@@ -1,4 +1,6 @@
-<p align="center"><h1><code>Nginx Quick Reference</code></h1></p>
+<div align="center">
+  <h1><code>Nginx Quick Reference</code></h1>
+</div>
 
 <br>
 
