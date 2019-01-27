@@ -31,33 +31,9 @@
 
 ****
 
-# Standard configuration
+# Base rules
 
-- **Listen directives**
-
-    **Rationale:**
-
-    Separate both (80/443) listen directive.
-
-    **Example:**
-
-    ```bash
-    # For http:
-    server {
-      listen                    10.240.20.2:80;
-      ...
-
-    # For https:
-    server {
-      listen                    10.240.20.2:443 ssl;
-      ...
-    ```
-
-    **External resources:**
-
-    - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
-
-- **Use http2 instead http**
+- **Separate both (80/443) listen directive**
 
     **Rationale:**
 
@@ -81,7 +57,26 @@
 
     - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 
-- **Default Server**
+- **Use HTTP2**
+
+    **Rationale:**
+
+    ...
+
+    **Example:**
+
+    ```bash
+    # For https:
+    server {
+      listen                    10.240.20.2:443 ssl http2;
+      ...
+    ```
+
+    **External resources:**
+
+    - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
+
+- **Use default_server directive**
 
     **Rationale:**
 
@@ -94,9 +89,10 @@
     server_name                 default_server;
 
     location / {
-      return                    301 https://badssl.com;
-      # or server static file (error page):
+      # server static file (error page):
       root                      /etc/nginx/error-pages/sites/404;
+      # or redirect:
+      # return                  301 https://badssl.com;
     }
     ```
 
@@ -110,7 +106,7 @@
 
     **Rationale:**
 
-    Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration is `4096 bit` DH Group.
+    Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration use `4096 bit` DH Group.
 
     **Example:**
 
@@ -119,7 +115,7 @@
     openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
     # Nginx configuration:
-    ssl_dhparam                 dhparams_4096.pem;
+    ssl_dhparam                 /etc/nginx/ssl/dhparams_4096.pem;
     ```
 
     **External resources:**
