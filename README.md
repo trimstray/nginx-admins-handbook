@@ -1,15 +1,15 @@
 <div align="center">
-  <h1><code>Nginx Hardening Reference</code></h1>
+  <h1><code>Nginx Quick Reference</code></h1>
 </div>
 
 <br>
 
 <p align="center">
-  <a href="https://github.com/trimstray/nginx-hardening-reference/tree/master">
+  <a href="https://github.com/trimstray/nginx-quick-reference/tree/master">
     <img src="https://img.shields.io/badge/Branch-master-green.svg?longCache=true"
         alt="Branch">
   </a>
-  <a href="https://github.com/trimstray/nginx-hardening-reference/pulls">
+  <a href="https://github.com/trimstray/nginx-quick-reference/pulls">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?longCache=true"
         alt="Pull Requests">
   </a>
@@ -22,7 +22,7 @@
 <div align="center">
   <sub>Created by
   <a href="https://twitter.com/trimstray">trimstray</a> and
-  <a href="https://github.com/trimstray/nginx-hardening-reference/graphs/contributors">
+  <a href="https://github.com/trimstray/nginx-quick-reference/graphs/contributors">
     contributors
   </a>
 </div>
@@ -31,9 +31,9 @@
 
 ****
 
-# Base rules
+# Main context
 
-- **Separate both (80/443) listen directive**
+- **Separate listen directives for 80 and 443**
 
     **Rationale:**
 
@@ -56,25 +56,6 @@
     **External resources:**
 
     - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
-
-- **Use HTTP2**
-
-    **Rationale:**
-
-    ...
-
-    **Example:**
-
-    ```bash
-    # For https:
-    server {
-      listen                    10.240.20.2:443 ssl http2;
-      ...
-    ```
-
-    **External resources:**
-
-    - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 
 - **Use default_server directive**
 
@@ -100,7 +81,32 @@
 
     - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 
-# SSL/TLS
+# Performance
+
+- **Use HTTP2**
+
+    **Rationale:**
+
+    ...
+
+    **Example:**
+
+    ```bash
+    # For https:
+    server {
+      listen                    10.240.20.2:443 ssl http2;
+      ...
+    ```
+
+    **External resources:**
+
+    - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
+
+# Hardening
+
+## Response Headers
+
+## SSL/TLS
 
 - **Use strong Diffie-Hellman group**
 
