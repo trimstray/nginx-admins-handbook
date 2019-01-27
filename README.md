@@ -1,15 +1,15 @@
 <div align="center">
-  <h1><code>Nginx Quick Reference</code></h1>
+  <h1><code>Nginx Hardening Reference</code></h1>
 </div>
 
 <br>
 
 <p align="center">
-  <a href="https://github.com/trimstray/nginx-quick-reference/tree/master">
+  <a href="https://github.com/trimstray/nginx-hardening-reference/tree/master">
     <img src="https://img.shields.io/badge/Branch-master-green.svg?longCache=true"
         alt="Branch">
   </a>
-  <a href="https://github.com/trimstray/nginx-quick-reference/pulls">
+  <a href="https://github.com/trimstray/nginx-hardening-reference/pulls">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?longCache=true"
         alt="Pull Requests">
   </a>
@@ -22,7 +22,7 @@
 <div align="center">
   <sub>Created by
   <a href="https://twitter.com/trimstray">trimstray</a> and
-  <a href="https://github.com/trimstray/nginx-quick-reference/graphs/contributors">
+  <a href="https://github.com/trimstray/nginx-hardening-reference/graphs/contributors">
     contributors
   </a>
 </div>
