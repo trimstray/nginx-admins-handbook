@@ -55,7 +55,7 @@
 
     **External resources:**
 
-    - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
+    - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 
 - **Use default_server directive**
 
@@ -87,7 +87,7 @@
 
     **Rationale:**
 
-    ...
+    All requests are downloaded in parallel, not in a queue, HTTP headers are compressed, pages transfer as a binary, not as a text file, which is more efficient and more.
 
     **Example:**
 
@@ -106,7 +106,39 @@
 
 ## Response Headers
 
+- **HTTP Strict Transport Security**
+
+    **Rationale:**
+
+    Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration use `4096 bit` DH Group.
+
+    **Example:**
+
+    ```bash
+    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
+    ```
+
+    **External resources:**
+
+    - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
+
 ## SSL/TLS
+
+- **Use TLS v2**
+
+    **Rationale:**
+
+    TLS v1.1 and v1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms.
+
+    **Example:**
+
+    ```bash
+    ssl_protocols               TLSv1.2;
+    ```
+
+    **External resources:**
+
+    - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
 
 - **Use strong Diffie-Hellman group**
 
