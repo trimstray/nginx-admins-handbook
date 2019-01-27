@@ -31,66 +31,32 @@
 
 ****
 
-# Protect traffic on IP address
+# Default Server and Listen directive
 
-## Rationale
+- **Prevent processing requests with undefined server names**
 
-## Configuration
+    **Rationale:**
 
-```bash
-server {
+    IF the request does not contain `Host` header field at all, then nginx will route the request to the default server for this port.
 
-  listen                        <public_ip_addr>:80;
+    **Example:**
 
-  add_header                    Allow "GET, POST, HEAD" always;
+    ```bash
+    # Place it at the beginning of the configuration file.
+    server_name                 default_server;
 
-  if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
-
-    return 405;
-
-  }
-
-  server_name                   default_server;
-
-  location / {
+    location / {
       return                    301 https://badssl.com;
-  }
+    }
+    ```
 
-  access_log                    /var/log/nginx/defaults/access.log main;
-  error_log                     /var/log/nginx/defaults/error.log crit;
+    **External resources:**
 
-}
-
-server {
-
-  listen                        <public_ip_addr>:443 ssl;
-
-  ssl_certificate               /etc/nginx/certs/nginx_defaults_bundle.crt;
-  ssl_certificate_key           /etc/nginx/certs/defaults.key;
-
-  add_header                    Allow "GET, POST, HEAD" always;
-
-  if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
-
-    return 405;
-
-  }
-
-  server_name                   default_server;
-
-  location / {
-      return                    301 https://badssl.com;
-  }
-
-  access_log                    /var/log/nginx/defaults/access.log main;
-  error_log                     /var/log/nginx/defaults/error.log crit;
-
-}
-```
+    - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 
 # SSL/TLS
 
-- **Diffie-Hellman Key**
+- **Use strong Diffie-Hellman group**
 
     **Rationale:**
 
