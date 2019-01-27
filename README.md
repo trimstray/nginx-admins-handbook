@@ -31,13 +31,61 @@
 
 ****
 
-# Default Server and Listen directive
+# Standard configuration
 
-- **Prevent processing requests with undefined server names**
+- **Listen directives**
 
     **Rationale:**
 
-    IF the request does not contain `Host` header field at all, then nginx will route the request to the default server for this port.
+    Separate both (80/443) listen directive.
+
+    **Example:**
+
+    ```bash
+    # For http:
+    server {
+      listen                    10.240.20.2:80;
+      ...
+
+    # For https:
+    server {
+      listen                    10.240.20.2:443 ssl;
+      ...
+    ```
+
+    **External resources:**
+
+    - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
+
+- **Use http2 instead http**
+
+    **Rationale:**
+
+    ...
+
+    **Example:**
+
+    ```bash
+    # For http:
+    server {
+      listen                    10.240.20.2:80;
+      ...
+
+    # For https:
+    server {
+      listen                    10.240.20.2:443 ssl;
+      ...
+    ```
+
+    **External resources:**
+
+    - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
+
+- **Default Server**
+
+    **Rationale:**
+
+    Nginx should prevent processing requests with undefined server names - also traffic on ip address. It also protects against configuration errors and providing incorrect backends.
 
     **Example:**
 
@@ -47,6 +95,8 @@
 
     location / {
       return                    301 https://badssl.com;
+      # or server static file (error page):
+      root                      /etc/nginx/error-pages/sites/404;
     }
     ```
 
@@ -69,7 +119,7 @@
     openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
     # Nginx configuration:
-    ssl_dhparam dhparams_4096.pem;
+    ssl_dhparam                 dhparams_4096.pem;
     ```
 
     **External resources:**
