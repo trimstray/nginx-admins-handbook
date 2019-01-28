@@ -428,6 +428,25 @@ alias ng.stop='systemctl stop nginx'
 
 # Performance
 
+- [ ] **Set manually worker processes**
+
+    ###### Rationale
+
+    The `worker_processes` directive is the sturdy spine of life for Nginx. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
+
+    For high load proxy servers (also standalone servers) the best value is ALL_CORES - 1 (please test it before used). Official Nginx documentation say: "When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)."
+
+    ###### Example
+
+    ```bash
+    # expr $(nproc --all) - 1
+    worker_processes 2;
+    ```
+
+    ###### External resources
+
+    - [Nginx Core Module - worker_processes](https://nginx.org/en/docs/ngx_core_module.html#worker_processes)
+
 - [ ] **Use HTTP/2**
 
     ###### Rationale
