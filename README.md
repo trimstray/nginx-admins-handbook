@@ -149,6 +149,38 @@
 
 # Hardening
 
+- [ ] **Hide Nginx version number**
+
+    ###### Rationale
+
+    Disclosing the version of nginx running can be undesirable, particularly in environments sensitive to information disclosure.
+
+    ###### Example
+
+    ```bash
+    server_tokens off;
+    ```
+
+    ###### External resources
+
+    - [Remove Version from Server Header Banner in nginx](https://geekflare.com/remove-server-header-banner-nginx/)
+
+- [ ] **Hide Nginx server signature**
+
+    ###### Rationale
+
+    You should compile Nginx from sources with `ngx_headers_more` to used `more_set_headers` directive.
+
+    ###### Example
+
+    ```bash
+    more_set_headers "Server: Unknown";
+    ```
+
+    ###### External resources
+
+    - [How to change (hide) the Nginx Server Signature?](https://stackoverflow.com/questions/24594971/how-to-changehide-the-nginx-server-signature)
+
 - [ ] **Keep only TLS 1.2 (+ TLS 1.3)**
 
     ###### Rationale
