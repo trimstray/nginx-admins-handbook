@@ -33,16 +33,11 @@
 
 # Table of Contents
 
-- **[Status](#status)**
 - **[Introduction](#introduction)**
 - **[External Resources](#external-resources)**
 - **[Base rules](#base-rules)**
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
-
-# Status
-
-Still work in progress... :construction_worker:
 
 # Introduction
 
