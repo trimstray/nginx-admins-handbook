@@ -1,5 +1,9 @@
 <div align="center">
-  <h1><code>Nginx Quick Reference</code></h1>
+  <h1>Nginx Quick Reference</h1>
+</div>
+
+<div align="center">
+  <h6><code>My notes about Nginx...</code></h6>
 </div>
 
 <br>
@@ -39,11 +43,12 @@
   * [About Nginx](#about-nginx)
   * [Cheatsheets](#cheatsheets)
   * [Performance & Hardening](#performance--hardening)
-  * [Testing tools](#testing-tools)
-  * [Performance Analyzers](#performance-analyzers)
+  * [Static Analyzers](#static-analyzers)
   * [Log Analyzers](#log-analyzers)
+  * [Performance Analyzers](#performance-analyzers)
+  * [Benchmarking tools](#benchmarking-tools)
   * [Online tools](#online-tools)
-  * [Comparison](#comparison)
+  * [Other](#other)
 - **[Aliases](#aliases)**
 - **[Base rules](#base-rules)**
   * [Separate listen directives for 80 and 443](#separate-listen-directives-for-80-and-443)
@@ -103,8 +108,8 @@ This is not an official handbook. Many of these rules refer to other resources. 
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/nginx/nginx"><b>Nginx official read-only mirror</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/h5bp/server-configs-nginx"><b>Nginx boilerplate configs</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/nginx-boilerplate/nginx-boilerplate"><b>Awesome Nginx configuration template</b></a><br>
-&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/yandex/gixy"><b>Nginx static analyzer</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
 </p>
 
 ##### Cheatsheets
@@ -127,19 +132,10 @@ This is not an official handbook. Many of these rules refer to other resources. 
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://enable-cors.org/index.html"><b>Enable cross-origin resource sharing (CORS)</b></a><br>
 </p>
 
-##### Testing tools
+##### Static Analyzers
 
 <p>
-&nbsp;&nbsp;:small_orange_diamond: <a href="https://www.joedog.org/siege-home/"><b>siege</b></a><br>
-&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/wg/wrk"><b>wrk</b></a><br>
-&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/codesenberg/bombardier"><b>bombardier</b></a><br>
-&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/cmpxchg16/gobench"><b>gobench</b></a><br>
-</p>
-
-##### Performance Analyzers
-
-<p>
-&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/lebinh/ngxtop"><b>ngxtop</b></a><br>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/yandex/gixy"><b>Nginx static analyzer</b></a><br>
 </p>
 
 ##### Log Analyzers
@@ -148,6 +144,21 @@ This is not an official handbook. Many of these rules refer to other resources. 
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://goaccess.io/"><b>GoAccess</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://www.graylog.org/"><b>Graylog</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://www.elastic.co/products/logstash"><b>Logstash</b></a><br>
+</p>
+
+##### Performance Analyzers
+
+<p>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/lebinh/ngxtop"><b>ngxtop</b></a><br>
+</p>
+
+##### Benchmarking tools
+
+<p>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://www.joedog.org/siege-home/"><b>siege</b></a><br>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/wg/wrk"><b>wrk</b></a><br>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/codesenberg/bombardier"><b>bombardier</b></a><br>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/cmpxchg16/gobench"><b>gobench</b></a><br>
 </p>
 
 ##### Online tools
@@ -161,7 +172,7 @@ This is not an official handbook. Many of these rules refer to other resources. 
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://observatory.mozilla.org/"><b>Analyze your website by Mozilla Observatory</b></a><br>
 </p>
 
-##### Comparison
+##### Other
 
 <p>
 &nbsp;&nbsp;:small_orange_diamond: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
@@ -563,7 +574,7 @@ chown -R www-data:www-data /var/www/domain.com
 
 ###### External resources
 
-- [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
+- [nginx-modules](https://github.com/nginx-modules)
 
 #### Hide Nginx version number
 
