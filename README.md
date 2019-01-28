@@ -124,11 +124,11 @@
 
 ## SSL/TLS
 
-- **Use TLS v2**
+- **Keep only TLS 1.2**
 
     **Rationale:**
 
-    TLS v1.1 and v1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms.
+    TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
     **Example:**
 
@@ -138,9 +138,47 @@
 
     **External resources:**
 
-    - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
+    - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
+    - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
+
+- **Use only strong ciphers**
+
+    **Rationale:**
+
+    This parameter changes quite often, the recommended configuration for today may be out of date tomorrow but remember - drop backward compatibility software components. Use only strong and not vulnerable ciphersuite.
+
+    **Example:**
+
+    ```bash
+    ssl_ciphers                 "AES256+EECDH:AES256+EDH:!aNULL";
+    ```
+
+    **External resources:**
+
+    - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 
 - **Use strong Diffie-Hellman group**
+
+    **Rationale:**
+
+    Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration use `4096 bit` DH Group or pre-configured DH groups from [mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
+
+    **Example:**
+
+    ```bash
+    # Generate DH Key:
+    openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
+
+    # Nginx configuration:
+    ssl_dhparam                 /etc/nginx/ssl/dhparams_4096.pem;
+    ```
+
+    **External resources:**
+
+    - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
+    - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
+
+- **Enables server-side protection from BEAST attacks**
 
     **Rationale:**
 
