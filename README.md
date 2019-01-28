@@ -104,6 +104,83 @@
 
     - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 
+- [ ] **Use geo/map modules instead allow/deny**
+
+    ###### Rationale
+
+    Creates variables with values depending on the client IP address. Use map or geo modules (one of them) to prevent users abusing your servers.
+
+    ###### Example
+
+    ```bash
+    # Map module:
+    map $remote_addr $globals_internal_map_acl {
+
+      # Status code:
+      #  - 0 = false
+      #  - 1 = true
+      default 0;
+
+      ### INTERNAL ###
+      10.255.10.0/24 1;
+      10.255.20.0/24 1;
+      10.255.30.0/24 1;
+      192.168.0.0/16 1;
+
+    }
+
+    # Geo module:
+    geo $globals_internal_geo_acl {
+
+      # Status code:
+      #  - 0 = false
+      #  - 1 = true
+      default 0;
+
+      ### INTERNAL ###
+      10.255.10.0/24 1;
+      10.255.20.0/24 1;
+      10.255.30.0/24 1;
+      192.168.0.0/16 1;
+
+    }
+    ```
+
+    ###### External resources
+
+    - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
+
+- [ ] **Map all the things...**
+
+    ###### Rationale
+
+    Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents.
+
+    ###### Example
+
+    ```bash
+    map $http_user_agent $device_redirect {
+      default "desktop";
+      ~(?i)ip(hone|od) "mobile";
+      ~(?i)android.*(mobile|mini) "mobile";
+      ~Mobile.+Firefox "mobile";
+      ~^HTC "mobile";
+      ~Fennec "mobile";
+      ~IEMobile "mobile";
+      ~BB10 "mobile";
+      ~SymbianOS.*AppleWebKit "mobile";
+      ~Opera\sMobi "mobile";
+    }
+
+    if ($device_redirect = "mobile") {
+      return 301 https://m.domain.com$request_uri;
+    }
+    ```
+
+    ###### External resources
+
+    - [Cool Nginx feature of the week](https://www.ignoredbydinosaurs.com/posts/236-cool-nginx-feature-of-the-week)
+
 # Performance
 
 - [ ] **Use HTTP/2**
