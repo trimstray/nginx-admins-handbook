@@ -651,12 +651,12 @@ alias ng.stop='systemctl stop nginx'
 
     ###### Rationale
 
-    x25519 is a more secure but slightly less compatible option. The NIST curves (prime256v1, secp384r1, secp521r1) are known to be weak and potentially vulnerable.
+    X25519 is a more secure but slightly less compatible option. The NIST curves (prime256v1, secp384r1, secp521r1) are known to be weak and potentially vulnerable.
 
     ###### Example
 
     ```bash
-    ssl_ecdh_curve x25519;
+    ssl_ecdh_curve X25519;
     ```
 
     ###### External resources
