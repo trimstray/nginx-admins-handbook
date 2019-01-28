@@ -70,7 +70,7 @@
     server_name                 default_server;
 
     location / {
-      # server static file (error page):
+      # serve static file (error page):
       root                      /etc/nginx/error-pages/sites/404;
       # or redirect:
       # return                  301 https://badssl.com;
@@ -81,9 +81,32 @@
 
     - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 
+- [ ] **Forcing HTTPS**
+
+    ###### Rationale
+
+    You should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications.
+
+    ###### Example
+
+    ```bash
+    server {
+
+      ...
+
+      server_name               domain.com;
+      return                    301 https://$host$request_uri;
+
+    }
+    ```
+
+    ###### External resources
+
+    - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
+
 # Performance
 
-- [ ] **Use HTTP2**
+- [ ] **Use HTTP/2**
 
     ###### Rationale
 
@@ -114,7 +137,7 @@
 
     ```bash
     ssl_session_cache shared:SSL:10m;
-    ssl_session_timeout 1d;
+    ssl_session_timeout 24h;
     ssl_session_tickets off;
     ssl_buffer_size 1400;
     ```
@@ -169,7 +192,7 @@
 
     ```bash
     # Generate DH Key:
-    openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
+    openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
     # Nginx configuration:
     ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
@@ -179,6 +202,7 @@
 
     - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
     - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
+    - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 
 - [ ] **Use more secure ECDH Curve**
 
@@ -212,6 +236,22 @@
 
     - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
+- [ ] **Disable compression (mitigation of CRIME attack)**
+
+    ###### Rationale
+
+    Disabling SSL/TLS compression stops the attack very effectively.
+
+    ###### Example
+
+    ```bash
+    gzip off;
+    ```
+
+    ###### External resources
+
+    - [SSL/TLS attacks: Part 2 – CRIME Attack](http://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-2-crime-attack/)
+
 - [ ] **HTTP Strict Transport Security**
 
     ###### Rationale
@@ -221,9 +261,113 @@
     ###### Example
 
     ```bash
-    add_header Strict-Transport-Security "max-age=15768000; includeSubdomains";
+    add_header                       Strict-Transport-Security "max-age=15768000; includeSubdomains" always;
     ```
 
     ###### External resources
 
     - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
+
+- [ ] **Reduce XSS risks (Content-Security-Policy)**
+
+    ###### Rationale
+
+    CSP reduce the risk and impact of XSS attacks in modern browsers.
+
+    ###### Example
+
+    ```bash
+    # This policy allows images, scripts, AJAX, and CSS from the same origin, and does not allow any other resources to load.
+    add_header                      Content-Security-Policy "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';" always;
+    ```
+
+    ###### External resources
+
+    - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
+    - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
+
+- [ ] **Control the behavior of the Referer header (Referrer-Policy)**
+
+    ###### Rationale
+
+    Determine what information is sent along with the requests.
+
+    ###### Example
+
+    ```bash
+    add_header                      Referrer-Policy "no-referrer";
+    ```
+
+    ###### External resources
+
+    - [A new security header: Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
+
+- [ ] **Provide clickjacking protection (X-Frame-Options)**
+
+    ###### Rationale
+
+    Helps to protect your visitors against clickjacking attacks. It is recommended that you use the x-frame-options header on pages which should not be allowed to render a page in a frame.
+
+    ###### Example
+
+    ```bash
+    add_header                      X-Frame-Options "SAMEORIGIN" always;
+    ```
+
+    ###### External resources
+
+    - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
+
+- [ ] **Prevent some categories of XSS attacks (X-XSS-Protection)**
+
+    ###### Rationale
+
+    Enable the cross-site scripting (XSS) filter built into modern web browsers.
+
+    ###### Example
+
+    ```bash
+    add_header                      X-XSS-Protection "1; mode=block" always
+    ```
+
+    ###### External resources
+
+    - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
+
+- [ ] **Prevent Sniff Mimetype middleware (X-Content-Type-Options)**
+
+    ###### Rationale
+
+    It prevents the browser from doing MIME-type sniffing (prevents "mime" based attacks).
+
+    ###### Example
+
+    ```bash
+    add_header                      X-Content-Type-Options "nosniff" always;
+    ```
+
+    ###### External resources
+
+    - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
+
+- [ ] **Reject unsafe HTTP methods**
+
+    ###### Rationale
+
+    Set of methods support by a resource. An ordinary web server supports the HEAD, GET and POST methods to retrieve static and dynamic content. Other (e.g. OPTIONS, TRACE) methods should not be supported on public web servers, as they increase the attack surface.
+
+    ###### Example
+
+    ```bash
+    add_header                      Allow "GET, POST, HEAD" always;
+
+    if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
+
+      return 405;
+
+    }
+    ```
+
+    ###### External resources
+
+    - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
