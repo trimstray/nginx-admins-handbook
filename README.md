@@ -410,7 +410,10 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
     ###### Example
 
     ```bash
+    # Edit nginx.conf:
     user www-data;
+
+    # Set owner and group:
     chown -R www-data:www-data /var/www/domain.com
     ```
 
@@ -430,7 +433,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
     # During installation:
     ./configure --without-http_autoindex_module
 
-    # Comment from configuration:
+    # Comment modules in the configuration file:
     # load_module /usr/share/nginx/modules/ndk_http_module.so;
     # load_module /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
     ```
