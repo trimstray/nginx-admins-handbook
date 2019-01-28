@@ -126,23 +126,7 @@
 
 # Hardening
 
-- [ ] **HTTP Strict Transport Security**
-
-    ###### Rationale
-
-    The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
-
-    ###### Example
-
-    ```bash
-    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
-    ```
-
-    ###### External resources
-
-    - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
-
-- [ ] **Keep only TLS 1.2**
+- [ ] **Keep only TLS 1.2 (+ TLS 1.3)**
 
     ###### Rationale
 
@@ -175,7 +159,7 @@
 
     - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 
-- [ ] **Use strong Diffie-Hellman group**
+- [ ] **Use strong Key Exchange**
 
     ###### Rationale
 
@@ -196,6 +180,22 @@
     - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
     - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 
+- [ ] **Use more secure ECDH Curve**
+
+    ###### Rationale
+
+    x25519 is a more secure but slightly less compatible option. The NIST curves (prime256v1, secp384r1, secp521r1) are known to be weak and potentially vulnerable.
+
+    ###### Example
+
+    ```bash
+    ssl_ecdh_curve x25519;
+    ```
+
+    ###### External resources
+
+    - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
+
 - [ ] **Defend against the BEAST attack**
 
     ###### Rationale
@@ -212,18 +212,18 @@
 
     - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
-- [ ] **Defend against the BEAST attack**
+- [ ] **HTTP Strict Transport Security**
 
     ###### Rationale
 
-    Enables server-side protection from BEAST attacks.
+    The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
     ###### Example
 
     ```bash
-    ssl_prefer_server_ciphers on;
+    add_header Strict-Transport-Security "max-age=15768000; includeSubdomains";
     ```
 
     ###### External resources
 
-    - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
+    - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
