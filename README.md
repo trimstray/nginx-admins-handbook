@@ -126,8 +126,6 @@
 
 # Hardening
 
-## Response Headers
-
 - [ ] **HTTP Strict Transport Security**
 
     ###### Rationale
@@ -143,8 +141,6 @@
     ###### External resources
 
     - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
-
-## SSL/TLS
 
 - [ ] **Keep only TLS 1.2**
 
@@ -199,6 +195,22 @@
 
     - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
     - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
+
+- [ ] **Defend against the BEAST attack**
+
+    ###### Rationale
+
+    Enables server-side protection from BEAST attacks.
+
+    ###### Example
+
+    ```bash
+    ssl_prefer_server_ciphers on;
+    ```
+
+    ###### External resources
+
+    - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
 - [ ] **Defend against the BEAST attack**
 
