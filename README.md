@@ -149,6 +149,23 @@
 
 # Hardening
 
+- [ ] **Run as an unprivileged user**
+
+    ###### Rationale
+
+    There is no real difference in security just by changing the process owner name. On the other hand in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
+
+    ###### Example
+
+    ```bash
+    user www-data;
+    chown -R www-data:www-data /var/www/domain.com
+    ```
+
+    ###### External resources
+
+    - [Why does nginx starts process as root?](https://unix.stackexchange.com/questions/134301/why-does-nginx-starts-process-as-root)
+
 - [ ] **Hide Nginx version number**
 
     ###### Rationale
@@ -180,6 +197,32 @@
     ###### External resources
 
     - [How to change (hide) the Nginx Server Signature?](https://stackoverflow.com/questions/24594971/how-to-changehide-the-nginx-server-signature)
+
+- [ ] **Hide upstream proxy headers**
+
+    ###### Rationale
+
+    When nginx is used to proxy requests from an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (for example, the version of PHP running).
+
+    ###### Example
+
+    ```bash
+    proxy_hide_header Server;
+    proxy_hide_header X-Powered-By;
+    proxy_hide_header X-AspNetMvc-Version;
+    proxy_hide_header X-AspNet-Version;
+    proxy_hide_header X-Drupal-Cache;
+    proxy_hide_header Via;
+    proxy_hide_header Link;
+    proxy_hide_header X-Generator;
+    proxy_hide_header X-Host;
+    proxy_hide_header X-Url;
+    proxy_hide_header Purge-Cache-Tags;
+    ```
+
+    ###### External resources
+
+    - [Remove insecure http headers](https://veggiespam.com/headers/)
 
 - [ ] **Keep only TLS 1.2 (+ TLS 1.3)**
 
