@@ -409,6 +409,23 @@ alias ng.stop='systemctl stop nginx'
 
     - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
 
+- [ ] **Use debug mode for debugging**
+
+    ###### Rationale
+
+    There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly).
+
+    ###### Example
+
+    ```bash
+    rewrite_log on;
+    error_log /var/log/nginx/error-debug.log debug;
+    ```
+
+    ###### External resources
+
+    - [A debugging logA debugging log](https://nginx.org/en/docs/debugging_log.html)
+
 # Performance
 
 - [ ] **Use HTTP/2**
