@@ -35,7 +35,7 @@
 
 - **[Introduction](#introduction)**
 - **[External Resources](#external-resources)**
-- **[Aliases](#aliases)
+- **[Aliases](#aliases)**
 - **[Base rules](#base-rules)**
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
