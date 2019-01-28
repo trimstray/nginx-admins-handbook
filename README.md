@@ -41,7 +41,7 @@
 
 # Introduction
 
-<img src="https://github.com/trimstray/OpenProxy/blob/master/doc/img/nginx_logo.png" align="right">
+<img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx_logo.png" align="right">
 
   > Before using the **Nginx** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
