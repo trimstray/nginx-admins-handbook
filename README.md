@@ -35,6 +35,7 @@
 
 - **[Introduction](#introduction)**
 - **[External Resources](#external-resources)**
+- **[Aliases](#aliases)
 - **[Base rules](#base-rules)**
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
@@ -122,6 +123,15 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 &nbsp;&nbsp;:small_orange_diamond: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 </p>
+
+# Aliases
+
+```bash
+alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
+alias ng.reload='systemctl reload nginx'
+alias ng.restart='systemctl restart nginx'
+alias ng.stop='systemctl stop nginx'
+```
 
 # Base rules
 
@@ -363,6 +373,41 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
     ###### External resources
 
     - [Cool Nginx feature of the week](https://www.ignoredbydinosaurs.com/posts/236-cool-nginx-feature-of-the-week)
+
+- [ ] **Drop the same root inside location block**
+
+    ###### Rationale
+
+    If you add a root to every location block then a location block that isn’t matched will have no root. Set global `root` inside server directive.
+
+    ###### Example
+
+    ```bash
+    server {
+
+      server_name domain.com;
+
+      root /var/www/domain.com/public;
+
+      location / {
+        ...
+      }
+
+      location /api {
+        ...
+      }
+
+      location /static {
+        root /var/www/domain.com/static;
+        ...
+      }
+
+    }
+    ```
+
+    ###### External resources
+
+    - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
 
 # Performance
 
