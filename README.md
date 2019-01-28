@@ -31,7 +31,7 @@
 
 ****
 
-# Main context
+# Base rules
 
 - [ ] **Separate listen directives for 80 and 443**
 
@@ -75,6 +75,7 @@
 
     ```bash
     # Store this configuration in https-ssl-common.conf
+    cat /etc/nginx/domain.com/commons/https-ssl-common.conf;
     listen 10.240.20.2:443 ssl;
 
     root /etc/nginx/error-pages/other;
