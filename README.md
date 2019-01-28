@@ -51,7 +51,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 # External Resources
 
-###### Base
+##### Base
 
 <p>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://www.nginx.com/"><b>Nginx Project</b></a><br>
@@ -62,7 +62,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
 </p>
 
-###### Cheatsheets
+##### Cheatsheets
 
 <p>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://gist.github.com/carlessanagustin/9509d0d31414804da03b"><b>Nginx Cheatsheet</b></a><br>
@@ -70,7 +70,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://mijndertstuij.nl/writing/posts/nginx-cheatsheet/"><b>Nginx Cheatsheet by Mijdert Stuij</b></a><br>
 </p>
 
-###### Performance & Hardening
+##### Performance & Hardening
 
 <p>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/nbs-system/naxsi"><b>WAF for Nginx</b></a><br>
