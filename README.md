@@ -457,7 +457,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 ###### External resources
 
-- [A debugging logA debugging log](https://nginx.org/en/docs/debugging_log.html)
+- [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 
 # Performance
 
