@@ -335,6 +335,27 @@
 
     - [Why does nginx starts process as root?](https://unix.stackexchange.com/questions/134301/why-does-nginx-starts-process-as-root)
 
+- [ ] **Disable unnecessary modules**
+
+    ###### Rationale
+
+    It is recommended to disable any modules which are not required as this will minimize the risk of any potential attacks by limiting the operations allowed by the web server.
+
+    ###### Example
+
+    ```bash
+    # During installation:
+    ./configure --without-http_autoindex_module
+
+    # Comment from configuration:
+    # load_module /usr/share/nginx/modules/ndk_http_module.so;
+    # load_module /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
+    ```
+
+    ###### External resources
+
+    - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
+
 - [ ] **Hide Nginx version number**
 
     ###### Rationale
@@ -615,3 +636,42 @@
     ###### External resources
 
     - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
+
+- [ ] **Control Buffer Overflow attacks**
+
+    ###### Rationale
+
+    Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in nginx we can set buffer size limitations for all clients.
+
+    ###### Example
+
+    ```bash
+    client_body_buffer_size 100k;
+    client_header_buffer_size 1k;
+    client_max_body_size 100k;
+    large_client_header_buffers 2 1k;
+    ```
+
+    ###### External resources
+
+    - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
+
+- [ ] **Mitigating Slow HTTP DoS attack (Closing Slow Connections)**
+
+    ###### Rationale
+
+    Close connections that are writing data too infrequently, which can represent an attempt to keep connections open as long as possible.
+
+    ###### Example
+
+    ```bash
+    client_body_timeout 10s;
+    client_header_timeout 10s;
+    keepalive_timeout 5 5;
+    send_timeout 10;
+    ```
+
+    ###### External resources
+
+    - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
+    - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
