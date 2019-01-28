@@ -33,7 +33,7 @@
 
 # Main context
 
-- **Separate listen directives for 80 and 443**
+- [ ] **Separate listen directives for 80 and 443**
 
     **Rationale:**
 
@@ -57,7 +57,7 @@
 
     - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 
-- **Use default_server directive**
+- [ ] **Use default_server directive**
 
     **Rationale:**
 
@@ -83,7 +83,7 @@
 
 # Performance
 
-- **Use HTTP2**
+- [ ] **Use HTTP2**
 
     **Rationale:**
 
@@ -102,15 +102,37 @@
 
     - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 
+- [ ] **Maintaining SSL Sessions**
+
+    **Rationale:**
+
+    This improves performance from the clients’ perspective, because it eliminates the need for a new (and time-consuming) SSL handshake to be conducted each time a request is made.
+
+    Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
+
+    **Example:**
+
+    ```bash
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+    ssl_buffer_size 1400;
+    ```
+
+    **External resources:**
+
+    - [SSL Session (cache)](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache)
+    - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
+
 # Hardening
 
 ## Response Headers
 
-- **HTTP Strict Transport Security**
+- [ ] **HTTP Strict Transport Security**
 
     **Rationale:**
 
-    Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration use `4096 bit` DH Group.
+    The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
     **Example:**
 
@@ -124,7 +146,7 @@
 
 ## SSL/TLS
 
-- **Keep only TLS 1.2**
+- [ ] **Keep only TLS 1.2**
 
     **Rationale:**
 
@@ -133,7 +155,7 @@
     **Example:**
 
     ```bash
-    ssl_protocols               TLSv1.2;
+    ssl_protocols TLSv1.2;
     ```
 
     **External resources:**
@@ -141,7 +163,7 @@
     - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
     - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
 
-- **Use only strong ciphers**
+- [ ] **Use only strong ciphers**
 
     **Rationale:**
 
@@ -150,14 +172,14 @@
     **Example:**
 
     ```bash
-    ssl_ciphers                 "AES256+EECDH:AES256+EDH:!aNULL";
+    ssl_ciphers "AES256+EECDH:AES256+EDH:!aNULL";
     ```
 
     **External resources:**
 
     - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 
-- **Use strong Diffie-Hellman group**
+- [ ] **Use strong Diffie-Hellman group**
 
     **Rationale:**
 
@@ -170,7 +192,7 @@
     openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
     # Nginx configuration:
-    ssl_dhparam                 /etc/nginx/ssl/dhparams_4096.pem;
+    ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
     ```
 
     **External resources:**
@@ -178,22 +200,18 @@
     - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
     - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 
-- **Enables server-side protection from BEAST attacks**
+- [ ] **Defend against the BEAST attack**
 
     **Rationale:**
 
-    Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration use `4096 bit` DH Group.
+    Enables server-side protection from BEAST attacks.
 
     **Example:**
 
     ```bash
-    # Generate DH Key:
-    openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
-
-    # Nginx configuration:
-    ssl_dhparam                 /etc/nginx/ssl/dhparams_4096.pem;
+    ssl_prefer_server_ciphers on;
     ```
 
     **External resources:**
 
-    - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
+    - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
