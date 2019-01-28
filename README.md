@@ -44,14 +44,18 @@
     ```bash
     # For http:
     server {
+
       listen 10.240.20.2:80;
       ...
+
     }
 
     # For https:
     server {
+
       listen 10.240.20.2:443 ssl;
       ...
+
     }
     ```
 
@@ -116,14 +120,38 @@
     ###### Example
 
     ```bash
-    # Place it at the beginning of the configuration file.
-    server_name default_server;
+    server {
 
-    location / {
-      # serve static file (error page):
-      root /etc/nginx/error-pages/404;
-      # or redirect:
-      # return 301 https://badssl.com;
+      listen 10.240.20.2:443 ssl;
+
+      # Place it at the beginning of the configuration file.
+      server_name default_server;
+
+      location / {
+        # serve static file (error page):
+        root /etc/nginx/error-pages/404;
+        # or redirect:
+        # return 301 https://badssl.com;
+      }
+
+    }
+
+    server {
+
+      listen 10.240.20.2:443 ssl;
+
+      server_name domain.com;
+      ...
+
+    }
+
+    server {
+
+      listen 10.240.20.2:443 ssl;
+
+      server_name app.domain.com;
+      ...
+
     }
     ```
 
@@ -131,7 +159,7 @@
 
     - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 
-- [ ] **Forcing HTTPS**
+- [ ] **Force all connections over TLS**
 
     ###### Rationale
 
@@ -146,6 +174,14 @@
 
       server_name domain.com;
       return 301 https://$host$request_uri;
+
+    }
+
+    server {
+      listen 10.240.20.2:443 ssl;
+
+      server_name domain.com;
+      ...
 
     }
     ```
@@ -210,7 +246,9 @@
 
     ```bash
     map $http_user_agent $device_redirect {
+
       default "desktop";
+
       ~(?i)ip(hone|od) "mobile";
       ~(?i)android.*(mobile|mini) "mobile";
       ~Mobile.+Firefox "mobile";
@@ -220,10 +258,13 @@
       ~BB10 "mobile";
       ~SymbianOS.*AppleWebKit "mobile";
       ~Opera\sMobi "mobile";
+
     }
 
     if ($device_redirect = "mobile") {
+
       return 301 https://m.domain.com$request_uri;
+
     }
     ```
 
@@ -244,6 +285,7 @@
     ```bash
     # For https:
     server {
+
       listen 10.240.20.2:443 ssl http2;
       ...
     ```
