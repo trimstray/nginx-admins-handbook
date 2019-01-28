@@ -44,12 +44,12 @@
     ```bash
     # For http:
     server {
-      listen                    10.240.20.2:80;
+      listen 10.240.20.2:80;
       ...
 
     # For https:
     server {
-      listen                    10.240.20.2:443 ssl;
+      listen 10.240.20.2:443 ssl;
       ...
     ```
 
@@ -67,13 +67,13 @@
 
     ```bash
     # Place it at the beginning of the configuration file.
-    server_name                 default_server;
+    server_name default_server;
 
     location / {
       # serve static file (error page):
-      root                      /etc/nginx/error-pages/sites/404;
+      root /etc/nginx/error-pages/404;
       # or redirect:
-      # return                  301 https://badssl.com;
+      # return 301 https://badssl.com;
     }
     ```
 
@@ -94,8 +94,8 @@
 
       ...
 
-      server_name               domain.com;
-      return                    301 https://$host$request_uri;
+      server_name domain.com;
+      return 301 https://$host$request_uri;
 
     }
     ```
@@ -117,7 +117,7 @@
     ```bash
     # For https:
     server {
-      listen                    10.240.20.2:443 ssl http2;
+      listen 10.240.20.2:443 ssl http2;
       ...
     ```
 
@@ -261,7 +261,7 @@
     ###### Example
 
     ```bash
-    add_header                       Strict-Transport-Security "max-age=15768000; includeSubdomains" always;
+    add_header Strict-Transport-Security "max-age=15768000; includeSubdomains" always;
     ```
 
     ###### External resources
@@ -278,7 +278,7 @@
 
     ```bash
     # This policy allows images, scripts, AJAX, and CSS from the same origin, and does not allow any other resources to load.
-    add_header                      Content-Security-Policy "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';" always;
+    add_header Content-Security-Policy "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';" always;
     ```
 
     ###### External resources
@@ -295,7 +295,7 @@
     ###### Example
 
     ```bash
-    add_header                      Referrer-Policy "no-referrer";
+    add_header Referrer-Policy "no-referrer";
     ```
 
     ###### External resources
@@ -311,7 +311,7 @@
     ###### Example
 
     ```bash
-    add_header                      X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
     ```
 
     ###### External resources
@@ -327,7 +327,7 @@
     ###### Example
 
     ```bash
-    add_header                      X-XSS-Protection "1; mode=block" always
+    add_header X-XSS-Protection "1; mode=block" always
     ```
 
     ###### External resources
@@ -343,7 +343,7 @@
     ###### Example
 
     ```bash
-    add_header                      X-Content-Type-Options "nosniff" always;
+    add_header X-Content-Type-Options "nosniff" always;
     ```
 
     ###### External resources
@@ -359,7 +359,7 @@
     ###### Example
 
     ```bash
-    add_header                      Allow "GET, POST, HEAD" always;
+    add_header Allow "GET, POST, HEAD" always;
 
     if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
 
