@@ -50,6 +50,8 @@
 
 To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/docs/)**.
 
+This is not an official handbook. Many of these rules refer to other resources. It is rather a quick collection of things used by me in production env.
+
 # External Resources
 
 ##### Base
