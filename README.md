@@ -46,16 +46,65 @@
     server {
       listen 10.240.20.2:80;
       ...
+    }
 
     # For https:
     server {
       listen 10.240.20.2:443 ssl;
       ...
+    }
     ```
 
     ###### External resources
 
     - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
+
+- [ ] **Organising Nginx configuration**
+
+    ###### Rationale
+
+    When your configuration grow, the need for organising your code will also grow. Well organised code is:
+
+    - Easier to understand.
+    - Easier to maintain.
+    - Easier to work with.
+
+    Use `include` directive to attach your nginx specific code to global config, contexts and other.
+
+    ###### Example
+
+    ```bash
+    # Store this configuration in https-ssl-common.conf
+    listen 10.240.20.2:443 ssl;
+
+    root /etc/nginx/error-pages/other;
+
+    ssl_certificate /etc/nginx/domain.com/certs/nginx_domain.com_bundle.crt;
+    ssl_certificate_key /etc/nginx/domain.com/certs/domain.com.key;
+
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers AES256+EECDH:AES256+EDH:!aNULL;
+    # Uncomment if issued by the CA:
+    # ssl_stapling                  on;
+    # ssl_stapling_verify           on;
+    ssl_ecdh_curve secp384r1;
+    ssl_dhparam /etc/nginx/dhparams_4096.pem;
+
+    # And include this in server section:
+    server {
+
+      include /etc/nginx/domain.com/commons/https-ssl-common.conf;
+
+      server_name domain.com www.domain.com;
+      ...
+    ```
+
+    ###### External resources
+
+    - [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
 
 - [ ] **Use default_server directive**
 
@@ -92,7 +141,7 @@
     ```bash
     server {
 
-      ...
+      listen 10.240.20.2:80;
 
       server_name domain.com;
       return 301 https://$host$request_uri;
