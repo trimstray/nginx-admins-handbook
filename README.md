@@ -51,7 +51,8 @@
   * [Benchmarking tools](#benchmarking-tools)
   * [Online tools](#online-tools)
   * [Other](#other)
-- **[Aliases](#aliases)**
+- **[Snippets](#snippets)**
+  * [Shell aliases](#shell-aliases)
 - **[Base rules](#base-rules)**
   * [Separate listen directives for 80 and 443](#separate-listen-directives-for-80-and-443)
   * [Organising Nginx configuration](#organising-nginx-configuration)
@@ -196,13 +197,14 @@ Many of these recipes have been applied to the configuration of my private websi
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 </p>
 
-# Aliases
+# Snippets
+
+#### Shell aliases
 
 ```bash
 alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
-alias ng.reload='systemctl reload nginx'
-alias ng.restart='systemctl restart nginx'
-alias ng.stop='systemctl stop nginx'
+alias ng.stop='ng.test && systemctl stop nginx'
+alias ng.reload='ng.test && systemctl reload nginx'
 ```
 
 # Base rules
