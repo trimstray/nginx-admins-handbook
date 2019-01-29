@@ -54,40 +54,40 @@
 - **[Snippets](#snippets)**
   * [Shell aliases](#shell-aliases)
 - **[Base rules](#base-rules)**
-  * [Separate listen directives for 80 and 443](#separate-listen-directives-for-80-and-443)
-  * [Organising Nginx configuration](#organising-nginx-configuration)
-  * [Use default_server directive at the beginning](#use-default_server-directive-at-the-beginning)
-  * [Force all connections over TLS](#force-all-connections-over-tls)
-  * [Use geo/map modules instead allow/deny](#use-geomap-modules-instead-allowdeny)
-  * [Map all the things...](#map-all-the-things)
-  * [Drop the same root inside location block](#drop-the-same-root-inside-location-block)
-  * [Use debug mode for debugging](#use-debug-mode-for-debugging)
+  * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
+  * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
+  * [Use default_server directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
+  * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
+  * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
+  * [Map all the things...](#beginner-map-all-the-things)
+  * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
+  * [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging)
 - **[Performance](#performance)**
-  * [Set manually worker processes](#set-manually-worker-processes)
-  * [Use HTTP/2](#use-http2)
-  * [Maintaining SSL Sessions](#maintaining-ssl-sessions)
+  * [Set manually worker processes](#beginner-set-manually-worker-processes)
+  * [Use HTTP/2](#beginner-use-http2)
+  * [Maintaining SSL Sessions](#beginner-maintaining-ssl-sessions)
 - **[Hardening](#hardening)**
-  * [Run as an unprivileged user](#run-as-an-unprivileged-user)
-  * [Disable unnecessary modules](#disable-unnecessary-modules)
-  * [Hide Nginx version number](#hide-nginx-version-number)
-  * [Hide Nginx server signature](#hide-nginx-server-signature)
-  * [Hide upstream proxy headers](#hide-upstream-proxy-headers)
-  * [Keep only TLS 1.2 (+ TLS 1.3)](#keep-only-tls-12--tls-13)
-  * [Use only strong ciphers](#use-only-strong-ciphers)
-  * [Use strong Key Exchange](#use-strong-key-exchange)
-  * [Use more secure ECDH Curve](#use-more-secure-ecdh-curve)
-  * [Use only 4096-bit private keys](#use-only-4096-bit-private-keys)
-  * [Defend against the BEAST attack](#defend-against-the-beast-attack)
-  * [Disable compression (mitigation of CRIME attack)](#disable-compression-mitigation-of-crime-attack)
-  * [HTTP Strict Transport Security](#http-strict-transport-security)
-  * [Reduce XSS risks (Content-Security-Policy)](#reduce-xss-risks-content-security-policy)
-  * [Control the behavior of the Referer header (Referrer-Policy)](#control-the-behavior-of-the-referer-header-referrer-policy)
-  * [Provide clickjacking protection (X-Frame-Options)](#provide-clickjacking-protection-x-frame-options)
-  * [Prevent some categories of XSS attacks (X-XSS-Protection)](#prevent-some-categories-of-xss-attacks-x-xss-protection)
-  * [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#prevent-sniff-mimetype-middleware-x-content-type-options)
-  * [Reject unsafe HTTP methods](#reject-unsafe-http-methods)
-  * [Control Buffer Overflow attacks](#control-buffer-overflow-attacks)
-  * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#mitigating-slow-http-dos-attack-closing-slow-connections)
+  * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
+  * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
+  * [Hide Nginx version number](#beginner-hide-nginx-version-number)
+  * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
+  * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
+  * [Keep only TLS 1.2 (+ TLS 1.3)](#beginner-keep-only-tls-12--tls-13)
+  * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
+  * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
+  * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
+  * [Use only 4096-bit private keys](#beginner-use-only-4096-bit-private-keys)
+  * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
+  * [Disable compression (mitigation of CRIME attack)](#beginner-disable-compression-mitigation-of-crime-attack)
+  * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
+  * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
+  * [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)
+  * [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)
+  * [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)
+  * [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)
+  * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
+  * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
+  * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
 
 # Introduction
 
@@ -218,7 +218,7 @@ alias ng.reload='ng.test && systemctl reload nginx'
 
 # Base rules
 
-#### Separate listen directives for 80 and 443
+#### :beginner: Separate listen directives for 80 and 443
 
 ###### Rationale
 
@@ -248,17 +248,17 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 
-#### Organising Nginx configuration
+#### :beginner: Organising Nginx configuration
 
 ###### Rationale
 
   > When your configuration grow, the need for organising your code will also grow. Well organised code is:
 
-  - easier to understand.
-  - easier to maintain.
-  - easier to work with.
+  > - easier to understand.
+  > - easier to maintain.
+  > - easier to work with.
 
-  Use `include` directive to attach your nginx specific code to global config, contexts and other.
+  > Use `include` directive to attach your nginx specific code to global config, contexts and other.
 
 ###### Example
 
@@ -284,7 +284,7 @@ server {
 
 - [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
 
-#### Use default_server directive at the beginning
+#### :beginner: Use default_server directive at the beginning
 
 ###### Rationale
 
@@ -332,7 +332,7 @@ server {
 
 - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 
-#### Force all connections over TLS
+#### :beginner: Force all connections over TLS
 
 ###### Rationale
 
@@ -364,7 +364,7 @@ server {
 
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 
-#### Use geo/map modules instead allow/deny
+#### :beginner: Use geo/map modules instead allow/deny
 
 ###### Rationale
 
@@ -410,7 +410,7 @@ geo $globals_internal_geo_acl {
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
 
-#### Map all the things...
+#### :beginner: Map all the things...
 
 ###### Rationale
 
@@ -446,7 +446,7 @@ if ($device_redirect = "mobile") {
 
 - [Cool Nginx feature of the week](https://www.ignoredbydinosaurs.com/posts/236-cool-nginx-feature-of-the-week)
 
-#### Drop the same root inside location block
+#### :beginner: Drop the same root inside location block
 
 ###### Rationale
 
@@ -481,7 +481,7 @@ server {
 
 - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
 
-#### Use debug mode for debugging
+#### :beginner: Use debug mode for debugging
 
 ###### Rationale
 
@@ -500,13 +500,13 @@ error_log /var/log/nginx/error-debug.log debug;
 
 # Performance
 
-#### Set manually worker processes
+#### :beginner: Set manually worker processes
 
 ###### Rationale
 
   > The `worker_processes` directive is the sturdy spine of life for Nginx. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
 
-  For high load proxy servers (also standalone servers) the best value is ALL_CORES - 1 (please test it before used). Official Nginx documentation say: "When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)."
+  > For high load proxy servers (also standalone servers) the best value is ALL_CORES - 1 (please test it before used). Official Nginx documentation say: "When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)."
 
 ###### Example
 
@@ -519,7 +519,7 @@ worker_processes 3;
 
 - [Nginx Core Module - worker_processes](https://nginx.org/en/docs/ngx_core_module.html#worker_processes)
 
-#### Use HTTP/2
+#### :beginner: Use HTTP/2
 
 ###### Rationale
 
@@ -539,13 +539,13 @@ server {
 
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 
-#### Maintaining SSL Sessions
+#### :beginner: Maintaining SSL Sessions
 
 ###### Rationale
 
   > This improves performance from the clients’ perspective, because it eliminates the need for a new (and time-consuming) SSL handshake to be conducted each time a request is made.
 
-  Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
+  > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
 ###### Example
 
@@ -563,7 +563,7 @@ ssl_buffer_size 1400;
 
 # Hardening
 
-#### Run as an unprivileged user
+#### :beginner: Run as an unprivileged user
 
 ###### Rationale
 
@@ -583,7 +583,7 @@ chown -R www-data:www-data /var/www/domain.com
 
 - [Why does nginx starts process as root?](https://unix.stackexchange.com/questions/134301/why-does-nginx-starts-process-as-root)
 
-#### Disable unnecessary modules
+#### :beginner: Disable unnecessary modules
 
 ###### Rationale
 
@@ -606,7 +606,7 @@ chown -R www-data:www-data /var/www/domain.com
 
 #### Hide Nginx version number
 
-###### Rationale
+###### :beginner: Rationale
 
   > Disclosing the version of nginx running can be undesirable, particularly in environments sensitive to information disclosure.
 
@@ -620,7 +620,7 @@ server_tokens off;
 
 - [Remove Version from Server Header Banner in nginx](https://geekflare.com/remove-server-header-banner-nginx/)
 
-#### Hide Nginx server signature
+#### :beginner: Hide Nginx server signature
 
 ###### Rationale
 
@@ -636,7 +636,7 @@ more_set_headers "Server: Unknown";
 
 - [How to change (hide) the Nginx Server Signature?](https://stackoverflow.com/questions/24594971/how-to-changehide-the-nginx-server-signature)
 
-#### Hide upstream proxy headers
+#### :beginner: Hide upstream proxy headers
 
 ###### Rationale
 
@@ -656,7 +656,7 @@ proxy_hide_header X-Drupal-Cache;
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
 
-#### Keep only TLS 1.2 (+ TLS 1.3)
+#### :beginner: Keep only TLS 1.2 (+ TLS 1.3)
 
 ###### Rationale
 
@@ -673,13 +673,13 @@ ssl_protocols TLSv1.2;
 - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
 - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
 
-#### Use only strong ciphers
+#### :beginner: Use only strong ciphers
 
 ###### Rationale
 
   > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow but remember - drop backward compatibility software components. Use only strong and not vulnerable ciphersuite.
 
-  If you use http/2 you can get `Server sent fatal alert: handshake_failure` error.
+  > If you use http/2 you can get `Server sent fatal alert: handshake_failure` error.
 
 ###### Example
 
@@ -692,7 +692,7 @@ ssl_ciphers "AES256+EECDH:AES256+EDH:!aNULL";
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 
-#### Use strong Key Exchange
+#### :beginner: Use strong Key Exchange
 
 ###### Rationale
 
@@ -714,7 +714,7 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 
-#### Use more secure ECDH Curve
+#### :beginner: Use more secure ECDH Curve
 
 ###### Rationale
 
@@ -730,7 +730,7 @@ ssl_ecdh_curve X25519;
 
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
 
-#### Use only 4096-bit private keys
+#### :beginner: Use only 4096-bit private keys
 
 ###### Rationale
 
@@ -751,7 +751,7 @@ certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 
-#### Defend against the BEAST attack
+#### :beginner: Defend against the BEAST attack
 
 ###### Rationale
 
@@ -767,7 +767,7 @@ ssl_prefer_server_ciphers on;
 
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
-#### Disable compression (mitigation of CRIME attack)
+#### :beginner: Disable compression (mitigation of CRIME attack)
 
 ###### Rationale
 
@@ -783,7 +783,7 @@ gzip off;
 
 - [SSL/TLS attacks: Part 2 – CRIME Attack](http://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-2-crime-attack/)
 
-#### HTTP Strict Transport Security
+#### :beginner: HTTP Strict Transport Security
 
 ###### Rationale
 
@@ -799,7 +799,7 @@ add_header Strict-Transport-Security "max-age=15768000; includeSubdomains" alway
 
 - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
 
-#### Reduce XSS risks (Content-Security-Policy)
+#### :beginner: Reduce XSS risks (Content-Security-Policy)
 
 ###### Rationale
 
@@ -817,7 +817,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
 
-#### Control the behavior of the Referer header (Referrer-Policy)
+#### :beginner: Control the behavior of the Referer header (Referrer-Policy)
 
 ###### Rationale
 
@@ -833,7 +833,7 @@ add_header Referrer-Policy "no-referrer";
 
 - [A new security header: Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
 
-#### Provide clickjacking protection (X-Frame-Options)
+#### :beginner: Provide clickjacking protection (X-Frame-Options)
 
 ###### Rationale
 
@@ -849,7 +849,7 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 
 - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
 
-#### Prevent some categories of XSS attacks (X-XSS-Protection)
+#### :beginner: Prevent some categories of XSS attacks (X-XSS-Protection)
 
 ###### Rationale
 
@@ -865,7 +865,7 @@ add_header X-XSS-Protection "1; mode=block" always
 
 - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
 
-#### Prevent Sniff Mimetype middleware (X-Content-Type-Options)
+#### :beginner: Prevent Sniff Mimetype middleware (X-Content-Type-Options)
 
 ###### Rationale
 
@@ -881,7 +881,7 @@ add_header X-Content-Type-Options "nosniff" always;
 
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
 
-#### Reject unsafe HTTP methods
+#### :beginner: Reject unsafe HTTP methods
 
 ###### Rationale
 
@@ -903,7 +903,7 @@ if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
 
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
 
-#### Control Buffer Overflow attacks
+#### :beginner: Control Buffer Overflow attacks
 
 ###### Rationale
 
@@ -922,7 +922,7 @@ large_client_header_buffers 2 1k;
 
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 
-#### Mitigating Slow HTTP DoS attack (Closing Slow Connections)
+#### :beginner: Mitigating Slow HTTP DoS attack (Closing Slow Connections)
 
 ###### Rationale
 
