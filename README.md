@@ -76,6 +76,7 @@
   * [Use only strong ciphers](#use-only-strong-ciphers)
   * [Use strong Key Exchange](#use-strong-key-exchange)
   * [Use more secure ECDH Curve](#use-more-secure-ecdh-curve)
+  * [Use only 4096-bit private keys](#use-only-4096bit-private-keys)
   * [Defend against the BEAST attack](#defend-against-the-beast-attack)
   * [Disable compression (mitigation of CRIME attack)](#disable-compression-mitigation-of-crime-attack)
   * [HTTP Strict Transport Security](#http-strict-transport-security)
@@ -110,6 +111,10 @@ Many of these recipes have been applied to the configuration of my private websi
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/blkcipher_ssllabs_preview.png"
         alt="Master">
 </p>
+
+But remember:
+
+  > These guidelines provides recommendations for very restrictive setup.
 
 # External Resources
 
@@ -736,6 +741,27 @@ ssl_prefer_server_ciphers on;
 ###### External resources
 
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
+
+#### Use only 4096-bit private keys
+
+###### Rationale
+
+  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030.
+
+  > I always generate 4096 bit keys since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
+
+###### Example
+
+```bash
+( _fd="domain.com.key" ; _len="4096" ; openssl genrsa -out ${_fd} ${_len} )
+
+# Letsencrypt:
+certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
+```
+
+###### External resources
+
+- [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 
 #### Disable compression (mitigation of CRIME attack)
 
