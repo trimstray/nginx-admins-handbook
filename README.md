@@ -76,7 +76,7 @@
   * [Use only strong ciphers](#use-only-strong-ciphers)
   * [Use strong Key Exchange](#use-strong-key-exchange)
   * [Use more secure ECDH Curve](#use-more-secure-ecdh-curve)
-  * [Use only 4096-bit private keys](#use-only-4096bit-private-keys)
+  * [Use only 4096-bit private keys](#use-only-4096-bit-private-keys)
   * [Defend against the BEAST attack](#defend-against-the-beast-attack)
   * [Disable compression (mitigation of CRIME attack)](#disable-compression-mitigation-of-crime-attack)
   * [HTTP Strict Transport Security](#http-strict-transport-security)
@@ -102,6 +102,8 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 ## General disclaimer
 
 This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some things used by me in production environments.
+
+  > The most important thing: Do not follow guides just to get 100% of something. Think about what you actually do at your server!
 
 ## SSL Report: blkcipher.info
 
@@ -726,22 +728,6 @@ ssl_ecdh_curve X25519;
 
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
 
-#### Defend against the BEAST attack
-
-###### Rationale
-
-  > Enables server-side protection from BEAST attacks.
-
-###### Example
-
-```bash
-ssl_prefer_server_ciphers on;
-```
-
-###### External resources
-
-- [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
-
 #### Use only 4096-bit private keys
 
 ###### Rationale
@@ -762,6 +748,22 @@ certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 ###### External resources
 
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
+
+#### Defend against the BEAST attack
+
+###### Rationale
+
+  > Enables server-side protection from BEAST attacks.
+
+###### Example
+
+```bash
+ssl_prefer_server_ciphers on;
+```
+
+###### External resources
+
+- [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
 #### Disable compression (mitigation of CRIME attack)
 
