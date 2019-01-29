@@ -661,6 +661,7 @@ ssl_ciphers "AES256+EECDH:AES256+EDH:!aNULL";
 ###### External resources
 
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
+- [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 
 #### Use strong Key Exchange
 
