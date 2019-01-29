@@ -103,20 +103,22 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some things used by me in production environments.
 
-  > The most important thing: Do not follow guides just to get 100% of something. Think about what you actually do at your server!
+The most important thing:
+
+  > Do not follow guides just to get 100% of something. Think about what you actually do at your server!
+
+And remember:
+
+  > These guidelines provides recommendations for very restrictive setup.
 
 ## SSL Report: blkcipher.info
 
-Many of these recipes have been applied to the configuration of my private website. I finally got all 100%'s on my scores...
+Many of these recipes have been applied to the configuration of my private website. I finally got all 100%'s on my scores:
 
 <p align="center">
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/blkcipher_ssllabs_preview.png"
         alt="Master">
 </p>
-
-But remember:
-
-  > These guidelines provides recommendations for very restrictive setup.
 
 # External Resources
 
