@@ -652,6 +652,8 @@ ssl_protocols TLSv1.2;
 
   > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow but remember - drop backward compatibility software components. Use only strong and not vulnerable ciphersuite.
 
+  If you use http/2 you can get `Server sent fatal alert: handshake_failure` error.
+
 ###### Example
 
 ```bash
