@@ -104,7 +104,7 @@ This is not an official handbook. Many of these rules refer to another resources
 
 ## SSL Report: blkcipher.info
 
-Many of these recipes have been applied to the configuration of my private website.
+Many of these recipes have been applied to the configuration of my private website. I finally got all 100%'s on my scores...
 
 <p align="center">
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/blkcipher_ssllabs_preview.png"
