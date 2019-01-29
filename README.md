@@ -97,7 +97,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 ## General disclaimer
 
-This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of things used by me in production env.
+This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some things used by me in production environments.
 
 # External Resources
 
