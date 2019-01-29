@@ -733,6 +733,7 @@ ssl_ecdh_curve X25519;
 ###### External resources
 
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
+- [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 
 #### :beginner: Use only 4096-bit private keys
 
