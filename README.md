@@ -130,6 +130,7 @@ This is not an official handbook. Many of these rules refer to another resources
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html"><b>Strong SSL Security on Nginx</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://github.com/denji/nginx-tuning"><b>Nginx Tuning For Best Performance by Denji</b></a><br>
 &nbsp;&nbsp;:small_orange_diamond: <a href="https://enable-cors.org/index.html"><b>Enable cross-origin resource sharing (CORS)</b></a><br>
+&nbsp;&nbsp;:small_orange_diamond: <a href="https://istlsfastyet.com/"><b>TLS has exactly one performance problem: it is not used widely enough</b></a><br>
 </p>
 
 ##### Static Analyzers
