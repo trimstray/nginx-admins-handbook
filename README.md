@@ -39,6 +39,7 @@
 
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
+  * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
   * [Cheatsheets](#cheatsheets)
@@ -98,6 +99,15 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 ## General disclaimer
 
 This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some things used by me in production environments.
+
+## SSL Report: blkcipher.info
+
+Many of these recipes have been applied to the configuration of my private website.
+
+<p align="center">
+    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/blkcipher_ssllabs_preview.png"
+        alt="Master">
+</p>
 
 # External Resources
 
