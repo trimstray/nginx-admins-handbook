@@ -54,8 +54,8 @@
 - **[Snippets](#snippets)**
   * [Shell aliases](#shell-aliases)
 - **[Base rules](#base-rules)**
-  * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
+  * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Use default_server directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
@@ -222,6 +222,42 @@ alias ng.reload='ng.test && systemctl reload nginx'
 
 # Base rules
 
+#### :beginner: Organising Nginx configuration
+
+###### Rationale
+
+  > When your configuration grow, the need for organising your code will also grow. Well organised code is:
+
+  > - easier to understand
+  > - easier to maintain
+  > - easier to work with
+
+  > Use `include` directive to attach your nginx specific code to global config, contexts and other.
+
+###### Example
+
+```bash
+# Store this configuration in https-ssl-common.conf
+listen 10.240.20.2:443 ssl;
+
+root /etc/nginx/error-pages/other;
+
+ssl_certificate /etc/nginx/domain.com/certs/nginx_domain.com_bundle.crt;
+ssl_certificate_key /etc/nginx/domain.com/certs/domain.com.key;
+
+# And include this file in server section:
+server {
+
+  include /etc/nginx/domain.com/commons/https-ssl-common.conf;
+
+  server_name domain.com www.domain.com;
+  ...
+```
+
+###### External resources
+
+- [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
+
 #### :beginner: Separate listen directives for 80 and 443
 
 ###### Rationale
@@ -251,42 +287,6 @@ server {
 ###### External resources
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
-
-#### :beginner: Organising Nginx configuration
-
-###### Rationale
-
-  > When your configuration grow, the need for organising your code will also grow. Well organised code is:
-
-  > - easier to understand.
-  > - easier to maintain.
-  > - easier to work with.
-
-  > Use `include` directive to attach your nginx specific code to global config, contexts and other.
-
-###### Example
-
-```bash
-# Store this configuration in https-ssl-common.conf
-listen 10.240.20.2:443 ssl;
-
-root /etc/nginx/error-pages/other;
-
-ssl_certificate /etc/nginx/domain.com/certs/nginx_domain.com_bundle.crt;
-ssl_certificate_key /etc/nginx/domain.com/certs/domain.com.key;
-
-# And include this file in server section:
-server {
-
-  include /etc/nginx/domain.com/commons/https-ssl-common.conf;
-
-  server_name domain.com www.domain.com;
-  ...
-```
-
-###### External resources
-
-- [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
 
 #### :beginner: Use default_server directive at the beginning
 
@@ -632,7 +632,7 @@ location ~ /\.git {
 
 }
 
-# or all . directories/files in general (including .htaccess, etc)
+# or all . directories/files in general
 location ~ /\. {
 
   deny all;
@@ -756,9 +756,9 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get 'Server sent fatal alert: handshake_failure' error).
+  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get `Server sent fatal alert: handshake_failure` error).
 
-  > For backward compatibility software components you should use more restrictive ciphers.
+  > For backward compatibility software components you should use less restrictive ciphers.
 
 ###### Example
 
