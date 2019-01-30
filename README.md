@@ -69,7 +69,7 @@
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
-  * [Protect sensitive resources](#protect-sensitive-resources)
+  * [Protect sensitive resources](#beginner-protect-sensitive-resources)
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
@@ -86,6 +86,7 @@
   * [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)
   * [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)
   * [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)
+  * [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
@@ -644,9 +645,9 @@ location ~ /\. {
 
 - [Hidden directories and files as a source of sensitive information about web application](https://medium.com/@_bl4de/hidden-directories-and-files-as-a-source-of-sensitive-information-about-web-application-84e5c534e5ad)
 
-#### Hide Nginx version number
+#### :beginner: Hide Nginx version number
 
-###### :beginner: Rationale
+###### Rationale
 
   > Disclosing the version of nginx running can be undesirable, particularly in environments sensitive to information disclosure.
 
@@ -960,6 +961,23 @@ add_header X-Content-Type-Options "nosniff" always;
 ###### External resources
 
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
+
+#### :beginner: Deny the use of browser features (Feature-Policy)
+
+###### Rationale
+
+  > This header protect your site from third parties using APIs that have security and privacy implications, and also from your own team adding outdated APIs or poorly optimized images.
+
+###### Example
+
+```bash
+add_header Feature-Policy "geolocation none; midi none; notifications none; push none; sync-xhr none; microphone none; camera none; magnetometer none; gyroscope none; speaker none; vibrate none; fullscreen self; payment none; usb none;";
+```
+
+###### External resources
+
+- [Feature Policy Explainer](https://docs.google.com/document/d/1k0Ua-ZWlM_PsFCFdLMa8kaVTo32PeNZ4G7FFHqpFx4E/edit)
+- [Policy Controlled Features](https://github.com/w3c/webappsec-feature-policy/blob/master/features.md)
 
 #### :beginner: Reject unsafe HTTP methods
 
