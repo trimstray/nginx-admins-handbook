@@ -69,6 +69,7 @@
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
+  * [Protect sensitive resources](#protect-sensitive-resources)
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
@@ -609,9 +610,9 @@ chown -R www-data:www-data /var/www/domain.com
 
 - [nginx-modules](https://github.com/nginx-modules)
 
-#### Protect sensitive resources
+#### :beginner: Protect sensitive resources
 
-###### :beginner: Rationale
+###### Rationale
 
   > Hidden directories and files should never be web accessible.
 
