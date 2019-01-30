@@ -73,11 +73,11 @@
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
+  * [Use only 4096-bit private keys](#beginner-use-only-4096-bit-private-keys)
   * [Keep only TLS 1.2 (+ TLS 1.3)](#beginner-keep-only-tls-12--tls-13)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
-  * [Use only 4096-bit private keys](#beginner-use-only-4096-bit-private-keys)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
   * [Disable compression (mitigation of CRIME attack)](#beginner-disable-compression-mitigation-of-crime-attack)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
@@ -695,6 +695,38 @@ proxy_hide_header X-Drupal-Cache;
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
 
+#### :beginner: Use only 4096-bit private keys
+
+###### Rationale
+
+  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030.
+
+  > I always generate 4096 bit keys since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
+
+###### Example
+
+```bash
+( _fd="domain.com.key" ; _len="4096" ; openssl genrsa -out ${_fd} ${_len} )
+
+# Letsencrypt:
+certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
+```
+
+&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+
+```bash
+( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
+
+# Letsencrypt:
+certbot certonly -d domain.com -d www.domain.com
+```
+
+&nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
+
+###### External resources
+
+- [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
+
 #### :beginner: Keep only TLS 1.2 (+ TLS 1.3)
 
 ###### Rationale
@@ -707,6 +739,14 @@ proxy_hide_header X-Drupal-Cache;
 ssl_protocols TLSv1.2;
 ```
 
+&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+
+```bash
+ssl_protocols TLSv1.2 TLSv1.1;
+```
+
+&nbsp;&nbsp;<sub>ssllabs score: **95**</sub>
+
 ###### External resources
 
 - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
@@ -716,15 +756,25 @@ ssl_protocols TLSv1.2;
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow but remember - drop backward compatibility software components. Use only strong and not vulnerable ciphersuite.
+  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get 'Server sent fatal alert: handshake_failure' error).
 
-  > If you use http/2 you can get `Server sent fatal alert: handshake_failure` error.
+  > For backward compatibility software components you should use more restrictive ciphers.
 
 ###### Example
 
 ```bash
+# Ssllabs score: 100
 ssl_ciphers "AES256+EECDH:AES256+EDH:!aNULL";
 ```
+
+&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+
+```bash
+ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS";
+#
+```
+
+&nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
 
 ###### External resources
 
@@ -746,6 +796,8 @@ openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 # Nginx configuration:
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
+
+&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
 
 ###### External resources
 
@@ -772,31 +824,12 @@ ssl_ecdh_curve X25519;
 ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ```
 
+&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+
 ###### External resources
 
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
-
-#### :beginner: Use only 4096-bit private keys
-
-###### Rationale
-
-  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030.
-
-  > I always generate 4096 bit keys since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
-
-###### Example
-
-```bash
-( _fd="domain.com.key" ; _len="4096" ; openssl genrsa -out ${_fd} ${_len} )
-
-# Letsencrypt:
-certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
-```
-
-###### External resources
-
-- [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 
 #### :beginner: Defend against the BEAST attack
 
@@ -839,8 +872,10 @@ gzip off;
 ###### Example
 
 ```bash
-add_header Strict-Transport-Security "max-age=15768000; includeSubdomains" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubdomains" always;
 ```
+
+&nbsp;&nbsp;<sub>ssllabs score: **A+**</sub>
 
 ###### External resources
 
