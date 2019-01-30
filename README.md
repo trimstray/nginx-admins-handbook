@@ -50,13 +50,13 @@
   * [Performance Analyzers](#performance-analyzers)
   * [Benchmarking tools](#benchmarking-tools)
   * [Online tools](#online-tools)
-  * [Other](#other)
+  * [Other stuff](#other-stuff)
 - **[Snippets](#snippets)**
   * [Shell aliases](#shell-aliases)
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
-  * [Use default_server directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
+  * [Use `default_server` directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -103,7 +103,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 ## General disclaimer
 
-This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some things used by me in production environments.
+This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some rules used by me in production environments (not only).
 
 The most important thing:
 
@@ -204,7 +204,7 @@ Many of these recipes have been applied to the configuration of my private websi
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regextester.com/"><b>Online Regex Tester & Debugger</b></a><br>
 </p>
 
-##### Other
+##### Other stuff
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
@@ -289,7 +289,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 
-#### :beginner: Use default_server directive at the beginning
+#### :beginner: Use `default_server` directive at the beginning
 
 ###### Rationale
 
