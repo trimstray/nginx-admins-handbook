@@ -650,7 +650,6 @@ more_set_headers "Server: Unknown";
 ###### Example
 
 ```bash
-proxy_hide_header Server;
 proxy_hide_header X-Powered-By;
 proxy_hide_header X-AspNetMvc-Version;
 proxy_hide_header X-AspNet-Version;
@@ -706,7 +705,7 @@ ssl_ciphers "AES256+EECDH:AES256+EDH:!aNULL";
 ###### Example
 
 ```bash
-# Generate DH Key:
+# Generating DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
 # Nginx configuration:
@@ -725,10 +724,17 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 
   > X25519 is a more secure but slightly less compatible option. The NIST curves (prime256v1, secp384r1, secp521r1) are known to be weak and potentially vulnerable.
 
+  > If web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+
+  > Sometimes you should keep secp384r1 only for compatibility with some web browsers.
+
 ###### Example
 
 ```bash
 ssl_ecdh_curve X25519;
+
+# Alternative:
+ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ```
 
 ###### External resources
