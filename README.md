@@ -609,6 +609,40 @@ chown -R www-data:www-data /var/www/domain.com
 
 - [nginx-modules](https://github.com/nginx-modules)
 
+#### Protect sensitive resources
+
+###### :beginner: Rationale
+
+  > Hidden directories and files should never be web accessible.
+
+###### Example
+
+```bash
+if ( $request_uri ~ "/\.git" ) {
+
+  return 403;
+
+}
+
+# or
+location ~ /\.git {
+
+  deny all;
+
+}
+
+# or all . directories/files in general (including .htaccess, etc)
+location ~ /\. {
+
+  deny all;
+
+}
+```
+
+###### External resources
+
+- [RHidden directories and files as a source of sensitive information about web application](https://medium.com/@_bl4de/hidden-directories-and-files-as-a-source-of-sensitive-information-about-web-application-84e5c534e5ad)
+
 #### Hide Nginx version number
 
 ###### :beginner: Rationale
