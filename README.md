@@ -872,7 +872,7 @@ gzip off;
 ###### Example
 
 ```bash
-add_header Strict-Transport-Security "max-age=31536000; includeSubdomains" always;
+add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" always;
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **A+**</sub>
