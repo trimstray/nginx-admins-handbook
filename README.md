@@ -419,7 +419,7 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents.
+  > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents. Manage a large number of redirects with Nginx maps.
 
 ###### Example
 
