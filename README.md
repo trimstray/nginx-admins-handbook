@@ -734,6 +734,8 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
+  > If you use TLS 1.2 or TLS 1.1/1.2 older clients will not able to load your site.
+
 ###### Example
 
 ```bash
