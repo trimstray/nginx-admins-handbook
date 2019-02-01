@@ -51,7 +51,7 @@
   * [Benchmarking tools](#benchmarking-tools)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
-- **[Snippets](#snippets)**
+- **[Helpers](#helpers)**
   * [Shell aliases](#shell-aliases)
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
@@ -76,8 +76,8 @@
   * [Use only 4096-bit private keys](#beginner-use-only-4096-bit-private-keys)
   * [Keep only TLS 1.2 (+ TLS 1.3)](#beginner-keep-only-tls-12--tls-13)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
-  * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
+  * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
   * [Disable compression (mitigation of CRIME attack)](#beginner-disable-compression-mitigation-of-crime-attack)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
@@ -162,6 +162,9 @@ Many of these recipes have been applied to the configuration of my private websi
 &nbsp;&nbsp;:black_small_square: <a href="https://istlsfastyet.com/"><b>TLS has exactly one performance problem: it is not used widely enough</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nbs-system/naxsi"><b>WAF for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet"><b>Transport Layer Protection Cheat Sheet</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices"><b>SSL and TLS Deployment Best Practices</b></a><br>
 </p>
 
 ##### Static Analyzers
@@ -197,6 +200,7 @@ Many of these recipes have been applied to the configuration of my private websi
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/"><b>SSL Server Test</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://cipherli.st/"><b>Strong ciphers for Apache, Nginx, Lighttpd and more</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://securityheaders.com/"><b>Analyse the HTTP response headers by Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://observatory.mozilla.org/"><b>Analyze your website by Mozilla Observatory</b></a><br>
@@ -211,7 +215,7 @@ Many of these recipes have been applied to the configuration of my private websi
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 </p>
 
-# Snippets
+# Helpers
 
 #### Shell aliases
 
@@ -704,13 +708,22 @@ proxy_hide_header X-Drupal-Cache;
 
   > I always generate 4096 bit keys since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
 
+  > Use of alternative solution: ECC Certificate Signing Request (CSR).
+
 ###### Example
 
 ```bash
+### Example (RSA):
 ( _fd="domain.com.key" ; _len="4096" ; openssl genrsa -out ${_fd} ${_len} )
 
 # Letsencrypt:
 certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
+
+### Example (ECC):
+( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256)
+
+# Letsencrypt:
+certbot --csr domain.com.csr -[other-args]
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
@@ -763,16 +776,18 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > For backward compatibility software components you should use less restrictive ciphers.
 
+  > You should definitely disable weak ciphers like those with DSS, DSA, DES/3DES, RC4, MD5, SHA1, null, anon in the name.
+
 ###### Example
 
 ```bash
-ssl_ciphers "AES256+EECDH:AES256+EDH:!aNULL";
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
 
 ```bash
-ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS";
+ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256";
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
@@ -781,6 +796,35 @@ ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
+- [Which SSL/TLS Protocol Versions and Cipher Suites Should I Use?](https://www.securityevaluators.com/ssl-tls-protocol-versions-cipher-suites-use/)
+
+#### :beginner: Use more secure ECDH Curve
+
+###### Rationale
+
+  > X25519 is a more secure but slightly less compatible option but to maximise interoperability with existing browsers and servers, stick to P-256 prime256v1 and P-384 secp384r1 curves.
+
+  > If web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+
+  > Do not use the secp112r1, secp112r2, secp128r1, secp128r2, secp160k1, secp160r1, secp160r2, secp192k1 curves. They have a too small size for security application according to NIST recommendation.
+
+###### Example
+
+```bash
+ssl_ecdh_curve X25519;
+
+# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order)
+ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
+```
+
+&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+
+###### External resources
+
+- [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
+- [Safe ECC curves for HTTPS are coming sooner than you think](https://certsimple.com/blog/safe-curves-and-openssl)
+- [Cryptographic Key Length Recommendations](https://www.keylength.com/)
+- [Testing for Weak SSL/TLS Ciphers, Insufficient Transport Layer Protection (OTG-CRYPST-001)](https://www.owasp.org/index.php/Testing_for_Weak_SSL/TLS_Ciphers,_Insufficient_Transport_Layer_Protection_(OTG-CRYPST-001))
 
 #### :beginner: Use strong Key Exchange
 
@@ -805,32 +849,6 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
 - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
-
-#### :beginner: Use more secure ECDH Curve
-
-###### Rationale
-
-  > X25519 is a more secure but slightly less compatible option. The NIST curves (prime256v1, secp384r1, secp521r1) are known to be weak and potentially vulnerable.
-
-  > If web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
-
-  > Sometimes you should keep secp384r1 only for compatibility with some web browsers.
-
-###### Example
-
-```bash
-ssl_ecdh_curve X25519;
-
-# Alternative:
-ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
-```
-
-&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
-
-###### External resources
-
-- [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
-- [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 
 #### :beginner: Defend against the BEAST attack
 
