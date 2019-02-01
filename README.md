@@ -802,7 +802,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
 ###### Rationale
 
-  > X25519 is a more secure but slightly less compatible option but to maximise interoperability with existing browsers and servers, stick to P-256 prime256v1 and P-384 secp384r1 curves.
+  > X25519 is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to P-256 prime256v1 and P-384 secp384r1 curves.
 
   > If web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
 
