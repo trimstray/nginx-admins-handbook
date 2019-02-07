@@ -727,11 +727,10 @@ proxy_hide_header X-Drupal-Cache;
 
   > If you want to get **A+ with 100%s on SSL Lab** you should definitely use 4096 bit private key.
 
-  > The "SSL/TLS Deployment Best Practices Book" say:
+  > The "SSL/TLS Deployment Best Practices" book say:
+  _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
 
-  > _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
-
-  > I always generate 4096 bit keys for low-requests sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
+  > I always generate 4096 bit keys for low busy sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
 
   > Use of alternative solution: ECC Certificate Signing Request (CSR).
 
@@ -865,7 +864,9 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 
 ###### Rationale
 
-  > Default key size in OpenSSL is `1024 bits` - it's vurnelable and breakable. For the best security configuration use `4096 bit` DH Group or pre-configured DH groups from [mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
+  > `dhparam` is only used when using DHE ciphers. Given the ciphers listed, dhparam would not be used. Most of the "modern" profiles from places like Mozilla's ssl config generator no longer recommend using this.
+
+  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own `4096 bit` DH Group or use known safe ones pre-defined DH groups (it's recommended) from [mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
 
 ###### Example
 
@@ -906,6 +907,8 @@ ssl_prefer_server_ciphers on;
 ###### Rationale
 
   > Disabling SSL/TLS compression stops the attack very effectively.
+
+  > Some attacks are possible because of gzip being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL requests.
 
 ###### Example
 
