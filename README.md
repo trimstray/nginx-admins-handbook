@@ -739,10 +739,10 @@ proxy_hide_header X-Drupal-Cache;
 certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 
 ### Example (ECC):
-( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256)
+( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 
-# Let's Encrypt:
-certbot --csr domain.com.csr -[other-args]
+# Let's Encrypt (from above):
+certbot --csr ${_fd_csr} -[other-args]
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
