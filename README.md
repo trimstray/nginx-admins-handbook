@@ -727,9 +727,9 @@ proxy_hide_header X-Drupal-Cache;
 
   > If you want to get **A+ with 100%s on SSL Lab** you should definitely use 4096 bit private key.
 
-  > The _SSL/TLS Deployment Best Practices Book_ say:
+  > The "SSL/TLS Deployment Best Practices Book" say:
 
-  > The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE.
+  > _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
 
   > I always generate 4096 bit keys for low-requests sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
 
