@@ -40,7 +40,7 @@
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
-  * [Printable high-res hardening checklist](#printable-a4-hardening-checklist)
+  * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
   * [References](#references)
@@ -132,6 +132,8 @@ Simple hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx-hardening-checklist.png"
         alt="nginx-hardening-checklist">
 </p>
+
+  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/doc/img) directory.
 
 # External Resources
 
