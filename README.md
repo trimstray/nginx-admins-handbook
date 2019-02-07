@@ -739,10 +739,18 @@ proxy_hide_header X-Drupal-Cache;
 certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 
 ### Example (ECC):
+# _curve: prime256v1, secp521r1, secp384r1
 ( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 
 # Let's Encrypt (from above):
 certbot --csr ${_fd_csr} -[other-args]
+```
+
+For `x25519`:
+
+```bash
+( _fd="private.key" ; _curve="x25519" ; \
+openssl genpkey -algorithm ${_curve} -out ${_fd} )
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
@@ -823,7 +831,9 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
   > X25519 is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to P-256 prime256v1 and P-384 secp384r1 curves.
 
-  > If web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+  > If you not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `X25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be P-256).
+
+  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` - for me it's perfect solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
 
   > Do not use the secp112r1, secp112r2, secp128r1, secp128r2, secp160k1, secp160r1, secp160r2, secp192k1 curves. They have a too small size for security application according to NIST recommendation.
 
