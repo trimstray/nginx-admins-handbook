@@ -40,16 +40,16 @@
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
-  * [Printable A4 Hardening Checklist](#printable-a4-hardening-checklist)
+  * [Printable high-res hardening checklist](#printable-a4-hardening-checklist)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
   * [References](#references)
   * [Cheatsheets](#cheatsheets)
   * [Performance & Hardening](#performance--hardening)
   * [Config generators](#config-generators)
-  * [Static Analyzers](#static-analyzers)
-  * [Log Analyzers](#log-analyzers)
-  * [Performance Analyzers](#performance-analyzers)
+  * [Static analyzers](#static-analyzers)
+  * [Log analyzers](#log-analyzers)
+  * [Performance analyzers](#performance-analyzers)
   * [Benchmarking tools](#benchmarking-tools)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
@@ -124,9 +124,9 @@ Many of these recipes have been applied to the configuration of my private websi
         alt="blkcipher_ssllabs_preview">
 </p>
 
-## Printable A4 Hardening Checklist
+## Printable high-res gardening checklist
 
-Simple hardening checklist based on this recipes (@ssllabs A+ 100%):
+Simple hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x7500:
 
 <p align="center">
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx-hardening-checklist.png"
@@ -184,13 +184,13 @@ Simple hardening checklist based on this recipes (@ssllabs A+ 100%):
 &nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids.</b></a><br>
 </p>
 
-##### Static Analyzers
+##### Static analyzers
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/yandex/gixy"><b>Nginx static analyzer</b></a><br>
 </p>
 
-##### Log Analyzers
+##### Log analyzers
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://goaccess.io/"><b>GoAccess</b></a><br>
@@ -198,7 +198,7 @@ Simple hardening checklist based on this recipes (@ssllabs A+ 100%):
 &nbsp;&nbsp;:black_small_square: <a href="https://www.elastic.co/products/logstash"><b>Logstash</b></a><br>
 </p>
 
-##### Performance Analyzers
+##### Performance analyzers
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/lebinh/ngxtop"><b>ngxtop</b></a><br>
