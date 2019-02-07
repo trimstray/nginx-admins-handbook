@@ -45,6 +45,7 @@
   * [References](#references)
   * [Cheatsheets](#cheatsheets)
   * [Performance & Hardening](#performance--hardening)
+  * [Config generators](#config-generators)
   * [Static Analyzers](#static-analyzers)
   * [Log Analyzers](#log-analyzers)
   * [Performance Analyzers](#performance-analyzers)
@@ -165,6 +166,12 @@ Many of these recipes have been applied to the configuration of my private websi
 &nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet"><b>Transport Layer Protection Cheat Sheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices"><b>SSL and TLS Deployment Best Practices</b></a><br>
+</p>
+
+##### Config generators
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids.</b></a><br>
 </p>
 
 ##### Static Analyzers
