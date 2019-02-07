@@ -124,7 +124,7 @@ Many of these recipes have been applied to the configuration of my private websi
         alt="blkcipher_ssllabs_preview">
 </p>
 
-## Printable high-res gardening checklist
+## Printable high-res hardening checklist
 
 Simple hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x7500:
 
