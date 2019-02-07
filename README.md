@@ -716,13 +716,13 @@ proxy_hide_header X-Drupal-Cache;
 ### Example (RSA):
 ( _fd="domain.com.key" ; _len="4096" ; openssl genrsa -out ${_fd} ${_len} )
 
-# Letsencrypt:
+# Let's Encrypt:
 certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 
 ### Example (ECC):
 ( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256)
 
-# Letsencrypt:
+# Let's Encrypt:
 certbot --csr domain.com.csr -[other-args]
 ```
 
@@ -731,7 +731,7 @@ certbot --csr domain.com.csr -[other-args]
 ```bash
 ( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
 
-# Letsencrypt:
+# Let's Encrypt:
 certbot certonly -d domain.com -d www.domain.com
 ```
 
