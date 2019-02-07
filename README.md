@@ -40,6 +40,7 @@
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
+  * [Printable A4 Hardening Checklist](#printable-a4-hardening-checklist)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
   * [References](#references)
@@ -120,7 +121,16 @@ Many of these recipes have been applied to the configuration of my private websi
 
 <p align="center">
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/blkcipher_ssllabs_preview.png"
-        alt="Master">
+        alt="blkcipher_ssllabs_preview">
+</p>
+
+## Printable A4 Hardening Checklist
+
+Simple hardening checklist based on this recipes (@ssllabs A+ 100%):
+
+<p align="center">
+    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx-hardening-checklist.png"
+        alt="nginx-hardening-checklist">
 </p>
 
 # External Resources
