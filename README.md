@@ -732,6 +732,9 @@ proxy_hide_header X-Drupal-Cache;
   > The "SSL/TLS Deployment Best Practices" book say:
   _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
 
+  > Konstantin Ryabitsev (Reddit):
+  _Generally speaking, if we ever find ourselves in a world where 2048-bit keys are no longer good enough, it won't be because of improvements in brute-force capabilities of current computers, but because RSA will be made obsolete as a technology due to revolutionary computing advances. If that ever happens, 3072 or 4096 bits won't make much of a difference anyway. This is why anything above 2048 bits is generally regarded as a sort of feel-good hedging theatre._
+
   > I always generate 4096 bit keys for low busy sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
 
   > Use of alternative solution: ECC Certificate Signing Request (CSR).
