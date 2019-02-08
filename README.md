@@ -177,7 +177,6 @@ Simple hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet"><b>Transport Layer Protection Cheat Sheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices"><b>SSL and TLS Deployment Best Practices</b></a><br>
 </p>
 
 ##### Config generators
@@ -729,15 +728,17 @@ proxy_hide_header X-Drupal-Cache;
 
   > If you want to get **A+ with 100%s on SSL Lab** you should definitely use 4096 bit private key.
 
-  > The "SSL/TLS Deployment Best Practices" book say:
-  _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
-
-  > Konstantin Ryabitsev (Reddit):
-  _Generally speaking, if we ever find ourselves in a world where 2048-bit keys are no longer good enough, it won't be because of improvements in brute-force capabilities of current computers, but because RSA will be made obsolete as a technology due to revolutionary computing advances. If that ever happens, 3072 or 4096 bits won't make much of a difference anyway. This is why anything above 2048 bits is generally regarded as a sort of feel-good hedging theatre._
-
   > I always generate 4096 bit keys for low busy sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
 
   > Use of alternative solution: ECC Certificate Signing Request (CSR).
+
+  The "SSL/TLS Deployment Best Practices" book say:
+
+  > _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
+
+  Konstantin Ryabitsev (Reddit):
+
+  > _Generally speaking, if we ever find ourselves in a world where 2048-bit keys are no longer good enough, it won't be because of improvements in brute-force capabilities of current computers, but because RSA will be made obsolete as a technology due to revolutionary computing advances. If that ever happens, 3072 or 4096 bits won't make much of a difference anyway. This is why anything above 2048 bits is generally regarded as a sort of feel-good hedging theatre._
 
 ###### Example
 
@@ -750,7 +751,8 @@ certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 
 ### Example (ECC):
 # _curve: prime256v1, secp521r1, secp384r1
-( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
+( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; \
+openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 
 # Let's Encrypt (from above):
 certbot --csr ${_fd_csr} -[other-args]
