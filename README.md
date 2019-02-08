@@ -855,6 +855,7 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 
 ###### External resources
 
+- [Standards for Efficient Cryptography Group](http://www.secg.org/)
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
 - [Safe ECC curves for HTTPS are coming sooner than you think](https://certsimple.com/blog/safe-curves-and-openssl)
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
