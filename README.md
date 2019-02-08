@@ -725,6 +725,8 @@ proxy_hide_header X-Drupal-Cache;
 
   > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030.
 
+  > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals.
+
   > If you want to get **A+ with 100%s on SSL Lab** you should definitely use 4096 bit private key.
 
   > The "SSL/TLS Deployment Best Practices" book say:
