@@ -883,8 +883,14 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ###### Example
 
 ```bash
-# Generating DH parameters:
+# To generate a DH key:
+openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
+
+# To produce "DSA-like" DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
+
+# To generate a ECDH key:
+openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
 
 # Nginx configuration:
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
@@ -897,6 +903,7 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
 - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
+- [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
 
 #### :beginner: Defend against the BEAST attack
 
