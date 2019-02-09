@@ -849,16 +849,16 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
   > If you not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `X25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be P-256).
 
-  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` - for me it's perfect solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating!**. On the other hand it's perfect solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
 
   > Do not use the secp112r1, secp112r2, secp128r1, secp128r2, secp160k1, secp160r1, secp160r2, secp192k1 curves. They have a too small size for security application according to NIST recommendation.
 
 ###### Example
 
 ```bash
-ssl_ecdh_curve X25519;
+ssl_ecdh_curve secp521r1:secp384r1;
 
-# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order)
+# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order) but downgrade Key Exchange score:
 ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ```
 
