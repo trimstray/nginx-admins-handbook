@@ -1110,8 +1110,8 @@ large_client_header_buffers 2 1k;
 ```bash
 client_body_timeout 10s;
 client_header_timeout 10s;
-keepalive_timeout 5 5;
-send_timeout 10;
+keepalive_timeout 5s 5s;
+send_timeout 10s;
 ```
 
 ###### External resources
