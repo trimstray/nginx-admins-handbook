@@ -707,7 +707,7 @@ more_set_headers "Server: Unknown";
 
 ###### Rationale
 
-  > When nginx is used to proxy requests from an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (for example, the version of PHP running).
+  > When nginx is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (for example, the version of PHP running).
 
 ###### Example
 
