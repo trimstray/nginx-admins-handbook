@@ -92,6 +92,8 @@
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
+- **[Configuration examples](#configuration-examples)**
+  * [Reverse Proxy](#reverse-proxy)
 
 # Introduction
 
@@ -124,16 +126,18 @@ Many of these recipes have been applied to the configuration of my private websi
         alt="blkcipher_ssllabs_preview">
 </p>
 
+  > An example configuration is in [this](#configuration-examples) chapter.
+
 ## Printable high-res hardening checklist
 
-Simple hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x7500:
+Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x7500.
+
+  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/doc/img) directory.
 
 <p align="center">
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx-hardening-checklist.png"
         alt="nginx-hardening-checklist">
 </p>
-
-  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/doc/img) directory.
 
 # External Resources
 
@@ -1105,3 +1109,26 @@ send_timeout 10;
 
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
+
+# Configuration examples
+
+<div align="center">
+  <h6><code>work in progress</code></h6>
+</div>
+
+  > Remember to make a copy of the current configuration and all files/directories.
+
+## Reverse Proxy
+
+This chapter describes the basic configuration of a my private proxy server.
+
+#### Installation
+
+It's very simple - clone the repo and perform full directory sync:
+
+```bash
+git clone https://github.com/trimstray/nginx-quick-reference.git
+rsync -avur --delete lib/nginx/ /etc/nginx/
+```
+
+  > For leaving your configuration (not recommended) remove `--delete` rsync param.
