@@ -1,0 +1,15 @@
+geo $globals_external_geo_acl {
+
+  # Status code:
+  #  - 0 = false
+  #  - 1 = true
+  default 0;
+
+  ### EXTERNAL ###
+  216.129.67.216/32 1;
+
+  ### GUEST IP ###
+  65.64.29.68/32 1;
+  88.151.87.220/32 1;
+
+}

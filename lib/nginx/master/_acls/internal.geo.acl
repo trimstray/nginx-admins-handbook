@@ -1,0 +1,15 @@
+geo $globals_internal_geo_acl {
+
+  # Status code:
+  #  - 0 = false
+  #  - 1 = true
+  default 0;
+
+  ### INTERNAL ###
+  10.255.10.0/24 1;
+  10.255.20.0/24 1;
+  10.255.30.0/24 1;
+  172.31.254.0/24 1;
+  192.168.0.0/16 1;
+
+}
