@@ -1120,7 +1120,7 @@ send_timeout 10;
 
 ## Reverse Proxy
 
-This chapter describes the basic configuration of a my private proxy server.
+This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
 
 #### Installation
 
