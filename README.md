@@ -868,9 +868,11 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 
 - [Standards for Efficient Cryptography Group](http://www.secg.org/)
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
+- [P-521 is pretty nice prime](https://blog.cr.yp.to/20140323-ecdsa.html)
 - [Safe ECC curves for HTTPS are coming sooner than you think](https://certsimple.com/blog/safe-curves-and-openssl)
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [Testing for Weak SSL/TLS Ciphers, Insufficient Transport Layer Protection (OTG-CRYPST-001)](https://www.owasp.org/index.php/Testing_for_Weak_SSL/TLS_Ciphers,_Insufficient_Transport_Layer_Protection_(OTG-CRYPST-001))
+- [Elliptic Curve performance: NIST vs Brainpool](https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool)
 
 #### :beginner: Use strong Key Exchange
 
