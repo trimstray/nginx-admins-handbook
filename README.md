@@ -1009,7 +1009,7 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 ###### Example
 
 ```bash
-add_header X-XSS-Protection "1; mode=block" always
+add_header X-XSS-Protection "1; mode=block" always;
 ```
 
 ###### External resources
