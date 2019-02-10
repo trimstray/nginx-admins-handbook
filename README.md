@@ -94,6 +94,12 @@
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
 - **[Configuration examples](#configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
+    * [Nginx Contexts](#nginx-contexts)
+    * [Installation](#installation)
+    * [Set your domain](#set-your-domain)
+    * [Regenerate private keys and certs](#regenerate-private-keys-and-certs)
+    * [Add new domain](#add-new-domain)
+    * [Test your configuration](#test-your-configuration)
 
 # Introduction
 
@@ -1129,15 +1135,18 @@ This chapter describes the basic configuration of my proxy server (for [blkciphe
 
 #### Nginx Contexts
 
+Before read this configuration remember about Nginx Contexts structure:
+
 ```
 Core Contexts
 
-  Global/Main context
+  Global/Main Context
     Events Context
     HTTP Context
       Server Context
         Location Context
       Upstream Context
+    Mail Context
 ```
 
 #### Installation
