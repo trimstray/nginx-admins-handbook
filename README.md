@@ -389,7 +389,7 @@ server {
 
   > For sharing a single IP address between several HTTPS servers you should use one SSL config.
 
-  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server name - if none of the directives have the default_server parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
+  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server name - if none of the directives have the `default_server` parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
 
 ###### Example
 
