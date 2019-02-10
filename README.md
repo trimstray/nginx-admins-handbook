@@ -59,6 +59,8 @@
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Use `default_server` directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
+  * [Use only one SSL config for specific listen directive](#use-only-one-SSL-config-for-specific-listen-directive)
+  * [Include certificate chain and private key at the http contexts](#include-certificate-chain-and-private-key-at-the-http-contexts)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -152,6 +154,7 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x750
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Project</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Documentation</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx official read-only mirror</b></a><br>
 </p>
 
@@ -271,7 +274,7 @@ alias ng.reload='ng.test && systemctl reload nginx'
 ###### Example
 
 ```bash
-# Store this configuration in https-ssl-common.conf
+# Store this configuration in e.g. https-ssl-common.conf
 listen 10.240.20.2:443 ssl;
 
 root /etc/nginx/error-pages/other;
@@ -285,6 +288,7 @@ server {
   include /etc/nginx/domain.com/commons/https-ssl-common.conf;
 
   server_name domain.com www.domain.com;
+
   ...
 ```
 
@@ -305,6 +309,7 @@ server {
 server {
 
   listen 10.240.20.2:80;
+
   ...
 
 }
@@ -313,6 +318,7 @@ server {
 server {
 
   listen 10.240.20.2:443 ssl;
+
   ...
 
 }
@@ -326,6 +332,8 @@ server {
 
 ###### Rationale
 
+  > If none of the directives have the `default_server` parameter then the first server with the address:port pair will be the default server for this pair.
+
   > Nginx should prevent processing requests with undefined server names - also traffic on ip address. It also protects against configuration errors and providing incorrect backends.
 
 ###### Example
@@ -338,11 +346,15 @@ server {
   # Place it at the beginning of the configuration file.
   server_name default_server;
 
+  ...
+
   location / {
+
     # serve static file (error page):
     root /etc/nginx/error-pages/404;
     # or redirect:
     # return 301 https://badssl.com;
+
   }
 
 }
@@ -352,6 +364,7 @@ server {
   listen 10.240.20.2:443 ssl;
 
   server_name domain.com;
+
   ...
 
 }
@@ -361,6 +374,7 @@ server {
   listen 10.240.20.2:443 ssl;
 
   server_name app.domain.com;
+
   ...
 
 }
@@ -369,6 +383,98 @@ server {
 ###### External resources
 
 - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
+
+#### :beginner: Use only one SSL config for specific listen directive
+
+###### Rationale
+
+  > For sharing a single IP address between several HTTPS servers you should use one SSL config.
+
+  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server name - if none of the directives have the default_server parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
+
+###### Example
+
+```bash
+# Store this configuration in e.g. https.conf
+listen 192.168.252.10:443 ssl http2;
+
+ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 24h;
+ssl_session_tickets off;
+ssl_buffer_size 1400;
+
+ssl_protocols TLSv1.2;
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
+
+ssl_prefer_server_ciphers on;
+
+ssl_ecdh_curve secp521r1:secp384r1;
+
+# Include this file to server context (attach domain-a.com for specific listen directive)
+server {
+
+  include /etc/nginx/https.conf;
+
+  server_name domain-a.com;
+
+  ...
+
+}
+
+# Include this file to server context (attach domain-b.com for specific listen directive)
+server {
+
+  include /etc/nginx/https.conf;
+
+  server_name domain-b.com;
+
+  ...
+
+}
+```
+
+###### External resources
+
+#### :beginner: Include certificate chain and private key at the http contexts
+
+###### Rationale
+
+  > It is better to place a certificate file with several names and its private key file at the http level of configuration to inherit their single memory copy in all servers.
+
+###### Example
+
+```bash
+http {
+
+  ssl_certificate /etc/nginx/certs/wildcard-domain.com_chain.crt;
+  ssl_certificate_key /etc/nginx/certs/domain.com.key;
+
+  server {
+
+    ...
+
+    server_name a.domain.com;
+
+    ...
+
+  }
+
+  server {
+
+    ...
+
+    server_name b.domain.com;
+
+    ...
+
+  }
+
+}
+```
+
+###### External resources
+
+- [An SSL certificate with several names](https://nginx.org/en/docs/http/configuring_https_servers.html#certificate_with_several_names)
 
 #### :beginner: Force all connections over TLS
 
@@ -384,6 +490,7 @@ server {
   listen 10.240.20.2:80;
 
   server_name domain.com;
+
   return 301 https://$host$request_uri;
 
 }
@@ -393,6 +500,7 @@ server {
   listen 10.240.20.2:443 ssl;
 
   server_name domain.com;
+
   ...
 
 }
@@ -500,16 +608,23 @@ server {
   root /var/www/domain.com/public;
 
   location / {
+
     ...
+
   }
 
   location /api {
+
     ...
+
   }
 
   location /static {
+
     root /var/www/domain.com/static;
+
     ...
+
   }
 
 }
@@ -572,6 +687,7 @@ worker_processes 3;
 server {
 
   listen 10.240.20.2:443 ssl http2;
+
   ...
 ```
 
@@ -666,7 +782,7 @@ location ~ /\.git {
 
 }
 
-# or all . directories/files in general
+# or all . directories/files in general (remember about .well-known path)
 location ~ /\. {
 
   deny all;
