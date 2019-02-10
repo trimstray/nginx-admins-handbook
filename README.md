@@ -138,13 +138,13 @@ Many of these recipes have been applied to the configuration of my private websi
 
 ## Printable high-res hardening checklist
 
-Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x7500.
+Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x8200.
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/doc/img) directory.
 
 <p align="center">
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx-hardening-checklist.png"
-        alt="nginx-hardening-checklist">
+        alt="nginx-hardening-checklist" width="75%" height="75%">
 </p>
 
 # External Resources
@@ -409,7 +409,7 @@ ssl_prefer_server_ciphers on;
 
 ssl_ecdh_curve secp521r1:secp384r1;
 
-# Include this file to server context (attach domain-a.com for specific listen directive)
+# Include this file to the server context (attach domain-a.com for specific listen directive)
 server {
 
   include /etc/nginx/https.conf;
@@ -420,7 +420,7 @@ server {
 
 }
 
-# Include this file to server context (attach domain-b.com for specific listen directive)
+# Include this file to the server context (attach domain-b.com for specific listen directive)
 server {
 
   include /etc/nginx/https.conf;
