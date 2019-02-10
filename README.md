@@ -93,8 +93,8 @@
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
 - **[Configuration examples](#configuration-examples)**
+  * [Nginx Contexts](#nginx-contexts)
   * [Reverse Proxy](#reverse-proxy)
-    * [Nginx Contexts](#nginx-contexts)
     * [Installation](#installation)
     * [Set your domain](#set-your-domain)
     * [Regenerate private keys and certs](#regenerate-private-keys-and-certs)
@@ -1129,11 +1129,7 @@ send_timeout 10s;
 
   > Remember to make a copy of the current configuration and all files/directories.
 
-## Reverse Proxy
-
-This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
-
-#### Nginx Contexts
+## Nginx Contexts
 
 Before read this configuration remember about Nginx Contexts structure:
 
@@ -1148,6 +1144,10 @@ Core Contexts
       Upstream Context
     Mail Context
 ```
+
+## Reverse Proxy
+
+This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
 
 #### Installation
 
