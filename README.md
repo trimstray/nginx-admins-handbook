@@ -95,8 +95,9 @@
 - **[Configuration examples](#configuration-examples)**
   * [Nginx Contexts](#nginx-contexts)
   * [Reverse Proxy](#reverse-proxy)
-    * [Installation](#installation)
-    * [Set your domain](#set-your-domain)
+    * [Import configuration](#import-configuration)
+    * [Set bind IP address](#set-bind-ip-address)
+    * [Set your domain name](#set-your-domain-name)
     * [Regenerate private keys and certs](#regenerate-private-keys-and-certs)
     * [Add new domain](#add-new-domain)
     * [Test your configuration](#test-your-configuration)
@@ -1149,7 +1150,7 @@ Core Contexts
 
 This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
 
-#### Installation
+#### Import configuration
 
 It's very simple - clone the repo and perform full directory sync:
 
@@ -1160,7 +1161,23 @@ rsync -avur --delete lib/nginx/ /etc/nginx/
 
   > For leaving your configuration (not recommended) remove `--delete` rsync param.
 
-#### Set your domain
+#### Set bind IP address
+
+###### Find and replace 192.168.252.2 string in directory and file names
+
+```bash
+cd /etc/nginx
+find . -depth -name '*192.168.252.2*' -execdir bash -c 'mv -v "$1" "${1//192.168.252.2/xxx.xxx.xxx.xxx}"' _ {} \;
+```
+
+###### Find and replace 192.168.252.2 string in configuration files
+
+```bash
+cd /etc/nginx
+find . -type f -print0 | xargs -0 sed -i 's/192.168.252.2/xxx.xxx.xxx.xxx/g'
+```
+
+#### Set your domain name
 
 ###### Find and replace blkcipher.info string in directory and file names
 
