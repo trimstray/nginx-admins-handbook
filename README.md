@@ -60,7 +60,6 @@
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Use `default_server` directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
   * [Use only one SSL config for specific listen directive](#use-only-one-SSL-config-for-specific-listen-directive)
-  * [Include certificate chain and private key at the http contexts](#include-certificate-chain-and-private-key-at-the-http-contexts)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -434,47 +433,6 @@ server {
 ```
 
 ###### External resources
-
-#### :beginner: Include certificate chain and private key at the http contexts
-
-###### Rationale
-
-  > It is better to place a certificate file with several names and its private key file at the http level of configuration to inherit their single memory copy in all servers.
-
-###### Example
-
-```bash
-http {
-
-  ssl_certificate /etc/nginx/certs/wildcard-domain.com_chain.crt;
-  ssl_certificate_key /etc/nginx/certs/domain.com.key;
-
-  server {
-
-    ...
-
-    server_name a.domain.com;
-
-    ...
-
-  }
-
-  server {
-
-    ...
-
-    server_name b.domain.com;
-
-    ...
-
-  }
-
-}
-```
-
-###### External resources
-
-- [An SSL certificate with several names](https://nginx.org/en/docs/http/configuring_https_servers.html#certificate_with_several_names)
 
 #### :beginner: Force all connections over TLS
 
