@@ -1121,15 +1121,24 @@ send_timeout 10s;
 
 # Configuration examples
 
-<div align="center">
-  <h6><code>work in progress</code></h6>
-</div>
-
   > Remember to make a copy of the current configuration and all files/directories.
 
 ## Reverse Proxy
 
 This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
+
+#### Nginx Contexts
+
+```
+Core Contexts
+
+  Global/Main context
+    Events Context
+    HTTP Context
+      Server Context
+        Location Context
+      Upstream Context
+```
 
 #### Installation
 
@@ -1141,3 +1150,84 @@ rsync -avur --delete lib/nginx/ /etc/nginx/
 ```
 
   > For leaving your configuration (not recommended) remove `--delete` rsync param.
+
+#### Set your domain
+
+###### Find and replace blkcipher.info string in directory and file names
+
+```bash
+cd /etc/nginx
+find . -depth -name '*blkcipher.info*' -execdir bash -c 'mv -v "$1" "${1//blkcipher.info/example.com}"' _ {} \;
+```
+
+###### Find and replace blkcipher.info string in configuration files
+
+```bash
+cd /etc/nginx
+find . -type f -print0 | xargs -0 sed -i 's/blkcipher_info/example_com/g'
+find . -type f -print0 | xargs -0 sed -i 's/blkcipher.info/example.com/g'
+```
+
+#### Regenerate private keys and certs
+
+###### For localhost
+
+```bash
+cd /etc/nginx/master/_server/localhost/certs
+# Private key + Self-signed certificate
+( _fd="localhost.key" ; _fd_crt="nginx_localhost_bundle.crt" ; \
+openssl req -x509 -newkey rsa:4096 -keyout ${_fd} -out ${_fd_crt} -days 365 -nodes \
+-subj "/C=X0/ST=localhost/L=localhost/O=localhost/OU=X00/CN=localhost" )
+```
+
+###### For `default_server`
+
+```bash
+cd /etc/nginx/master/_server/defaults/certs
+# Private key + Self-signed certificate
+( _fd="defaults.key" ; _fd_crt="nginx_defaults_bundle.crt" ; \
+openssl req -x509 -newkey rsa:4096 -keyout ${_fd} -out ${_fd_crt} -days 365 -nodes \
+-subj "/C=X1/ST=default/L=default/O=default/OU=X11/CN=default_server" )
+```
+
+###### For your domain (e.g. Let's Encrypt)
+
+```bash
+cd /etc/nginx/master/_server/example.com/certs
+
+# For multidomain:
+certbot certonly -d example.com -d www.example.com --rsa-key-size 4096
+
+# For wildcard:
+certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example.com --rsa-key-size 4096
+
+# Copy private key and chain:
+cp /etc/letsencrypt/live/example.com/fullchain.pem nginx_example.com_bundle.crt
+cp /etc/letsencrypt/live/example.com/privkey.pem example.com.key
+```
+
+#### Add new domain
+
+###### Updated `nginx.conf`
+
+```bash
+# At the end of the file (in 'IPS/DOMAINS' section)
+include                     /etc/nginx/master/_server/domain.com/servers.conf;
+include                     /etc/nginx/master/_server/domain.com/backends.conf;
+```
+###### Init domain directory
+
+```bash
+cd /etc/nginx/cd master/_server
+cp -R example.com domain.com
+cd domain.com
+find . -depth -name '*example.com*' -execdir bash -c 'mv -v "$1" "${1//example.com/domain.com}"' _ {} \;
+find . -type f -print0 | xargs -0 sed -i 's/example_com/domain_com/g'
+find . -type f -print0 | xargs -0 sed -i 's/example.com/domain.com/g'
+```
+
+#### Test your configuration
+
+```bash
+nginx -t -c /etc/nginx/nginx.conf
+```
