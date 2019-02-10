@@ -59,7 +59,7 @@
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Use `default_server` directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
-  * [Use only one SSL config for specific listen directive](#use-only-one-SSL-config-for-specific-listen-directive)
+  * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
