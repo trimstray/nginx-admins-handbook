@@ -266,7 +266,7 @@ alias ng.reload='ng.test && systemctl reload nginx'
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to attach your nginx specific code to global config, contexts and other.
+  > Use `include` directive to attach your Nginx specific code to global config, contexts and other.
 
 ###### Example
 
@@ -331,7 +331,7 @@ server {
 
   > If none of the directives have the `default_server` parameter then the first server with the address:port pair will be the default server for this pair.
 
-  > Nginx should prevent processing requests with undefined server names - also traffic on ip address. It also protects against configuration errors and providing incorrect backends.
+  > Nginx should prevent processing requests with undefined server names - also traffic on ip address. It also protects against configuration errors and don't pass traffic to incorrect backends.
 
 ###### Example
 
@@ -395,17 +395,14 @@ server {
 # Store this configuration in e.g. https.conf
 listen 192.168.252.10:443 ssl http2;
 
-ssl_session_cache shared:SSL:10m;
-ssl_session_timeout 24h;
-ssl_session_tickets off;
-ssl_buffer_size 1400;
-
 ssl_protocols TLSv1.2;
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
 
 ssl_prefer_server_ciphers on;
 
 ssl_ecdh_curve secp521r1:secp384r1;
+
+...
 
 # Include this file to the server context (attach domain-a.com for specific listen directive)
 server {
@@ -615,9 +612,11 @@ error_log /var/log/nginx/error-debug.log debug;
 
   > The `worker_processes` directive is the sturdy spine of life for Nginx. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
 
-  > Official Nginx documentation say: "When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)."
+  Official Nginx documentation say:
 
-  > I think for high load proxy servers (also standalone servers) the best value is ALL_CORES - 1 (please test it before used).
+  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)._
+
+  > I think for high load proxy servers (also standalone servers) the best value is `ALL_CORES - 1` (please test it before used).
 
 ###### Example
 
@@ -634,7 +633,11 @@ worker_processes 3;
 
 ###### Rationale
 
-  > All requests are downloaded in parallel, not in a queue, HTTP headers are compressed, pages transfer as a binary, not as a text file, which is more efficient and more.
+  > HTTP/2 will make our applications faster, simpler, and more robust.
+
+  > The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimize protocol overhead via efficient compression of HTTP header fields, and add support for request prioritization and server push.
+
+  > HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before.
 
 ###### Example
 
@@ -649,7 +652,9 @@ server {
 
 ###### External resources
 
+- [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/)
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
+- [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
 
 #### :beginner: Maintaining SSL Sessions
 
@@ -687,7 +692,7 @@ ssl_buffer_size 1400;
 # Edit nginx.conf:
 user www-data;
 
-# Set owner and group:
+# Set owner and group for root (app, default) directory:
 chown -R www-data:www-data /var/www/domain.com
 ```
 
@@ -707,9 +712,21 @@ chown -R www-data:www-data /var/www/domain.com
 # During installation:
 ./configure --without-http_autoindex_module
 
-# Comment modules in the configuration file:
-# load_module /usr/share/nginx/modules/ndk_http_module.so;
-# load_module /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
+# Comment modules in the configuration file e.g. modules.conf:
+# load_module                 /usr/share/nginx/modules/ndk_http_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_http_cache_purge_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_http_dav_ext_module.so;
+load_module                   /usr/share/nginx/modules/ngx_http_echo_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_http_fancyindex_module.so;
+load_module                   /usr/share/nginx/modules/ngx_http_geoip_module.so;
+load_module                   /usr/share/nginx/modules/ngx_http_headers_more_filter_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_http_image_filter_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_http_lua_module.so;
+load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_mail_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_nchan_module.so;
+# load_module                 /usr/share/nginx/modules/ngx_stream_module.so;
 ```
 
 ###### External resources
@@ -738,7 +755,7 @@ location ~ /\.git {
 
 }
 
-# or all . directories/files in general (remember about .well-known path)
+# or all . directories/files in general (but remember about .well-known path)
 location ~ /\. {
 
   deny all;
@@ -754,7 +771,7 @@ location ~ /\. {
 
 ###### Rationale
 
-  > Disclosing the version of nginx running can be undesirable, particularly in environments sensitive to information disclosure.
+  > Disclosing the version of Nginx running can be undesirable, particularly in environments sensitive to information disclosure.
 
 ###### Example
 
@@ -786,7 +803,7 @@ more_set_headers "Server: Unknown";
 
 ###### Rationale
 
-  > When nginx is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (for example, the version of PHP running).
+  > When Nginx is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (for example, the version of PHP running).
 
 ###### Example
 
@@ -867,9 +884,9 @@ certbot certonly -d domain.com -d www.domain.com
 
 ###### Rationale
 
-  > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
+  > It is recommended to run TLS 1.1/1.2 and fully disable SSLv2, SSLv3 and TLS 1.0 that have protocol weaknesses.
 
-  > If you use TLS 1.2 or TLS 1.1/1.2 older clients will not able to load your site.
+  > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
 ###### Example
 
@@ -888,13 +905,17 @@ ssl_protocols TLSv1.2 TLSv1.1;
 ###### External resources
 
 - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
+- [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
+- [TLS1.3 - OpenSSLWiki](https://wiki.openssl.org/index.php/TLS1.3)
 - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
 
 #### :beginner: Use only strong ciphers
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get `Server sent fatal alert: handshake_failure` error).
+  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow.
+
+  > For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get `Server sent fatal alert: handshake_failure` error).
 
   > For backward compatibility software components you should use less restrictive ciphers.
 
@@ -926,9 +947,9 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
   > X25519 is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to P-256 prime256v1 and P-384 secp384r1 curves.
 
-  > If you not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `X25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be P-256).
+  > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `X25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be P-256).
 
-  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**. On the other hand it's perfect solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**. On the other hand it's good solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
 
   > Do not use the secp112r1, secp112r2, secp128r1, secp128r2, secp160k1, secp160r1, secp160r2, secp192k1 curves. They have a too small size for security application according to NIST recommendation.
 
@@ -936,12 +957,14 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
 ```bash
 ssl_ecdh_curve secp521r1:secp384r1;
-
-# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order) but downgrade Key Exchange score:
-ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+
+```bash
+# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order) but downgrade Key Exchange score:
+ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
+```
 
 ###### External resources
 
@@ -1076,7 +1099,7 @@ add_header Referrer-Policy "no-referrer";
 
 ###### Rationale
 
-  > Helps to protect your visitors against clickjacking attacks. It is recommended that you use the x-frame-options header on pages which should not be allowed to render a page in a frame.
+  > Helps to protect your visitors against clickjacking attacks. It is recommended that you use the `x-frame-options` header on pages which should not be allowed to render a page in a frame.
 
 ###### Example
 
@@ -1141,7 +1164,7 @@ add_header Feature-Policy "geolocation none; midi none; notifications none; push
 
 ###### Rationale
 
-  > Set of methods support by a resource. An ordinary web server supports the HEAD, GET and POST methods to retrieve static and dynamic content. Other (e.g. OPTIONS, TRACE) methods should not be supported on public web servers, as they increase the attack surface.
+  > Set of methods support by a resource. An ordinary web server supports the `HEAD`, `GET` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
 ###### Example
 
@@ -1163,7 +1186,7 @@ if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
 
 ###### Rationale
 
-  > Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in nginx we can set buffer size limitations for all clients.
+  > Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in Nginx we can set buffer size limitations for all clients.
 
 ###### Example
 
