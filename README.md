@@ -576,7 +576,7 @@ map $http_user_agent $device_redirect {
 
 }
 
-if ( $device_redirect = "mobile" ) {
+if ($device_redirect = "mobile") {
 
   return 301 https://m.domain.com$request_uri;
 
@@ -784,7 +784,7 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 ###### Example
 
 ```bash
-if ( $request_uri ~ "/\.git" ) {
+if ($request_uri ~ "/\.git") {
 
   return 403;
 
@@ -1220,7 +1220,7 @@ add_header Feature-Policy "geolocation none; midi none; notifications none; push
 ```bash
 add_header Allow "GET, POST, HEAD" always;
 
-if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
+if ($request_method !~ ^(GET|POST|HEAD)$) {
 
   return 405;
 
