@@ -55,6 +55,11 @@
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
   * [Shell aliases](#shell-aliases)
+  * [Debugging](#debugging)*
+    * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
+    * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
+    * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
+    * [Get range of dates in a web server log](#get-range-of-dates-in-a-web-server-log)
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -252,6 +257,41 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x820
 alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
 alias ng.stop='ng.test && systemctl stop nginx'
 alias ng.reload='ng.test && systemctl reload nginx'
+```
+
+#### Debugging
+
+###### See the top 5 IP addresses in a web server log
+
+```bash
+cut -d ' ' -f1 /path/to/logfile | sort | uniq -c | sort -nr | head -5 | nl
+     1      434 130.129.229.22
+     2      270 245.212.70.130
+     3      235 122.246.50.223
+     4      100 61.39.161.15
+     5       85 252.7.5.66
+```
+
+###### Analyse web server log and show only 2xx http codes
+
+```bash
+tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [2]"
+```
+
+###### Analyse web server log and show only 5xx http codes
+
+```bash
+tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [5]"
+```
+
+###### Get range of dates in a web server log
+
+```bash
+# 1)
+awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:%H:%M")'/ { print $0 }' /path/to/logfile
+
+# 2)
+awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
 ```
 
 # Base rules
