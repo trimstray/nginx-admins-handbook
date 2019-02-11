@@ -945,13 +945,13 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
 ###### Rationale
 
-  > X25519 is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to P-256 prime256v1 and P-384 secp384r1 curves.
+  > `x25519` is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves.
 
-  > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `X25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be P-256).
+  > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
 
-  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**. On the other hand it's good solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**. On the other hand it's good solution because if web browser support `x25519` curves -> use `x25519` otherwise try the next curve listed.
 
-  > Do not use the secp112r1, secp112r2, secp128r1, secp128r2, secp160k1, secp160r1, secp160r2, secp192k1 curves. They have a too small size for security application according to NIST recommendation.
+  > Do not use the `secp112r1`, `secp112r2`, `secp128r1`, `secp128r2`, `secp160k1`, `secp160r1`, `secp160r2`, `secp192k1` curves. They have a too small size for security application according to NIST recommendation.
 
 ###### Example
 
@@ -1333,8 +1333,8 @@ cp /etc/letsencrypt/live/example.com/privkey.pem example.com.key
 
 ```bash
 # At the end of the file (in 'IPS/DOMAINS' section)
-include                     /etc/nginx/master/_server/domain.com/servers.conf;
-include                     /etc/nginx/master/_server/domain.com/backends.conf;
+include /etc/nginx/master/_server/domain.com/servers.conf;
+include /etc/nginx/master/_server/domain.com/backends.conf;
 ```
 ###### Init domain directory
 
