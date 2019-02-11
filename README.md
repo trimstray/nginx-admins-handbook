@@ -576,7 +576,7 @@ map $http_user_agent $device_redirect {
 
 }
 
-if ($device_redirect = "mobile") {
+if ( $device_redirect = "mobile" ) {
 
   return 301 https://m.domain.com$request_uri;
 
@@ -794,6 +794,13 @@ if ( $request_uri ~ "/\.git" ) {
 location ~ /\.git {
 
   deny all;
+
+}
+
+# or
+location ~* ^.*(\.(?:git|svn|htaccess))$ {
+
+  return 403;
 
 }
 
