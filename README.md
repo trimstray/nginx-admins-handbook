@@ -55,7 +55,7 @@
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
   * [Shell aliases](#shell-aliases)
-  * [Debugging](#debugging)*
+  * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
     * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
