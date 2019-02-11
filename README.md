@@ -60,6 +60,7 @@
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
     * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
     * [Get range of dates in a web server log](#get-range-of-dates-in-a-web-server-log)
+    * [Get line rates from web server log](#get-line-rates-from-web-server-log)
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -292,6 +293,12 @@ awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:
 
 # 2)
 awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
+```
+
+###### Get line rates from web server log
+
+```bash
+tail -F /path/to/logfile | pv -N RAW -lc 1>/dev/null
 ```
 
 # Base rules
