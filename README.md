@@ -115,15 +115,13 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 ## General disclaimer
 
-This is not an official handbook. Many of these rules refer to another resources. It is rather a quick collection of some rules used by me in production environments (not only).
+This is not an official handbook. Many of these rules refer to external resources. It is rather a quick collection of some rules used by me in production environments (not only).
 
-The most important thing:
+Before you start remember about the two most important things:
 
-  > Do not follow guides just to get 100% of something. Think about what you actually do at your server!
+  > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-And remember:
-
-  > These guidelines provides recommendations for very restrictive setup.
+  > **`These guidelines provides recommendations for very restrictive setup.`**
 
 ## SSL Report: blkcipher.info
 
@@ -930,7 +928,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 
   > If you not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `X25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be P-256).
 
-  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating!**. On the other hand it's perfect solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
+  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**. On the other hand it's perfect solution because if web browser support X25519 curves -> use X25519 otherwise try the next curve listed.
 
   > Do not use the secp112r1, secp112r2, secp128r1, secp128r2, secp160k1, secp160r1, secp160r2, secp192k1 curves. They have a too small size for security application according to NIST recommendation.
 
