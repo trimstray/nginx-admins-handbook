@@ -199,7 +199,7 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x820
 ##### Config generators
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids.</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids</b></a><br>
 </p>
 
 ##### Static analyzers
@@ -266,11 +266,6 @@ alias ng.reload='ng.test && systemctl reload nginx'
 
 ```bash
 cut -d ' ' -f1 /path/to/logfile | sort | uniq -c | sort -nr | head -5 | nl
-     1      434 130.129.229.22
-     2      270 245.212.70.130
-     3      235 122.246.50.223
-     4      100 61.39.161.15
-     5       85 252.7.5.66
 ```
 
 ###### Analyse web server log and show only 2xx http codes
