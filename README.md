@@ -258,6 +258,8 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x820
 alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
 alias ng.stop='ng.test && systemctl stop nginx'
 alias ng.reload='ng.test && systemctl reload nginx'
+alias ng.restart='ng.test && systemctl restart nginx'
+alias ng.restart='ng.test && kill -HUP `cat /var/run/nginx.pid`'
 ```
 
 #### Debugging
