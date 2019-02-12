@@ -61,6 +61,8 @@
     * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
     * [Get range of dates in a web server log](#get-range-of-dates-in-a-web-server-log)
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
+    * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
+    * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -296,6 +298,18 @@ awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
 
 ```bash
 tail -F /path/to/logfile | pv -N RAW -lc 1>/dev/null
+```
+
+###### Trace network traffic for all Nginx processes
+
+```bash
+strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
+```
+
+###### List all files accessed by a Nginx
+
+```bash
+strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
 
 # Base rules
