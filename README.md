@@ -982,6 +982,8 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get `Server sent fatal alert: handshake_failure` error).
 
+  > Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because ECDHE suites are faster, you want to use them whenever clients supports them.
+
   > For backward compatibility software components you should use less restrictive ciphers.
 
   > You should definitely disable weak ciphers like those with DSS, DSA, DES/3DES, RC4, MD5, SHA1, null, anon in the name.
@@ -995,7 +997,11 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
 
 ```bash
+# 1)
 ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256";
+
+# 2)
+ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:!AES256-GCM-SHA256:!AES256-GCM-SHA128:!aNULL:!MD5";
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
@@ -1005,6 +1011,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 - [Which SSL/TLS Protocol Versions and Cipher Suites Should I Use?](https://www.securityevaluators.com/ssl-tls-protocol-versions-cipher-suites-use/)
+- [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
 
 #### :beginner: Use more secure ECDH Curve
 
@@ -1045,7 +1052,9 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 
 ###### Rationale
 
-  > `dhparam` is only used when using DHE ciphers. Given the ciphers listed, dhparam would not be used. Most of the "modern" profiles from places like Mozilla's ssl config generator no longer recommend using this.
+  > The DH key is only used if DH ciphers are used. Modern clients prefer ECDHE instead and if your Nginx accepts this preference then the handshake will not use the DH param at all since it will not do a DHE key exchange but an ECDHE key exchange.
+
+  > Most of the "modern" profiles from places like Mozilla's ssl config generator no longer recommend using this.
 
   > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own `4096 bit` DH Group or use known safe ones pre-defined DH groups (it's recommended) from [mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
 
