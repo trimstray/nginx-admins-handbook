@@ -962,6 +962,9 @@ certbot certonly -d domain.com -d www.domain.com
 
 ```bash
 ssl_protocols TLSv1.2;
+
+# For TLS 1.3
+ssl_protocols TLSv1.2 TLSv1.3;
 ```
 
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
@@ -1011,12 +1014,19 @@ ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+
 
 &nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
 
+Ciphersuite for TLS 1.3:
+
+```bash
+ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
+```
+
 ###### External resources
 
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 - [Which SSL/TLS Protocol Versions and Cipher Suites Should I Use?](https://www.securityevaluators.com/ssl-tls-protocol-versions-cipher-suites-use/)
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
+- [Differences between TLS 1.2 and TLS 1.3](https://www.wolfssl.com/differences-between-tls-1-2-and-tls-1-3/)
 
 #### :beginner: Use more secure ECDH Curve
 
