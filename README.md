@@ -1236,7 +1236,7 @@ add_header X-Content-Type-Options "nosniff" always;
 
 ###### Rationale
 
-  > This header protect your site from third parties using APIs that have security and privacy implications, and also from your own team adding outdated APIs or poorly optimized images.
+  > This header protects your site from third parties using APIs that have security and privacy implications, and also from your own team adding outdated APIs or poorly optimized images.
 
 ###### Example
 
