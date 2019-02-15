@@ -90,7 +90,7 @@
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
-  * [Disable compression (mitigation of CRIME attack)](#beginner-disable-compression-mitigation-of-crime-attack)
+  * [Disable compression (mitigation of CRIME/BREACH attacks)](#beginner-disable-compression-mitigation-of-crime-breach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)
@@ -1032,13 +1032,19 @@ ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-1
 
 ###### Rationale
 
+  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (ECDSA algorithm).
+
   > `x25519` is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves.
+
+  > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, "prime256v1" and "secp384r1"). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
+
+  > Use P-256 to minimize trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use P-384: it will increases your computational and network costs.
 
   > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
 
-  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**. On the other hand it's good solution because if web browser support `x25519` curves -> use `x25519` otherwise try the next curve listed.
+  > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**.
 
-  > Do not use the `secp112r1`, `secp112r2`, `secp128r1`, `secp128r2`, `secp160k1`, `secp160r1`, `secp160r2`, `secp192k1` curves. They have a too small size for security application according to NIST recommendation.
+  > Definitely do not use the `secp112r1`, `secp112r2`, `secp128r1`, `secp128r2`, `secp160k1`, `secp160r1`, `secp160r2`, `secp192k1` curves. They have a too small size for security application according to NIST recommendation.
 
 ###### Example
 
@@ -1049,7 +1055,7 @@ ssl_ecdh_curve secp521r1:secp384r1;
 &nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
 
 ```bash
-# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order) but downgrade Key Exchange score:
+# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order). This setup downgrade Key Exchange score:
 ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ```
 
@@ -1062,6 +1068,7 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [Testing for Weak SSL/TLS Ciphers, Insufficient Transport Layer Protection (OTG-CRYPST-001)](https://www.owasp.org/index.php/Testing_for_Weak_SSL/TLS_Ciphers,_Insufficient_Transport_Layer_Protection_(OTG-CRYPST-001))
 - [Elliptic Curve performance: NIST vs Brainpool](https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool)
+- [Which elliptic curve should I use?](https://security.stackexchange.com/questions/78621/which-elliptic-curve-should-i-use/91562)
 
 #### :beginner: Use strong Key Exchange
 
@@ -1114,13 +1121,17 @@ ssl_prefer_server_ciphers on;
 
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
-#### :beginner: Disable compression (mitigation of CRIME attack)
+#### :beginner: Disable compression (mitigation of CRIME/BREACH attacks)
 
 ###### Rationale
 
-  > Disabling SSL/TLS compression stops the attack very effectively.
+  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively.
 
-  > Some attacks are possible because of gzip being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL requests.
+  > Some attacks are possible because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
+
+  > You shouldn't use HTTP compression on private responses when using TLS.
+
+  > Compression can be (i think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
 
 ###### Example
 
@@ -1130,7 +1141,10 @@ gzip off;
 
 ###### External resources
 
+- [Is HTTP compression safe?](https://security.stackexchange.com/questions/20406/is-http-compression-safe)
+- [HTTP compression continues to put encrypted communications at risk](https://www.pcworld.com/article/3051675/http-compression-continues-to-put-encrypted-communications-at-risk.html)
 - [SSL/TLS attacks: Part 2 – CRIME Attack](http://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-2-crime-attack/)
+- [To avoid BREACH, can we use gzip on non-token responses?](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses)
 
 #### :beginner: HTTP Strict Transport Security
 
