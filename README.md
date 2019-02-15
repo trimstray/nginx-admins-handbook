@@ -1038,7 +1038,7 @@ ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-1
 
   > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, "prime256v1" and "secp384r1"). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
 
-  > Use P-256 to minimize trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use P-384: it will increases your computational and network costs.
+  > Use `P-256` to minimize trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
 
   > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
 
