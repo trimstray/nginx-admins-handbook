@@ -679,7 +679,7 @@ server {
 
 ###### Rationale
 
-  > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly).
+  > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a **very** high-traffic sites).
 
 ###### Example
 
@@ -922,6 +922,8 @@ server_tokens off;
 
 ###### Rationale
 
+  > In my opinion there is no real reason or need to show this much information. It is easy to look up particular vulnerabilities once you know the version number.
+
   > You should compile Nginx from sources with `ngx_headers_more` to used `more_set_headers` directive.
 
 ###### Example
@@ -932,6 +934,7 @@ more_set_headers "Server: Unknown";
 
 ###### External resources
 
+- [Shhh... don’t let your response headers talk too loudly](https://www.troyhunt.com/shhh-dont-let-your-response-headers/)
 - [How to change (hide) the Nginx Server Signature?](https://stackoverflow.com/questions/24594971/how-to-changehide-the-nginx-server-signature)
 
 #### :beginner: Hide upstream proxy headers
