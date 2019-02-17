@@ -1177,6 +1177,7 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ###### External resources
 
 - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
+- [Guide to Deploying Diffie-Hellman for TLS](https://weakdh.org/sysadmin.html)
 - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 - [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
