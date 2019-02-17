@@ -256,6 +256,7 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x820
 &nbsp;&nbsp;:black_small_square: <a href="https://urlscan.io/"><b>Service to scan and analyse websites</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://regexr.com/"><b>Online tool to learn, build, & test Regular Expressions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regextester.com/"><b>Online Regex Tester & Debugger</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://cryptcheck.fr/suite/"><b>User agent compatibility (Cipher suite)</b></a><br>
 </p>
 
 ##### Other stuff
