@@ -92,7 +92,7 @@
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
-  * [Disable compression (mitigation of CRIME/BREACH attacks)](#beginner-disable-compression-mitigation-of-crime-breach-attacks)
+  * [Disable HTTP compression (mitigation of CRIME/BREACH attacks)](#beginner-disable-http-compression-mitigation-of-crimebreach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)
@@ -1186,7 +1186,7 @@ ssl_prefer_server_ciphers on;
 
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
-#### :beginner: Disable compression (mitigation of CRIME/BREACH attacks)
+#### :beginner: Disable HTTP compression (mitigation of CRIME/BREACH attacks)
 
 ###### Rationale
 
