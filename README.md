@@ -39,6 +39,7 @@
 
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
+  * [Contributing](#contributing)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
   * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
 - **[External Resources](#external-resources)**
@@ -130,6 +131,12 @@ Before you start remember about the two most important things:
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
   > **`These guidelines provides recommendations for very restrictive setup.`**
+
+## Contributing
+
+If you find something which doesn't make sense, or one of these doesn't seem right, or something seems really stupid; please make a pull request or please add valid and well-reasoned opinions about your changes or comments.
+
+See **[this](CONTRIBUTING.md)**.
 
 ## SSL Report: blkcipher.info
 
