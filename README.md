@@ -136,7 +136,7 @@ Before you start remember about the two most important things:
 
 If you find something which doesn't make sense, or one of these doesn't seem right, or something seems really stupid; please make a pull request or please add valid and well-reasoned opinions about your changes or comments.
 
-See **[this](CONTRIBUTING.md)**.
+Before add pull request please see **[this](CONTRIBUTING.md)**.
 
 ## SSL Report: blkcipher.info
 
