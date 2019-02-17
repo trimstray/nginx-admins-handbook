@@ -67,7 +67,7 @@
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
-  * [Preventing use miscellaneous names](#beginner-preventing-use-miscellaneous-names)
+  * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
@@ -395,7 +395,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 
-#### :beginner: Preventing use miscellaneous names
+#### :beginner: Prevent processing requests with undefined server names
 
 ###### Rationale
 
@@ -460,23 +460,25 @@ server {
 
 ###### External resources
 
-- [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
+- [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
 #### :beginner: Use only one SSL config for specific listen directive
 
 ###### Rationale
 
-  > For sharing a single IP address between several HTTPS servers you should use one SSL config.
+  > For sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves) because changes will affect the default server.
 
-  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server name - if none of the directives have the `default_server` parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
+  > Remember that regardless of ssl parameters, you are able to use multiple SSL certificates.
+
+  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
 
 ###### Example
 
 ```bash
 # Store this configuration in e.g. https.conf
-listen 192.168.252.10:443 ssl http2;
+listen 192.168.252.10:443 default_server ssl http2;
 
 ssl_protocols TLSv1.2;
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
@@ -511,6 +513,8 @@ server {
 ```
 
 ###### External resources
+
+- [Nginx one ip and multiple ssl certificates](https://serverfault.com/questions/766831/nginx-one-ip-and-multiple-ssl-certificates)
 
 #### :beginner: Force all connections over TLS
 
