@@ -396,6 +396,8 @@ server {
 
   > Nginx should prevent processing requests with undefined server names - also traffic on ip address. It also protects against configuration errors and don't pass traffic to incorrect backends.
 
+  > I think the best solution it is set `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in Nginx.
+
 ###### Example
 
 ```bash
@@ -411,9 +413,10 @@ server {
   location / {
 
     # serve static file (error page):
-    root /etc/nginx/error-pages/404;
+    # root /etc/nginx/error-pages/404;
     # or redirect:
     # return 301 https://badssl.com;
+    return 444;
 
   }
 
