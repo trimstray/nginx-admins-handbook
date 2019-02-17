@@ -67,7 +67,7 @@
 - **[Base rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
-  * [Use `default_server` directive at the beginning](#beginner-use-default_server-directive-at-the-beginning)
+  * [Preventing use miscellaneous names](#beginner-preventing-use-miscellaneous-names)
   * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
@@ -395,37 +395,45 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 
-#### :beginner: Use `default_server` directive at the beginning
+#### :beginner: Preventing use miscellaneous names
 
 ###### Rationale
 
-  > If none of the directives have the `default_server` parameter then the first server with the address:port pair will be the default server for this pair.
+  > Nginx should prevent processing requests with undefined server names - also traffic on IP address. It also protects against configuration errors and don't pass traffic to incorrect backends.
 
-  > Nginx should prevent processing requests with undefined server names - also traffic on ip address. It also protects against configuration errors and don't pass traffic to incorrect backends.
+  > If none of the listen directives have the `default_server` parameter then the first server with the address:port pair will be the default server for this pair.
+
+  > If someone makes a request using an IP address instead of a server name, the "Host" request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
   > I think the best solution is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in Nginx.
 
 ###### Example
 
 ```bash
+# Place it at the beginning of the configuration file to prevent mistakes.
 server {
 
-  listen 10.240.20.2:443 ssl;
+  # A default server is a property of the listen port:
+  listen 10.240.20.2:443 ssl default_server;
 
-  # Place it at the beginning of the configuration file.
-  server_name default_server;
+  # We catch invalid domain names, requests without the "Host" header and all others (also due to the above setting).
+  server_name _ "" default_server;
 
   ...
 
-  location / {
+  return 444;
 
-    # serve static file (error page):
+  # We can also serve:
+  # location / {
+
+    # static file (error page):
     # root /etc/nginx/error-pages/404;
     # or redirect:
     # return 301 https://badssl.com;
-    return 444;
 
-  }
+    # return 444;
+
+  # }
 
 }
 
