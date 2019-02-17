@@ -403,9 +403,7 @@ server {
 
   > If none of the listen directives have the `default_server` parameter then the first server with the address:port pair will be the default server for this pair.
 
-  > If someone makes a request using an IP address instead of a server name, the "Host" request header field will contain the IP address and the request can be handled using the IP address as the server name.
-
-  > Add `default_server` to your listen directive in the server that you want to act as the default.
+  > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
   > I think the best solution is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in Nginx.
 
@@ -415,7 +413,7 @@ server {
 # Place it at the beginning of the configuration file to prevent mistakes.
 server {
 
-  # A default server is a property of the listen port:
+  # Add default_server to your listen directive in the server that you want to act as the default.
   listen 10.240.20.2:443 default_server ssl;
 
   # We catch invalid domain names, requests without the "Host" header and all others (also due to the above setting).
@@ -463,6 +461,7 @@ server {
 ###### External resources
 
 - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
+- [Server names](https://nginx.org/en/docs/http/server_names.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
 #### :beginner: Use only one SSL config for specific listen directive
