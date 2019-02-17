@@ -908,6 +908,10 @@ location ~ /\. {
 
   > Disclosing the version of Nginx running can be undesirable, particularly in environments sensitive to information disclosure.
 
+  The "Official Apache Documentation (Apache Core Features)" say:
+
+  > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
+
 ###### Example
 
 ```bash
@@ -917,12 +921,13 @@ server_tokens off;
 ###### External resources
 
 - [Remove Version from Server Header Banner in nginx](https://geekflare.com/remove-server-header-banner-nginx/)
+- [Reduce or remove server headers](https://www.tunetheweb.com/security/http-security-headers/server-header/)
 
 #### :beginner: Hide Nginx server signature
 
 ###### Rationale
 
-  > In my opinion there is no real reason or need to show this much information. It is easy to look up particular vulnerabilities once you know the version number.
+  > In my opinion there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number.
 
   > You should compile Nginx from sources with `ngx_headers_more` to used `more_set_headers` directive.
 
