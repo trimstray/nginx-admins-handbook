@@ -78,6 +78,7 @@
   * [Set manually worker processes](#beginner-set-manually-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL Sessions](#beginner-maintaining-ssl-sessions)
+  * [Use exact names where possible](#beginner-use-exact-names-where-possible)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -764,6 +765,46 @@ ssl_buffer_size 1400;
 
 - [SSL Session (cache)](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache)
 - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
+
+#### :beginner: Use exact names where possible
+
+###### Rationale
+
+  > Exact names, wildcard names starting with an asterisk, and wildcard names ending with an asterisk are stored in three hash tables bound to the listen ports.
+
+  > The exact names hash table is searched first. If a name is not found, the hash table with wildcard names starting with an asterisk is searched. If the name is not found there, the hash table with wildcard names ending with an asterisk is searched. Searching wildcard names hash table is slower than searching exact names hash table because names are searched by domain parts.
+
+  > Regular expressions are tested sequentially and therefore are the slowest method and are non-scalable. For these reasons, it is better to use exact names where possible.
+
+###### Example
+
+```bash
+# It is more efficient to define them explicitly:
+server {
+
+    listen       80;
+
+    server_name  example.org  www.example.org  *.example.org;
+
+    ...
+
+}
+
+# than to use the simplified form:
+server {
+
+    listen       80;
+
+    server_name  .example.org;
+
+    ...
+
+}
+```
+
+###### External resources
+
+- [Server names](https://nginx.org/en/docs/http/server_names.html)
 
 # Hardening
 
