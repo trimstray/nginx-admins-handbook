@@ -244,7 +244,7 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x820
 ##### Online tools
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/"><b>SSL Server Test</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/"><b>SSL Server Test by SSL Labs</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.htbridge.com/ssl/"><b>Test SSL/TLS (PCI DSS, HIPAA and NIST)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://sslanalyzer.comodoca.com/"><b>SSL analyzer and certificate checker</b></a><br>
@@ -276,6 +276,7 @@ alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
 alias ng.stop='ng.test && systemctl stop nginx'
 alias ng.reload='ng.test && systemctl reload nginx'
 alias ng.restart='ng.test && systemctl restart nginx'
+# or
 alias ng.restart='ng.test && kill -HUP `cat /var/run/nginx.pid`'
 ```
 
