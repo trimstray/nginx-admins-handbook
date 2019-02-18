@@ -74,8 +74,9 @@
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
   * [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging)
+  * [Use custom log formats](#beginner-use-custom-log-formats)
 - **[Performance](#performance)**
-  * [Set manually worker processes](#beginner-set-manually-worker-processes)
+  * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL Sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
@@ -682,6 +683,8 @@ server {
 
 ###### Rationale
 
+  > The `error_log` directive is part of the core module.
+
   > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a **very** high-traffic sites).
 
 ###### Example
@@ -695,9 +698,70 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 
+#### :beginner: Use custom log formats
+
+###### Rationale
+
+  > The `access_log` directive is part of the HttpLogModule.
+
+  > Anything you can access as a variable in nginx config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
+
+###### Example
+
+```bash
+# Default main log format from nginx repository:
+log_format main
+                '$remote_addr - $remote_user [$time_local] "$request" '
+                '$status $body_bytes_sent "$http_referer" '
+                '"$http_user_agent" "$http_x_forwarded_for"';
+
+# Extended main log format:
+log_format main-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '$request_time';
+
+# Debug log formats:
+log_format debug-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" '
+                '$request_completion';
+
+log_format debug-level-1
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" $request_length '
+                '$request_completion $connection $connection_requests';
+
+log_format debug-level-2
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" $request_length '
+                '$request_completion $connection $connection_requests '
+                '$server_addr $server_port $remote_addr $remote_port';
+```
+
+###### External resources
+
+- [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
+- [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
+- [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
+
 # Performance
 
-#### :beginner: Set manually worker processes
+#### :beginner: Adjust worker processes
 
 ###### Rationale
 
@@ -707,7 +771,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
   > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)._
 
-  > I think for high load proxy servers (also standalone servers) the best value is `ALL_CORES - 1` (please test it before used).
+  > I think for high load proxy servers (also standalone servers) good value is `ALL_CORES - 1` (please test it before used).
 
 ###### Example
 
