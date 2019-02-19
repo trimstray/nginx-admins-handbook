@@ -706,6 +706,8 @@ error_log /var/log/nginx/error-debug.log debug;
 
   > Anything you can access as a variable in nginx config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
 
+  > This is extremely helpful for debugging specific `location` directives.
+
 ###### Example
 
 ```bash
