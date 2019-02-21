@@ -187,7 +187,6 @@ Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x820
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://gist.github.com/carlessanagustin/9509d0d31414804da03b"><b>Nginx Cheatsheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://mijndertstuij.nl/writing/posts/nginx-cheatsheet/"><b>Nginx Cheatsheet by Mijdert Stuij</b></a><br>
 </p>
 
 ##### Performance & Hardening
