@@ -959,8 +959,8 @@ location ~* ^.*(\.(?:git|svn|htaccess))$ {
 
 }
 
-# or all . directories/files in general (but remember about .well-known path)
-location ~ /\. {
+# or all . directories/files excepted .well-known
+location ~ /\.(?!well-known\/) {
 
   deny all;
 
