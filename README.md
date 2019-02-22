@@ -153,7 +153,7 @@ Many of these recipes have been applied to the configuration of my private websi
 
 ## Printable high-res hardening checklist
 
-Hardening checklist based on this recipes (@ssllabs A+ 100%) - High-Res 5000x8200.
+Hardening checklist based on these recipes (@ssllabs A+ 100%) - High-Res 5000x8200.
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/doc/img) directory.
 
@@ -472,9 +472,9 @@ server {
 
 ###### Rationale
 
-  > For sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves) because changes will affect the default server.
+  > For sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves) because changes will affect only the default server.
 
-  > Remember that regardless of ssl parameters, you are able to use multiple SSL certificates.
+  > Remember that regardless of SSL parameters, you are able to use multiple SSL certificates.
 
   > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
 
@@ -604,7 +604,9 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents. Manage a large number of redirects with Nginx maps.
+  > Manage a large number of redirects with Nginx maps.
+
+  > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents.
 
 ###### Example
 
@@ -682,8 +684,6 @@ server {
 
 ###### Rationale
 
-  > The `error_log` directive is part of the core module.
-
   > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a **very** high-traffic sites).
 
 ###### Example
@@ -701,9 +701,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 ###### Rationale
 
-  > The `access_log` directive is part of the HttpLogModule.
-
-  > Anything you can access as a variable in nginx config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
+  > Anything you can access as a variable in Nginx config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
 
   > This is extremely helpful for debugging specific `location` directives.
 
@@ -1014,7 +1012,7 @@ more_set_headers "Server: Unknown";
 
 ###### Rationale
 
-  > When Nginx is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (for example, the version of PHP running).
+  > When Nginx is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (e.g. the version of PHP running).
 
 ###### Example
 
@@ -1129,13 +1127,13 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow.
 
-  > For more security use only strong and not vulnerable ciphersuite (but if you use http/2 you can get `Server sent fatal alert: handshake_failure` error).
+  > For more security use only strong and not vulnerable ciphersuite (but if you use HTTP/2 you can get `Server sent fatal alert: handshake_failure` error).
 
-  > Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because ECDHE suites are faster, you want to use them whenever clients supports them.
+  > Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because `ECDHE` suites are faster, you want to use them whenever clients supports them.
 
   > For backward compatibility software components you should use less restrictive ciphers.
 
-  > You should definitely disable weak ciphers like those with DSS, DSA, DES/3DES, RC4, MD5, SHA1, null, anon in the name.
+  > You should definitely disable weak ciphers like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
 
 ###### Example
 
@@ -1173,15 +1171,15 @@ ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-1
 
 ###### Rationale
 
-  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (ECDSA algorithm).
+  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm).
 
   > `x25519` is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves.
 
-  > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, "prime256v1" and "secp384r1"). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
+  > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, `prime256v1` and `secp384r1`). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
 
   > Use `P-256` to minimize trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
 
-  > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
+  > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
 
   > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**.
 
@@ -1215,7 +1213,7 @@ ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 
 ###### Rationale
 
-  > The DH key is only used if DH ciphers are used. Modern clients prefer ECDHE instead and if your Nginx accepts this preference then the handshake will not use the DH param at all since it will not do a DHE key exchange but an ECDHE key exchange.
+  > The DH key is only used if DH ciphers are used. Modern clients prefer `ECDHE` instead and if your Nginx accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange.
 
   > Most of the "modern" profiles from places like Mozilla's ssl config generator no longer recommend using this.
 
@@ -1475,7 +1473,7 @@ send_timeout 10s;
 Before read this configuration remember about Nginx Contexts structure:
 
 ```
-Core Contexts
+Core Contexts:
 
   Global/Main Context
     Events Context
