@@ -87,7 +87,7 @@
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
-  * [Use only 4096-bit private keys](#beginner-use-only-4096-bit-private-keys)
+  * [Use 4096-bit private keys](#beginner-use-4096-bit-private-keys)
   * [Keep only TLS 1.2 (+ TLS 1.3)](#beginner-keep-only-tls-12--tls-13)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
@@ -477,6 +477,8 @@ server {
   > Remember that regardless of SSL parameters, you are able to use multiple SSL certificates.
 
   > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
+
+  > It's also to prevent mistakes and configuration mismatch.
 
 ###### Example
 
@@ -1027,17 +1029,17 @@ proxy_hide_header X-Drupal-Cache;
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
 
-#### :beginner: Use only 4096-bit private keys
+#### :beginner: Use 4096-bit private keys
 
 ###### Rationale
 
-  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030.
+  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per NIST).
 
   > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals.
 
   > If you want to get **A+ with 100%s on SSL Lab** you should definitely use 4096 bit private key.
 
-  > I always generate 4096 bit keys for low busy sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like).
+  > I always generate 4096 bit keys for low busy sites since the downside is minimal (slightly lower performance) and security is slightly higher (although not as high as one would like) because longer keys take more time to generate and require more CPU and power when used for encrypting and decrypting.
 
   > Use of alternative solution: ECC Certificate Signing Request (CSR).
 
