@@ -210,6 +210,7 @@ Hardening checklist based on these recipes (@ssllabs A+ 100%) - High-Res 5000x82
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/"><b>Mozilla SSL Configuration Generator</b></a><br>
 </p>
 
 ##### Static analyzers
