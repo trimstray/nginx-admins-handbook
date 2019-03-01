@@ -87,7 +87,7 @@
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
-  * [Use 4096-bit private keys](#beginner-use-4096-bit-private-keys)
+  * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
   * [Keep only TLS 1.2 (+ TLS 1.3)](#beginner-keep-only-tls-12--tls-13)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
@@ -1030,7 +1030,7 @@ proxy_hide_header X-Drupal-Cache;
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
 
-#### :beginner: Use 4096-bit private keys
+#### :beginner: Use min. 2048-bit private keys
 
 ###### Rationale
 
