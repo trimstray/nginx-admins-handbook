@@ -1272,7 +1272,7 @@ ssl_prefer_server_ciphers on;
 
   > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
 
-  > Compression is not the only requirement for the attack to be done so using compression does not mean that the attack will succeed.
+  > Compression is not the only requirement for the attack to be done so using it does not mean that the attack will succeed. Generally you should consider whether having an accidental performance drop on HTTPS sites is better than HTTPS sites being accidentally vulnerable.
 
   > You shouldn't use HTTP compression on private responses when using TLS.
 
