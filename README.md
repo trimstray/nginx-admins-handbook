@@ -1270,11 +1270,11 @@ ssl_prefer_server_ciphers on;
 
   > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively.
 
-  > Some attacks are possible because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
+  > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL. Remember: compression is not the only requirement for the attack to be done.
 
   > You shouldn't use HTTP compression on private responses when using TLS.
 
-  > Compression can be (i think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
+  > Compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
 
 ###### Example
 
@@ -1288,6 +1288,7 @@ gzip off;
 - [HTTP compression continues to put encrypted communications at risk](https://www.pcworld.com/article/3051675/http-compression-continues-to-put-encrypted-communications-at-risk.html)
 - [SSL/TLS attacks: Part 2 – CRIME Attack](http://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-2-crime-attack/)
 - [To avoid BREACH, can we use gzip on non-token responses?](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses)
+- [Don't Worry About BREACH](https://blog.ircmaxell.com/2013/08/dont-worry-about-breach.html)
 
 #### :beginner: HTTP Strict Transport Security
 
