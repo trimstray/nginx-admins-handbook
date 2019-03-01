@@ -64,7 +64,7 @@
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
-- **[Base rules](#base-rules)**
+- **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
@@ -104,7 +104,7 @@
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
-- **[Configuration examples](#configuration-examples)**
+- **[Configuration Examples](#configuration-examples)**
   * [Nginx Contexts](#nginx-contexts)
   * [Reverse Proxy](#reverse-proxy)
     * [Import configuration](#import-configuration)
@@ -136,9 +136,9 @@ Before you start remember about the two most important things:
 
 ## Contributing
 
-If you find something which doesn't make sense, or one of these doesn't seem right, or something seems really stupid; please make a pull request or please add valid and well-reasoned opinions about your changes or comments.
+If you find something which doesn't make sense, or something doesn't seem right, please make a pull request and please add valid and well-reasoned explanations about your changes or comments.
 
-Before add pull request please see **[this](CONTRIBUTING.md)**.
+Before adding a pull request, please see the **[contributing guidelines](CONTRIBUTING.md)**.
 
 ## SSL Report: blkcipher.info
 
@@ -329,7 +329,7 @@ strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
 
-# Base rules
+# Base Rules
 
 #### :beginner: Organising Nginx configuration
 
@@ -1467,7 +1467,7 @@ send_timeout 10s;
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 
-# Configuration examples
+# Configuration Examples
 
   > Remember to make a copy of the current configuration and all files/directories.
 
