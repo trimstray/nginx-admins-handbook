@@ -1270,7 +1270,9 @@ ssl_prefer_server_ciphers on;
 
   > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively.
 
-  > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL. Remember: compression is not the only requirement for the attack to be done.
+  > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
+
+  > Compression is not the only requirement for the attack to be done so using compression does not mean that the attack will succeed.
 
   > You shouldn't use HTTP compression on private responses when using TLS.
 
