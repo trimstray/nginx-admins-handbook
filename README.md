@@ -1038,7 +1038,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals.
 
-  > If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private key. That's the main reason why you should use them.
+  > If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main reason why you should use them.
 
   > Longer keys take more time to generate and require more CPU (please use `openssl speed rsa` on your server) and power when used for encrypting and decrypting, also the SSL handshake at the start of each connection will be slower. It also has a small impact on the client side (e.g. browsers).
 
