@@ -410,7 +410,7 @@ server {
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
-  > I think the best solution is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in Nginx.
+  > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in Nginx.
 
 ###### Example
 
