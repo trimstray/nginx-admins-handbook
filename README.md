@@ -39,7 +39,7 @@
 
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
-  * [Contributing & Support](#contributing-support)
+  * [Contributing & Support](#contributing--support)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
   * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
 - **[External Resources](#external-resources)**
