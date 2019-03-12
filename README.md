@@ -39,7 +39,7 @@
 
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
-  * [Contributing](#contributing)
+  * [Contributing & Support](#contributing-support)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
   * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
 - **[External Resources](#external-resources)**
@@ -134,11 +134,13 @@ Before you start remember about the two most important things:
 
   > **`These guidelines provides recommendations for very restrictive setup.`**
 
-## Contributing
+## Contributing & Support
 
 If you find something which doesn't make sense, or something doesn't seem right, please make a pull request and please add valid and well-reasoned explanations about your changes or comments.
 
 Before adding a pull request, please see the **[contributing guidelines](CONTRIBUTING.md)**.
+
+If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
 
 ## SSL Report: blkcipher.info
 
