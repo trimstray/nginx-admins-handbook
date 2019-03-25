@@ -114,7 +114,7 @@
 
 # Introduction
 
-<img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx_logo.png" align="right">
+<img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/nginx_logo.png" align="right">
 
   > Before using the **Nginx** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
@@ -145,7 +145,7 @@ If this project is useful and important for you, you can bring **positive energy
 Many of these recipes have been applied to the configuration of my private website. I finally got all 100%'s on my scores:
 
 <p align="center">
-    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/blkcipher_ssllabs_preview.png"
+    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/blkcipher_ssllabs_preview.png"
         alt="blkcipher_ssllabs_preview">
 </p>
 
@@ -155,10 +155,10 @@ Many of these recipes have been applied to the configuration of my private websi
 
 Hardening checklist based on these recipes (@ssllabs A+ 100%) - High-Res 5000x8200.
 
-  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/doc/img) directory.
+  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/static/img) directory.
 
 <p align="center">
-    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/doc/img/nginx-hardening-checklist.png"
+    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/nginx-hardening-checklist.png"
         alt="nginx-hardening-checklist" width="75%" height="75%">
 </p>
 
