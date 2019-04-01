@@ -67,6 +67,7 @@
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
+  * [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly)
   * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
@@ -293,11 +294,15 @@ inflight requests
 
 ```bash
 alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
+
 alias ng.stop='ng.test && systemctl stop nginx'
+
 alias ng.reload='ng.test && systemctl reload nginx'
+alias ng.reload='ng.test && kill -HUP $(cat /var/run/nginx.pid)'
+#                       or: kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
 alias ng.restart='ng.test && systemctl restart nginx'
-# or
-alias ng.restart='ng.test && kill -HUP `cat /var/run/nginx.pid`'
+alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/nginx'
+#                        or: kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
 ```
 
 #### Debugging
@@ -487,6 +492,41 @@ server {
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
 - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
+
+#### :beginner: Use `reload` method to change configurations on the fly
+
+###### Rationale
+
+  > Use the reload method of Nginx to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
+
+  > This ability of Nginx is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
+
+  > When you restart Nginx you might encounter situation in which Nginx will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
+
+###### Example
+
+```bash
+# 1)
+systemctl reload nginx
+
+# 2)
+service nginx reload
+
+# 3)
+/etc/init.d/nginx reload
+
+# 4)
+/usr/sbin/nginx -s reload
+
+# 5)
+kill -HUP $(cat /var/run/nginx.pid)
+# or
+kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+```
+
+###### External resources
+
+- [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
 
 #### :beginner: Use only one SSL config for specific listen directive
 
