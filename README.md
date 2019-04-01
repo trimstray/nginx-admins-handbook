@@ -53,6 +53,7 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
+  * [Nginx commands](#nginx-commands)
   * [Shell aliases](#shell-aliases)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
@@ -271,6 +272,22 @@ Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 500
 </p>
 
 # Helpers
+
+#### Nginx commands
+
+- `nginx -h` - shows the help
+- `nginx -v` - shows the Nginx version
+- `nginx -V` - shows the extended information about Nginx: version, build parameters and configuration arguments
+- `nginx -t` - tests the Nginx configuration
+- `nginx -c` - sets configuration file (default: `/etc/nginx/nginx.conf`)
+- `nginx -p` - sets prefix path (default: `/etc/nginx/`)
+- `nginx -T` - tests the Nginx configuration and prints the validated configuration on the screen
+- `nginx -s` - sends a signal to the Nginx master process:
+  - `stop` - discontinues the Nginx process immediately
+  - `quit` - stops the Nginx process after it finishes processing
+inflight requests
+  - `reload` - reloads the configuration without stopping Nginx processes
+  - `reopen` - instructs Nginx to reopen log files
 
 #### Shell aliases
 
