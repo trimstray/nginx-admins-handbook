@@ -53,8 +53,10 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
+  * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
-  * [Control Nginx processes](#control-nginx-processes)
+  * [Nginx processes](#nginx-processes)
+    * [Control Nginx processes](#control-nginx-processes)
   * [Shell aliases](#shell-aliases)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
@@ -275,6 +277,13 @@ Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 500
 
 # Helpers
 
+#### Nginx directories and files
+
+- `/etc/nginx` - is the default configuration root for the Nginx server
+- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the Nginx services. Includes the top-level http block and all other configuration files
+- `/var/log/nginx` - is the default log location for Nginx
+- `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about Nginx process(es)
+
 #### Nginx commands
 
 - `nginx -h` - shows the help
@@ -291,9 +300,19 @@ inflight requests
   - `reload` - reloads the configuration without stopping Nginx processes
   - `reopen` - instructs Nginx to reopen log files
 
-#### Control Nginx processes
+#### Nginx processes
 
-The following signals can be sent to the master process:
+Nginx has **one master process** and **one or more worker processes**.
+
+The main purpose of the master process is to read and evaluate configuration files, as well as maintain the worker processes.
+
+Master process should be started as **root** user, because this will allow Nginx to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
+
+The worker processes do the actual processing of requests. These are spawned by the master process, and the user and group will as specified.
+
+###### Control Nginx processes
+
+The following signals can be sent to the Nginx master process:
 
 | <b>SIGNAL</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
