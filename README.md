@@ -293,25 +293,25 @@ inflight requests
 
 #### Control Nginx processes
 
-The following signals are relatively commonly sent to the master process:
+The following signals can be sent to the master process:
 
 | <b>SIGNAL</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
-| **TERM, INT** | _quick shutdown_ |
-| **QUIT** | _graceful shutdown_ |
-| **KILL** | _halts a stubborn process_ |
-| **HUP** | _configuration reload, start new workers, gracefully shutdown the old worker processes_ |
-| **USR1** | _reopen the log files_ |
-| **USR2** | _upgrade Executable on the fly_ |
-| **WINCH** | _gracefully shutdown the worker processes_ |
+| `TERM`, `INT` | quick shutdown |
+| `QUIT` | graceful shutdown |
+| `KILL` | halts a stubborn process |
+| `HUP` | configuration reload, start new workers, gracefully shutdown the old worker processes |
+| `USR1` | reopen the log files |
+| `USR2` | upgrade executable on the fly |
+| `WINCH` | gracefully shutdown the worker processes |
 
 There’s no need to control the worker processes yourself. However, they support some signals, too:
 
 | <b>SIGNAL</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
-| **TERM, INT** | _quick shutdown_ |
-| **QUIT** | _graceful shutdown_ |
-| **USR1** | _reopen the log files_ |
+| `TERM`, `INT` | quick shutdown |
+| `QUIT` | graceful shutdown |
+| `USR1` | reopen the log files |
 
 #### Shell aliases
 
