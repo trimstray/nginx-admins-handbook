@@ -153,7 +153,7 @@ Many of these recipes have been applied to the configuration of my private websi
 
 ## Printable high-res hardening checklist
 
-Hardening checklist based on these recipes (@ssllabs A+ 100%) - High-Res 5000x8200.
+Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 5000x8200.
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-quick-reference/tree/master/static/img) directory.
 
