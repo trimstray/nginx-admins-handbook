@@ -54,6 +54,7 @@
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
   * [Nginx commands](#nginx-commands)
+  * [Control Nginx processes](#control-nginx-processes)
   * [Shell aliases](#shell-aliases)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
@@ -290,6 +291,28 @@ inflight requests
   - `reload` - reloads the configuration without stopping Nginx processes
   - `reopen` - instructs Nginx to reopen log files
 
+#### Control Nginx processes
+
+The following signals are relatively commonly sent to the master process:
+
+| <b>SIGNAL</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| **TERM, INT** | _quick shutdown_ |
+| **QUIT** | _graceful shutdown_ |
+| **KILL** | _halts a stubborn process_ |
+| **HUP** | _configuration reload, start new workers, gracefully shutdown the old worker processes_ |
+| **USR1** | _reopen the log files_ |
+| **USR2** | _upgrade Executable on the fly_ |
+| **WINCH** | _gracefully shutdown the worker processes_ |
+
+There’s no need to control the worker processes yourself. However, they support some signals, too:
+
+| <b>SIGNAL</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| **TERM, INT** | _quick shutdown_ |
+| **QUIT** | _graceful shutdown_ |
+| **USR1** | _reopen the log files_ |
+
 #### Shell aliases
 
 ```bash
@@ -299,10 +322,11 @@ alias ng.stop='ng.test && systemctl stop nginx'
 
 alias ng.reload='ng.test && systemctl reload nginx'
 alias ng.reload='ng.test && kill -HUP $(cat /var/run/nginx.pid)'
-#                       or: kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+#                       ... kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+
 alias ng.restart='ng.test && systemctl restart nginx'
 alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/nginx'
-#                        or: kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+#                        ... kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}') ...
 ```
 
 #### Debugging
