@@ -56,7 +56,6 @@
   * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
-    * [Control Nginx processes](#control-nginx-processes)
   * [Shell aliases](#shell-aliases)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
@@ -309,8 +308,6 @@ The main purpose of the master process is to read and evaluate configuration fil
 Master process should be started as **root** user, because this will allow Nginx to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
 The worker processes do the actual processing of requests. These are spawned by the master process, and the user and group will as specified.
-
-###### Control Nginx processes
 
 The following signals can be sent to the Nginx master process:
 
