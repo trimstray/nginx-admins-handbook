@@ -82,7 +82,7 @@
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
-  * [Avoid checks server_name with if directive](#avoid-checks-server_name-with-if-directive)
+  * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
