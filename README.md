@@ -80,7 +80,7 @@
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
-  * [Maintaining SSL Sessions](#beginner-maintaining-ssl-sessions)
+  * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
@@ -919,7 +919,7 @@ server {
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 - [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
 
-#### :beginner: Maintaining SSL Sessions
+#### :beginner: Maintaining SSL sessions
 
 ###### Rationale
 
