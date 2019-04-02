@@ -106,6 +106,9 @@
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
+- **[Load Balancing](#load-balancing)**
+  * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
+  * [Don't disable backends by comments, use down parameter](#dont-disable-backends-by-comments-use-down-parameter)
 - **[Configuration Examples](#configuration-examples)**
   * [Nginx Contexts](#nginx-contexts)
   * [Reverse Proxy](#reverse-proxy)
@@ -1572,6 +1575,56 @@ send_timeout 10s;
 
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
+
+# Load Balancing
+
+#### :beginner: Tweak passive health checks
+
+###### Rationale
+
+  > Monitoring for health is important on all types of load balancing mainly for business continuity. Passive checks watches for failed or timed-out connections as they pass through Nginx as requested by a client.
+
+  > This functionality is enabled by default but the parameters mentioned here allow you to tweak their behavior. Default values are: `max_fails=1` and `fail_timeout=10s`.
+
+###### Example
+
+```bash
+upstream backend {
+
+  server bk01_node:80 max_fails=3 fail_timeout=5s;
+  server bk02_node:80 max_fails=3 fail_timeout=5s;
+
+}
+```
+
+###### External resources
+
+- [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
+
+#### :beginner: Don't disable backends by comments, use `down` parameter
+
+###### Rationale
+
+  > Sometimes we need to turn off backends e.g. at maintenance-time. I think good solution is marks the server as permanently unavailable with `down` parameter even if the downtime takes a short time.
+
+  > Comments are good for really permanently disable servers or if you want to leave information for historical purposes.
+
+  > Nginx also provides a `backup` parameter which marks the server as a backup server. It will be passed requests when the primary servers are unavailable. I use this option rarely for the above purposes and only if I am sure that the backends will work at the maintenance time.
+
+###### Example
+
+```bash
+upstream backend {
+
+  server bk01_node:80 max_fails=3 fail_timeout=5s down;
+  server bk02_node:80 max_fails=3 fail_timeout=5s;
+
+}
+```
+
+###### External resources
+
+- [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
 
 # Configuration Examples
 
