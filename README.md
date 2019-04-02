@@ -82,6 +82,7 @@
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
+  * [Avoid checks server_name with if directive](#avoid-checks-server_name-with-if-directive)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -980,6 +981,61 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
+
+#### :beginner: Avoid checks `server_name` with if directive
+
+###### Rationale
+
+  > When Nginx receives a request no matter what is the subdomain being requested, be it www.example.com or just the plain example.com this if directive is always evaluated. Since you’re requesting Nginx to check for the `Host` header for every request. It’s extremely inefficient.
+
+  > Instead use two server directives like the example below. This approach decreases Nginx processing requirements.
+
+###### Example
+
+```bash
+# Bad configuration:
+server {
+
+  ...
+
+  server_name                 domain.com www.domain.com;
+
+  if ($host = www.domain.com) {
+
+    return                    301 https://domain.com$request_uri;
+
+  }
+
+  server_name                 domain.com;
+
+  ...
+
+}
+
+# Good configuration:
+server {
+
+    server_name               www.domain.com;
+    return                    301 $scheme://domain.com$request_uri;
+    # If you force your web traffic to use HTTPS:
+    #                         301 https://domain.com$request_uri;
+
+}
+
+server {
+
+    listen                    80;
+
+    server_name               domain.com;
+
+    ...
+
+}
+```
+
+###### External resources
+
+- [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 
 # Hardening
 
