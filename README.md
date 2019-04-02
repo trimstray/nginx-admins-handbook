@@ -108,7 +108,7 @@
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
-  * [Don't disable backends by comments, use down parameter](#dont-disable-backends-by-comments-use-down-parameter)
+  * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Configuration Examples](#configuration-examples)**
   * [Nginx Contexts](#nginx-contexts)
   * [Reverse Proxy](#reverse-proxy)
