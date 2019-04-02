@@ -309,6 +309,8 @@ Master process should be started as **root** user, because this will allow Nginx
 
 The worker processes do the actual processing of requests. These are spawned by the master process, and the user and group will as specified.
 
+  > Nginx has also cache loader and cache manager processes but only if you enable caching.
+
 The following signals can be sent to the Nginx master process:
 
 | <b>SIGNAL</b> | <b>DESCRIPTION</b> |
