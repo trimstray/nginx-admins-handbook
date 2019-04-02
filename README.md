@@ -299,6 +299,7 @@ Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 500
 inflight requests
   - `reload` - reloads the configuration without stopping Nginx processes
   - `reopen` - instructs Nginx to reopen log files
+- `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
 #### Nginx processes
 
