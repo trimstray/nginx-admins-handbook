@@ -280,6 +280,7 @@ Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 500
 
 - `/etc/nginx` - is the default configuration root for the Nginx server
 - `/etc/nginx/nginx.conf` - is the default configuration entry point used by the Nginx services. Includes the top-level http block and all other configuration files
+- `/usr/share/nginx` - default root directory for requests
 - `/var/log/nginx` - is the default log location for Nginx
 - `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about Nginx process(es)
 
