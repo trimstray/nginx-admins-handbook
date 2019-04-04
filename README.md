@@ -56,6 +56,7 @@
   * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
+  * [Nginx contexts](#nginx-contexts)
   * [Shell aliases](#shell-aliases)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
@@ -111,7 +112,6 @@
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Configuration Examples](#configuration-examples)**
-  * [Nginx Contexts](#nginx-contexts)
   * [Reverse Proxy](#reverse-proxy)
     * [Import configuration](#import-configuration)
     * [Set bind IP address](#set-bind-ip-address)
@@ -336,6 +336,32 @@ There’s no need to control the worker processes yourself. However, they suppor
 | `TERM`, `INT` | quick shutdown |
 | `QUIT` | graceful shutdown |
 | `USR1` | reopen the log files |
+
+#### Nginx contexts
+
+The Nginx Contexts structure looks like this:
+
+```
+ Global/Main Context
+         |
+         |
+         +-----Events Context
+         |
+         |
+         +-----HTTP Context
+         |          |
+         |          |
+         |          +-----Server Context
+         |          |          |
+         |          |          |
+         |          |          +-----Location Context
+         |          |
+         |          |
+         |          +-----Upstream Context
+         |
+         |
+         +-----Mail Context
+```
 
 #### Shell aliases
 
@@ -1685,22 +1711,6 @@ upstream backend {
 # Configuration Examples
 
   > Remember to make a copy of the current configuration and all files/directories.
-
-## Nginx Contexts
-
-Before read this configuration remember about Nginx Contexts structure:
-
-```
-Core Contexts:
-
-  Global/Main Context
-    Events Context
-    HTTP Context
-      Server Context
-        Location Context
-      Upstream Context
-    Mail Context
-```
 
 ## Reverse Proxy
 
