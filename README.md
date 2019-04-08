@@ -352,7 +352,9 @@ _Written for experienced systems administrators and engineers, this book teaches
 - `/etc/nginx` - is the default configuration root for the Nginx server
 - `/etc/nginx/nginx.conf` - is the default configuration entry point used by the Nginx services. Includes the top-level http block and all other configuration files
 - `/usr/share/nginx` - default root directory for requests
-- `/var/log/nginx` - is the default log location for Nginx
+- `/var/log/nginx` - is the default log (access/error) location for Nginx
+- `/var/lib/nginx` - is the default temporary files location for Nginx
+- `/etc/nginx/conf.d` or `/etc/nginx/sites-enabled` - contains custom configuration files
 - `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about Nginx process(es)
 
 #### Nginx commands
