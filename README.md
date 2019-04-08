@@ -59,6 +59,10 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
+  * [Installation from Source](#installation-from-source)
+  * [Installation from Prebuilt Packages](#installation-from-prebuilt-packages)
+    * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
+    * [Debian or Ubuntu](#debian-or-ubuntu)
   * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
@@ -346,6 +350,116 @@ _Written for experienced systems administrators and engineers, this book teaches
 </p>
 
 # Helpers
+
+#### Installation from Source
+
+There are currently two versions of Nginx available:
+
+- **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
+- **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
+
+Mandatory requirements:
+
+  > Download, compile and install or install from your distribution repository.
+
+- OpenSSL library
+- Zlib library
+- PCRE library
+- GCC Compiler
+
+**Nginx** package:
+
+```bash
+# Download latest package from https://nginx.org/download/
+wget -c https://nginx.org/download/nginx-1.9.8.tar.gz
+
+# Extract content and go to the Nginx source directory:
+tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
+
+# Configure, compile and install:
+./configure
+make && make install
+```
+
+#### Installation from Prebuilt Packages
+
+##### RHEL7 or CentOS 7
+
+###### From EPEL
+
+```bash
+# Install epel repository:
+yum install epel-release
+# or:
+wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install epel-release-latest-7.noarch.rpm
+
+# Install Nginx:
+yum install nginx
+```
+
+###### From Software Collections
+
+```bash
+# Install yum install centos-release-scl
+yum-config-manager --enable rhel-server-rhscl-7-rpms
+
+# Install Nginx (rh-nginx14, rh-nginx16, rh-nginx18):
+yum install rh-nginx16
+
+# Enable Nginx from SCL:
+scl enable rh-nginx16 bash
+```
+
+###### From Official Repository
+
+```bash
+# Where:
+#   - <os_type> is: rhel or centos
+cat > /etc/yum.repos.d/nginx.repo << __EOF__
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/<os_type>/$releasever/$basearch/
+gpgcheck=0
+enabled=1
+__EOF__
+
+# Install Nginx:
+yum install nginx
+```
+
+##### Debian or Ubuntu
+
+Check available flavors of Nginx before install. For more information please see [this](https://askubuntu.com/questions/553937/what-is-the-difference-between-the-core-full-extras-and-light-packages-for-ngi) great answer.
+
+###### From Debian/Ubuntu Repository
+
+```bash
+# Install Nginx:
+apt-get install nginx
+```
+
+###### From Official Repository
+
+```bash
+# Where:
+#   - <os_type> is: debian or ubuntu
+#   - <os_release> is: xenial, bionic, jessie, stretch
+cat > /etc/apt/sources.list.d/nginx.list << __EOF__
+deb http://nginx.org/packages/<os_type>/ <os_release> nginx
+deb-src http://nginx.org/packages/<os_type>/ <os_release> nginx
+__EOF__
+
+# Update packages list:
+apt-get update
+
+# Download the public key (<pub_key> from your GPG error):
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <pub_key>
+
+# Install Nginx:
+apt-get update
+apt-get install nginx
+```
 
 #### Nginx directories and files
 
