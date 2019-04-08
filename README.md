@@ -87,7 +87,7 @@
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
   * [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging)
-  * [Use custom log formats](#beginner-use-custom-log-formats)
+  * [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
@@ -624,10 +624,10 @@ tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [5]"
 
 ```bash
 # 1)
-awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:%H:%M")'/ { print $0 }' /path/to/logfile
+awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
 
 # 2)
-awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
+awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:%H:%M")'/ { print $0 }' /path/to/logfile
 ```
 
 ###### Get line rates from web server log
@@ -1054,7 +1054,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 
-#### :beginner: Use custom log formats
+#### :beginner: Use custom log formats for debugging
 
 ###### Rationale
 
