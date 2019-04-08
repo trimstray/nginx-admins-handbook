@@ -685,7 +685,7 @@ limit_req_zone $binary_remote_addr zone=per_remote_addr:10m rate=10r/m;
 - the unique key for limiter: `$binary_remote_addr`
 - zone name is: `per_remote_addr`
 - zone size is: `10m` (160,000 IP addresses)
-- 10 requests per minute (1 requests every 6 second)
+- `10` requests per minute (1 request every 6 second)
 
 # Base Rules
 
