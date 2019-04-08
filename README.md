@@ -362,24 +362,57 @@ Mandatory requirements:
 
   > Download, compile and install or install from your distribution repository.
 
-- OpenSSL library
-- Zlib library
-- PCRE library
-- GCC Compiler
+- [OpenSSL](https://www.openssl.org/source/) library
+- [Zlib](https://zlib.net/) library
+- [PCRE](https://ftp.pcre.org/pub/pcre/) library
+- [GCC](https://gcc.gnu.org/) Compiler
 
-**Nginx** package:
+###### Nginx package
+
+- [Nginx](https://nginx.org/download/) source code
+
+  > Before this, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/).
 
 ```bash
-# Download latest package from https://nginx.org/download/
+# Download latest package:
 wget -c https://nginx.org/download/nginx-1.9.8.tar.gz
 
 # Extract content and go to the Nginx source directory:
 tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
 
-# Configure, compile and install:
-./configure
+# Configure (with or without params):
+./configure --user=nginx \
+            --group=nginx \
+            --prefix=/usr/share/nginx \
+            --sbin-path=/usr/sbin/nginx \
+            --modules-path=/usr/lib/nginx/modules \
+            --conf-path=/etc/nginx/nginx.conf \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+            --pid-path=/run/run/nginx.pid \
+            --lock-path=/var/lock/nginx.lock \
+            --with-openssl=../openssl-1.1.0b \
+            --with-openssl-opt=no-weak-ssl-ciphers \
+            --with-openssl-opt=no-ssl3 \
+            --with-pcre=../pcre-8.42 \
+            --with-pcre-jit \
+            --with-zlib=../zlib-1.2.11 \
+            --with-threads \
+            --with-http_realip_module \
+            --with-http_ssl_module \
+            --with-http_sub_module \
+            --with-http_stub_status_module \
+            --with-http_v2_module \
+            --with-stream \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+
+# Compile and install:
 make && make install
 ```
+
+  > By default Nginx will be installed in `/usr/local/nginx`.
 
 #### Installation from Prebuilt Packages
 
