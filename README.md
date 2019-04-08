@@ -76,6 +76,8 @@
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
+  * [Rate Limiting](#rate-limiting)
+    * [Limiting the Rate of Requests](#limiting-the-rate-of-requests)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -647,6 +649,43 @@ strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 ```bash
 strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
+
+#### Rate Limiting
+
+  > All rate limiting rules should be added to the Nginx `http` context.
+
+Nginx provides following variables:
+
+| <b>VARIABLE</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| `$remote_addr` | client address |
+| `$binary_remote_addr`| client address in a binary form, it is smaller and saves space then `remote_addr` |
+
+Zones are used to store the state of each IP address and how often it has accessed a request-limited URL. This information are stored in shared memory available from all Nginx worker processes.
+
+The zone has two parts:
+
+- `<name>` - is the zone identifier
+- `<size>` - defined zone size
+
+Example:
+
+```bash
+limit_req_zone <variable> zone=<name>:<size> rate=30r/m;
+```
+
+  > State information for about **16,000** IP addresses takes **1 megabyte**.
+
+###### Limiting the Rate of Requests
+
+```bash
+limit_req_zone $binary_remote_addr zone=per_remote_addr:10m rate=10r/m;
+```
+
+- the unique key for limiter: `$binary_remote_addr`
+- zone name is: `per_remote_addr`
+- zone size is: `10m` (160,000 IP addresses)
+- 10 requests per minute (1 requests every 6 second)
 
 # Base Rules
 
