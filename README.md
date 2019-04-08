@@ -360,7 +360,7 @@ There are currently two versions of Nginx available:
 
 Mandatory requirements:
 
-  > Download, compile and install or install from your distribution repository.
+  > Download, compile and install or install packages from your distribution repository.
 
 - [OpenSSL](https://www.openssl.org/source/) library
 - [Zlib](https://zlib.net/) library
@@ -412,7 +412,12 @@ tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
 make && make install
 ```
 
-  > By default Nginx will be installed in `/usr/local/nginx`.
+  > By default Nginx will be installed in `/usr/local/nginx`. So if you don't set compile parameters with your values the following locations will be as follows:
+  > - `/usr/local/nginx/conf` - configuration files
+  > - `/usr/local/nginx/conf/nginx.conf` - main configuration file
+  > - `/usr/local/nginx/logs` - path to the log files (access and error log)
+  > - `/usr/local/nginx` - temporary files
+  > - `/usr/local/nginx/html` - default virtual host files (default root directory)
 
 #### Installation from Prebuilt Packages
 
@@ -545,7 +550,7 @@ The following signals can be sent to the Nginx master process:
 | `USR2` | upgrade executable on the fly |
 | `WINCH` | gracefully shutdown the worker processes |
 
-There’s no need to control the worker processes yourself. However, they support some signals, too:
+There’s no need to control the worker processes yourself. However, they support some signals too:
 
 | <b>SIGNAL</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
