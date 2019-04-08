@@ -40,6 +40,12 @@
   * [Contributing & Support](#contributing--support)
   * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
   * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
+- **[Books](#books)**
+  * [Nginx Essentials](#nginx-essentials)
+  * [Nginx Cookbook](#nginx-cookbook)
+  * [Nginx HTTP Server](#nginx-http-server)
+  * [Nginx High Performance](#nginx-high-performance)
+  * [Mastering Nginx](#mastering-nginx)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
   * [References](#references)
@@ -132,7 +138,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 ## General disclaimer
 
-This is not an official handbook. Many of these rules refer to external resources. It is rather a quick collection of some rules used by me in production environments (not only).
+This is not an official handbook. Many of these rules refer to external resources. It is rather a quick collection of some rules and papers used by me in production environments (not only).
 
 Throughout this reference you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
@@ -171,6 +177,67 @@ Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 500
     <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/nginx-hardening-checklist.png"
         alt="nginx-hardening-checklist" width="75%" height="75%">
 </p>
+
+# Books
+
+#### [Nginx Essentials](https://www.amazon.com/Nginx-Essentials-Valery-Kholodkov/dp/1785289535)
+
+Authors: **Valery Kholodkov**
+
+_Excel in Nginx quickly by learning to use its most essential features in real-life applications._
+
+- _Learn how to set up, configure, and operate an Nginx installation for day-to-day use_
+- _Explore the vast features of Nginx to manage it like a pro, and use them successfully to run your website_
+- _Example-based guide to get the best out of Nginx to reduce resource usage footprint_
+
+<sup><i>This short review comes from this book or the store.</i></sup>
+
+#### [Nginx Cookbook](https://www.oreilly.com/library/view/nginx-cookbook/9781492049098/)
+
+Authors: **Derek DeJonghe**
+
+_You’ll find recipes for:_
+
+- _Traffic management and A/B testing_
+- _Managing programmability and automation with dynamic templating and the NGINX Plus API_
+- _Securing access through encrypted traffic, secure links, HTTP authentication subrequests, and more_
+- _Deploying NGINX to AWS, Azure, and Google cloud-computing services_
+- _Using Docker to deploy containers and microservices_
+- _Debugging and troubleshooting, performance tuning, and practical ops tips_
+
+<sup><i>This short review comes from this book or the store.</i></sup>
+
+#### [Nginx HTTP Server](https://www.amazon.com/Nginx-HTTP-Server-Harness-infrastructure/dp/178862355X)
+
+Authors: **Martin Fjordvald**, **Clement Nedelcu**
+
+_Harness the power of Nginx to make the most of your infrastructure and serve pages faster than ever._
+
+- _Discover possible interactions between Nginx and Apache to get the best of both worlds_
+- _Learn to exploit the features offered by Nginx for your web applications_
+- _Get your hands on the most updated version of Nginx (1.13.2) to support all your web administration requirements_
+
+<sup><i>This short review comes from this book or the store.</i></sup>
+
+#### [Nginx High Performance](https://www.amazon.com/Nginx-High-Performance-Rahul-Sharma/dp/1785281836)
+
+Authors: **Rahul Sharma**
+
+_Optimize NGINX for high-performance, scalable web applications._
+
+- _Configure Nginx for best performance, with configuration examples and explanations_
+- _Step–by-step tutorials for performance testing using open source software_
+- _Tune the TCP stack to make the most of the available infrastructure_
+
+<sup><i>This short review comes from this book or the store.</i></sup>
+
+#### [Mastering Nginx](https://www.amazon.com/Mastering-Nginx-Dimitri-Aivaliotis/dp/1849517444)
+
+Authors: **Dimitri Aivaliotis**
+
+_Written for experienced systems administrators and engineers, this book teaches you from scratch how to configure Nginx for any situation. Step-by-step instructions and real-world code snippets clarify even the most complex areas._
+
+<sup><i>This short review comes from this book or the store.</i></sup>
 
 # External Resources
 
