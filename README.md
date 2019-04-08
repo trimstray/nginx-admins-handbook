@@ -654,14 +654,14 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
   > All rate limiting rules should be added to the Nginx `http` context.
 
-Nginx provides following variables:
+Nginx provides following variables that can be used in rate limiting rules:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
 | `$remote_addr` | client address |
 | `$binary_remote_addr`| client address in a binary form, it is smaller and saves space then `remote_addr` |
 
-And following zones:
+Nginx also provides following zones:
 
 | <b>ZONE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -691,79 +691,45 @@ http {
 
   limit_req zone=<name>;
 
-  server {
-
-    ...
-
-    location /api {
-
-      ...
-
-    }
-
-  }
-
-}
+  ...
 ```
 - **server context**
 ```bash
-http {
+server {
+
+  limit_req zone=<name>;
 
   ...
-
-  server {
-
-    limit_req zone=<name>;
-
-    location /api {
-
-      ...
-
-    }
-
-  }
-
-}
 ```
 - **location directive**
 ```bash
-http {
+location /api {
+
+  limit_req zone=<name>;
 
   ...
-
-  server {
-
-    ...
-
-    location /api {
-
-      limit_req zone=<name>;
-
-    }
-
-  }
-
-}
 ```
 
 ###### Limiting the Rate of Requests
 
 ```bash
-limit_req_zone $binary_remote_addr zone=per_remote_addr:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:10m rate=10r/m;
 ```
 
+- zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
-- zone name is: `per_remote_addr`
-- zone size is: `10m` (160,000 IP addresses)
+- zone name: `req_for_remote_addr`
+- zone size: `10m` (160,000 IP addresses)
 - rate is `10` requests per minute (1 request every 6 second)
 
 ```bash
-limit_req_zone $binary_remote_addr zone=per_remote_addr:50m rate=1r/s;
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 ```
 
+- zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
-- zone name is: `per_remote_addr`
-- zone size is: `50m` (800,000 IP addresses)
+- zone name: `req_for_remote_addr`
+- zone size: `50m` (800,000 IP addresses)
 - `60` requests per minute (1 request every second)
 
 # Base Rules
