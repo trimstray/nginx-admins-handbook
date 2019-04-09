@@ -672,6 +672,16 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
   > All rate limiting rules (definitions) should be added to the Nginx `http` context.
 
+Rate limiting rules are useful for:
+
+- traffic shaping
+- traffic optimizing
+- slow down the rate of incoming requests
+- protect http requests flood
+- protect against slow http attacks
+- mitigating ddos attacks
+- protect brute-force attacks
+
 Nginx provides following variables (unique keys) that can be used in rate limiting rules:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
@@ -679,7 +689,7 @@ Nginx provides following variables (unique keys) that can be used in rate limiti
 | `$remote_addr` | client address |
 | `$binary_remote_addr`| client address in a binary form, it is smaller and saves space then `remote_addr` |
 
-Nginx also provides following zones:
+Nginx also provides following zones/queues:
 
 | <b>ZONE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -728,6 +738,14 @@ location /api {
   ...
 ```
 
+For enable queue you should use `limit_req` directive (see above). It also provides optional parameters:
+
+| <b>PARAMETER</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| `burst=<value>` | sets the maximum number of excessive requests that await to be processed in a timely manner |
+| `delay=<value>` | it delays of excessive requests |
+| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests, is only useful when you also set a burst value |
+
 ###### Limiting the Rate of Requests
 
 ```bash
@@ -741,7 +759,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:10m rate=10r/m;
 - rate is `10` requests per minute (1 request every 6 second)
 
 ```bash
-limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s burst=10;
 ```
 
 - zone type: `limit_req_zone`
@@ -749,6 +767,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
 - rate is `60` requests per minute (1 request every second)
+- bursts not exceeding `10` requests
 
 # Base Rules
 
