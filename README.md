@@ -766,7 +766,7 @@ For enable queue you should use `limit_req` directive (see above). It also provi
 
   > `delay` and `nodelay` parameters are only useful when you also set a `burst`.
 
-Simple shell functions for testing queues:
+Simple shell function for testing queues:
 
 ```bash
 function _http() {
@@ -781,7 +781,7 @@ function _http() {
   for i in {1..$_counter}; do
 
     printf "%4s - " "$i"
-    (curl -Is "$_url" | head -n1 ) 2>/dev/null
+    (curl -Is "$_url" | head -n1 | awk '{print $1 " " $2}') 2>/dev/null
 
     sleep "$_timeout"
 
@@ -812,16 +812,16 @@ Testing this queue:
 
 ```bash
 _http https://x409.info/stats/ 10 1
-   1 - HTTP/1.1 200 OK
-   2 - HTTP/1.1 503 Service Temporarily Unavailable
-   3 - HTTP/1.1 503 Service Temporarily Unavailable
-   4 - HTTP/1.1 503 Service Temporarily Unavailable
-   5 - HTTP/1.1 503 Service Temporarily Unavailable
-   6 - HTTP/1.1 200 OK
-   7 - HTTP/1.1 503 Service Temporarily Unavailable
-   8 - HTTP/1.1 503 Service Temporarily Unavailable
-   9 - HTTP/1.1 503 Service Temporarily Unavailable
-  10 - HTTP/1.1 503 Service Temporarily Unavailable
+   1 - HTTP/1.1 200
+   2 - HTTP/1.1 503
+   3 - HTTP/1.1 503
+   4 - HTTP/1.1 503
+   5 - HTTP/1.1 503
+   6 - HTTP/1.1 200
+   7 - HTTP/1.1 503
+   8 - HTTP/1.1 503
+   9 - HTTP/1.1 503
+  10 - HTTP/1.1 503
 ```
 
 ```bash
