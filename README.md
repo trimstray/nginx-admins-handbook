@@ -382,10 +382,28 @@ wget -c https://nginx.org/download/nginx-1.9.8.tar.gz
 # Extract content and go to the Nginx source directory:
 tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
 
-# Configure without build parameters (default):
+# Configure with default values for build parameters:
 ./configure
 
-# Configure with build parameters:
+# Configure with new values for build parameters:
+./configure --user=nginx \
+            --group=nginx \
+            --prefix=/usr/local/nginx \
+            --conf-path=/usr/local/nginx/nginx.conf \
+            --sbin-path=/usr/local/nginx/nginx \
+            --pid-path=/usr/local/nginx/nginx.pid \
+            --error-log-path=/usr/local/nginx/error.log \
+            --http-log-path=/usr/local/nginx/access.log \
+            --with-http_ssl_module \
+            --with-http_v2_module \
+            --with-stream \
+            --with-openssl=../openssl-1.1.0b \
+            --with-openssl-opt=no-weak-ssl-ciphers \
+            --with-openssl-opt=no-ssl3 \
+            --with-pcre=../pcre-8.42 \
+            --with-zlib=../zlib-1.2.11
+
+# or other example:
 ./configure --user=nginx \
             --group=nginx \
             --prefix=/etc/nginx \
@@ -748,6 +766,30 @@ For enable queue you should use `limit_req` directive (see above). It also provi
 
   > `delay` and `nodelay` parameters are only useful when you also set a `burst`.
 
+Simple shell functions for testing queues:
+
+```bash
+function _http() {
+
+  # Usage:
+  #   _http https://example.com 12 1
+
+  _url="$1"
+  _counter="$2"
+  _timeout="$3"
+
+  for i in {1..$_counter}; do
+
+    printf "%4s - " "$i"
+    (curl -Is "$_url" | head -n1 ) 2>/dev/null
+
+    sleep "$_timeout"
+
+  done
+
+}
+```
+
 ###### Limiting the Rate of Requests
 
 ```bash
@@ -760,8 +802,30 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:10m rate=10r/m;
 - zone size: `10m` (160,000 IP addresses)
 - rate is `10` requests per minute (1 request every 6 second)
 
+Example of use:
+
 ```bash
-limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s burst=10;
+limit_req zone=req_for_remote_addr;
+```
+
+Testing this queue:
+
+```bash
+_http https://x409.info/stats/ 10 1
+   1 - HTTP/1.1 200 OK
+   2 - HTTP/1.1 503 Service Temporarily Unavailable
+   3 - HTTP/1.1 503 Service Temporarily Unavailable
+   4 - HTTP/1.1 503 Service Temporarily Unavailable
+   5 - HTTP/1.1 503 Service Temporarily Unavailable
+   6 - HTTP/1.1 200 OK
+   7 - HTTP/1.1 503 Service Temporarily Unavailable
+   8 - HTTP/1.1 503 Service Temporarily Unavailable
+   9 - HTTP/1.1 503 Service Temporarily Unavailable
+  10 - HTTP/1.1 503 Service Temporarily Unavailable
+```
+
+```bash
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 ```
 
 - zone type: `limit_req_zone`
@@ -769,6 +833,13 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s burst=
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
 - rate is `60` requests per minute (1 request every second)
+
+Example of use:
+
+```bash
+limit_req zone=req_for_remote_addr burst=10;
+```
+
 - bursts not exceeding `10` requests
 
 # Base Rules
