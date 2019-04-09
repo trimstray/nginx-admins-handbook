@@ -59,8 +59,8 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
-  * [Installation from Source](#installation-from-source)
-  * [Installation from Prebuilt Packages](#installation-from-prebuilt-packages)
+  * [Installation from source](#installation-from-source)
+  * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
   * [Nginx directories and files](#nginx-directories-and-files)
@@ -353,16 +353,16 @@ _Written for experienced systems administrators and engineers, this book teaches
 
 # Helpers
 
-#### Installation from Source
+#### Installation from source
 
-There are currently two versions of Nginx available:
+There are currently two versions of Nginx:
 
 - **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
 - **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
 
 Mandatory requirements:
 
-  > Download, compile and install or install packages from your distribution repository.
+  > Download, compile and install or install prebuilt packages from your distribution repository.
 
 - [OpenSSL](https://www.openssl.org/source/) library
 - [Zlib](https://zlib.net/) library
@@ -382,46 +382,58 @@ wget -c https://nginx.org/download/nginx-1.9.8.tar.gz
 # Extract content and go to the Nginx source directory:
 tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
 
-# Configure (with or without params):
+# Configure without build parameters (default):
+./configure
+
+# Configure with build parameters:
 ./configure --user=nginx \
             --group=nginx \
-            --prefix=/usr/share/nginx \
-            --sbin-path=/usr/sbin/nginx \
-            --modules-path=/usr/lib/nginx/modules \
+            --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
+            --sbin-path=/usr/sbin/nginx \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --modules-path=/usr/lib64/nginx/modules \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
-            --pid-path=/run/run/nginx.pid \
-            --lock-path=/var/lock/nginx.lock \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
             --with-openssl=../openssl-1.1.0b \
             --with-openssl-opt=no-weak-ssl-ciphers \
             --with-openssl-opt=no-ssl3 \
             --with-pcre=../pcre-8.42 \
             --with-pcre-jit \
             --with-zlib=../zlib-1.2.11 \
+            --with-compat \
+            --with-file-aio \
             --with-threads \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_random_index_module \
             --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_slice_module \
             --with-http_ssl_module \
-            --with-http_sub_module \
             --with-http_stub_status_module \
+            --with-http_sub_module \
             --with-http_v2_module \
             --with-stream \
             --with-stream_realip_module \
             --with-stream_ssl_module \
             --with-stream_ssl_preread_module \
+            --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
+            --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie'
 
 # Compile and install:
 make && make install
 ```
 
-  > By default Nginx will be installed in `/usr/local/nginx`. So if you don't set compile parameters with your values the following locations will be as follows:
-  > - `/usr/local/nginx/conf` - configuration files
-  > - `/usr/local/nginx/conf/nginx.conf` - main configuration file
-  > - `/usr/local/nginx/logs` - path to the log files (access and error log)
-  > - `/usr/local/nginx` - temporary files
-  > - `/usr/local/nginx/html` - default virtual host files (default root directory)
-
-#### Installation from Prebuilt Packages
+#### Installation from prebuilt packages
 
 ##### RHEL7 or CentOS 7
 
@@ -430,9 +442,9 @@ make && make install
 ```bash
 # Install epel repository:
 yum install epel-release
-# or:
-wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum install epel-release-latest-7.noarch.rpm
+# or alternative:
+#   wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   yum install epel-release-latest-7.noarch.rpm
 
 # Install Nginx:
 yum install nginx
@@ -441,7 +453,8 @@ yum install nginx
 ###### From Software Collections
 
 ```bash
-# Install yum install centos-release-scl
+# Install and enable scl:
+yum install centos-release-scl
 yum-config-manager --enable rhel-server-rhscl-7-rpms
 
 # Install Nginx (rh-nginx14, rh-nginx16, rh-nginx18):
@@ -470,7 +483,7 @@ yum install nginx
 
 ##### Debian or Ubuntu
 
-Check available flavors of Nginx before install. For more information please see [this](https://askubuntu.com/questions/553937/what-is-the-difference-between-the-core-full-extras-and-light-packages-for-ngi) great answer.
+Check available flavors of Nginx before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
 
 ###### From Debian/Ubuntu Repository
 
@@ -484,7 +497,7 @@ apt-get install nginx
 ```bash
 # Where:
 #   - <os_type> is: debian or ubuntu
-#   - <os_release> is: xenial, bionic, jessie, stretch
+#   - <os_release> is: xenial, bionic, jessie, stretch or other
 cat > /etc/apt/sources.list.d/nginx.list << __EOF__
 deb http://nginx.org/packages/<os_type>/ <os_release> nginx
 deb-src http://nginx.org/packages/<os_type>/ <os_release> nginx
@@ -493,7 +506,7 @@ __EOF__
 # Update packages list:
 apt-get update
 
-# Download the public key (<pub_key> from your GPG error):
+# Download the public key (or <pub_key> from your GPG error):
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <pub_key>
 
 # Install Nginx:
@@ -503,12 +516,16 @@ apt-get install nginx
 
 #### Nginx directories and files
 
-- `/etc/nginx` - is the default configuration root for the Nginx server
+  > If you compile Nginx server by default all files and directories are available from `/usr/local/nginx` location.
+
+For prebuilt Nginx package paths can be as follows:
+
+- `/etc/nginx` - is the default configuration root for the Nginx service
 - `/etc/nginx/nginx.conf` - is the default configuration entry point used by the Nginx services. Includes the top-level http block and all other configuration files
-- `/usr/share/nginx` - default root directory for requests
-- `/var/log/nginx` - is the default log (access/error) location for Nginx
-- `/var/lib/nginx` - is the default temporary files location for Nginx
-- `/etc/nginx/conf.d` or `/etc/nginx/sites-enabled` - contains custom configuration files
+- `/usr/share/nginx` - is the default root directory for requests, contains `html` directory and basic static files
+- `/var/log/nginx` - is the default log (access and error log) location for Nginx
+- `/var/lib/nginx` or `/var/cache/nginx` - is the default temporary files location for Nginx
+- `/etc/nginx/conf`, `/etc/nginx/conf.d` or `/etc/nginx/sites-enabled` - contains custom/vhosts configuration files
 - `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about Nginx process(es)
 
 #### Nginx commands
@@ -516,6 +533,7 @@ apt-get install nginx
 - `nginx -h` - shows the help
 - `nginx -v` - shows the Nginx version
 - `nginx -V` - shows the extended information about Nginx: version, build parameters and configuration arguments
+  - `2>&1 nginx -V | tr ' '  '\n' | grep -e --` - shows only build parameters
 - `nginx -t` - tests the Nginx configuration
 - `nginx -c` - sets configuration file (default: `/etc/nginx/nginx.conf`)
 - `nginx -p` - sets prefix path (default: `/etc/nginx/`)
@@ -536,7 +554,7 @@ The main purpose of the master process is to read and evaluate configuration fil
 
 Master process should be started as **root** user, because this will allow Nginx to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
-The worker processes do the actual processing of requests. These are spawned by the master process, and the user and group will as specified.
+The worker processes do the actual processing of requests. These are spawned by the master process, and the user and group will as specified (unprivileged).
 
   > Nginx has also cache loader and cache manager processes but only if you enable caching.
 
@@ -565,25 +583,25 @@ There’s no need to control the worker processes yourself. However, they suppor
 The Nginx Contexts structure looks like this:
 
 ```
- Global/Main Context
-         |
-         |
-         +-----Events Context
-         |
-         |
-         +-----HTTP Context
-         |          |
-         |          |
-         |          +-----Server Context
-         |          |          |
-         |          |          |
-         |          |          +-----Location Context
-         |          |
-         |          |
-         |          +-----Upstream Context
-         |
-         |
-         +-----Mail Context
+    Global/Main Context
+            |
+            |
+N           +-----» Events Context
+G           |
+I           |
+N           +-----» HTTP Context
+X           |          |
+            |          |
+C           |          +-----» Server Context
+O           |          |          |
+N           |          |          |
+T           |          |          +-----» Location Context
+E           |          |
+X           |          |
+T           |          +-----» Upstream Context
+S           |
+            |
+            +-----» Mail Context
 ```
 
 #### Shell aliases
@@ -652,9 +670,9 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
 #### Rate Limiting
 
-  > All rate limiting rules should be added to the Nginx `http` context.
+  > All rate limiting rules (definitions) should be added to the Nginx `http` context.
 
-Nginx provides following variables that can be used in rate limiting rules:
+Nginx provides following variables (unique keys) that can be used in rate limiting rules:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -668,7 +686,7 @@ Nginx also provides following zones:
 | `limit_conn_zone` | stores the maximum allowed number of connections |
 | `limit_req_zone` | stores the current number of excessive requests |
 
-Zones are used to store the state of each IP address and how often it has accessed a request-limited URL. This information are stored in shared memory available from all Nginx worker processes.
+Zones are used to store the state of each IP address and how often it has accessed a request-limited object. This information are stored in shared memory available from all Nginx worker processes.
 
 The zone has two required parts:
 
@@ -730,7 +748,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
-- `60` requests per minute (1 request every second)
+- rate is `60` requests per minute (1 request every second)
 
 # Base Rules
 
