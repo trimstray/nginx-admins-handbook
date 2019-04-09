@@ -744,7 +744,9 @@ For enable queue you should use `limit_req` directive (see above). It also provi
 | :---         | :---         |
 | `burst=<num>` | sets the maximum number of excessive requests that await to be processed in a timely manner |
 | `delay=<num>` | it delays of excessive requests |
-| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests, is only useful when you also set a burst value |
+| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests |
+
+  > `delay` and `nodelay` parameters are only useful when you also set a `burst`.
 
 ###### Limiting the Rate of Requests
 
