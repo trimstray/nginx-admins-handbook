@@ -698,20 +698,49 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
 #### Error log severity levels
 
-The following is a list of all severity levels (from low - `debug` to high - `emerg`):
+The following is a list of all severity levels (from _low_ - `emerg` to _high_ - `debug`):
 
 | <b>TYPE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
-| `debug` | useful debugging information to help determine where the problem lies |
+| `debug` | information that can be useful to pinpoint where a problem is occurring |
 | `info` | informational messages that aren’t necessary to read but may be good to know |
 | `notice` | something normal happened that is worth noting |
 | `warn` | something unexpected happened, however is not a cause for concern |
-| `error` | something was unsuccessful |
-| `crit` | there are problems that need to be critically addressed |
-| `alert` | pompt action is required |
+| `error` | something was unsuccessful, contains the action of limiting rules |
+| `crit` | important problems that need to be addressed |
+| `alert` | severe situation where action is needed promptly |
 | `emerg` | the system is in an unusable state and requires immediate attention |
 
-For example: if you set `crit` error log level, Nginx would include all `crit`, `alert`, and `emerg` errors in the error log.
+This diagram shows you which messages of levels are logged:
+
+```
++----------------------------------------------------------+
+|debug                                                     |
+|     +---------------------------------------------------+|
+|     |info                                               ||
+|     |     +--------------------------------------------+||
+|     |     |notice                                      |||
+|     |     |      +------------------------------------+|||
+|     |     |      |warn                                ||||
+|     |     |      |     +-----------------------------+||||
+|     |     |      |     |error                        |||||
+|     |     |      |     |     +----------------------+|||||
+|     |     |      |     |     |crit                  ||||||
+|     |     |      |     |     |     +---------------+||||||
+|     |     |      |     |     |     |alert          |||||||
+|     |     |      |     |     |     |      +-------+|||||||
+|     |     |      |     |     |     |      |emerg  ||||||||
+|     |     |      |     |     |     |      +-------+|||||||
+|     |     |      |     |     |     +---------------+||||||
+|     |     |      |     |     +----------------------+|||||
+|     |     |      |     +-----------------------------+||||
+|     |     |      +------------------------------------+|||
+|     |     +--------------------------------------------+||
+|     +---------------------------------------------------+|
++----------------------------------------------------------+
+```
+
+For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
 
 #### Rate Limiting
 
