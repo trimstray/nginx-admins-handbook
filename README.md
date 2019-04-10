@@ -51,6 +51,7 @@
   * [References](#references)
   * [Cheatsheets](#cheatsheets)
   * [Performance & Hardening](#performance--hardening)
+  * [Playgrounds](#playgrounds)
   * [Config generators](#config-generators)
   * [Static analyzers](#static-analyzers)
   * [Log analyzers](#log-analyzers)
@@ -76,8 +77,11 @@
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
+  * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
     * [Limiting the Rate of Requests](#limiting-the-rate-of-requests)
+    * [Limiting the Rate of Requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
+    * [Limiting the Rate of Requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -287,6 +291,12 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet"><b>Transport Layer Protection Cheat Sheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS</b></a><br>
+</p>
+
+##### Playgrounds
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/sportebois/nginx-rate-limit-sandbox"><b>NGINX Rate Limit, Burst and nodelay sandbox</b></a><br>
 </p>
 
 ##### Config generators
@@ -686,7 +696,26 @@ strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
 
+#### Error log severity levels
+
+The following is a list of all severity levels (from low - `debug` to high - `emerg`):
+
+| <b>TYPE</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| `debug` | useful debugging information to help determine where the problem lies |
+| `info` | informational messages that aren’t necessary to read but may be good to know |
+| `notice` | something normal happened that is worth noting |
+| `warn` | something unexpected happened, however is not a cause for concern |
+| `error` | something was unsuccessful |
+| `crit` | there are problems that need to be critically addressed |
+| `alert` | pompt action is required |
+| `emerg` | the system is in an unusable state and requires immediate attention |
+
+For example: if you set `crit` error log level, Nginx would include all `crit`, `alert`, and `emerg` errors in the error log.
+
 #### Rate Limiting
+
+Still work in progress...
 
   > All rate limiting rules (definitions) should be added to the Nginx `http` context.
 
@@ -700,19 +729,20 @@ Rate limiting rules are useful for:
 - mitigating ddos attacks
 - protect brute-force attacks
 
-Nginx provides following variables (unique keys) that can be used in rate limiting rules:
+Nginx has following variables (unique keys) that can be used in rate limiting rules:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
 | `$remote_addr` | client address |
 | `$binary_remote_addr`| client address in a binary form, it is smaller and saves space then `remote_addr` |
+| `$server_name` | name of the server which accepted a request |
 
 Nginx also provides following zones/queues:
 
 | <b>ZONE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
-| `limit_conn_zone` | stores the maximum allowed number of connections |
 | `limit_req_zone` | stores the current number of excessive requests |
+| `limit_conn_zone` | stores the maximum allowed number of connections |
 
 Zones are used to store the state of each IP address and how often it has accessed a request-limited object. This information are stored in shared memory available from all Nginx worker processes.
 
@@ -756,7 +786,9 @@ location /api {
   ...
 ```
 
-For enable queue you should use `limit_req` directive (see above). It also provides optional parameters:
+`limit_req_zone` zone lets you set `rate` parameter (optional). It set the rate limited URL(s).
+
+For enable queue you should use `limit_req` or `limit_conn` directives (see above). `limit_req` also provides optional parameters:
 
 | <b>PARAMETER</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -765,30 +797,6 @@ For enable queue you should use `limit_req` directive (see above). It also provi
 | `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests |
 
   > `delay` and `nodelay` parameters are only useful when you also set a `burst`.
-
-Simple shell function for testing queues:
-
-```bash
-function _http() {
-
-  # Usage:
-  #   _http https://example.com 12 1
-
-  _url="$1"
-  _counter="$2"
-  _timeout="$3"
-
-  for i in {1..$_counter} ; do
-
-    printf "%4s - " "$i"
-    (curl -Is "$_url" | head -n1 | awk '{print $1 " " $2}' &) 2>/dev/null
-
-    sleep "$_timeout"
-
-  done
-
-}
-```
 
 ###### Limiting the Rate of Requests
 
@@ -800,7 +808,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:10m rate=10r/m;
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `req_for_remote_addr`
 - zone size: `10m` (160,000 IP addresses)
-- rate is `10` requests per minute (1 request every 6 second)
+- rate is `0,16` request each second or `10` requests per minute (1 request every 6 second)
 
 Example of use:
 
@@ -808,21 +816,69 @@ Example of use:
 limit_req zone=req_for_remote_addr;
 ```
 
-Testing this queue:
+Testing queue:
 
 ```bash
-_http https://x409.info/stats/ 10 1
-   1 - HTTP/1.1 200
-   2 - HTTP/1.1 503
-   3 - HTTP/1.1 503
-   4 - HTTP/1.1 503
-   5 - HTTP/1.1 503
-   6 - HTTP/1.1 200
-   7 - HTTP/1.1 503
-   8 - HTTP/1.1 503
-   9 - HTTP/1.1 503
-  10 - HTTP/1.1 503
+# siege -b -r 1 -c 12 -v https://x409.info/stats/
+** SIEGE 4.0.4
+** Preparing 12 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 200     0.17 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.24 secs:    1501 bytes ==> GET  /stats/
+
+Transactions:              1 hits
+Availability:           8.33 %
+Elapsed time:           0.24 secs
+Data transferred:         0.02 MB
+Response time:            2.40 secs
+Transaction rate:         4.17 trans/sec
+Throughput:           0.07 MB/sec
+Concurrency:           10.00
+Successful transactions:           1
+Failed transactions:            11
+Longest transaction:          0.24
+Shortest transaction:         0.17
+
+# bombardier -c 1 -n 12 -l -p result https://x409.info/stats/
+Statistics        Avg      Stdev        Max
+  Reqs/sec        13.25      23.33     126.16
+  Latency       84.01ms    42.66ms   225.50ms
+  Latency Distribution
+     50%    71.07ms
+     75%    71.20ms
+     90%    72.01ms
+     95%    72.01ms
+     99%   225.50ms
+  HTTP codes:
+    1xx - 0, 2xx - 1, 3xx - 0, 4xx - 0, 5xx - 11
+    others - 0
+  Throughput:    26.92KB/s
+
+# gobench -c 5 -r 12 -u https://x409.info/stats/
+Dispatching 5 clients
+Waiting for results...
+
+Requests:                               60 hits
+Successful requests:                     1 hits
+Network failed:                          0 hits
+Bad requests failed (!2xx):             59 hits
+Successful requests rate:                1 hits/sec
+Read throughput:                    134915 bytes/sec
+Write throughput:                     8750 bytes/sec
+Test time:                               1 sec
 ```
+
+###### Limiting the Rate of Requests with burst mode
 
 ```bash
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
@@ -832,15 +888,232 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
-- rate is `60` requests per minute (1 request every second)
+- rate is `1` request each second or `60` requests per minute (1 request every second)
 
 Example of use:
 
 ```bash
-limit_req zone=req_for_remote_addr burst=10;
+limit_req zone=req_for_remote_addr burst=2;
 ```
 
-- bursts not exceeding `10` requests
+- bursts not exceeding `2` requests
+
+Testing queue:
+
+```bash
+# siege -b -r 1 -c 12 -v https://x409.info/stats/
+** SIEGE 4.0.4
+** Preparing 12 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 200     0.18 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 200     1.18 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200     2.19 secs:       2 bytes ==> GET  /stats/
+
+Transactions:              3 hits
+Availability:          25.00 %
+Elapsed time:           2.19 secs
+Data transferred:         0.01 MB
+Response time:            1.77 secs
+Transaction rate:         1.37 trans/sec
+Throughput:           0.01 MB/sec
+Concurrency:            2.42
+Successful transactions:           3
+Failed transactions:             9
+Longest transaction:          2.19
+Shortest transaction:         0.18
+
+# bombardier -c 1 -n 12 -l -p result https://x409.info/stats/
+Statistics        Avg      Stdev        Max
+  Reqs/sec         1.08       7.25      58.90
+  Latency         0.94s   188.46ms      1.00s
+  Latency Distribution
+     50%      1.00s
+     75%      1.00s
+     90%      1.00s
+     95%      1.00s
+     99%      1.00s
+  HTTP codes:
+    1xx - 0, 2xx - 12, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     1.57KB/s
+
+# gobench -c 5 -r 12 -u https://x409.info/stats/
+Dispatching 5 clients
+Waiting for results...
+
+Requests:                               60 hits
+Successful requests:                    25 hits
+Network failed:                          0 hits
+Bad requests failed (!2xx):             35 hits
+Successful requests rate:                1 hits/sec
+Read throughput:                      4751 bytes/sec
+Write throughput:                      364 bytes/sec
+Test time:                              24 sec
+```
+
+###### Limiting the Rate of Requests with burst mode and nodelay
+
+```bash
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
+```
+
+- zone type: `limit_req_zone`
+- the unique key for limiter: `$binary_remote_addr`
+- zone name: `req_for_remote_addr`
+- zone size: `50m` (800,000 IP addresses)
+- rate is `1` request each second or `60` requests per minute (1 request every second)
+
+Example of use:
+
+```bash
+limit_req zone=req_for_remote_addr burst=2 nodelay;
+```
+
+- bursts not exceeding `2` requests
+- allocates slots in the queue according to the burst parameter with `nodelay`
+
+Testing queue:
+
+```bash
+# siege -b -r 1 -c 12 -v https://x409.info/stats/
+** SIEGE 4.0.4
+** Preparing 12 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 200     0.19 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200     0.47 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200     0.48 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 503     0.48 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.49 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.50 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.50 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.52 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.52 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.53 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.54 secs:    1501 bytes ==> GET  /stats/
+
+Transactions:              3 hits
+Availability:          25.00 %
+Elapsed time:           0.54 secs
+Data transferred:         0.01 MB
+Response time:            1.91 secs
+Transaction rate:         5.56 trans/sec
+Throughput:           0.02 MB/sec
+Concurrency:           10.61
+Successful transactions:           3
+Failed transactions:             9
+Longest transaction:          0.54
+Shortest transaction:         0.19
+
+# bombardier -c 1 -n 12 -l -p result https://x409.info/stats/
+Statistics        Avg      Stdev        Max
+  Reqs/sec        12.96      21.22      98.03
+  Latency       82.51ms    59.12ms   273.75ms
+  Latency Distribution
+     50%    70.86ms
+     75%    71.05ms
+     90%    76.54ms
+     95%    76.54ms
+     99%   273.75ms
+  HTTP codes:
+    1xx - 0, 2xx - 3, 3xx - 0, 4xx - 0, 5xx - 9
+    others - 0
+  Throughput:    25.69KB/s
+
+# gobench -c 5 -r 12 -u https://x409.info/stats/
+Dispatching 5 clients
+Waiting for results...
+
+Requests:                               60 hits
+Successful requests:                     4 hits
+Network failed:                          0 hits
+Bad requests failed (!2xx):             56 hits
+Successful requests rate:                4 hits/sec
+Read throughput:                    132305 bytes/sec
+Write throughput:                     8750 bytes/sec
+Test time:                               1 sec
+```
+
+###### Limiting the Number of Connections
+
+  > In HTTP/2 and SPDY, each concurrent request is considered a separate connection.
+
+```bash
+limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
+```
+
+- zone type: `limit_conn_zone`
+- the unique key for limiter: `$binary_remote_addr`
+- zone name: `conn_for_remote_addr`
+- zone size: `1m` (16,000 IP addresses)
+
+Example of use:
+
+```bash
+limit_conn conn_for_remote_addr 2;
+```
+
+- allow only `2` connections per an IP address at a time
+
+Testing queue:
+
+```bash
+# gobench -c 20 -r 10 -u https://x409.info/stats/
+Dispatching 20 clients
+Waiting for results...
+
+Requests:                              200 hits
+Successful requests:                   195 hits
+Network failed:                          0 hits
+Bad requests failed (!2xx):              5 hits
+Successful requests rate:              195 hits/sec
+Read throughput:                    295090 bytes/sec
+Write throughput:                    30360 bytes/sec
+Test time:                               1 sec
+```
+
+```bash
+limit_conn_zone $server_name zone=conn_for_server_name:1m;
+```
+
+- zone type: `limit_conn_zone`
+- the unique key for limiter: `$server_name`
+- zone name: `conn_for_server_name`
+- zone size: `1m` (16,000 IP addresses)
+
+Example of use:
+
+```bash
+limit_conn conn_for_remote_addr 2;
+```
+
+- allow only `2` connections to the virtual server
+
+Testing queue:
+
+```bash
+# gobench -c 20 -r 10 -u https://x409.info/stats/
+Dispatching 20 clients
+Waiting for results...
+
+Requests:                              200 hits
+Successful requests:                   187 hits
+Network failed:                          0 hits
+Bad requests failed (!2xx):             13 hits
+Successful requests rate:              187 hits/sec
+Read throughput:                    302050 bytes/sec
+Write throughput:                    30360 bytes/sec
+Test time:                               1 sec
+```
 
 # Base Rules
 
