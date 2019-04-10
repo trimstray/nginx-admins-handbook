@@ -778,10 +778,10 @@ function _http() {
   _counter="$2"
   _timeout="$3"
 
-  for i in {1..$_counter}; do
+  for i in {1..$_counter} ; do
 
     printf "%4s - " "$i"
-    (curl -Is "$_url" | head -n1 | awk '{print $1 " " $2}') 2>/dev/null
+    (curl -Is "$_url" | head -n1 | awk '{print $1 " " $2}' &) 2>/dev/null
 
     sleep "$_timeout"
 
