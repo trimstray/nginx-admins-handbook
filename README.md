@@ -698,7 +698,7 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
 #### Error log severity levels
 
-The following is a list of all severity levels (from _low_ - `emerg` to _high_ - `debug`):
+The following is a list of all severity levels:
 
 | <b>TYPE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -765,15 +765,21 @@ Nginx has following variables (unique keys) that can be used in rate limiting ru
 | `$remote_addr` | client address |
 | `$binary_remote_addr`| client address in a binary form, it is smaller and saves space then `remote_addr` |
 | `$server_name` | name of the server which accepted a request |
+| `$request_uri` | full original request URI (with arguments) |
+| `$query_string` | arguments in the request line |
+| `$scheme` | request scheme: _http_ or _https_ |
+| `$server_protocol` | request protocol, usually _HTTP/1.0_, _HTTP/1.1_, or _HTTP/2.0_ |
 
-Nginx also provides following zones/queues:
+<sup><i>Please see [official docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
 
-| <b>ZONE</b> | <b>DESCRIPTION</b> |
+Nginx also provides following keys:
+
+| <b>KEY</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
 | `limit_req_zone` | stores the current number of excessive requests |
 | `limit_conn_zone` | stores the maximum allowed number of connections |
 
-Zones are used to store the state of each IP address and how often it has accessed a request-limited object. This information are stored in shared memory available from all Nginx worker processes.
+Keys are used to store the state of each IP address and how often it has accessed a request-limited object. This information are stored in shared memory available from all Nginx worker processes.
 
 The zone has two required parts:
 
@@ -783,7 +789,7 @@ The zone has two required parts:
 Example:
 
 ```bash
-limit_req_zone <variable> zone=<name>:<size>;
+<key> <variable> zone=<name>:<size>;
 ```
 
   > State information for about **16,000** IP addresses takes **1 megabyte**.
@@ -815,7 +821,7 @@ location /api {
   ...
 ```
 
-`limit_req_zone` zone lets you set `rate` parameter (optional). It set the rate limited URL(s).
+`limit_req_zone` key lets you set `rate` parameter (optional) - it set the rate limited URL(s).
 
 For enable queue you should use `limit_req` or `limit_conn` directives (see above). `limit_req` also provides optional parameters:
 
@@ -830,13 +836,13 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 ###### Limiting the Rate of Requests
 
 ```bash
-limit_req_zone $binary_remote_addr zone=req_for_remote_addr:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
 ```
 
-- zone type: `limit_req_zone`
+- key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `req_for_remote_addr`
-- zone size: `10m` (160,000 IP addresses)
+- zone size: `64k` (1024 IP addresses)
 - rate is `0,16` request each second or `10` requests per minute (1 request every 6 second)
 
 Example of use:
@@ -913,7 +919,7 @@ Test time:                               1 sec
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 ```
 
-- zone type: `limit_req_zone`
+- key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
@@ -995,7 +1001,7 @@ Test time:                              24 sec
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 ```
 
-- zone type: `limit_req_zone`
+- key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
@@ -1080,7 +1086,7 @@ Test time:                               1 sec
 limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
 ```
 
-- zone type: `limit_conn_zone`
+- key/zone type: `limit_conn_zone`
 - the unique key for limiter: `$binary_remote_addr`
 - zone name: `conn_for_remote_addr`
 - zone size: `1m` (16,000 IP addresses)
@@ -1114,7 +1120,7 @@ Test time:                               1 sec
 limit_conn_zone $server_name zone=conn_for_server_name:1m;
 ```
 
-- zone type: `limit_conn_zone`
+- key/zone type: `limit_conn_zone`
 - the unique key for limiter: `$server_name`
 - zone name: `conn_for_server_name`
 - zone size: `1m` (16,000 IP addresses)
