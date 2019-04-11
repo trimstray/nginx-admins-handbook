@@ -801,7 +801,7 @@ Example of use:
 limit_req zone=req_for_remote_addr burst=5;
 ```
 
-- bursts not exceeding `2` requests
+- bursts not exceeding `5` requests
 
 Testing queue:
 
@@ -810,22 +810,22 @@ Testing queue:
 ** SIEGE 4.0.4
 ** Preparing 12 concurrent users for battle.
 The server is now under siege...
-HTTP/1.1 200     0.20 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200 *   0.20 secs:       2 bytes ==> GET  /stats/
 HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.23 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 200     6.22 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200    12.24 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200    18.27 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200    24.30 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200    30.32 secs:       2 bytes ==> GET  /stats/ *
-                                                           |
-                                                      BURST MODE
-                                                      - burst=5
-                                                      - 0,16r/s, 10r/m
+HTTP/1.1 200 *   6.22 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *  12.24 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *  18.27 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *  24.30 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *  30.32 secs:       2 bytes ==> GET  /stats/
+             |
+        BURST MODE
+        - burst=5
+        - 0,16r/s, 10r/m
 
 Transactions:              6 hits
 Availability:          50.00 %
@@ -856,10 +856,10 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
 Example of use:
 
 ```bash
-limit_req zone=req_for_remote_addr burst=2 nodelay;
+limit_req zone=req_for_remote_addr burst=5 nodelay;
 ```
 
-- bursts not exceeding `2` requests
+- bursts not exceeding `5` requests
 - allocates slots in the queue according to the burst parameter with `nodelay`
 
 Testing queue:
@@ -869,22 +869,22 @@ Testing queue:
 ** SIEGE 4.0.4
 ** Preparing 12 concurrent users for battle.
 The server is now under siege...
-HTTP/1.1 200     0.18 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200     0.47 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200     0.47 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200     0.48 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200     0.48 secs:       2 bytes ==> GET  /stats/ *
-HTTP/1.1 200     0.49 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200 *   0.18 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.47 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.47 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.48 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.48 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.49 secs:       2 bytes ==> GET  /stats/
 HTTP/1.1 503     0.49 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.50 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.52 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.53 secs:    1501 bytes ==> GET  /stats/
-                                                           |
-                                                      BURST MODE
-                                                      - burst=5 with nodelay
-                                                      - 1r/s, 60r/m
+             |
+        BURST MODE
+        - burst=5 with nodelay
+        - 0,16r/s, 10r/m
 
 Transactions:              6 hits
 Availability:          50.00 %
