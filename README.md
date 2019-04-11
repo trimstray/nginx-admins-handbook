@@ -68,7 +68,7 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Nginx contexts](#nginx-contexts)
-  * [Shell aliases](#shell-aliases)
+  * [Error log severity levels](#error-log-severity-levels)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
@@ -77,11 +77,10 @@
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
-  * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
-    * [Limiting the Rate of Requests](#limiting-the-rate-of-requests)
     * [Limiting the Rate of Requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the Rate of Requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+  * [Shell aliases](#shell-aliases)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -383,7 +382,7 @@ Mandatory requirements:
 
 - [Nginx](https://nginx.org/download/) source code
 
-  > Before this, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/).
+  > Before starting the installation, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/).
 
 ```bash
 # Download latest package:
@@ -561,7 +560,6 @@ For prebuilt Nginx package paths can be as follows:
 - `nginx -h` - shows the help
 - `nginx -v` - shows the Nginx version
 - `nginx -V` - shows the extended information about Nginx: version, build parameters and configuration arguments
-  - `2>&1 nginx -V | tr ' '  '\n' | grep -e --` - shows only build parameters
 - `nginx -t` - tests the Nginx configuration
 - `nginx -c` - sets configuration file (default: `/etc/nginx/nginx.conf`)
 - `nginx -p` - sets prefix path (default: `/etc/nginx/`)
@@ -608,45 +606,46 @@ There’s no need to control the worker processes yourself. However, they suppor
 
 #### Nginx contexts
 
-The Nginx Contexts structure looks like this:
+The Nginx contexts structure looks like this:
 
 ```
     Global/Main Context
             |
             |
-N           +-----» Events Context
-G           |
-I           |
-N           +-----» HTTP Context
-X           |          |
+            +-----» Events Context
+            |
+            |
+            +-----» HTTP Context
             |          |
-C           |          +-----» Server Context
-O           |          |          |
-N           |          |          |
-T           |          |          +-----» Location Context
-E           |          |
-X           |          |
-T           |          +-----» Upstream Context
-S           |
+            |          |
+            |          +-----» Server Context
+            |          |          |
+            |          |          |
+            |          |          +-----» Location Context
+            |          |
+            |          |
+            |          +-----» Upstream Context
+            |
             |
             +-----» Mail Context
 ```
 
-#### Shell aliases
+#### Error log severity levels
 
-```bash
-alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
+The following is a list of all severity levels:
 
-alias ng.stop='ng.test && systemctl stop nginx'
+| <b>TYPE</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| `debug` | information that can be useful to pinpoint where a problem is occurring |
+| `info` | informational messages that aren’t necessary to read but may be good to know |
+| `notice` | something normal happened that is worth noting |
+| `warn` | something unexpected happened, however is not a cause for concern |
+| `error` | something was unsuccessful, contains the action of limiting rules |
+| `crit` | important problems that need to be addressed |
+| `alert` | severe situation where action is needed promptly |
+| `emerg` | the system is in an unusable state and requires immediate attention |
 
-alias ng.reload='ng.test && systemctl reload nginx'
-alias ng.reload='ng.test && kill -HUP $(cat /var/run/nginx.pid)'
-#                       ... kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
-
-alias ng.restart='ng.test && systemctl restart nginx'
-alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/nginx'
-#                        ... kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}') ...
-```
+For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
 
 #### Debugging
 
@@ -696,52 +695,6 @@ strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
 
-#### Error log severity levels
-
-The following is a list of all severity levels:
-
-| <b>TYPE</b> | <b>DESCRIPTION</b> |
-| :---         | :---         |
-| `debug` | information that can be useful to pinpoint where a problem is occurring |
-| `info` | informational messages that aren’t necessary to read but may be good to know |
-| `notice` | something normal happened that is worth noting |
-| `warn` | something unexpected happened, however is not a cause for concern |
-| `error` | something was unsuccessful, contains the action of limiting rules |
-| `crit` | important problems that need to be addressed |
-| `alert` | severe situation where action is needed promptly |
-| `emerg` | the system is in an unusable state and requires immediate attention |
-
-This diagram shows you which messages of levels are logged:
-
-```
-+----------------------------------------------------------+
-|debug                                                     |
-|     +---------------------------------------------------+|
-|     |info                                               ||
-|     |     +--------------------------------------------+||
-|     |     |notice                                      |||
-|     |     |      +------------------------------------+|||
-|     |     |      |warn                                ||||
-|     |     |      |     +-----------------------------+||||
-|     |     |      |     |error                        |||||
-|     |     |      |     |     +----------------------+|||||
-|     |     |      |     |     |crit                  ||||||
-|     |     |      |     |     |     +---------------+||||||
-|     |     |      |     |     |     |alert          |||||||
-|     |     |      |     |     |     |      +-------+|||||||
-|     |     |      |     |     |     |      |emerg  ||||||||
-|     |     |      |     |     |     |      +-------+|||||||
-|     |     |      |     |     |     +---------------+||||||
-|     |     |      |     |     +----------------------+|||||
-|     |     |      |     +-----------------------------+||||
-|     |     |      +------------------------------------+|||
-|     |     +--------------------------------------------+||
-|     +---------------------------------------------------+|
-+----------------------------------------------------------+
-```
-
-For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
-
 #### Rate Limiting
 
 Still work in progress...
@@ -758,7 +711,7 @@ Rate limiting rules are useful for:
 - mitigating ddos attacks
 - protect brute-force attacks
 
-Nginx has following variables (unique keys) that can be used in rate limiting rules:
+Nginx has following variables (unique keys) that can be used in a rate limiting rules:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -772,16 +725,16 @@ Nginx has following variables (unique keys) that can be used in rate limiting ru
 
 <sup><i>Please see [official docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
 
-Nginx also provides following keys:
+Nginx also provides following keys and directives:
 
-| <b>KEY</b> | <b>DESCRIPTION</b> |
-| :---         | :---         |
-| `limit_req_zone` | stores the current number of excessive requests |
-| `limit_conn_zone` | stores the maximum allowed number of connections |
+| <b>KEY</b> | <b>DIRECTIVE</b> | <b>DESCRIPTION</b> |
+| :---         | :---         | :---         |
+| `limit_req_zone` | `limit_req` | stores the current number of excessive requests |
+| `limit_conn_zone` | `limit_conn` | stores the maximum allowed number of connections |
 
-Keys are used to store the state of each IP address and how often it has accessed a request-limited object. This information are stored in shared memory available from all Nginx worker processes.
+Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all Nginx worker processes.
 
-The zone has two required parts:
+Rate limiting rule also have zones. The zone has two required parts:
 
 - `<name>` - is the zone identifier
 - `<size>` - is the zone size
@@ -800,28 +753,25 @@ The range of zones is as follows:
 ```bash
 http {
 
-  limit_req zone=<name>;
+  ... zone=<name>;
 
-  ...
 ```
 - **server context**
 ```bash
 server {
 
-  limit_req zone=<name>;
+  ... zone=<name>;
 
-  ...
 ```
 - **location directive**
 ```bash
 location /api {
 
-  limit_req zone=<name>;
+  ... zone=<name>;
 
-  ...
 ```
 
-`limit_req_zone` key lets you set `rate` parameter (optional) - it set the rate limited URL(s).
+`limit_req_zone` key lets you set `rate` parameter (optional) - it defines the rate limited URL(s).
 
 For enable queue you should use `limit_req` or `limit_conn` directives (see above). `limit_req` also provides optional parameters:
 
@@ -833,7 +783,7 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
   > `delay` and `nodelay` parameters are only useful when you also set a `burst`.
 
-###### Limiting the Rate of Requests
+###### Limiting the Rate of Requests with burst mode
 
 ```bash
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
@@ -848,87 +798,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
 Example of use:
 
 ```bash
-limit_req zone=req_for_remote_addr;
-```
-
-Testing queue:
-
-```bash
-# siege -b -r 1 -c 12 -v https://x409.info/stats/
-** SIEGE 4.0.4
-** Preparing 12 concurrent users for battle.
-The server is now under siege...
-HTTP/1.1 200     0.17 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.24 secs:    1501 bytes ==> GET  /stats/
-
-Transactions:              1 hits
-Availability:           8.33 %
-Elapsed time:           0.24 secs
-Data transferred:         0.02 MB
-Response time:            2.40 secs
-Transaction rate:         4.17 trans/sec
-Throughput:           0.07 MB/sec
-Concurrency:           10.00
-Successful transactions:           1
-Failed transactions:            11
-Longest transaction:          0.24
-Shortest transaction:         0.17
-
-# bombardier -c 1 -n 12 -l -p result https://x409.info/stats/
-Statistics        Avg      Stdev        Max
-  Reqs/sec        13.25      23.33     126.16
-  Latency       84.01ms    42.66ms   225.50ms
-  Latency Distribution
-     50%    71.07ms
-     75%    71.20ms
-     90%    72.01ms
-     95%    72.01ms
-     99%   225.50ms
-  HTTP codes:
-    1xx - 0, 2xx - 1, 3xx - 0, 4xx - 0, 5xx - 11
-    others - 0
-  Throughput:    26.92KB/s
-
-# gobench -c 5 -r 12 -u https://x409.info/stats/
-Dispatching 5 clients
-Waiting for results...
-
-Requests:                               60 hits
-Successful requests:                     1 hits
-Network failed:                          0 hits
-Bad requests failed (!2xx):             59 hits
-Successful requests rate:                1 hits/sec
-Read throughput:                    134915 bytes/sec
-Write throughput:                     8750 bytes/sec
-Test time:                               1 sec
-```
-
-###### Limiting the Rate of Requests with burst mode
-
-```bash
-limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
-```
-
-- key/zone type: `limit_req_zone`
-- the unique key for limiter: `$binary_remote_addr`
-- zone name: `req_for_remote_addr`
-- zone size: `50m` (800,000 IP addresses)
-- rate is `1` request each second or `60` requests per minute (1 request every second)
-
-Example of use:
-
-```bash
-limit_req zone=req_for_remote_addr burst=2;
+limit_req zone=req_for_remote_addr burst=5;
 ```
 
 - bursts not exceeding `2` requests
@@ -940,59 +810,35 @@ Testing queue:
 ** SIEGE 4.0.4
 ** Preparing 12 concurrent users for battle.
 The server is now under siege...
-HTTP/1.1 200     0.18 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.18 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 200     0.20 secs:       2 bytes ==> GET  /stats/ *
 HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 200     1.18 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200     2.19 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.23 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 200     6.22 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200    12.24 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200    18.27 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200    24.30 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200    30.32 secs:       2 bytes ==> GET  /stats/ *
+                                                           |
+                                                      BURST MODE
+                                                      - burst=5
+                                                      - 0,16r/s, 10r/m
 
-Transactions:              3 hits
-Availability:          25.00 %
-Elapsed time:           2.19 secs
-Data transferred:         0.01 MB
-Response time:            1.77 secs
-Transaction rate:         1.37 trans/sec
-Throughput:           0.01 MB/sec
-Concurrency:            2.42
-Successful transactions:           3
-Failed transactions:             9
-Longest transaction:          2.19
-Shortest transaction:         0.18
-
-# bombardier -c 1 -n 12 -l -p result https://x409.info/stats/
-Statistics        Avg      Stdev        Max
-  Reqs/sec         1.08       7.25      58.90
-  Latency         0.94s   188.46ms      1.00s
-  Latency Distribution
-     50%      1.00s
-     75%      1.00s
-     90%      1.00s
-     95%      1.00s
-     99%      1.00s
-  HTTP codes:
-    1xx - 0, 2xx - 12, 3xx - 0, 4xx - 0, 5xx - 0
-    others - 0
-  Throughput:     1.57KB/s
-
-# gobench -c 5 -r 12 -u https://x409.info/stats/
-Dispatching 5 clients
-Waiting for results...
-
-Requests:                               60 hits
-Successful requests:                    25 hits
-Network failed:                          0 hits
-Bad requests failed (!2xx):             35 hits
-Successful requests rate:                1 hits/sec
-Read throughput:                      4751 bytes/sec
-Write throughput:                      364 bytes/sec
-Test time:                              24 sec
+Transactions:              6 hits
+Availability:          50.00 %
+Elapsed time:          30.32 secs
+Data transferred:       0.01 MB
+Response time:         15.47 secs
+Transaction rate:       0.20 trans/sec
+Throughput:             0.00 MB/sec
+Concurrency:            3.06
+Successful transactions:   6
+Failed transactions:       6
+Longest transaction:   30.32
+Shortest transaction:   0.20
 ```
 
 ###### Limiting the Rate of Requests with burst mode and nodelay
@@ -1023,131 +869,51 @@ Testing queue:
 ** SIEGE 4.0.4
 ** Preparing 12 concurrent users for battle.
 The server is now under siege...
-HTTP/1.1 200     0.19 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200     0.47 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200     0.48 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 503     0.48 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 200     0.18 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200     0.47 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200     0.47 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200     0.48 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200     0.48 secs:       2 bytes ==> GET  /stats/ *
+HTTP/1.1 200     0.49 secs:       2 bytes ==> GET  /stats/ *
 HTTP/1.1 503     0.49 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.50 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.50 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.52 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.52 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.53 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.54 secs:    1501 bytes ==> GET  /stats/
+                                                           |
+                                                      BURST MODE
+                                                      - burst=5 with nodelay
+                                                      - 1r/s, 60r/m
 
-Transactions:              3 hits
-Availability:          25.00 %
-Elapsed time:           0.54 secs
-Data transferred:         0.01 MB
-Response time:            1.91 secs
-Transaction rate:         5.56 trans/sec
-Throughput:           0.02 MB/sec
-Concurrency:           10.61
-Successful transactions:           3
-Failed transactions:             9
-Longest transaction:          0.54
-Shortest transaction:         0.19
-
-# bombardier -c 1 -n 12 -l -p result https://x409.info/stats/
-Statistics        Avg      Stdev        Max
-  Reqs/sec        12.96      21.22      98.03
-  Latency       82.51ms    59.12ms   273.75ms
-  Latency Distribution
-     50%    70.86ms
-     75%    71.05ms
-     90%    76.54ms
-     95%    76.54ms
-     99%   273.75ms
-  HTTP codes:
-    1xx - 0, 2xx - 3, 3xx - 0, 4xx - 0, 5xx - 9
-    others - 0
-  Throughput:    25.69KB/s
-
-# gobench -c 5 -r 12 -u https://x409.info/stats/
-Dispatching 5 clients
-Waiting for results...
-
-Requests:                               60 hits
-Successful requests:                     4 hits
-Network failed:                          0 hits
-Bad requests failed (!2xx):             56 hits
-Successful requests rate:                4 hits/sec
-Read throughput:                    132305 bytes/sec
-Write throughput:                     8750 bytes/sec
-Test time:                               1 sec
+Transactions:              6 hits
+Availability:          50.00 %
+Elapsed time:           0.53 secs
+Data transferred:       0.01 MB
+Response time:          0.94 secs
+Transaction rate:      11.32 trans/sec
+Throughput:             0.02 MB/sec
+Concurrency:           10.62
+Successful transactions:   6
+Failed transactions:       6
+Longest transaction:    0.53
+Shortest transaction:   0.18
 ```
 
-###### Limiting the Number of Connections
-
-  > In HTTP/2 and SPDY, each concurrent request is considered a separate connection.
+#### Shell aliases
 
 ```bash
-limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
-```
+alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
 
-- key/zone type: `limit_conn_zone`
-- the unique key for limiter: `$binary_remote_addr`
-- zone name: `conn_for_remote_addr`
-- zone size: `1m` (16,000 IP addresses)
+alias ng.stop='ng.test && systemctl stop nginx'
 
-Example of use:
+alias ng.reload='ng.test && systemctl reload nginx'
+alias ng.reload='ng.test && kill -HUP $(cat /var/run/nginx.pid)'
+#                       ... kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
 
-```bash
-limit_conn conn_for_remote_addr 2;
-```
-
-- allow only `2` connections per an IP address at a time
-
-Testing queue:
-
-```bash
-# gobench -c 20 -r 10 -u https://x409.info/stats/
-Dispatching 20 clients
-Waiting for results...
-
-Requests:                              200 hits
-Successful requests:                   195 hits
-Network failed:                          0 hits
-Bad requests failed (!2xx):              5 hits
-Successful requests rate:              195 hits/sec
-Read throughput:                    295090 bytes/sec
-Write throughput:                    30360 bytes/sec
-Test time:                               1 sec
-```
-
-```bash
-limit_conn_zone $server_name zone=conn_for_server_name:1m;
-```
-
-- key/zone type: `limit_conn_zone`
-- the unique key for limiter: `$server_name`
-- zone name: `conn_for_server_name`
-- zone size: `1m` (16,000 IP addresses)
-
-Example of use:
-
-```bash
-limit_conn conn_for_remote_addr 2;
-```
-
-- allow only `2` connections to the virtual server
-
-Testing queue:
-
-```bash
-# gobench -c 20 -r 10 -u https://x409.info/stats/
-Dispatching 20 clients
-Waiting for results...
-
-Requests:                              200 hits
-Successful requests:                   187 hits
-Network failed:                          0 hits
-Bad requests failed (!2xx):             13 hits
-Successful requests rate:              187 hits/sec
-Read throughput:                    302050 bytes/sec
-Write throughput:                    30360 bytes/sec
-Test time:                               1 sec
+alias ng.restart='ng.test && systemctl restart nginx'
+alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/nginx'
+#                        ... kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}') ...
 ```
 
 # Base Rules
