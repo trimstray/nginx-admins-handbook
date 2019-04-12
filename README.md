@@ -72,8 +72,9 @@
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
   * [Rate Limiting](#rate-limiting)
-    * [Limiting the Rate of Requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
-    * [Limiting the Rate of Requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+    * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
+    * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+    * [Limiting the number of connections](#limiting-the-number-of-connections)
   * [Shell aliases](#shell-aliases)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
@@ -719,16 +720,27 @@ Nginx has following variables (unique keys) that can be used in a rate limiting 
 
 <sup><i>Please see [official docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
 
-Nginx also provides following keys and directives:
+Nginx also provides following keys:
 
-| <b>KEY</b> | <b>DIRECTIVE</b> | <b>DESCRIPTION</b> |
-| :---         | :---         | :---         |
-| `limit_req_zone` | `limit_req` | stores the current number of excessive requests |
-| `limit_conn_zone` | `limit_conn` | stores the maximum allowed number of connections |
+| <b>KEY</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| `limit_req_zone` | stores the current number of excessive requests |
+| `limit_conn_zone` | stores the maximum allowed number of connections |
+
+and directives:
+
+| <b>DIRECTIVE</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| `limit_req` | sets the shared memory zone and the maximum burst size of requests |
+| `limit_conn` | sets the shared memory zone and the maximum allowed number of connections to the server per a client IP and, at the same time for a given key value |
 
 Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all Nginx worker processes.
 
-Rate limiting rule also have zones. The zone has two required parts:
+Rate limiting rules also have zones that lets you define a shared space in which to count the incoming requests or connections.
+
+  > All requests or connections coming into the same space will be counted in the same rate limit. This is what allows you to limit per URL, per IP, or anything else.
+
+The zone has two required parts:
 
 - `<name>` - is the zone identifier
 - `<size>` - is the zone size
@@ -739,7 +751,7 @@ Example:
 <key> <variable> zone=<name>:<size>;
 ```
 
-  > State information for about **16,000** IP addresses takes **1 megabyte**.
+  > State information for about **16,000** IP addresses takes **1 megabyte**. So **1 kilobyte** zone has **16** IP addresses.
 
 The range of zones is as follows:
 
@@ -771,13 +783,14 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
 | <b>PARAMETER</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
-| `burst=<num>` | sets the maximum number of excessive requests that await to be processed in a timely manner |
-| `delay=<num>` | it delays of excessive requests |
-| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests |
+| `burst=<num>` | sets the maximum number of excessive requests that await to be processed in a timely manner; set maximum requests as `rate` * `burst` in `burst` seconds |
+| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests; default Nginx would return 503 response and not handle excessive requests |
 
-  > `delay` and `nodelay` parameters are only useful when you also set a `burst`.
+  > `nodelay` parameters are only useful when you also set a `burst`.
 
-###### Limiting the Rate of Requests with burst mode
+Without `nodelay` option Nginx would wait (no 503 response) and handle excessive requests with some delay.
+
+###### Limiting the rate of requests with burst mode
 
 ```bash
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
@@ -785,17 +798,23 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
 
 - key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
+  - limit requests per IP as following
 - zone name: `req_for_remote_addr`
 - zone size: `64k` (1024 IP addresses)
-- rate is `0,16` request each second or `10` requests per minute (1 request every 6 second)
+- rate is `0,16` request each second or `10` requests per minute (`1` request every `6` second)
 
 Example of use:
 
 ```bash
-limit_req zone=req_for_remote_addr burst=5;
+location ~ /stats {
+
+  limit_req zone=req_for_remote_addr burst=5;
 ```
 
-- bursts not exceeding `5` requests
+- set maximum requests as `rate` * `burst` in `burst` seconds
+  - with bursts not exceeding `5` requests:
+    + `0,16r/s` * `5` = `0.80` requests per `5` seconds
+    + `10r/m` * `5` = `50` requests per `5` minutes
 
 Testing queue:
 
@@ -817,9 +836,8 @@ HTTP/1.1 200 *  18.27 secs:       2 bytes ==> GET  /stats/
 HTTP/1.1 200 *  24.30 secs:       2 bytes ==> GET  /stats/
 HTTP/1.1 200 *  30.32 secs:       2 bytes ==> GET  /stats/
              |
-        BURST MODE
-        - burst=5
-        - 0,16r/s, 10r/m
+             - burst=5
+             - 0,16r/s, 10r/m - 1r every 6 seconds
 
 Transactions:              6 hits
 Availability:          50.00 %
@@ -835,26 +853,32 @@ Longest transaction:   30.32
 Shortest transaction:   0.20
 ```
 
-###### Limiting the Rate of Requests with burst mode and nodelay
+###### Limiting the rate of requests with burst mode and nodelay
 
 ```bash
-limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=1r/s;
+limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=2r/s;
 ```
 
 - key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
+  - limit requests per IP as following
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
-- rate is `1` request each second or `60` requests per minute (1 request every second)
+- rate is `2` request each second or `30` requests per minute (`2` requests every `1` second)
 
 Example of use:
 
 ```bash
-limit_req zone=req_for_remote_addr burst=5 nodelay;
+location ~ /stats {
+
+  limit_req zone=req_for_remote_addr burst=5 nodelay;
 ```
 
-- bursts not exceeding `5` requests
-- allocates slots in the queue according to the burst parameter with `nodelay`
+- set maximum requests as `rate` * `burst` in `burst` seconds
+  - with bursts not exceeding `5` requests
+    + `2r/s` * `5` = `10` requests per `5` seconds
+    + `30r/m` * `5` = `150` requests per `5` minutes
+- allocates slots in the queue according to the `burst` parameter with `nodelay`
 
 Testing queue:
 
@@ -864,34 +888,78 @@ Testing queue:
 ** Preparing 12 concurrent users for battle.
 The server is now under siege...
 HTTP/1.1 200 *   0.18 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200 *   0.47 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200 *   0.47 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200 *   0.48 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200 *   0.48 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 200 *   0.49 secs:       2 bytes ==> GET  /stats/
-HTTP/1.1 503     0.49 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.50 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.51 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.52 secs:    1501 bytes ==> GET  /stats/
-HTTP/1.1 503     0.53 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.18 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.19 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.19 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.19 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 200 *   0.19 secs:       2 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.19 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.20 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
+HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
              |
-        BURST MODE
-        - burst=5 with nodelay
-        - 0,16r/s, 10r/m
+             - burst=5 with nodelay
+             - 2r/s, 30r/m - 1r every 0.5 second
 
 Transactions:              6 hits
 Availability:          50.00 %
-Elapsed time:           0.53 secs
+Elapsed time:           0.23 secs
 Data transferred:       0.01 MB
-Response time:          0.94 secs
-Transaction rate:      11.32 trans/sec
-Throughput:             0.02 MB/sec
-Concurrency:           10.62
+Response time:          0.39 secs
+Transaction rate:      26.09 trans/sec
+Throughput:             0.04 MB/sec
+Concurrency:           10.17
 Successful transactions:   6
 Failed transactions:       6
-Longest transaction:    0.53
+Longest transaction:    0.22
 Shortest transaction:   0.18
+```
+
+###### Limiting the number of connections
+
+```bash
+limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
+```
+
+- key/zone type: `limit_conn_zone`
+- the unique key for limiter: `$binary_remote_addr`
+  - limit requests per IP as following
+- zone name: `conn_for_remote_addr`
+- zone size: `1m` (16,000 IP addresses)
+
+Example of use:
+
+```bash
+location ~ /stats {
+
+  limit_conn conn_for_remote_addr 1;
+```
+
+- limit a single IP address to make no more than `1` connection from IP at the same time
+
+Testing queue:
+
+```bash
+# siege -b -r 1 -c 100 -t 10s --no-parser https://x409.info/stats/
+defaulting to time-based testing: 10 seconds
+** SIEGE 4.0.4
+** Preparing 100 concurrent users for battle.
+The server is now under siege...
+Lifting the server siege...
+Transactions:            364 hits
+Availability:          32.13 %
+Elapsed time:           9.00 secs
+Data transferred:       1.10 MB
+Response time:          2.37 secs
+Transaction rate:      40.44 trans/sec
+Throughput:             0.12 MB/sec
+Concurrency:           95.67
+Successful transactions: 364
+Failed transactions:     769
+Longest transaction:    1.10
+Shortest transaction:   0.38
 ```
 
 #### Shell aliases
