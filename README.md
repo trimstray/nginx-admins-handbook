@@ -75,6 +75,7 @@
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
+    * [Limit the rate of response transmission to a client](#limit-the-rate-of-response-transmission-to-a-client)
   * [Shell aliases](#shell-aliases)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
@@ -692,8 +693,6 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
 #### Rate Limiting
 
-Still work in progress...
-
   > All rate limiting rules (definitions) should be added to the Nginx `http` context.
 
 Rate limiting rules are useful for:
@@ -735,6 +734,30 @@ and directives:
 | `limit_conn` | sets the shared memory zone and the maximum allowed number of connections to the server per a client IP and, at the same time for a given key value |
 
 Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all Nginx worker processes.
+
+Both keys also provides response status parameters indicating too many requests or connections with specific http code (default **503**).
+
+- `limit_req_status <value>`
+- `limit_conn_status <value>`
+
+For example, if you want to set the desired logging level for cases when the server limits the number of connections:
+
+```
+# Add this to http context:
+limit_req_status 429;
+
+# Set your own error page for 429 http code:
+error_page 429 /rate_limit.html;
+location = /rate_limit.html {
+  root /usr/share/www/http-error-pages/sites/other;
+  internal;
+}
+
+# And creat this file:
+cat > /usr/share/www/http-error-pages/sites/other/rate_limit.html << __EOF__
+HTTP 429 Too Many Requests
+__EOF__
+```
 
 Rate limiting rules also have zones that lets you define a shared space in which to count the incoming requests or connections.
 
@@ -788,7 +811,7 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
   > `nodelay` parameters are only useful when you also set a `burst`.
 
-Without `nodelay` option Nginx would wait (no 503 response) and handle excessive requests with some delay.
+Without `nodelay` option Nginx would wait (no **503** response) and handle excessive requests with some delay.
 
 ###### Limiting the rate of requests with burst mode
 
@@ -960,6 +983,13 @@ Successful transactions: 364
 Failed transactions:     769
 Longest transaction:    1.10
 Shortest transaction:   0.38
+```
+
+###### Limit the rate of response transmission to a client
+
+```
+limit_rate_after 10m;
+limit_rate 1m;
 ```
 
 #### Shell aliases
