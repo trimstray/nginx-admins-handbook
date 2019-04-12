@@ -75,7 +75,6 @@
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
-    * [Limit the rate of response transmission to a client](#limit-the-rate-of-response-transmission-to-a-client)
   * [Shell aliases](#shell-aliases)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
@@ -95,6 +94,7 @@
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
+  * [Limit the download speed with limit_zone and limit_conn](#limit-the-download-speed-with-limit_zone-and-limit_conn)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -605,25 +605,25 @@ There’s no need to control the worker processes yourself. However, they suppor
 The Nginx contexts structure looks like this:
 
 ```
-    Global/Main Context
-            |
-            |
-            +-----» Events Context
-            |
-            |
-            +-----» HTTP Context
-            |          |
-            |          |
-            |          +-----» Server Context
-            |          |          |
-            |          |          |
-            |          |          +-----» Location Context
-            |          |
-            |          |
-            |          +-----» Upstream Context
-            |
-            |
-            +-----» Mail Context
+Global/Main Context
+        |
+        |
+        +-----» Events Context
+        |
+        |
+        +-----» HTTP Context
+        |          |
+        |          |
+        |          +-----» Server Context
+        |          |          |
+        |          |          |
+        |          |          +-----» Location Context
+        |          |
+        |          |
+        |          +-----» Upstream Context
+        |
+        |
+        +-----» Mail Context
 ```
 
 #### Error log severity levels
@@ -702,6 +702,7 @@ Rate limiting rules are useful for:
 - slow down the rate of incoming requests
 - protect http requests flood
 - protect against slow http attacks
+- prevent consume a lot of bandwidth
 - mitigating ddos attacks
 - protect brute-force attacks
 
@@ -731,7 +732,7 @@ and directives:
 | <b>DIRECTIVE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
 | `limit_req` | sets the shared memory zone and the maximum burst size of requests |
-| `limit_conn` | sets the shared memory zone and the maximum allowed number of connections to the server per a client IP and, at the same time for a given key value |
+| `limit_conn` | sets the shared memory zone and the maximum allowed number of connections to the server per a client IP |
 
 Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all Nginx worker processes.
 
@@ -753,7 +754,7 @@ location = /rate_limit.html {
   internal;
 }
 
-# And creat this file:
+# And create this file:
 cat > /usr/share/www/http-error-pages/sites/other/rate_limit.html << __EOF__
 HTTP 429 Too Many Requests
 __EOF__
@@ -806,12 +807,12 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
 | <b>PARAMETER</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
-| `burst=<num>` | sets the maximum number of excessive requests that await to be processed in a timely manner; set maximum requests as `rate` * `burst` in `burst` seconds |
+| `burst=<num>` | sets the maximum number of excessive requests that await to be processed in a timely manner; maximum requests as `rate` * `burst` in `burst` seconds |
 | `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests; default Nginx would return 503 response and not handle excessive requests |
 
   > `nodelay` parameters are only useful when you also set a `burst`.
 
-Without `nodelay` option Nginx would wait (no **503** response) and handle excessive requests with some delay.
+Without `nodelay` option Nginx would wait (no 503 response) and handle excessive requests with some delay.
 
 ###### Limiting the rate of requests with burst mode
 
@@ -983,13 +984,6 @@ Successful transactions: 364
 Failed transactions:     769
 Longest transaction:    1.10
 Shortest transaction:   0.38
-```
-
-###### Limit the rate of response transmission to a client
-
-```
-limit_rate_after 10m;
-limit_rate 1m;
 ```
 
 #### Shell aliases
@@ -1643,6 +1637,18 @@ server {
 ###### External resources
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
+
+#### :beginner: Limit the download speed with limit_zone and limit_conn
+
+###### Rationale
+
+###### Example
+
+```bash
+
+```
+
+###### External resources
 
 # Hardening
 
