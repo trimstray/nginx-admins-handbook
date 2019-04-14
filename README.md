@@ -1585,7 +1585,7 @@ server {
 
 ###### Rationale
 
-  > When Nginx receives a request no matter what is the subdomain being requested, be it www.example.com or just the plain example.com this if directive is always evaluated. Since you’re requesting Nginx to check for the `Host` header for every request. It’s extremely inefficient.
+  > When Nginx receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this if directive is always evaluated. Since you’re requesting Nginx to check for the `Host` header for every request. It’s extremely inefficient.
 
   > Instead use two server directives like the example below. This approach decreases Nginx processing requirements.
 
