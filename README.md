@@ -94,7 +94,7 @@
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
-  * [Limit the download speed with limit_zone and limit_conn](#limit-the-download-speed-with-limit_zone-and-limit_conn)
+  * [Use limit_conn_zone and limit_conn to strengthen limiting the download speed directives](#use-limit_conn_zone-and-limit_conn-to-strengthen-limiting-the-download-speed-directives)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -715,10 +715,8 @@ Nginx has following variables (unique keys) that can be used in a rate limiting 
 | `$server_name` | name of the server which accepted a request |
 | `$request_uri` | full original request URI (with arguments) |
 | `$query_string` | arguments in the request line |
-| `$scheme` | request scheme: _http_ or _https_ |
-| `$server_protocol` | request protocol, usually _HTTP/1.0_, _HTTP/1.1_, or _HTTP/2.0_ |
 
-<sup><i>Please see [official docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
+<sup><i>Please see [official doc](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
 
 Nginx also provides following keys:
 
@@ -888,7 +886,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=2r/s;
   - limit requests per IP as following
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
-- rate is `2` request each second or `30` requests per minute (`2` requests every `1` second)
+- rate is `2` request each second or `120` requests per minute (`2` requests every `1` second)
 
 Example of use:
 
@@ -901,7 +899,7 @@ location ~ /stats {
 - set maximum requests as `rate` * `burst` in `burst` seconds
   - with bursts not exceeding `5` requests
     + `2r/s` * `5` = `10` requests per `5` seconds
-    + `30r/m` * `5` = `150` requests per `5` minutes
+    + `120r/m` * `5` = `600` requests per `5` minutes
 - allocates slots in the queue according to the `burst` parameter with `nodelay`
 
 Testing queue:
@@ -925,7 +923,7 @@ HTTP/1.1 503     0.21 secs:    1501 bytes ==> GET  /stats/
 HTTP/1.1 503     0.22 secs:    1501 bytes ==> GET  /stats/
              |
              - burst=5 with nodelay
-             - 2r/s, 30r/m - 1r every 0.5 second
+             - 2r/s, 120r/m - 1r every 0.5 second
 
 Transactions:              6 hits
 Availability:          50.00 %
@@ -1638,17 +1636,31 @@ server {
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 
-#### :beginner: Limit the download speed with limit_zone and limit_conn
+#### :beginner: Use `limit_conn_zone` and `limit_conn` to strengthen limiting the download speed directives
 
 ###### Rationale
+
+  > Nginx provides two directives to limiting download speed: `limit_rate_after` and `limit_rate`. This solution limits nginx download speed per connection, so, if one user opens multiple video files, it will be able to download `X * the number of times` he connected to the video files.
+
+  > To prevent this situation use `limit_conn_zone` and `limit_conn` directives.
 
 ###### Example
 
 ```bash
+# Create limit connection zone:
+limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
 
+# Add rules to limiting the download speed:
+limit_rate_after 1m;
+limit_rate 250k;
+
+# Enable queue:
+limit_conn conn_for_remote_addr 10;
 ```
 
 ###### External resources
+
+- [How to Limit Nginx download Speed](https://www.scalescale.com/tips/nginx/how-to-limit-nginx-download-speed/)
 
 # Hardening
 
