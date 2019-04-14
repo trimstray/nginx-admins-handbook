@@ -32,7 +32,9 @@
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
   * [Contributing & Support](#contributing--support)
-  * [SSL Report: blkcipher.info](#ssl-report-blkcipherinfo)
+  * [Reports: blkcipher.info](#reports-blkcipherinfo)
+    * [SSL Labs](#ssl-labs)
+    * [Mozilla Observatory](#mozilla-observatory)
   * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
@@ -161,16 +163,31 @@ Before adding a pull request, please see the **[contributing guidelines](CONTRIB
 
 If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
 
-## SSL Report: blkcipher.info
+## Reports: blkcipher.info
 
-Many of these recipes have been applied to the configuration of my private website. I finally got all 100%'s on my scores:
-
-<p align="center">
-    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/blkcipher_ssllabs_preview.png"
-        alt="blkcipher_ssllabs_preview">
-</p>
+Many of these recipes have been applied to the configuration of my private website.
 
   > An example configuration is in [this](#configuration-examples) chapter.
+
+### SSL Labs
+
+I finally got all 100%'s on my scores:
+
+<p align="center">
+  <a href="https://www.ssllabs.com/ssltest/analyze.html?d=blkcipher.info&hideResults=on">
+    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/blkcipher_ssllabs_preview.png" alt="blkcipher_ssllabs_preview">
+  </a>
+</p>
+
+### Mozilla Observatory
+
+I also got the highest note from Mozilla:
+
+<p align="center">
+  <a href="https://observatory.mozilla.org/analyze/blkcipher.info?third-party=false">
+    <img src="https://github.com/trimstray/nginx-quick-reference/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
+  </a>
+</p>
 
 ## Printable high-res hardening checklist
 
