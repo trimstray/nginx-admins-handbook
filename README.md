@@ -96,7 +96,7 @@
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names where possible](#beginner-use-exact-names-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
-  * [Use limit_conn_zone and limit_conn to strengthen limiting the download speed directives](#use-limit_conn_zone-and-limit_conn-to-strengthen-limiting-the-download-speed-directives)
+  * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -1654,11 +1654,15 @@ server {
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 
-#### :beginner: Use `limit_conn_zone` and `limit_conn` to strengthen limiting the download speed directives
+#### :beginner: Use `limit_conn` to improve limiting the download speed
 
 ###### Rationale
 
-  > Nginx provides two directives to limiting download speed: `limit_rate_after` and `limit_rate`. This solution limits nginx download speed per connection, so, if one user opens multiple video files, it will be able to download `X * the number of times` he connected to the video files.
+  > Nginx provides two directives to limiting download speed:
+  >   - `limit_rate_after` - sets the amount of data transferred before the `limit_rate` directive takes effect
+  >   - `limit_rate` - allows you to limit the transfer rate of individual client connections (past exceeding `limit_rate_after`)
+
+  > This solution limits nginx download speed per connection, so, if one user opens multiple e.g. video files, it will be able to download `X * the number of times` he connected to the video files.
 
   > To prevent this situation use `limit_conn_zone` and `limit_conn` directives.
 
@@ -1669,11 +1673,16 @@ server {
 limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
 
 # Add rules to limiting the download speed:
-limit_rate_after 1m;
-limit_rate 250k;
+limit_rate_after 1m;  # run at maximum speed for the first 1 megabyte
+limit_rate 250k;      # and set rate limit after 1 megabyte
 
 # Enable queue:
-limit_conn conn_for_remote_addr 10;
+location /videos {
+
+  # Max amount of data by one client: 10 megabytes (limit_rate_after * 10)
+  limit_conn conn_for_remote_addr 10;
+
+  ...
 ```
 
 ###### External resources
