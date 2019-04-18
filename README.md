@@ -276,15 +276,16 @@ _Written for experienced systems administrators and engineers, this book teaches
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/h5bp/server-configs-nginx"><b>Nginx boilerplate configs</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx-boilerplate/nginx-boilerplate"><b>Awesome Nginx configuration template</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 </p>
 
 ##### Cheatsheets
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://gist.github.com/carlessanagustin/9509d0d31414804da03b"><b>Nginx Cheatsheet</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.scalescale.com/tips/nginx/"><b>Nginx Tutorials, Linux Sysadmin Configuration & Optimizing Tips and Tricks</b></a><br>
 </p>
 
@@ -1914,14 +1915,16 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
-  > If you have e.g. TLS 1.2 and TLS 1.1 remember about [set properly](#beginner-use-only-strong-ciphers) ciphers to handle both.
+  > Before enable specific protocol version, you should check which ciphers are supported. So if you enable TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, if you set appropriate versions of ssl/tls, they will not be anyway works without specific ciphers.
+
+  > But remember: TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions (and brings significant performance improvements which should ensure there are no longer any reasons to be using unencrypted connections in future.
 
 ###### Example
 
 ```bash
 ssl_protocols TLSv1.2;
 
-# Enabling also TLS 1.3:
+# To enable TLS 1.3:
 ssl_protocols TLSv1.2 TLSv1.3;
 ```
 
@@ -1937,8 +1940,13 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
 - [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
+- [TLS v1.2 handshake overview](https://medium.com/@ethicalevil/tls-handshake-protocol-overview-a39e8eee2cf5)
 - [TLS1.3 - OpenSSLWiki](https://wiki.openssl.org/index.php/TLS1.3)
+- [TLS1.2 - Every byte explained and reproduced](https://tls12.ulfheim.net/)
+- [TLS1.3 - Every byte explained and reproduced](https://tls13.ulfheim.net/)
 - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
+- [An Overview of TLS 1.3 - Faster and More Secure](https://kinsta.com/blog/tls-1-3/)
+- [Differences between TLS 1.2 and TLS 1.3](https://www.wolfssl.com/differences-between-tls-1-2-and-tls-1-3/)
 
 #### :beginner: Use only strong ciphers
 
@@ -1984,11 +1992,14 @@ ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-1
 
 ###### External resources
 
+- [TLS Cipher Suites](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-4)
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 - [Which SSL/TLS Protocol Versions and Cipher Suites Should I Use?](https://www.securityevaluators.com/ssl-tls-protocol-versions-cipher-suites-use/)
+- [Recommendations for a cipher string](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/TLS_Cipher_String_Cheat_Sheet.md)
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
-- [Differences between TLS 1.2 and TLS 1.3](https://www.wolfssl.com/differences-between-tls-1-2-and-tls-1-3/)
+- [Cipher Suite Breakdown](https://blogs.technet.microsoft.com/askpfeplat/2017/12/26/cipher-suite-breakdown/)
+- [OpenSSL IANA Mapping](https://testssl.sh/openssl-iana.mapping.html)
 
 #### :beginner: Use more secure ECDH Curve
 
@@ -2017,7 +2028,8 @@ ssl_ecdh_curve secp521r1:secp384r1;
 &nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
 
 ```bash
-# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order). This setup downgrade Key Exchange score:
+# Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order).
+# This setup downgrade Key Exchange score:
 ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
 ```
 
