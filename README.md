@@ -1917,7 +1917,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > Before enabling specific protocol version, you should check which ciphers are supported by protocol. So if you turn on TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers.
 
-  > But remember: TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions.
+  > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions.
 
 ###### Example
 
