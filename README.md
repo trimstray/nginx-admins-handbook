@@ -1891,7 +1891,7 @@ For `x25519`:
 openssl genpkey -algorithm ${_curve} -out ${_fd} )
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
 
 ```bash
 ( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
@@ -1900,7 +1900,7 @@ openssl genpkey -algorithm ${_curve} -out ${_fd} )
 certbot certonly -d domain.com -d www.domain.com
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **90**</sub>
 
 ###### External resources
 
@@ -1914,22 +1914,24 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
+  > If you have e.g. TLS 1.2 and TLS 1.1 remember about [set properly](#beginner-use-only-strong-ciphers) ciphers to handle both.
+
 ###### Example
 
 ```bash
 ssl_protocols TLSv1.2;
 
-# For TLS 1.3
+# Enabling also TLS 1.3:
 ssl_protocols TLSv1.2 TLSv1.3;
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
 
 ```bash
 ssl_protocols TLSv1.2 TLSv1.1;
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **95**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **95**</sub>
 
 ###### External resources
 
@@ -1954,11 +1956,15 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### Example
 
+Ciphersuite for TLS 1.2:
+
 ```bash
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
+
+Ciphersuite for TLS 1.2/1.1:
 
 ```bash
 # 1)
@@ -1968,7 +1974,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-E
 ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:!AES256-GCM-SHA256:!AES256-GCM-SHA128:!aNULL:!MD5";
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **90**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **90**</sub>
 
 Ciphersuite for TLS 1.3:
 
@@ -2008,7 +2014,7 @@ ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-1
 ssl_ecdh_curve secp521r1:secp384r1;
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
 
 ```bash
 # Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order). This setup downgrade Key Exchange score:
@@ -2052,7 +2058,7 @@ openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **100**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
 
 ###### External resources
 
@@ -2118,7 +2124,7 @@ gzip off;
 add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" always;
 ```
 
-&nbsp;&nbsp;<sub>ssllabs score: **A+**</sub>
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **A+**</sub>
 
 ###### External resources
 
