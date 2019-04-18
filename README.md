@@ -1915,9 +1915,9 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
-  > Before enable specific protocol version, you should check which ciphers are supported. So if you enable TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, if you set appropriate versions of ssl/tls, they will not be anyway works without specific ciphers.
+  > Before enabling specific protocol version, you should check which ciphers are supported by protocol. So if you turn on TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers.
 
-  > But remember: TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions (and brings significant performance improvements which should ensure there are no longer any reasons to be using unencrypted connections in future.
+  > But remember: TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions.
 
 ###### Example
 
