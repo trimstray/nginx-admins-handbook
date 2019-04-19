@@ -1932,7 +1932,7 @@ certbot certonly -d domain.com -d www.domain.com
 ssl_protocols TLSv1.2;
 
 # To enable TLS 1.3:
-ssl_protocols TLSv1.2 TLSv1.3;
+ssl_protocols TLSv1.3 TLSv1.2;
 ```
 
 &nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
