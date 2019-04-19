@@ -105,7 +105,7 @@
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
-  * [Keep only TLS 1.2 (+ TLS 1.3)](#beginner-keep-only-tls-12--tls-13)
+  * [Keep only TLS 1.2](#beginner-keep-only-tls-12)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
@@ -1912,7 +1912,7 @@ certbot certonly -d domain.com -d www.domain.com
 
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 
-#### :beginner: Keep only TLS 1.2 (+ TLS 1.3)
+#### :beginner: Keep only TLS 1.2
 
 ###### Rationale
 
@@ -1920,7 +1920,9 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
-  > Before enabling specific protocol version, you should check which ciphers are supported by protocol. So if you turn on TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers.
+  > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers.
+
+  > If you told Nginx to use TLS 1.3, it will use TLS 1.3 only where available. Nginx supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions.
 
