@@ -1025,13 +1025,13 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 
 ###### Rationale
 
-  > When your configuration grow, the need for organising your code will also grow. Well organised code is:
+  > When your Nginx configuration grow, the need for organising your configuration will also grow. Well organised code is:
 
   > - easier to understand
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to attach your Nginx specific code to global config, contexts and other.
+  > Use `include` directive to move common server settings into a separate files and to attach your Nginx specific code to global config, contexts and other.
 
 ###### Example
 
@@ -1062,7 +1062,7 @@ server {
 
 ###### Rationale
 
-...
+  > I don't like duplicating the rules, but it's certainly an easy and maintainable way.
 
 ###### Example
 
@@ -1094,9 +1094,9 @@ server {
 
 ###### Rationale
 
-  > Nginx should prevent processing requests with undefined server names - also traffic on IP address. It also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
+  > Nginx should prevent processing requests with undefined server names (also on IP address). It also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
 
-  > If none of the listen directives have the `default_server` parameter then the first server with the address:port pair will be the default server for this pair.
+  > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair.
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
@@ -1111,7 +1111,10 @@ server {
   # Add default_server to your listen directive in the server that you want to act as the default.
   listen 10.240.20.2:443 default_server ssl;
 
-  # We catch invalid domain names, requests without the "Host" header and all others (also due to the above setting).
+  # We catch:
+  #   - invalid domain names
+  #   - requests without the "Host" header
+  #   - and all others (also due to the above setting)
   server_name _ "" default_server;
 
   ...
@@ -1163,7 +1166,7 @@ server {
 
 ###### Rationale
 
-  > Use the reload method of Nginx to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
+  > Use the `reload` method of Nginx to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
 
   > This ability of Nginx is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
 
@@ -1412,7 +1415,7 @@ server {
 
 ###### Rationale
 
-  > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a **very** high-traffic sites).
+  > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a very high-traffic sites).
 
 ###### Example
 
@@ -1717,6 +1720,8 @@ chown -R www-data:www-data /var/www/domain.com
 ###### Rationale
 
   > It is recommended to disable any modules which are not required as this will minimize the risk of any potential attacks by limiting the operations allowed by the web server.
+
+  > The best way to disable unused modules you should use the `configure` option during installation.
 
 ###### Example
 
