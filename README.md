@@ -65,6 +65,10 @@
   * [Nginx processes](#nginx-processes)
   * [Nginx contexts](#nginx-contexts)
   * [Error log severity levels](#error-log-severity-levels)
+  * [Rate Limiting](#rate-limiting)
+  * [Monitoring](#monitoring)
+    * [Goaccess](#goaccess)
+    * [Ngxtop](#ngxtop)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
@@ -73,11 +77,13 @@
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
-  * [Rate Limiting](#rate-limiting)
+  * [Shell aliases](#shell-aliases)
+  * [Configuration snippets](#configuration-snippets)
+    * [Blocking referrer spam](#blocking-referrer-spam)
+    * [Limiting referrer spam](#limiting-referrer-spam)
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
-  * [Shell aliases](#shell-aliases)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
@@ -662,54 +668,6 @@ The following is a list of all severity levels:
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
 
-#### Debugging
-
-###### See the top 5 IP addresses in a web server log
-
-```bash
-cut -d ' ' -f1 /path/to/logfile | sort | uniq -c | sort -nr | head -5 | nl
-```
-
-###### Analyse web server log and show only 2xx http codes
-
-```bash
-tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [2]"
-```
-
-###### Analyse web server log and show only 5xx http codes
-
-```bash
-tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [5]"
-```
-
-###### Get range of dates in a web server log
-
-```bash
-# 1)
-awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
-
-# 2)
-awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:%H:%M")'/ { print $0 }' /path/to/logfile
-```
-
-###### Get line rates from web server log
-
-```bash
-tail -F /path/to/logfile | pv -N RAW -lc 1>/dev/null
-```
-
-###### Trace network traffic for all Nginx processes
-
-```bash
-strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
-```
-
-###### List all files accessed by a Nginx
-
-```bash
-strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
-```
-
 #### Rate Limiting
 
   > All rate limiting rules (definitions) should be added to the Nginx `http` context.
@@ -830,6 +788,166 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` option Nginx would wait (no 503 response) and handle excessive requests with some delay.
+
+#### Monitoring
+
+###### Goaccess
+
+```bash
+goaccess -c /path/to/logfile
+```
+
+###### Ngxtop
+
+```bash
+ngxtop -l /path/to/logfile
+```
+
+#### Debugging
+
+###### See the top 5 IP addresses in a web server log
+
+```bash
+cut -d ' ' -f1 /path/to/logfile | sort | uniq -c | sort -nr | head -5 | nl
+```
+
+###### Analyse web server log and show only 2xx http codes
+
+```bash
+tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [2]"
+```
+
+###### Analyse web server log and show only 5xx http codes
+
+```bash
+tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [5]"
+```
+
+###### Calculating requests per second
+
+```bash
+# In real time:
+tail -F /path/to/logfile | pv -lr >/dev/null
+
+awk '{print $4}' /path/to/logfile | uniq -c | sort -rn | head | tr -d "["
+```
+
+###### Get range of dates in a web server log
+
+```bash
+# 1)
+awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
+
+# 2)
+awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:%H:%M")'/ { print $0 }' /path/to/logfile
+```
+
+###### Get line rates from web server log
+
+```bash
+tail -F /path/to/logfile | pv -N RAW -lc 1>/dev/null
+```
+
+###### Trace network traffic for all Nginx processes
+
+```bash
+strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
+```
+
+###### List all files accessed by a Nginx
+
+```bash
+strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
+```
+
+#### Shell aliases
+
+```bash
+alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
+
+alias ng.stop='ng.test && systemctl stop nginx'
+
+alias ng.reload='ng.test && systemctl reload nginx'
+alias ng.reload='ng.test && kill -HUP $(cat /var/run/nginx.pid)'
+#                       ... kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+
+alias ng.restart='ng.test && systemctl restart nginx'
+alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/nginx'
+#                        ... kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}') ...
+```
+
+#### Configuration snippets
+
+###### Blocking referrer spam
+
+Attempt 1:
+
+```bash
+# file: /etc/nginx/limits.conf
+
+map $http_referer $invalid_referer {
+
+  hostnames;
+
+  default                   0;
+
+  # Invalid referrers:
+  "https://invalid.com/"    1;
+  "~*spamdomain4.com"       1;
+  "~*.invalid\.org"         1;
+
+}
+
+# turn on in a specific context (e.g. server)
+server_name example.com;
+
+  if ($invalid_referer) { return 403; }
+
+  ...
+```
+
+Attempt 2:
+
+```bash
+# turn on in a server context (e.g. location)
+location /check_status {
+
+  if ($http_referer ~ "spam1\.com|spam2\.com|spam3\.com") {
+
+    return 444;
+
+  }
+
+  ...
+```
+
+###### Limiting referrer spam
+
+Attempt 1:
+
+```bash
+# file: /etc/nginx/limits.conf
+
+map $http_referer $limit_ip_key_by_referer {
+
+  default                   $binary_remote_addr;
+
+  # Invalid referrers:
+  "https://invalid.com/"    1;
+  "~*spamdomain4.com"       1;
+  "~*.invalid\.org"         1;
+
+}
+
+limit_req_zone $limit_ip_key_by_referer zone=req_for_remote_addr_by_referer:1m rate=5r/s;
+
+# turn on in a specific context (e.g. server)
+server_name example.com;
+
+  limit_req zone=req_for_remote_addr_by_referer burst=2;
+
+  ...
+```
 
 ###### Limiting the rate of requests with burst mode
 
@@ -1001,22 +1119,6 @@ Successful transactions: 364
 Failed transactions:     769
 Longest transaction:    1.10
 Shortest transaction:   0.38
-```
-
-#### Shell aliases
-
-```bash
-alias ng.test='nginx -t -c /etc/nginx/nginx.conf'
-
-alias ng.stop='ng.test && systemctl stop nginx'
-
-alias ng.reload='ng.test && systemctl reload nginx'
-alias ng.reload='ng.test && kill -HUP $(cat /var/run/nginx.pid)'
-#                       ... kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
-
-alias ng.restart='ng.test && systemctl restart nginx'
-alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/nginx'
-#                        ... kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}') ...
 ```
 
 # Base Rules
