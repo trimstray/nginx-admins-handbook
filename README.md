@@ -1003,6 +1003,10 @@ server_name example.com;
 
   auth_basic "Restricted Area";
   auth_basic_user_file /etc/nginx/acls/htpasswd_example.com.conf;
+
+  location / {
+
+    ...
 ```
 
 ###### Blocking/allowing IP addresses
