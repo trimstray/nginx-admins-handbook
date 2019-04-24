@@ -67,8 +67,14 @@
   * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
   * [Monitoring](#monitoring)
-    * [Goaccess](#goaccess)
+    * [GoAccess](#goaccess)
+      * [Analyse log file and enable all recorded statistics](#analyse-log-file-and-enable-all-recorded-statistics)
+      * [Analyse compressed log file](#analyse-compressed-log-file)
+      * [Analyse log file remotely](#analyse-log-file-remotely)
     * [Ngxtop](#ngxtop)
+      * [Analyse log file](#analyse-log-file)
+      * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
+      * [Analyse log file remotely](##analyse-log-file-remotely-1)
   * [Debugging](#debugging)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
@@ -791,16 +797,58 @@ Without `nodelay` option Nginx would wait (no 503 response) and handle excessive
 
 #### Monitoring
 
-###### Goaccess
+##### GoAccess
+
+  > Paths configuration file:
+  >
+  >   - `/etc/goaccess.conf`
+  >   - `/etc/goaccess/goaccess.conf`
+  >   - `/usr/local/etc/goaccess.conf`
+
+Before use GoAccess enable these parameters:
 
 ```bash
-goaccess -c /path/to/logfile
+time-format %H:%M:%S
+date-format %d/%b/%Y
+log-format  %h %^[%d:%t %^] "%r" %s %b "%R" "%u"
 ```
 
-###### Ngxtop
+###### Analyse log file and enable all recorded statistics
+
+```bash
+goaccess -f /path/to/logfile -a
+```
+
+###### Analyse compressed log file
+
+```bash
+zcat /path/to/logfile.1.gz | goaccess -a -p /etc/goaccess/goaccess.conf
+```
+
+###### Analyse log file remotely
+
+```bash
+ssh user@remote_host '/path/to/logfile' | goaccess -a
+```
+
+##### Ngxtop
+
+###### Analyse log file
 
 ```bash
 ngxtop -l /path/to/logfile
+```
+
+###### Analyse log file and print requests with 4xx and 5xx
+
+```bash
+ngxtop -l /path/to/logfile -i 'status >= 400' print request status
+```
+
+###### Analyse log file remotely
+
+```bash
+ssh user@remote_host tail -f /path/to/logfile | ngxtop -f combined
 ```
 
 #### Debugging
