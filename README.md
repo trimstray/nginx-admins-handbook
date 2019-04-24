@@ -79,6 +79,7 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](##analyse-log-file-remotely-1)
   * [Debugging](#debugging)
+    * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [See the top 5 IP addresses in a web server log](#see-the-top-5-ip-addresses-in-a-web-server-log)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
     * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
@@ -88,6 +89,7 @@
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
+    * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
     * [Limiting referrer spam](#limiting-referrer-spam)
@@ -909,6 +911,12 @@ ssh user@remote_host tail -f /path/to/logfile | ngxtop -f combined
 
 #### Debugging
 
+###### Check if the module has been compiled
+
+```bash
+nginx -V 2>&1 | grep -- 'http_geoip_module'
+```
+
 ###### See the top 5 IP addresses in a web server log
 
 ```bash
@@ -981,6 +989,21 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 ```
 
 #### Configuration snippets
+
+###### Restricting access with basic authentication
+
+```bash
+# 1) generate file with htpasswd command:
+htpasswd -c htpasswd_example.com.conf <username>
+
+# 2) include this file in server context:
+server_name example.com;
+
+  ...
+
+  auth_basic "Restricted Area";
+  auth_basic_user_file /etc/nginx/acls/htpasswd_example.com.conf;
+```
 
 ###### Blocking/allowing IP addresses
 
