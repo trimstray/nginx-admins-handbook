@@ -3,7 +3,21 @@
 </div>
 
 <div align="center">
-  <h6><code>My notes about Nginx...</code></h6>
+  <h6><code>My SysAdmin Notes, Cheat Sheets & White Papers</code></h6>
+</div>
+
+<br>
+
+<div align="center">
+  <sup>
+    <i>
+      Hi-diddle-diddle, he played on his<br>
+      fiddle and danced with lady pigs.<br>
+      Number three said, "Nicks on tricks!<br>
+      I'll build my house with <b>NGINX</b>!".<br>
+      <a href="https://g.co/kgs/HCcQVz">The Three Little Pigs: Who's Afraid of the Big Bad Wolf?</a>
+    </i>
+  </sup>
 </div>
 
 <br>
@@ -163,11 +177,15 @@
 
 To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/docs/)**.
 
+Nginx is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
+
 ## General disclaimer
 
 This is not an official handbook. Many of these rules refer to external resources. It is rather a collection of some rules and papers used by me (also in production environments but not only).
 
 Throughout this reference you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
+
+I created this repository to helps us to configure high performing Nginx web and proxy servers that are fast, secure and stable.
 
 Before you start remember about the two most important things:
 
@@ -341,7 +359,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 ##### Static analyzers
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/yandex/gixy"><b>Nginx static analyzer</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/yandex/gixy"><b>gixy</b></a><br>
 </p>
 
 ##### Log analyzers
@@ -365,6 +383,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/wg/wrk"><b>wrk</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/codesenberg/bombardier"><b>bombardier</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/cmpxchg16/gobench"><b>gobench</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/rakyll/hey"><b>hey</b></a><br>
 </p>
 
 ##### Development
