@@ -74,6 +74,7 @@
       * [Analyse log file and enable all recorded statistics](#analyse-log-file-and-enable-all-recorded-statistics)
       * [Analyse compressed log file](#analyse-compressed-log-file)
       * [Analyse log file remotely](#analyse-log-file-remotely)
+      * [Analyse log file and generate html report](#analyse-log-file-and-generate-html-report)
     * [Ngxtop](#ngxtop)
       * [Analyse log file](#analyse-log-file)
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
@@ -887,6 +888,12 @@ zcat /path/to/logfile.1.gz | goaccess -a -p /etc/goaccess/goaccess.conf
 
 ```bash
 ssh user@remote_host '/path/to/logfile' | goaccess -a
+```
+
+###### Analyse log file and generate html report
+
+```bash
+goaccess -p /etc/goaccess/goaccess.conf -f /path/to/logfile --log-format=COMBINED -o /var/www/index.html
 ```
 
 ##### Ngxtop
