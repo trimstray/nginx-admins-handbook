@@ -2094,7 +2094,8 @@ certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
 ### Example (ECC):
 # _curve: prime256v1, secp521r1, secp384r1
 ( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; \
-openssl ecparam -out ${_fd} -name ${_curve} -genkey ; openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
+openssl ecparam -out ${_fd} -name ${_curve} -genkey ; \
+openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 
 # Let's Encrypt (from above):
 certbot --csr ${_fd_csr} -[other-args]
@@ -2120,7 +2121,10 @@ certbot certonly -d domain.com -d www.domain.com
 
 ###### External resources
 
+- [Key Management Guidelines by NIST](https://csrc.nist.gov/Projects/Key-Management/Key-Management-Guidelines)
+- [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
+- [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 
 #### :beginner: Keep only TLS 1.2
 
@@ -2171,7 +2175,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow.
 
-  > For more security use only strong and not vulnerable ciphersuite (but if you use HTTP/2 you can get `Server sent fatal alert: handshake_failure` error).
+  > For more security use only strong and not vulnerable ciphersuite (but if you use HTTP/2 with restrictive ciphersuite you can get `Server sent fatal alert: handshake_failure` error).
 
   > Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because `ECDHE` suites are faster, you want to use them whenever clients supports them.
 
