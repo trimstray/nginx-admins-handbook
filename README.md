@@ -690,8 +690,6 @@ direct to the first server with a listen directive that satisfies first step
 
 #### Request processing stages
 
-#### Request processing stages
-
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
   - example modules: [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
 - `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite directives defined in a server block
@@ -1811,6 +1809,7 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
+- [Virtual server logic](#virtual-server-logic)
 
 #### :beginner: Avoid checks `server_name` with if directive
 
