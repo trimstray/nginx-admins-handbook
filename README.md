@@ -1962,7 +1962,9 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
 ###### Rationale
 
-  > Hidden directories and files should never be web accessible.
+  > Hidden directories and files should never be web accessible. If you use control version system you should defninitely drop the access to the critical hidden directories like a `.git` or `.svn` to prevent expose source code of your application.
+
+  > Sensitive resources contains items that abusers can use to fully recreate the source code used by the site and look for bugs, vulnerabilities, and exposed passwords.
 
 ###### Example
 
