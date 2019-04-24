@@ -88,6 +88,7 @@
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
+    * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
     * [Limiting referrer spam](#limiting-referrer-spam)
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
@@ -981,12 +982,151 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 
 #### Configuration snippets
 
+###### Blocking/allowing IP addresses
+
+Example 1:
+
+```bash
+# 1) file: /etc/nginx/acls/allow.map.conf
+
+# Map module:
+map $remote_addr $globals_internal_map_acl {
+
+  # Status code:
+  #  - 0 = false
+  #  - 1 = true
+  default 0;
+
+  ### INTERNAL ###
+  10.255.10.0/24 1;
+  10.255.20.0/24 1;
+  10.255.30.0/24 1;
+  192.168.0.0/16 1;
+
+}
+
+# 2) include this file in http context:
+include /etc/nginx/acls/allow.map.conf;
+
+# 3) turn on in a specific context (e.g. location)
+server_name example.com;
+
+  ...
+
+  location / {
+
+    proxy_pass http://localhost:80;
+    client_max_body_size 10m;
+
+  }
+
+  location ~ ^/(backend|api|admin) {
+
+    if ($globals_internal_map_acl) {
+
+      set $pass 1;
+
+    }
+
+    if ($globals_internal_map_acl) {
+
+      proxy_pass http://localhost:80;
+      client_max_body_size 10m;
+
+    }
+
+    if ($globals_internal_map_acl) {
+
+      rewrite ^(.*) https://example.com;
+
+    }
+
+  ...
+```
+
+Example 2:
+
+```bash
+# 1) file: /etc/nginx/acls/allow.geo.conf
+
+# Geo module:
+geo $globals_internal_geo_acl {
+
+  # Status code:
+  #  - 0 = false
+  #  - 1 = true
+  default 0;
+
+  ### INTERNAL ###
+  10.255.10.0/24 1;
+  10.255.20.0/24 1;
+  10.255.30.0/24 1;
+  192.168.0.0/16 1;
+
+}
+
+# 2) include this file in http context:
+include /etc/nginx/acls/allow.geo.conf;
+
+# 3) turn on in a specific context (e.g. location)
+server_name example.com;
+
+  ...
+
+  location / {
+
+    proxy_pass http://localhost:80;
+    client_max_body_size 10m;
+
+  }
+
+  location ~ ^/(backend|api|admin) {
+
+    if ($globals_internal_geo_acl = 0) {
+
+      return 403;
+
+    }
+
+    proxy_pass http://localhost:80;
+    client_max_body_size 10m;
+
+  ...
+```
+
+Example 3:
+
+```bash
+# 1) file: /etc/nginx/acls/allow.conf
+
+### INTERNAL ###
+allow 10.255.10.0/24;
+allow 10.255.20.0/24;
+allow 10.255.30.0/24;
+allow 192.168.0.0/16;
+
+### EXTERNAL ###
+allow 35.228.233.xxx;
+
+# 2) include this file in http context:
+include /etc/nginx/acls/allow.conf;
+
+# 3) turn on in a specific context (e.g. server)
+server_name example.com;
+
+  include /etc/nginx/acls/allow.conf;
+  allow   35.228.233.xxx;
+  deny    all;
+
+  ...
+```
+
 ###### Blocking referrer spam
 
 Example 1:
 
 ```bash
-# file: /etc/nginx/limits.conf
+# 1) file: /etc/nginx/limits.conf
 
 map $http_referer $invalid_referer {
 
@@ -1001,7 +1141,10 @@ map $http_referer $invalid_referer {
 
 }
 
-# turn on in a specific context (e.g. server)
+# 2) include this file in http context:
+include /etc/nginx/limits.conf;
+
+# 3) turn on in a specific context (e.g. server)
 server_name example.com;
 
   if ($invalid_referer) { return 403; }
@@ -1012,7 +1155,7 @@ server_name example.com;
 Example 2:
 
 ```bash
-# turn on in a server context (e.g. location)
+# 1) turn on in a specific context (e.g. location)
 location /check_status {
 
   if ($http_referer ~ "spam1\.com|spam2\.com|spam3\.com") {
@@ -1029,7 +1172,7 @@ location /check_status {
 Example 1:
 
 ```bash
-# file: /etc/nginx/limits.conf
+# 1) file: /etc/nginx/limits.conf
 
 map $http_referer $limit_ip_key_by_referer {
 
@@ -1044,7 +1187,7 @@ map $http_referer $limit_ip_key_by_referer {
 
 limit_req_zone $limit_ip_key_by_referer zone=req_for_remote_addr_by_referer:1m rate=5r/s;
 
-# turn on in a specific context (e.g. server)
+# 2) turn on in a specific context (e.g. server)
 server_name example.com;
 
   limit_req zone=req_for_remote_addr_by_referer burst=2;
