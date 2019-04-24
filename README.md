@@ -996,17 +996,34 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 # 1) generate file with htpasswd command:
 htpasswd -c htpasswd_example.com.conf <username>
 
-# 2) include this file in server context:
+# 2) include this file in specific context: (e.g. server)
 server_name example.com;
 
   ...
 
-  auth_basic "Restricted Area";
-  auth_basic_user_file /etc/nginx/acls/htpasswd_example.com.conf;
+  # These directives are optional, only if we need them:
+  satisfy all;
+
+  deny    10.255.10.0/24;
+  allow   192.168.0.0/16;
+  allow   127.0.0.1;
+  deny    all;
+
+  # It's important:
+  auth_basic            "Restricted Area";
+  auth_basic_user_file  /etc/nginx/acls/htpasswd_example.com.conf;
 
   location / {
 
     ...
+
+  location /public/ {
+
+    auth_basic off;
+
+  }
+
+  ...
 ```
 
 ###### Blocking/allowing IP addresses
