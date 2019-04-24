@@ -53,6 +53,7 @@
   * [Log analyzers](#log-analyzers)
   * [Performance analyzers](#performance-analyzers)
   * [Benchmarking tools](#benchmarking-tools)
+  * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
@@ -64,6 +65,8 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Nginx contexts](#nginx-contexts)
+  * [Virtual server logic](#virtual-server-logic)
+  * [Request processing stages](#request-processing-stages)
   * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
   * [Monitoring](#monitoring)
@@ -290,7 +293,6 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx-boilerplate/nginx-boilerplate"><b>Awesome Nginx configuration template</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 </p>
 
@@ -361,6 +363,16 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/cmpxchg16/gobench"><b>gobench</b></a><br>
 </p>
 
+##### Development
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Nginx-Lua/"><b>An Introduction To OpenResty (nginx + lua) - Part 1</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-2/"><b>An Introduction To OpenResty - Part 2 - Concepts</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-3/"><b>An Introduction To OpenResty - Part 3
+</b></a><br>
+</p>
+
 ##### Online tools
 
 <p>
@@ -383,6 +395,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 ##### Other stuff
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The ARchitecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 </p>
@@ -603,11 +616,11 @@ inflight requests
 
 Nginx has **one master process** and **one or more worker processes**.
 
-The main purpose of the master process is to read and evaluate configuration files, as well as maintain the worker processes.
+The main purposes of the master process is to read and evaluate configuration files, as well as maintain the worker processes (respawn when a worker dies), handle signals and notify workers.
 
 Master process should be started as **root** user, because this will allow Nginx to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
-The worker processes do the actual processing of requests. These are spawned by the master process, and the user and group will as specified (unprivileged).
+The worker processes do the actual processing of requests and get commands from master process. These are spawned by the master process, and the user and group will as specified (unprivileged).
 
   > Nginx has also cache loader and cache manager processes but only if you enable caching.
 
@@ -656,6 +669,38 @@ Global/Main Context
         |
         +-----» Mail Context
 ```
+
+#### Virtual server logic
+
+Nginx uses the following logic to determining which virtual server should be used:
+
+1) Match the `address:port` pair to the listen directive
+2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
+3) Match the `Host` header field against the `server_name` directive with a
+wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
+4) Match the `Host` header field against the `server_name` directive with a
+wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
+5) Match the `Host` header field against the `server_name` directive as a regular expression
+6) If all the `Host` headers doesn't match, then direct to the listen directive
+marked as `default_server`
+7) If all the `Host` headers doesn't match and there is no `default_server`,
+direct to the first server with a listen directive that satisfies step 1
+
+<sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
+
+#### Request processing stages
+
+- `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header; [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+- `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite, rewrite directives defined in a server block; [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+- `NGX_HTTP_FIND_CONFIG_PHASE` - replace the location according to URI (location lookup)
+- `NGX_HTTP_REWRITE_PHASE` - URI transformation on location level; [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+- `NGX_HTTP_POST_REWRITE_PHASE` - URI transformation post-processing (the request is redirected to a new location); [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+- `NGX_HTTP_PREACCESS_PHASE` - authentication preprocessing request limit, connection limit (access restriction); [ngx_http_limit_req_module](http://nginx.org/en/docs/http/ngx_http_limit_req_module.html), ngx_http_limit_conn_module](http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html), [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+- `NGX_HTTP_ACCESS_PHASE` - access restrictions check, verification of the client (the authentication process, limiting access); [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
+- `NGX_HTTP_POST_ACCESS_PHASE` - access restrictions check post-processing phase, the certification process, processing `satisfy any` directive; [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
+- `NGX_HTTP_PRECONTENT_PHASE` - generating content; [ngx_http_try_files_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
+- `NGX_HTTP_CONTENT_PHASE` - content processing; [ngx_http_index_module](https://nginx.org/en/docs/http/ngx_http_index_module.html), [ngx_http_autoindex_module](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html), [ngx_http_gzip_module](https://nginx.org/en/docs/http/ngx_http_gzip_module.html)
+- `NGX_HTTP_LOG_PHASE` - log processing; [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
 #### Error log severity levels
 
@@ -928,7 +973,7 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 
 ###### Blocking referrer spam
 
-Attempt 1:
+Example 1:
 
 ```bash
 # file: /etc/nginx/limits.conf
@@ -954,7 +999,7 @@ server_name example.com;
   ...
 ```
 
-Attempt 2:
+Example 2:
 
 ```bash
 # turn on in a server context (e.g. location)
@@ -971,7 +1016,7 @@ location /check_status {
 
 ###### Limiting referrer spam
 
-Attempt 1:
+Example 1:
 
 ```bash
 # file: /etc/nginx/limits.conf
@@ -1176,7 +1221,7 @@ Shortest transaction:   0.38
 ###### Rationale
 
   > When your Nginx configuration grow, the need for organising your configuration will also grow. Well organised code is:
-
+  >
   > - easier to understand
   > - easier to maintain
   > - easier to work with
@@ -1439,7 +1484,9 @@ server {
 
 ###### Rationale
 
-  > Creates variables with values depending on the client IP address. Use map or geo modules (one of them) to prevent users abusing your servers.
+  > Use map or geo modules (one of them) to prevent users abusing your servers.
+
+  > This allows to create variables with values depending on the client IP address.
 
 ###### Example
 
@@ -1487,7 +1534,7 @@ geo $globals_internal_geo_acl {
 
   > Manage a large number of redirects with Nginx maps.
 
-  > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents.
+  > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
 ###### Example
 
@@ -1647,11 +1694,11 @@ log_format debug-level-2
 
   > The `worker_processes` directive is the sturdy spine of life for Nginx. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
 
+  > I think for high load proxy servers (also standalone servers) good value is `ALL_CORES - 1` (please test it before used).
+
   Official Nginx documentation say:
 
   > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)._
-
-  > I think for high load proxy servers (also standalone servers) good value is `ALL_CORES - 1` (please test it before used).
 
 ###### Example
 
@@ -1668,9 +1715,9 @@ worker_processes 3;
 
 ###### Rationale
 
-  > HTTP/2 will make our applications faster, simpler, and more robust.
-
   > The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimize protocol overhead via efficient compression of HTTP header fields, and add support for request prioritization and server push.
+
+  > HTTP/2 will make our applications faster, simpler, and more robust.
 
   > HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before.
 
