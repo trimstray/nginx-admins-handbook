@@ -1731,6 +1731,7 @@ geo $globals_internal_geo_acl {
 ###### External resources
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
+- [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
 
 #### :beginner: Map all the things...
 
