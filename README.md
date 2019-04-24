@@ -69,6 +69,7 @@
   * [Request processing stages](#request-processing-stages)
   * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
+  * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
       * [Analyse log file and enable all recorded statistics](#analyse-log-file-and-enable-all-recorded-statistics)
@@ -285,9 +286,9 @@ _Written for experienced systems administrators and engineers, this book teaches
 ##### About Nginx
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Project</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Official Project</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Documentation</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx official read-only mirror</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official read-only mirror</b></a><br>
 </p>
 
 ##### References
@@ -297,7 +298,6 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx-boilerplate/nginx-boilerplate"><b>Awesome Nginx configuration template</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 </p>
 
 ##### Cheatsheets
@@ -399,7 +399,9 @@ _Written for experienced systems administrators and engineers, this book teaches
 ##### Other stuff
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The ARchitecture of Open Source Applications - Nginx</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 </p>
@@ -853,6 +855,12 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` option Nginx would wait (no 503 response) and handle excessive requests with some delay.
+
+#### Analyse configuration
+
+```bash
+gixy /etc/nginx/nginx.conf
+```
 
 #### Monitoring
 
