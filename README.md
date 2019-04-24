@@ -684,23 +684,35 @@ wildcard at the end of the string (the hash table with wildcard names ending wit
 6) If all the `Host` headers doesn't match, then direct to the listen directive
 marked as `default_server`
 7) If all the `Host` headers doesn't match and there is no `default_server`,
-direct to the first server with a listen directive that satisfies step 1
+direct to the first server with a listen directive that satisfies first step
 
 <sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
 
 #### Request processing stages
 
-- `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header; [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
-- `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite, rewrite directives defined in a server block; [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+#### Request processing stages
+
+- `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
+  - example modules: [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+- `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite directives defined in a server block
+  - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
 - `NGX_HTTP_FIND_CONFIG_PHASE` - replace the location according to URI (location lookup)
-- `NGX_HTTP_REWRITE_PHASE` - URI transformation on location level; [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
-- `NGX_HTTP_POST_REWRITE_PHASE` - URI transformation post-processing (the request is redirected to a new location); [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
-- `NGX_HTTP_PREACCESS_PHASE` - authentication preprocessing request limit, connection limit (access restriction); [ngx_http_limit_req_module](http://nginx.org/en/docs/http/ngx_http_limit_req_module.html), ngx_http_limit_conn_module](http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html), [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
-- `NGX_HTTP_ACCESS_PHASE` - access restrictions check, verification of the client (the authentication process, limiting access); [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
-- `NGX_HTTP_POST_ACCESS_PHASE` - access restrictions check post-processing phase, the certification process, processing `satisfy any` directive; [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
-- `NGX_HTTP_PRECONTENT_PHASE` - generating content; [ngx_http_try_files_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
-- `NGX_HTTP_CONTENT_PHASE` - content processing; [ngx_http_index_module](https://nginx.org/en/docs/http/ngx_http_index_module.html), [ngx_http_autoindex_module](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html), [ngx_http_gzip_module](https://nginx.org/en/docs/http/ngx_http_gzip_module.html)
-- `NGX_HTTP_LOG_PHASE` - log processing; [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
+- `NGX_HTTP_REWRITE_PHASE` - URI transformation on location level
+  - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+- `NGX_HTTP_POST_REWRITE_PHASE` - URI transformation post-processing (the request is redirected to a new location)
+  - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+- `NGX_HTTP_PREACCESS_PHASE` - authentication preprocessing request limit, connection limit (access restriction)
+  - example modules: [ngx_http_limit_req_module](http://nginx.org/en/docs/http/ngx_http_limit_req_module.html), [ngx_http_limit_conn_module](http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html), [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+- `NGX_HTTP_ACCESS_PHASE` - verification of the client (the authentication process, limiting access)
+  - example modules: [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
+- `NGX_HTTP_POST_ACCESS_PHASE` - access restrictions check post-processing phase, the certification process, processing `satisfy any` directive
+  - example modules: [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
+- `NGX_HTTP_PRECONTENT_PHASE` - generating content
+  - example modules: [ngx_http_try_files_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
+- `NGX_HTTP_CONTENT_PHASE` - content processing
+  - example modules: [ngx_http_index_module](https://nginx.org/en/docs/http/ngx_http_index_module.html), [ngx_http_autoindex_module](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html), [ngx_http_gzip_module](https://nginx.org/en/docs/http/ngx_http_gzip_module.html)
+- `NGX_HTTP_LOG_PHASE` - log processing
+  - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
 #### Error log severity levels
 
