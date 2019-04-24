@@ -160,7 +160,7 @@ To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/do
 
 ## General disclaimer
 
-This is not an official handbook. Many of these rules refer to external resources. It is rather a quick collection of some rules and papers used by me in production environments (not only).
+This is not an official handbook. Many of these rules refer to external resources. It is rather a collection of some rules and papers used by me (also in production environments but not only).
 
 Throughout this reference you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
