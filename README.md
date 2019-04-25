@@ -441,50 +441,121 @@ Mandatory requirements:
 - [OpenSSL](https://www.openssl.org/source/) library
 - [Zlib](https://zlib.net/) library
 - [PCRE](https://ftp.pcre.org/pub/pcre/) library
-- [GCC](https://gcc.gnu.org/) Compiler
+
+If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building Nginx:
+
+| <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
+| :---         | :---         | :---         |
+| `gcc make build-essential` | `gcc gcc-c++ kernel-devel` | |
+| `perl libperl-dev` | `perl perl-ExtUtils-Embed` | |
+| `libssl-dev` | `openssl-devel` | if you don't use source |
+| `zlib1g-dev` | `zlib-devel` | if you don't use source |
+| `libpcre2-dev` | `pcre-devel` | if you don't use source |
+| `libxslt-dev` | `libxslt libxslt-devel` | |
+| `libgd-dev` | `gd gd-devel` | |
+| `libgeoip-dev` | `GeoIP-devel` | |
+| `libxml2-dev` | `libxml2-dev` | |
+| `libexpat-dev` | `expat-devel` | |
+| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
+| | `cpio` | |
+| | `gettext-devel` | |
+
+```bash
+# Ubuntu/Debian
+apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+
+# RedHat/CentOS
+yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
+```
 
 ###### Nginx package
 
 - [Nginx](https://nginx.org/download/) source code
 
-  > Before starting the installation, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/).
+  > Before starting the installation, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
 ```bash
-# Download latest package:
-wget -c https://nginx.org/download/nginx-1.9.8.tar.gz
+# Set version of Nginx:
+export ngx_version="1.15.8"
 
-# Extract content and go to the Nginx source directory:
-tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
+# Create directories:
+mkdir /usr/local/src/nginx-${ngx_version}
+mkdir /usr/local/src/nginx-${ngx_version}/master
+mkdir /usr/local/src/nginx-${ngx_version}/modules
 
-# Configure with default values for build parameters:
+# Install prebuilt dependencies:
+apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+
+# Or install sources:
+#   - libssl-dev
+#   - zlib1g-dev
+cd /usr/local/src/nginx-${ngx_version}/modules
+
+wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+cd /usr/local/src/nginx-${ngx_version}/modules/pcre-8.42
 ./configure
+make -j2 && make test
+make install
 
-# Configure with new values for build parameters:
-./configure --user=nginx \
-            --group=nginx \
-            --prefix=/usr/local/nginx \
-            --conf-path=/usr/local/nginx/nginx.conf \
-            --sbin-path=/usr/local/nginx/nginx \
-            --pid-path=/usr/local/nginx/nginx.pid \
-            --error-log-path=/usr/local/nginx/error.log \
-            --http-log-path=/usr/local/nginx/access.log \
-            --with-http_ssl_module \
-            --with-http_v2_module \
-            --with-stream \
-            --with-openssl=../openssl-1.1.0b \
-            --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl3 \
-            --with-pcre=../pcre-8.42 \
-            --with-zlib=../zlib-1.2.11
+wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+cd /usr/local/src/nginx-${ngx_version}/modules/zlib-1.2.11
+./configure
+make -j2 && make test
+make install
 
-# or other example:
-./configure --user=nginx \
-            --group=nginx \
-            --prefix=/etc/nginx \
+wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
+cd /usr/local/src/nginx-${ngx_version}/modules/openssl-1.1.1b
+./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+make -j2 && make test
+make install
+
+ldconfig
+
+# Get Nginx source:
+cd /usr/local/src/nginx-${ngx_version}
+wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
+tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/master --strip 1
+# Alternative:
+# git clone --depth 1 https://github.com/nginx/nginx
+
+# Install luajit package:
+cd /usr/local/src/ && git clone http://luajit.org/git/luajit-2.0.git
+cd luajit-2.0
+make && make install
+export LUA_LIB=/usr/local/lib/
+export LUA_INC=/usr/local/include/luajit-2.0/
+ln -s /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/liblua.so
+ldconfig
+
+# Download 3-party modules:
+cd /usr/local/src/nginx-${ngx_version}/modules/
+
+for i in \
+https://github.com/agentzh/memc-nginx-module \
+https://github.com/arut/nginx-rtmp-module \
+https://github.com/simpl/ngx_devel_kit \
+https://github.com/chaoslawful/lua-nginx-module \
+https://github.com/openresty/set-misc-nginx-module \
+https://github.com/openresty/echo-nginx-module \
+https://github.com/openresty/headers-more-nginx-module \
+https://github.com/cfsego/ngx_log_if \
+https://github.com/vozlt/nginx-module-sysguard \
+https://github.com/gnosek/nginx-upstream-fair ; do
+
+  git clone --depth 1 "$i"
+
+done
+
+# Compile Nginx:
+cd /usr/local/src/nginx-${ngx_version}/master
+
+./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
             --pid-path=/var/run/nginx.pid \
             --lock-path=/var/run/nginx.lock \
+            --user=nginx \
+            --group=nginx \
             --modules-path=/usr/lib64/nginx/modules \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
@@ -493,36 +564,49 @@ tar xzvfp nginx-1.9.8.tar.gz && cd nginx-1.9.8
             --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
             --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
             --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-openssl=../openssl-1.1.0b \
-            --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl3 \
-            --with-pcre=../pcre-8.42 \
-            --with-pcre-jit \
-            --with-zlib=../zlib-1.2.11 \
             --with-compat \
+            --with-debug \
             --with-file-aio \
             --with-threads \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_slice_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
             --with-stream \
             --with-stream_realip_module \
             --with-stream_ssl_module \
             --with-stream_ssl_preread_module \
-            --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie'
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_degradation_module \
+            --with-http_geoip_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_perl_module=dynamic \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-http_sub_module \
+            --with-http_v2_module \
+            --with-google_perftools_module \
+            --without-http-cache \
+            --without-http_memcached_module \
+            --without-mail_pop3_module \
+            --without-mail_imap_module \
+            --without-mail_smtp_module \
+            --without-http_fastcgi_module \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/echo-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/headers-more-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
 
-# Compile and install:
-make && make install
+make -j2 -n && make -j2 && make install
+
+mkdir /var/cache/nginx
 ```
 
 #### Installation from prebuilt packages
