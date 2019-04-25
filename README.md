@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  <h6><code>My notes on Nginx administration gotchas, snafus, etc., cheat sheets & white papers.</code></h6>
+  <h6><code>My notes on Nginx administration gotchas, snafus, etc.</code></h6>
 </div>
 
 <br>
