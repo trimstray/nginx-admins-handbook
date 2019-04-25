@@ -1,9 +1,9 @@
 <div align="center">
-  <h1>The Nginx Administrator's Handbook</h1>
+  <h1>The Nginx Admin's Handbook</h1>
 </div>
 
 <div align="center">
-  <h6><code>My notes on Nginx administration gotchas, snafus, etc.</code></h6>
+  <b><code>My notes on Nginx administration gotchas, snafus, etc.</code></b>
 </div>
 
 <br>
