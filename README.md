@@ -1,9 +1,9 @@
 <div align="center">
-  <h1>Nginx Quick Reference</h1>
+  <h1>The Nginx Administrator's Handbook</h1>
 </div>
 
 <div align="center">
-  <h6><code>My SysAdmin Notes, Cheat Sheets & White Papers</code></h6>
+  <h6><code>My notes on Nginx administration gotchas, snafus, etc., cheat sheets & white papers.</code></h6>
 </div>
 
 <br>
@@ -181,7 +181,7 @@ Nginx is a fast, light-weight and powerful web server that can also be used as a
 
 ## General disclaimer
 
-This is not an official handbook. Many of these rules refer to external resources. It is rather a collection of some rules and papers used by me (also in production environments but not only).
+This is not an official handbook. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only). Many of these rules refer to external resources.
 
 Throughout this reference you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
