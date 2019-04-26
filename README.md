@@ -649,6 +649,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
+            # Only if you use 3rd party modules:
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module \
