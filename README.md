@@ -472,7 +472,7 @@ yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib
 
 - [Nginx](https://nginx.org/download/) source code
 
-  > Before starting the installation, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
+  > Before starting, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
 ##### Example of installation on Ubuntu
 
@@ -603,6 +603,7 @@ done
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/master
 
+# You can also build Nginx without 3rd party modules.
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
@@ -649,7 +650,8 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            # Only if you use 3rd party modules:
+            --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
+            --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie' \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module \
