@@ -58,6 +58,7 @@
   * [Mastering Nginx](#mastering-nginx)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
+  * [Nginx forks](#nginx-forks)
   * [References](#references)
   * [Cheatsheets](#cheatsheets)
   * [Performance & Hardening](#performance--hardening)
@@ -160,6 +161,8 @@
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Configuration Examples](#configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
+    * [Installation](#installation)
+    * [Configuration](#configuration)
     * [Import configuration](#import-configuration)
     * [Set bind IP address](#set-bind-ip-address)
     * [Set your domain name](#set-your-domain-name)
@@ -181,7 +184,7 @@ Nginx is a fast, light-weight and powerful web server that can also be used as a
 
 ## General disclaimer
 
-This is not an official handbook. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only). Many of these rules refer to external resources.
+This is not an official document. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only). Many of these rules refer to external resources.
 
 Throughout this reference you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
@@ -305,8 +308,15 @@ _Written for experienced systems administrators and engineers, this book teaches
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Official Project</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Documentation</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Official Documentation</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official read-only mirror</b></a><br>
+</p>
+
+##### Nginx forks
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://openresty.org/"><b>OpenResty</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://tengine.taobao.org/"><b>The Tengine Web Server</b></a><br>
 </p>
 
 ##### References
@@ -316,6 +326,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx-boilerplate/nginx-boilerplate"><b>Awesome Nginx configuration template</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://openresty.org/download/agentzh-nginx-tutorials-en.html"><b>agentzh's Nginx Tutorials</b></a><br>
 </p>
 
 ##### Cheatsheets
@@ -549,10 +560,10 @@ Updated links and cache to the shared libraries:
 ldconfig
 ```
 
-###### Install luajit
+###### Build and install luajit
 
 ```bash
-cd /usr/local/src/ && git clone http://luajit.org/git/luajit-2.0.git
+cd /usr/local/src/ && git clone http://luajit.org/git/luajit-2.0
 
 cd luajit-2.0
 
@@ -560,8 +571,22 @@ make && make install
 
 export LUA_LIB=/usr/local/lib/
 export LUA_INC=/usr/local/include/luajit-2.0/
+
 ln -s /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/liblua.so
+
 ldconfig
+```
+
+###### Build and install sregex
+
+  > Required for `replace-filter-nginx-module` module.
+
+```bash
+cd /usr/local/src/ && git clone https://github.com/openresty/sregex
+
+cd sregex
+
+make && make install
 ```
 
 ###### Get Nginx sources
@@ -582,16 +607,16 @@ tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/mast
 cd /usr/local/src/nginx-${ngx_version}/modules/
 
 for i in \
+https://github.com/chaoslawful/lua-nginx-module \
 https://github.com/agentzh/memc-nginx-module \
 https://github.com/arut/nginx-rtmp-module \
 https://github.com/simpl/ngx_devel_kit \
-https://github.com/chaoslawful/lua-nginx-module \
 https://github.com/openresty/set-misc-nginx-module \
 https://github.com/openresty/echo-nginx-module \
 https://github.com/openresty/headers-more-nginx-module \
-https://github.com/cfsego/ngx_log_if \
+https://github.com/openresty/replace-filter-nginx-module \
 https://github.com/vozlt/nginx-module-sysguard \
-https://github.com/gnosek/nginx-upstream-fair ; do
+https://github.com/cfsego/ngx_log_if ; do
 
   git clone --depth 1 "$i"
 
@@ -611,7 +636,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --lock-path=/var/run/nginx.lock \
             --user=nginx \
             --group=nginx \
-            --modules-path=/usr/lib64/nginx/modules \
+            --modules-path=/etc/nginx/modules \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
             --http-client-body-temp-path=/var/cache/nginx/client_temp \
@@ -633,7 +658,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-http_geoip_module \
             --with-http_gunzip_module \
             --with-http_gzip_static_module \
-            --with-http_perl_module=dynamic \
+            --with-http_perl_module \
             --with-http_random_index_module \
             --with-http_realip_module \
             --with-http_secure_link_module \
@@ -656,24 +681,33 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/echo-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/headers-more-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/replace-filter-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
 
-make -j2 -n && make -j2 && make install
+make -j2 && make install && ldconfig
 ```
 
 ###### Post installation tasks
+
+Create a system user/group:
+
+```bash
+adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos "nginx user" --group nginx
+```
 
 Create required directories:
 
 ```bash
 for i in \
+/var/www \
 /var/log/nginx \
 /var/cache/nginx ; do
 
-  mkdir "$i" && chown nginx:nginx "$i"
+  mkdir -p "$i" && chown -R nginx:nginx "$i"
 
 done
 ```
@@ -681,7 +715,7 @@ done
 Add systemd service:
 
 ```bash
-cat > /lib/systemd/system/nginx.service < __EOF__
+cat > /lib/systemd/system/nginx.service << __EOF__
 # Stop dance for nginx
 # =======================
 #
@@ -712,8 +746,24 @@ KillMode=mixed
 [Install]
 WantedBy=multi-user.target
 __EOF__
+```
 
+Reload systemd manager configuration:
+
+```bash
 systemctl daemon-reload
+```
+
+Enable Nginx service:
+
+```bash
+systemctl enable nginx
+```
+
+Test Nginx configuration:
+
+```bash
+nginx -t -c /etc/nginx/nginx.conf
 ```
 
 #### Installation from prebuilt packages
@@ -2326,10 +2376,10 @@ location /videos {
 
 ```bash
 # Edit nginx.conf:
-user www-data;
+user nginx;
 
 # Set owner and group for root (app, default) directory:
-chown -R www-data:www-data /var/www/domain.com
+chown -R nginx:nginx /var/www/domain.com
 ```
 
 ###### External resources
@@ -2993,6 +3043,20 @@ upstream backend {
 
   > Remember to make a copy of the current configuration and all files/directories.
 
+## Installation
+
+I used step-by-step tutorial from [Installation from source](#installation-from-source).
+
+## Configuration
+
+| <b>Item</b> | <b>Value</b> | <b>Comment</b> |
+| :---         | :---         | :---         |
+| VM | Google Cloud Platform | |
+| vCPU | 2x | |
+| Memory | 4096GB | |
+| HTTP | Varnish on port 80 | |
+| HTTPS | Nginx on port 443 | |
+
 ## Reverse Proxy
 
 This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
@@ -3097,6 +3161,17 @@ cd domain.com
 find . -depth -name '*example.com*' -execdir bash -c 'mv -v "$1" "${1//example.com/domain.com}"' _ {} \;
 find . -type f -print0 | xargs -0 sed -i 's/example_com/domain_com/g'
 find . -type f -print0 | xargs -0 sed -i 's/example.com/domain.com/g'
+```
+
+#### Create log directories
+
+```bash
+mkdir -p /var/log/nginx/localhost
+mkdir -p /var/log/nginx/defaults
+mkdir -p /var/log/nginx/others
+mkdir -p /var/log/nginx/domains/blkcipher.info
+
+chown -R nginx:nginx /var/log/nginx
 ```
 
 #### Test your configuration
