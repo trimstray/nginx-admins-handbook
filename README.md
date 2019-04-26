@@ -607,10 +607,9 @@ tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/mast
 cd /usr/local/src/nginx-${ngx_version}/modules/
 
 for i in \
+https://github.com/simpl/ngx_devel_kit \
 https://github.com/chaoslawful/lua-nginx-module \
 https://github.com/agentzh/memc-nginx-module \
-https://github.com/arut/nginx-rtmp-module \
-https://github.com/simpl/ngx_devel_kit \
 https://github.com/openresty/set-misc-nginx-module \
 https://github.com/openresty/echo-nginx-module \
 https://github.com/openresty/headers-more-nginx-module \
@@ -621,6 +620,9 @@ https://github.com/cfsego/ngx_log_if ; do
   git clone --depth 1 "$i"
 
 done
+
+# Other modules:
+# https://github.com/arut/nginx-rtmp-module
 ```
 
 ###### Build Nginx
@@ -677,16 +679,18 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_uwsgi_module \
             --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
             --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie' \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/echo-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/headers-more-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/replace-filter-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
+
+# Other modules:
+#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module
 
 make -j2 && make install && ldconfig
 ```
