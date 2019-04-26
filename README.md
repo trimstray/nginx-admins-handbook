@@ -468,66 +468,117 @@ apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev 
 yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
 ```
 
-###### Nginx package
+##### Nginx package
 
 - [Nginx](https://nginx.org/download/) source code
 
   > Before starting the installation, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
-```bash
-# Set version of Nginx:
-export ngx_version="1.15.8"
+##### Example of installation on Ubuntu
 
-# Create directories:
+###### Pre installation tasks
+
+Set version of Nginx:
+
+```bash
+export ngx_version="1.15.8"
+```
+
+Create directories:
+
+```bash
 mkdir /usr/local/src/nginx-${ngx_version}
 mkdir /usr/local/src/nginx-${ngx_version}/master
 mkdir /usr/local/src/nginx-${ngx_version}/modules
+```
 
-# Install prebuilt dependencies:
-apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+Install prebuilt dependencies:
 
-# Or install sources:
-#   - libssl-dev
-#   - zlib1g-dev
+```bash
+apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+
+# Also if you don't use sources:
+apt-get install libssl-dev zlib1g-dev libpcre2-dev
+```
+
+###### Download and compile requirements (optional)
+
+```bash
 cd /usr/local/src/nginx-${ngx_version}/modules
+```
 
+PCRE:
+
+```bash
 wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+
 cd /usr/local/src/nginx-${ngx_version}/modules/pcre-8.42
+
 ./configure
 make -j2 && make test
 make install
+```
 
+Zlib:
+
+```bash
 wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+
 cd /usr/local/src/nginx-${ngx_version}/modules/zlib-1.2.11
+
 ./configure
 make -j2 && make test
 make install
+```
 
+OpenSSL:
+
+```bash
 wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
+
 cd /usr/local/src/nginx-${ngx_version}/modules/openssl-1.1.1b
+
 ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
 make -j2 && make test
 make install
+```
 
+Updated links and cache to the shared libraries:
+
+```bash
 ldconfig
+```
 
-# Get Nginx source:
-cd /usr/local/src/nginx-${ngx_version}
-wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
-tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/master --strip 1
-# Alternative:
-# git clone --depth 1 https://github.com/nginx/nginx
+###### Install luajit
 
-# Install luajit package:
+```bash
 cd /usr/local/src/ && git clone http://luajit.org/git/luajit-2.0.git
+
 cd luajit-2.0
+
 make && make install
+
 export LUA_LIB=/usr/local/lib/
 export LUA_INC=/usr/local/include/luajit-2.0/
 ln -s /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/liblua.so
 ldconfig
+```
 
-# Download 3-party modules:
+###### Get Nginx sources
+
+```bash
+cd /usr/local/src/nginx-${ngx_version}
+
+wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
+
+# Alternative:
+#   git clone --depth 1 https://github.com/nginx/nginx
+tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/master --strip 1
+```
+
+###### Download 3rd party modules
+
+```bash
 cd /usr/local/src/nginx-${ngx_version}/modules/
 
 for i in \
@@ -545,8 +596,11 @@ https://github.com/gnosek/nginx-upstream-fair ; do
   git clone --depth 1 "$i"
 
 done
+```
 
-# Compile Nginx:
+###### Build Nginx
+
+```bash
 cd /usr/local/src/nginx-${ngx_version}/master
 
 ./configure --prefix=/etc/nginx \
@@ -605,8 +659,58 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
 
 make -j2 -n && make -j2 && make install
+```
 
-mkdir /var/cache/nginx
+###### Post installation tasks
+
+Create required directories:
+
+```bash
+for i in \
+/var/log/nginx \
+/var/cache/nginx ; do
+
+  mkdir "$i" && chown nginx:nginx "$i"
+
+done
+```
+
+Add systemd service:
+
+```bash
+cat > /lib/systemd/system/nginx.service < __EOF__
+# Stop dance for nginx
+# =======================
+#
+# ExecStop sends SIGSTOP (graceful stop) to the nginx process.
+# If, after 5s (--retry QUIT/5) nginx is still running, systemd takes control
+# and sends SIGTERM (fast shutdown) to the main process.
+# After another 5s (TimeoutStopSec=5), and if nginx is alive, systemd sends
+# SIGKILL to all the remaining processes in the process group (KillMode=mixed).
+#
+# nginx signals reference doc:
+# http://nginx.org/en/docs/control.html
+#
+[Unit]
+Description=A high performance web server and a reverse proxy server
+Documentation=man:nginx(8)
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t -q -g 'daemon on; master_process on;'
+ExecStart=/usr/sbin/nginx -g 'daemon on; master_process on;'
+ExecReload=/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
+ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
+TimeoutStopSec=5
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+__EOF__
+
+systemctl daemon-reload
 ```
 
 #### Installation from prebuilt packages
