@@ -462,10 +462,10 @@ If you download and compile above sources the good point is to install additiona
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
+yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
 ```
 
 ##### Nginx package
