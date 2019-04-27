@@ -616,8 +616,9 @@ cd /usr/local/src/nginx-${ngx_version}
 
 wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
 
-# Alternative:
+# or alternative:
 #   git clone --depth 1 https://github.com/nginx/nginx
+
 tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/master --strip 1
 ```
 
