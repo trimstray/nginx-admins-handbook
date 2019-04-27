@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://www.hostingadvice.com/how-to/nginx-vs-apache/">
-    <img src="https://github.com/trimstray/Nginx-Admins-Handbook/blob/master/static/img/nginx_meme.png" alt="Meme">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_meme.png" alt="Meme">
   </a>
 </p>
 
@@ -31,7 +31,7 @@
 <br>
 
 <p align="center">
-  <a href="https://github.com/trimstray/Nginx-Admins-Handbook/pulls">
+  <a href="https://github.com/trimstray/nginx-admins-handbook/pulls">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?longCache=true" alt="Pull Requests">
   </a>
   <a href="http://www.gnu.org/licenses/">
@@ -42,7 +42,7 @@
 <div align="center">
   <sub>Created by
   <a href="https://twitter.com/trimstray">trimstray</a> and
-  <a href="https://github.com/trimstray/Nginx-Admins-Handbook/graphs/contributors">contributors</a>
+  <a href="https://github.com/trimstray/nginx-admins-handbook/graphs/contributors">contributors</a>
 </div>
 
 <br>
@@ -188,7 +188,7 @@
 
 # Introduction
 
-<img src="https://github.com/trimstray/Nginx-Admins-Handbook/blob/master/static/img/nginx_logo.png" align="right">
+<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_logo.png" align="right">
 
   > Before using the **Nginx** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
@@ -232,7 +232,7 @@ I finally got all 100%'s on my scores:
 
 <p align="center">
   <a href="https://www.ssllabs.com/ssltest/analyze.html?d=blkcipher.info&hideResults=on">
-    <img src="https://github.com/trimstray/Nginx-Admins-Handbook/blob/master/static/img/blkcipher_ssllabs_preview.png" alt="blkcipher_ssllabs_preview">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_ssllabs_preview.png" alt="blkcipher_ssllabs_preview">
   </a>
 </p>
 
@@ -242,7 +242,7 @@ I also got the highest note from Mozilla:
 
 <p align="center">
   <a href="https://observatory.mozilla.org/analyze/blkcipher.info?third-party=false">
-    <img src="https://github.com/trimstray/Nginx-Admins-Handbook/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
   </a>
 </p>
 
@@ -250,10 +250,10 @@ I also got the highest note from Mozilla:
 
 Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 5000x8200.
 
-  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/Nginx-Admins-Handbook/tree/master/static/img) directory.
+  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
 <p align="center">
-    <img src="https://github.com/trimstray/Nginx-Admins-Handbook/blob/master/static/img/nginx-hardening-checklist.png"
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist.png"
         alt="nginx-hardening-checklist" width="75%" height="75%">
 </p>
 
@@ -3134,7 +3134,7 @@ This chapter describes the basic configuration of my proxy server (for [blkciphe
 It's very simple - clone the repo and perform full directory sync:
 
 ```bash
-git clone https://github.com/trimstray/Nginx-Admins-Handbook.git
+git clone https://github.com/trimstray/nginx-admins-handbook.git
 rsync -avur --delete lib/nginx/ /etc/nginx/
 ```
 
