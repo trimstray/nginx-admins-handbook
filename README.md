@@ -537,7 +537,7 @@ apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
 Or download and compile them:
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/modules
+cd /usr/local/src/
 ```
 
 PCRE:
@@ -545,7 +545,7 @@ PCRE:
 ```bash
 wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
 
-cd /usr/local/src/nginx-${ngx_version}/modules/pcre-8.42
+cd /usr/local/src/pcre-8.42
 
 ./configure
 make -j2 && make test
@@ -557,7 +557,7 @@ Zlib:
 ```bash
 wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
 
-cd /usr/local/src/nginx-${ngx_version}/modules/zlib-1.2.11
+cd /usr/local/src/zlib-1.2.11
 
 ./configure
 make -j2 && make test
@@ -569,7 +569,7 @@ OpenSSL:
 ```bash
 wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
 
-cd /usr/local/src/nginx-${ngx_version}/modules/openssl-1.1.1b
+cd /usr/local/src/openssl-1.1.1b
 
 ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
 make -j2 && make test
