@@ -16,7 +16,7 @@
 
 <br>
 
-<div align="center">
+<p align="center">
   <sup>
     <i>
       Hi-diddle-diddle, he played on his<br>
@@ -26,7 +26,7 @@
       <a href="https://g.co/kgs/HCcQVz">The Three Little Pigs: Who's Afraid of the Big Bad Wolf?</a>
     </i>
   </sup>
-</div>
+</p>
 
 <br>
 
@@ -450,6 +450,8 @@ There are currently two versions of Nginx:
 - **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
 - **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
 
+##### Dependencies
+
 Mandatory requirements:
 
   > Download, compile and install or install prebuilt packages from your distribution repository.
@@ -457,6 +459,7 @@ Mandatory requirements:
 - [OpenSSL](https://www.openssl.org/source/) library
 - [Zlib](https://zlib.net/) library
 - [PCRE](https://ftp.pcre.org/pub/pcre/) library
+- [LuaJIT](http://luajit.org/download.html) library
 
 If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building Nginx:
 
@@ -464,9 +467,10 @@ If you download and compile above sources the good point is to install additiona
 | :---         | :---         | :---         |
 | `gcc make build-essential` | `gcc gcc-c++ kernel-devel` | |
 | `perl libperl-dev` | `perl perl-ExtUtils-Embed` | |
-| `libssl-dev` | `openssl-devel` | if you don't use source |
-| `zlib1g-dev` | `zlib-devel` | if you don't use source |
-| `libpcre2-dev` | `pcre-devel` | if you don't use source |
+| `libssl-dev` | `openssl-devel` | if you don't use from sources |
+| `zlib1g-dev` | `zlib-devel` | if you don't use from sources |
+| `libpcre2-dev` | `pcre-devel` | if you don't use from sources |
+| `libluajit-5.1-dev` | `luajit-devel` | if you don't use from sources |
 | `libxslt-dev` | `libxslt libxslt-devel` | |
 | `libgd-dev` | `gd gd-devel` | |
 | `libgeoip-dev` | `GeoIP-devel` | |
@@ -476,12 +480,14 @@ If you download and compile above sources the good point is to install additiona
 | | `cpio` | |
 | | `gettext-devel` | |
 
+Shell one-liner example:
+
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
+yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
 ```
 
 ##### Nginx package
@@ -494,10 +500,10 @@ yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib
 
 ###### Pre installation tasks
 
-Set version of Nginx:
+Set Nginx version:
 
 ```bash
-export ngx_version="1.15.8"
+export ngx_version="1.14.2"
 ```
 
 Create directories:
@@ -508,16 +514,18 @@ mkdir /usr/local/src/nginx-${ngx_version}/master
 mkdir /usr/local/src/nginx-${ngx_version}/modules
 ```
 
+###### Install or build dependencies
+
 Install prebuilt dependencies:
 
 ```bash
 apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
 
 # Also if you don't use sources:
-apt-get install libssl-dev zlib1g-dev libpcre2-dev
+apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
 ```
 
-###### Download and compile requirements (optional)
+Or download and compile them:
 
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/modules
@@ -559,13 +567,7 @@ make -j2 && make test
 make install
 ```
 
-Updated links and cache to the shared libraries:
-
-```bash
-ldconfig
-```
-
-###### Build and install luajit
+LuaJIT:
 
 ```bash
 cd /usr/local/src/ && git clone http://luajit.org/git/luajit-2.0
@@ -578,13 +580,11 @@ export LUA_LIB=/usr/local/lib/
 export LUA_INC=/usr/local/include/luajit-2.0/
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/liblua.so
-
-ldconfig
 ```
 
-###### Build and install sregex
+sregex:
 
-  > Required for `replace-filter-nginx-module` module.
+  > Required for `replace-filter-nginx-module` module. It must be compiled.
 
 ```bash
 cd /usr/local/src/ && git clone https://github.com/openresty/sregex
@@ -592,6 +592,12 @@ cd /usr/local/src/ && git clone https://github.com/openresty/sregex
 cd sregex
 
 make && make install
+```
+
+Updated links and cache to the shared libraries:
+
+```bash
+ldconfig
 ```
 
 ###### Get Nginx sources
