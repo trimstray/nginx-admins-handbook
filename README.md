@@ -3242,6 +3242,12 @@ mkdir -p /var/log/nginx/domains/blkcipher.info
 chown -R nginx:nginx /var/log/nginx
 ```
 
+#### Logrotate configuration
+
+```bash
+cp /etc/nginx/snippets/logrotate.d/nginx /etc/logrotate.d/
+```
+
 #### Test your configuration
 
 ```bash
