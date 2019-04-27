@@ -716,6 +716,49 @@ cd /usr/local/src/nginx-${ngx_version}/master
 make -j2 && make install && ldconfig
 ```
 
+Check Nginx version:
+
+```bash
+nginx -v
+nginx version: nginx/1.14.2
+```
+
+And list all files in `/etc/nginx`:
+
+```bash
+tree
+.
+├── fastcgi.conf
+├── fastcgi.conf.default
+├── fastcgi_params
+├── fastcgi_params.default
+├── html
+│   ├── 50x.html
+│   └── index.html
+├── koi-utf
+├── koi-win
+├── mime.types
+├── mime.types.default
+├── modules
+│   ├── ndk_http_module.so
+│   ├── ngx_http_echo_module.so
+│   ├── ngx_http_headers_more_filter_module.so
+│   ├── ngx_http_lua_module.so
+│   ├── ngx_http_memc_module.so
+│   ├── ngx_http_replace_filter_module.so
+│   ├── ngx_http_set_misc_module.so
+│   └── ngx_http_sysguard_module.so
+├── nginx.conf
+├── nginx.conf.default
+├── scgi_params
+├── scgi_params.default
+├── uwsgi_params
+├── uwsgi_params.default
+└── win-utf
+
+2 directories, 25 files
+```
+
 ###### Post installation tasks
 
 Create a system user/group:
