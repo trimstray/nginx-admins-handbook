@@ -247,7 +247,7 @@ I finally got **A+** grade and following scores:
   </a>
 </p>
 
-  > TLS configuration is also based on this [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
+  > TLS configuration of My site is also based on this [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
 
 ### Mozilla Observatory
 
@@ -265,7 +265,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
-- A+ with all 100%’s on @ssllabs and @mozilla observatory:
+- A+ with all 100%’s on @ssllabs and 120/100 on @mozilla observatory:
 
   > It provides very restrictive setup with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites.
 
@@ -460,6 +460,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://2ton.com.au/dhtool/"><b>Public Diffie-Hellman Parameter Service/Tool</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://securityheaders.com/"><b>Analyse the HTTP response headers by Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://observatory.mozilla.org/"><b>Analyze your website by Mozilla Observatory</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://sslmate.com/caa/"><b>CAA Record Helper</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://webhint.io/"><b>Linting tool that will help you with your site's accessibility, speed, security and more</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://urlscan.io/"><b>Service to scan and analyse websites</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://regexr.com/"><b>Online tool to learn, build, & test Regular Expressions</b></a><br>
@@ -668,9 +669,9 @@ cd LuaJIT
 make && make install
 
 export LUA_LIB=/usr/local/lib/
-export LUA_INC=/usr/local/include/luajit-2.0/
+export LUA_INC=/usr/local/include/luajit-2.1/
 
-ln -s /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/liblua.so
+ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```
 
 sregex:
@@ -2709,10 +2710,10 @@ proxy_hide_header X-Drupal-Cache;
 
 ```bash
 ### Example (RSA):
-( _fd="domain.com.key" ; _len="4096" ; openssl genrsa -out ${_fd} ${_len} )
+( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
 
 # Let's Encrypt:
-certbot certonly -d domain.com -d www.domain.com --rsa-key-size 4096
+certbot certonly -d domain.com -d www.domain.com --rsa-key-size 2048
 
 ### Example (ECC):
 # _curve: prime256v1, secp521r1, secp384r1
@@ -3326,14 +3327,17 @@ This chapter describes the basic configuration of my proxy server (for [blkciphe
 
 #### Import configuration
 
-It's very simple - clone the repo and perform full directory sync:
+It's very simple - clone the repo, backup your current configuration and perform full directory sync:
 
 ```bash
 git clone https://github.com/trimstray/nginx-admins-handbook.git
-rsync -avur --delete lib/nginx/ /etc/nginx/
+
+tar czvfp ~/nginx.etc.tgz /etc/nginx && mv /etc/nginx /etc/nginx.old
+
+rsync -avur lib/nginx/ /etc/nginx/
 ```
 
-  > For leaving your configuration (not recommended) remove `--delete` rsync param.
+  > If you compiled Nginx you should also update/refresh modules. All compiled modules are stored in `/usr/local/src/nginx-${ngx_version}/master/objs` and installed in accordance with the value of the `--modules-path` variable.
 
 #### Set bind IP address
 
@@ -3374,9 +3378,10 @@ find . -type f -print0 | xargs -0 sed -i 's/blkcipher.info/example.com/g'
 
 ```bash
 cd /etc/nginx/master/_server/localhost/certs
-# Private key + Self-signed certificate
+
+# Private key + Self-signed certificate:
 ( _fd="localhost.key" ; _fd_crt="nginx_localhost_bundle.crt" ; \
-openssl req -x509 -newkey rsa:4096 -keyout ${_fd} -out ${_fd_crt} -days 365 -nodes \
+openssl req -x509 -newkey rsa:2048 -keyout ${_fd} -out ${_fd_crt} -days 365 -nodes \
 -subj "/C=X0/ST=localhost/L=localhost/O=localhost/OU=X00/CN=localhost" )
 ```
 
@@ -3384,9 +3389,10 @@ openssl req -x509 -newkey rsa:4096 -keyout ${_fd} -out ${_fd_crt} -days 365 -nod
 
 ```bash
 cd /etc/nginx/master/_server/defaults/certs
-# Private key + Self-signed certificate
+
+# Private key + Self-signed certificate:
 ( _fd="defaults.key" ; _fd_crt="nginx_defaults_bundle.crt" ; \
-openssl req -x509 -newkey rsa:4096 -keyout ${_fd} -out ${_fd_crt} -days 365 -nodes \
+openssl req -x509 -newkey rsa:2048 -keyout ${_fd} -out ${_fd_crt} -days 365 -nodes \
 -subj "/C=X1/ST=default/L=default/O=default/OU=X11/CN=default_server" )
 ```
 
@@ -3396,10 +3402,10 @@ openssl req -x509 -newkey rsa:4096 -keyout ${_fd} -out ${_fd_crt} -days 365 -nod
 cd /etc/nginx/master/_server/example.com/certs
 
 # For multidomain:
-certbot certonly -d example.com -d www.example.com --rsa-key-size 4096
+certbot certonly -d example.com -d www.example.com --rsa-key-size 2048
 
 # For wildcard:
-certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example.com --rsa-key-size 4096
+certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example.com --rsa-key-size 2048
 
 # Copy private key and chain:
 cp /etc/letsencrypt/live/example.com/fullchain.pem nginx_example.com_bundle.crt
@@ -3411,7 +3417,7 @@ cp /etc/letsencrypt/live/example.com/privkey.pem example.com.key
 ###### Updated `nginx.conf`
 
 ```bash
-# At the end of the file (in 'IPS/DOMAINS' section)
+# At the end of the file (in 'IPS/DOMAINS' section):
 include /etc/nginx/master/_server/domain.com/servers.conf;
 include /etc/nginx/master/_server/domain.com/backends.conf;
 ```
@@ -3420,6 +3426,7 @@ include /etc/nginx/master/_server/domain.com/backends.conf;
 ```bash
 cd /etc/nginx/cd master/_server
 cp -R example.com domain.com
+
 cd domain.com
 find . -depth -name '*example.com*' -execdir bash -c 'mv -v "$1" "${1//example.com/domain.com}"' _ {} \;
 find . -type f -print0 | xargs -0 sed -i 's/example_com/domain_com/g'
