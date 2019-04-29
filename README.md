@@ -247,6 +247,8 @@ I finally got **A+** grade and following scores:
   </a>
 </p>
 
+  > TLS configuration is also based on this [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
+
 ### Mozilla Observatory
 
 I also got the highest note from Mozilla:
