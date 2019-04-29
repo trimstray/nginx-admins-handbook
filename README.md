@@ -212,7 +212,7 @@ Before you start remember about the two most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-  > **`These guidelines sometimes provides recommendations for very restrictive setup.`**
+  > **`These guidelines provides recommendations for very restrictive setup.`**
 
 ## Contributing & Support
 
