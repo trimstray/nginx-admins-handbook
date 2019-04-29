@@ -57,7 +57,7 @@
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
-  * [Printable high-res hardening checklist](#printable-high-res-hardening-checklist)
+  * [Printable high-res hardening checklists](#printable-high-res-hardening-checklists)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -98,6 +98,7 @@
   * [Nginx contexts](#nginx-contexts)
   * [Virtual server logic](#virtual-server-logic)
   * [Request processing stages](#request-processing-stages)
+  * [Matching location blocks](#matching-location-blocks)
   * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
@@ -190,7 +191,7 @@
 
 # Introduction
 
-<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_logo.png" align="right">
+<a href="https://www.nginx.com/"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_logo.png" align="right"></a>
 
   > Before using the **Nginx** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
@@ -247,7 +248,7 @@ I finally got **A+** grade and following scores:
   </a>
 </p>
 
-  > TLS configuration of My site is also based on this [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
+  > TLS configuration of My site is also based on this version of [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
 
 ### Mozilla Observatory
 
@@ -259,7 +260,7 @@ I also got the highest note from Mozilla:
   </a>
 </p>
 
-## Printable high-res hardening checklist
+## Printable high-res hardening checklists
 
 Hardening checklists (High-Res 5000x8200) based on these recipes:
 
@@ -274,7 +275,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
         alt="nginx-hardening-checklist-100p" width="75%" height="75%">
 </p>
 
-- A+ on @ssllabs and @mozilla observatory with TLS 1.3 support:
+- A+ on @ssllabs and 120/100 on @mozilla observatory with TLS 1.3 support:
 
   > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites.
 
@@ -500,22 +501,24 @@ Mandatory requirements:
 
 If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building Nginx:
 
-| <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
-| :---         | :---         | :---         |
-| `gcc make build-essential` | `gcc gcc-c++ kernel-devel` | |
-| `perl libperl-dev` | `perl perl-ExtUtils-Embed` | |
-| `libssl-dev` | `openssl-devel` | if you don't use from sources |
-| `zlib1g-dev` | `zlib-devel` | if you don't use from sources |
-| `libpcre2-dev` | `pcre-devel` | if you don't use from sources |
-| `libluajit-5.1-dev` | `luajit-devel` | if you don't use from sources |
-| `libxslt-dev` | `libxslt libxslt-devel` | |
-| `libgd-dev` | `gd gd-devel` | |
-| `libgeoip-dev` | `GeoIP-devel` | |
-| `libxml2-dev` | `libxml2-dev` | |
-| `libexpat-dev` | `expat-devel` | |
-| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
-| | `cpio` | |
-| | `gettext-devel` | |
+| <b>Debian Like</b> | <b>RedHat Like</b> |
+| :---         | :---         |
+| `gcc make build-essential` | `gcc gcc-c++ kernel-devel` |
+| `perl libperl-dev` | `perl perl-ExtUtils-Embed` |
+| `libssl-dev`* | `openssl-devel`* |
+| `zlib1g-dev`* | `zlib-devel`* |
+| `libpcre2-dev`* | `pcre-devel`* |
+| `libluajit-5.1-dev`* | `luajit-devel`* |
+| `libxslt-dev` | `libxslt libxslt-devel` |
+| `libgd-dev` | `gd gd-devel` |
+| `libgeoip-dev` | `GeoIP-devel` |
+| `libxml2-dev` | `libxml2-dev` |
+| `libexpat-dev` | `expat-devel` |
+| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` |
+| | `cpio` |
+| | `gettext-devel` |
+
+<sup><i>* If you don't use from sources.</i></sup>
 
 Shell one-liner example:
 
@@ -555,7 +558,7 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
   > In my configuration I used all prebuilt dependencies without `libssl-dev` because I compiled it manually - for TLS 1.3 support.
 
-Before start please see this short standard locations:
+Before start please see this short system locations:
 
 - For booting the system, rescues and maintenance: `/`
   - `/bin` - user programs
@@ -584,12 +587,6 @@ export LUA_LIB=/usr/local/x86_64-linux-gnu/
 export LUA_INC=/usr/include/luajit-2.1/
 
 ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
-```
-
-Update links and cache to the shared libraries:
-
-```bash
-ldconfig
 ```
 
   > Remember to compile `sregex` also if you use above step.
@@ -654,8 +651,6 @@ ln -s /usr/local/openssl-1.1.1b/bin/openssl /usr/bin/openssl
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 /usr/local/openssl-1.1.1b/lib
 __EOF__
-
-ldconfig
 ```
 
 LuaJIT:
@@ -686,7 +681,7 @@ cd sregex
 make && make install
 ```
 
-Update links and cache to the shared libraries:
+Update links and cache to the shared libraries for both types of installation:
 
 ```bash
 ldconfig
@@ -1132,6 +1127,10 @@ direct to the first server with a listen directive that satisfies first step
   - example modules: [ngx_http_index_module](https://nginx.org/en/docs/http/ngx_http_index_module.html), [ngx_http_autoindex_module](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html), [ngx_http_gzip_module](https://nginx.org/en/docs/http/ngx_http_gzip_module.html)
 - `NGX_HTTP_LOG_PHASE` - log processing
   - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
+
+#### Matching location blocks
+
+Work in progress.
 
 #### Error log severity levels
 
@@ -3313,7 +3312,7 @@ I used step-by-step tutorial from [Installation from source](#installation-from-
 
 Configuration of Google Cloud instance:
 
-| <b>Item</b> | <b>Value</b> | <b>Comment</b> |
+| <b>ITEM</b> | <b>VALUE</b> | <b>COMMENT</b> |
 | :---         | :---         | :---         |
 | VM | Google Cloud Platform | |
 | vCPU | 2x | |
