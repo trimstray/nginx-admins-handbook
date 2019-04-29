@@ -156,7 +156,7 @@
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
-  * [Keep only TLS 1.2](#beginner-keep-only-tls-12)
+  * [Keep only TLS 1.2 and TLS 1.3](#beginner-keep-only-tls-12-and-tls-13)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
@@ -210,7 +210,7 @@ Before you start remember about the two most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-  > **`These guidelines provides recommendations for very restrictive setup.`**
+  > **`These guidelines sometimes provides recommendations for very restrictive setup.`**
 
 ## Contributing & Support
 
@@ -228,7 +228,16 @@ Many of these recipes have been applied to the configuration of my private websi
 
 ### SSL Labs
 
-I finally got all 100%'s on my scores:
+  > Read about SSL Labs grading [here](https://community.qualys.com/docs/DOC-6321-ssl-labs-grading-2018) (SSL Labs Grading 2018).
+
+  > A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old programs).
+
+I finally got **A+** grade and following scores:
+
+- Certificate = **100%**
+- Protocol Support = **100%**
+- Key Exchange = **90%**
+- Cipher Strength = **90%**
 
 <p align="center">
   <a href="https://www.ssllabs.com/ssltest/analyze.html?d=blkcipher.info&hideResults=on">
@@ -248,13 +257,26 @@ I also got the highest note from Mozilla:
 
 ## Printable high-res hardening checklist
 
-Hardening checklist based on these recipes (for @ssllabs A+ 100%) - High-Res 5000x8200.
+Hardening checklists (High-Res 5000x8200) based on these recipes:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
+- A+ with all 100%’s on @ssllabs and @mozilla observatory:
+
+  > It provides very restrictive setup with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites.
+
 <p align="center">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist.png"
-        alt="nginx-hardening-checklist" width="75%" height="75%">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls12-100p.png"
+        alt="nginx-hardening-checklist-100p" width="75%" height="75%">
+</p>
+
+- A+ on @ssllabs and @mozilla observatory with TLS 1.3 support:
+
+  > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites.
+
+<p align="center">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png"
+        alt="nginx-hardening-checklist-tls13" width="75%" height="75%">
 </p>
 
 # Books
@@ -431,6 +453,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://cryptcheck.fr/"><b>Test your TLS server configuration (e.g. ciphers)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.jitbit.com/sslcheck/"><b>Scan your website for non-secure content</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://cipherli.st/"><b>Strong ciphers for Apache, Nginx, Lighttpd and more</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://2ton.com.au/dhtool/"><b>Public Diffie-Hellman Parameter Service/Tool</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://securityheaders.com/"><b>Analyse the HTTP response headers by Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://observatory.mozilla.org/"><b>Analyze your website by Mozilla Observatory</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://webhint.io/"><b>Linting tool that will help you with your site's accessibility, speed, security and more</b></a><br>
@@ -512,7 +535,7 @@ yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib
 Set Nginx version:
 
 ```bash
-export ngx_version="1.14.2"
+export ngx_version="1.16.0"
 ```
 
 Create directories:
@@ -525,14 +548,46 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
 ###### Install or build dependencies
 
-Install prebuilt dependencies:
+  > In my configuration I used all prebuilt dependencies without `libssl-dev` because I compiled it manually - for TLS 1.3 support.
+
+Before start please see this short standard locations:
+
+- For booting the system, rescues and maintenance: `/`
+  - `/bin` - user programs
+  - `/sbin` - system programs
+  - `/lib` - shared libraries
+- Full running environment: `/usr`
+  - `/usr/bin` - user programs
+  - `/usr/sbin` - system programs
+  - `/usr/lib` - shared libraries
+  - `/usr/share` - manual pages, data
+- Added packages: `/usr/local`
+  - `/usr/local/bin` - user programs
+  - `/usr/local/sbin` - system programs
+  - `/usr/local/lib` - shared libraries
+  - `/usr/local/share` - manual pages, data
+
+Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
 apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
 
 # Also if you don't use sources:
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
+
+export LUA_LIB=/usr/local/x86_64-linux-gnu/
+export LUA_INC=/usr/include/luajit-2.1/
+
+ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 ```
+
+Update links and cache to the shared libraries:
+
+```bash
+ldconfig
+```
+
+  > Remember to compile `sregex` also if you use above step.
 
 Or download and compile them:
 
@@ -548,6 +603,7 @@ wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
 cd /usr/local/src/pcre-8.42
 
 ./configure
+
 make -j2 && make test
 make install
 ```
@@ -560,6 +616,7 @@ wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
 cd /usr/local/src/zlib-1.2.11
 
 ./configure
+
 make -j2 && make test
 make install
 ```
@@ -571,17 +628,38 @@ wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.
 
 cd /usr/local/src/openssl-1.1.1b
 
-./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl2 no-ssl3 no-weak-ssl-ciphers
+
 make -j2 && make test
 make install
+
+# Setup PATH environment variables:
+cat > /etc/profile.d/openssl.sh << __EOF__
+#!/bin/sh
+export PATH=/usr/local/openssl-1.1.1b/bin:${PATH}
+export LD_LIBRARY_PATH=/usr/local/openssl-1.1.1b/lib:${LD_LIBRARY_PATH}
+__EOF__
+
+chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
+
+# To make the OpenSSL 1.1.1b version visible globally first:
+mv /usr/bin/openssl /usr/bin/openssl-1.1.0g
+ln -s /usr/local/openssl-1.1.1b/bin/openssl /usr/bin/openssl
+
+cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
+/usr/local/openssl-1.1.1b/lib
+__EOF__
+
+ldconfig
 ```
 
 LuaJIT:
 
 ```bash
-cd /usr/local/src/ && git clone http://luajit.org/git/luajit-2.0
+# I recommend to use LuaJIT-2.1.0-beta3 instead LuaJIT-2.0
+cd /usr/local/src/ && git clone https://github.com/LuaJIT/LuaJIT
 
-cd luajit-2.0
+cd LuaJIT
 
 make && make install
 
@@ -603,7 +681,7 @@ cd sregex
 make && make install
 ```
 
-Updated links and cache to the shared libraries:
+Update links and cache to the shared libraries:
 
 ```bash
 ldconfig
@@ -690,6 +768,10 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-http_sub_module \
             --with-http_v2_module \
             --with-google_perftools_module \
+            --with-openssl=/usr/local/src/openssl-1.1.1b \
+            --with-openssl-opt=no-weak-ssl-ciphers \
+            --with-openssl-opt=no-ssl2 \
+            --with-openssl-opt=no-ssl3 \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
@@ -720,7 +802,7 @@ Check Nginx version:
 
 ```bash
 nginx -v
-nginx version: nginx/1.14.2
+nginx version: nginx/1.16.0
 ```
 
 And list all files in `/etc/nginx`:
@@ -2287,11 +2369,13 @@ server {
 
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
+  > Set SSL Session Timeout to `5` minutes for prevent abused by advertisers like Google and Facebook.
+
 ###### Example
 
 ```bash
 ssl_session_cache shared:SSL:10m;
-ssl_session_timeout 24h;
+ssl_session_timeout 5m;
 ssl_session_tickets off;
 ssl_buffer_size 1400;
 ```
@@ -2603,7 +2687,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > Longer keys take more time to generate and require more CPU (please use `openssl speed rsa` on your server) and power when used for encrypting and decrypting, also the SSL handshake at the start of each connection will be slower. It also has a small impact on the client side (e.g. browsers).
 
-  > Use of alternative solution: ECC Certificate Signing Request (CSR).
+  > Use of alternative solution: ECC Certificate Signing Request (CSR). ECDSA certificates contain an ECC public key. ECC keys are better than RSA & DSA keys in that the ECC algorithm is harder to break.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2612,6 +2696,10 @@ proxy_hide_header X-Drupal-Cache;
   Konstantin Ryabitsev (Reddit):
 
   > _Generally speaking, if we ever find ourselves in a world where 2048-bit keys are no longer good enough, it won't be because of improvements in brute-force capabilities of current computers, but because RSA will be made obsolete as a technology due to revolutionary computing advances. If that ever happens, 3072 or 4096 bits won't make much of a difference anyway. This is why anything above 2048 bits is generally regarded as a sort of feel-good hedging theatre._
+
+  **My recommendation:**
+
+  > Use `2048-bit` key instead `4096-bit` at this moment.
 
 ###### Example
 
@@ -2657,30 +2745,47 @@ certbot certonly -d domain.com -d www.domain.com
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 
-#### :beginner: Keep only TLS 1.2
+#### :beginner: Keep only TLS 1.2 and TLS 1.3
 
 ###### Rationale
 
-  > It is recommended to run TLS 1.1/1.2 and fully disable SSLv2, SSLv3 and TLS 1.0 that have protocol weaknesses.
+  > It is recommended to run TLS 1.1/1.2/1.3 and fully disable SSLv2, SSLv3 and TLS 1.0 that have protocol weaknesses.
 
-  > TLS 1.1 and 1.2 are both without security issues - but only v1.2 provides modern cryptographic algorithms. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
-
-  > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.1 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers.
-
-  > If you told Nginx to use TLS 1.3, it will use TLS 1.3 only where available. Nginx supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
+  > TLS 1.1 and 1.2 are both without security issues - but only TLS 1.2 and TLS 1.3 provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions.
 
+  > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.1, TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
+
+  > If you told Nginx to use TLS 1.3, it will use TLS 1.3 only where is available. Nginx supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
+
+  **My recommendation:**
+
+  > Use only TLSv1.3 and TLSv1.2.
+
 ###### Example
 
-```bash
-ssl_protocols TLSv1.2;
+TLS 1.3 + 1.2:
 
-# To enable TLS 1.3:
+```bash
 ssl_protocols TLSv1.3 TLSv1.2;
 ```
 
+TLS 1.2:
+
+```bash
+ssl_protocols TLSv1.2;
+```
+
 &nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
+
+TLS 1.3 + 1.2 + 1.1:
+
+```bash
+ssl_protocols TLSv1.3 TLSv1.2 TLSv1.1;
+```
+
+TLS 1.2 + 1.1:
 
 ```bash
 ssl_protocols TLSv1.2 TLSv1.1;
@@ -2690,16 +2795,19 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### External resources
 
-- [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
-- [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
-- [TLS v1.2 handshake overview](https://medium.com/@ethicalevil/tls-handshake-protocol-overview-a39e8eee2cf5)
-- [TLS1.3 - OpenSSLWiki](https://wiki.openssl.org/index.php/TLS1.3)
+- [The Transport Layer Security (TLS) Protocol Version 1.2](https://www.ietf.org/rfc/rfc5246.txt)
+- [The Transport Layer Security (TLS) Protocol Version 1.3](https://tools.ietf.org/html/draft-ietf-tls-tls13-18)
 - [TLS1.2 - Every byte explained and reproduced](https://tls12.ulfheim.net/)
 - [TLS1.3 - Every byte explained and reproduced](https://tls13.ulfheim.net/)
-- [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
+- [TLS1.3 - OpenSSLWiki](https://wiki.openssl.org/index.php/TLS1.3)
+- [TLS v1.2 handshake overview](https://medium.com/@ethicalevil/tls-handshake-protocol-overview-a39e8eee2cf5)
 - [An Overview of TLS 1.3 - Faster and More Secure](https://kinsta.com/blog/tls-1-3/)
+- [A Detailed Look at RFC 8446 (a.k.a. TLS 1.3)](https://blog.cloudflare.com/rfc-8446-aka-tls-1-3/)
+- [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
 - [Differences between TLS 1.2 and TLS 1.3](https://www.wolfssl.com/differences-between-tls-1-2-and-tls-1-3/)
 - [Phase two of our TLS 1.0 and 1.1 deprecation plan](https://www.fastly.com/blog/phase-two-our-tls-10-and-11-deprecation-plan)
+- [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
+- [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
 - [This POODLE bites: exploiting the SSL 3.0 fallback](https://security.googleblog.com/2014/10/this-poodle-bites-exploiting-ssl-30.html)
 
 #### :beginner: Use only strong ciphers
@@ -2708,35 +2816,44 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow.
 
-  > For more security use only strong and not vulnerable ciphersuite (but if you use HTTP/2 with restrictive ciphersuite you can get `Server sent fatal alert: handshake_failure` error).
+  > To check ciphers supports by OpenSSL on your server use: `openssl ciphers -s -v` or `openssl ciphers -s -v ECDHE`.
+
+  > For more security use only strong and not vulnerable ciphersuite.
 
   > Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because `ECDHE` suites are faster, you want to use them whenever clients supports them.
 
-  > For backward compatibility software components you should use less restrictive ciphers.
+  > For backward compatibility software components you should use less restrictive ciphers. Not only that you have to enable at least one special AES128 cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
-  > You should definitely disable weak ciphers like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
+  > If you want to get **A+ with 100%s on SSL Lab** (for Cipher Strength) you should definitely disable `128-bit` ciphers. That's the main reason why you should not use them.
+
+  > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 ciphersuites so at this moment it's always on. On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+
+  > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys, so there is no forward secrecy.
+
+  > You should also definitely disable weak ciphers regardless of the TLS version do you use, like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
+
+  **My recommendation:**
+
+  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with above ciphersuites:
+  > ```bash
+    ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
+    ```
 
 ###### Example
+
+Ciphersuite for TLS 1.3:
+
+```bash
+ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384";
+```
 
 Ciphersuite for TLS 1.2:
 
 ```bash
-ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
 ```
 
 &nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
-
-Ciphersuite for TLS 1.2/1.1:
-
-```bash
-# 1)
-ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256";
-
-# 2)
-ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:!AES256-GCM-SHA256:!AES256-GCM-SHA128:!aNULL:!MD5";
-```
-
-&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **90**</sub>
 
 Ciphersuite for TLS 1.3:
 
@@ -2744,13 +2861,42 @@ Ciphersuite for TLS 1.3:
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ```
 
+Ciphersuite for TLS 1.2:
+
+```bash
+# 1)
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
+
+# 2)
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
+
+# 3)
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
+
+# 4)
+ssl_ciphers "EECDH+CHACHA20:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+```
+
+Ciphersuite for TLS 1.1 + 1.2:
+
+```bash
+# 1)
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
+
+# 2)
+ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:!AES256-GCM-SHA256:!AES256-GCM-SHA128:!aNULL:!MD5";
+```
+
+&nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **90**</sub>
+
 ###### External resources
 
 - [TLS Cipher Suites](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-4)
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 - [Which SSL/TLS Protocol Versions and Cipher Suites Should I Use?](https://www.securityevaluators.com/ssl-tls-protocol-versions-cipher-suites-use/)
-- [Recommendations for a cipher string](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/TLS_Cipher_String_Cheat_Sheet.md)
+- [Recommendations for a cipher string by OWASP](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/TLS_Cipher_String_Cheat_Sheet.md)
+- [Recommendations for TLS/SSL Cipher Hardening by Acunetix](https://www.acunetix.com/blog/articles/tls-ssl-cipher-hardening/)
 - [Mozilla’s Modern compatibility suite](https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility)
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
 - [Cipher Suite Breakdown](https://blogs.technet.microsoft.com/askpfeplat/2017/12/26/cipher-suite-breakdown/)
@@ -2768,24 +2914,36 @@ ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-1
 
   > Use `P-256` to minimize trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
 
+  > If you use TLS 1.3 you should enable `prime256v1` signature algorithm. Without this SSL Lab reports `TLS_AES_128_GCM_SHA256 (0x1301)` signature as weak.
+
   > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
 
   > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**.
 
   > Definitely do not use the `secp112r1`, `secp112r2`, `secp128r1`, `secp128r2`, `secp160k1`, `secp160r1`, `secp160r2`, `secp192k1` curves. They have a too small size for security application according to NIST recommendation.
 
+  **My recommendation:**
+
+  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) and [only strong ciphers](#use-only-strong-ciphers) with above curves:
+  > ```bash
+    ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
+    ```
+
 ###### Example
 
+Curves for TLS 1.2:
+
 ```bash
-ssl_ecdh_curve secp521r1:secp384r1;
+ssl_ecdh_curve secp521r1:secp384r1:prime256v1;
 ```
 
 &nbsp;&nbsp;<sub>:arrow_up: ssllabs score: **100**</sub>
 
 ```bash
 # Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order).
-# This setup downgrade Key Exchange score:
-ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
+
+# This setup downgrade Key Exchange score but is recommended for TLS 1.2 + 1.3:
+ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 ```
 
 ###### External resources
@@ -2855,7 +3013,7 @@ ssl_prefer_server_ciphers on;
 
 ###### Rationale
 
-  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively.
+  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540: 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2).
 
   > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
 
@@ -3117,11 +3275,13 @@ I used step-by-step tutorial from [Installation from source](#installation-from-
 
 ## Configuration
 
+Configuration of Google Cloud instance:
+
 | <b>Item</b> | <b>Value</b> | <b>Comment</b> |
 | :---         | :---         | :---         |
 | VM | Google Cloud Platform | |
 | vCPU | 2x | |
-| Memory | 4096GB | |
+| Memory | 4096MB | |
 | HTTP | Varnish on port 80 | |
 | HTTPS | Nginx on port 443 | |
 
