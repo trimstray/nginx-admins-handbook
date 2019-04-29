@@ -175,6 +175,8 @@
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
+- **[Others](#others)**
+  * [Enable DNS CAA Policy](#enable-dns-caa-policy)
 - **[Configuration Examples](#configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
@@ -3264,6 +3266,36 @@ upstream backend {
 ###### External resources
 
 - [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
+
+# Others
+
+#### :beginner: Enable DNS CAA Policy
+
+###### Rationale
+
+  > This rule isn't strictly related to Nginx but in my opinion it's also very important important aspect of security.
+
+  > DNS CAA policy helps you to control which Certificat Authorities are allowed to issue certificates for your domain becaues if no CAA record is present, any CA is allowed to issue a certificate for the domain.
+
+###### Example
+
+Generic configuration (Google Cloud DNS, Route 53, OVH, and other hosted services) for Let's Encrypt:
+
+```bash
+example.com. CAA 0 issue "letsencrypt.org"
+```
+
+Standard Zone File (BIND, PowerDNS and Knot DNS) for Let's Encrypt:
+
+```bash
+example.com. IN CAA 0 issue "letsencrypt.org"
+```
+
+###### External resources
+
+- [DNS Certification Authority Authorization (CAA) Resource Record](https://tools.ietf.org/html/rfc6844)
+- [CAA Records](https://support.dnsimple.com/articles/caa-record/)
+- [CAA Record Helper](https://sslmate.com/caa/)
 
 # Configuration Examples
 
