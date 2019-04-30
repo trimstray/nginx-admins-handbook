@@ -96,8 +96,8 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Nginx contexts](#nginx-contexts)
-  * [Virtual server logic](#virtual-server-logic)
   * [Request processing stages](#request-processing-stages)
+  * [Virtual server logic](#virtual-server-logic)
   * [Matching location blocks](#matching-location-blocks)
   * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
@@ -365,6 +365,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 ##### Cheatsheets & References
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/"><b>Pitfalls and Common Mistakes</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gist.github.com/carlessanagustin/9509d0d31414804da03b"><b>Nginx Cheatsheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.scalescale.com/tips/nginx/"><b>Nginx Tutorials, Linux Sysadmin Configuration & Optimizing Tips and Tricks</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/h5bp/server-configs-nginx"><b>Nginx boilerplate configs</b></a><br>
@@ -1088,24 +1089,6 @@ Global/Main Context
         +-----» Mail Context
 ```
 
-#### Virtual server logic
-
-Nginx uses the following logic to determining which virtual server should be used:
-
-1) Match the `address:port` pair to the listen directive
-2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
-3) Match the `Host` header field against the `server_name` directive with a
-wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
-4) Match the `Host` header field against the `server_name` directive with a
-wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
-5) Match the `Host` header field against the `server_name` directive as a regular expression
-6) If all the `Host` headers doesn't match, then direct to the listen directive
-marked as `default_server`
-7) If all the `Host` headers doesn't match and there is no `default_server`,
-direct to the first server with a listen directive that satisfies first step
-
-<sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
-
 #### Request processing stages
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
@@ -1129,6 +1112,24 @@ direct to the first server with a listen directive that satisfies first step
   - example modules: [ngx_http_index_module](https://nginx.org/en/docs/http/ngx_http_index_module.html), [ngx_http_autoindex_module](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html), [ngx_http_gzip_module](https://nginx.org/en/docs/http/ngx_http_gzip_module.html)
 - `NGX_HTTP_LOG_PHASE` - log processing
   - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
+
+#### Virtual server logic
+
+Nginx uses the following logic to determining which virtual server should be used:
+
+1) Match the `address:port` pair to the listen directive
+2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
+3) Match the `Host` header field against the `server_name` directive with a
+wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
+4) Match the `Host` header field against the `server_name` directive with a
+wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
+5) Match the `Host` header field against the `server_name` directive as a regular expression
+6) If all the `Host` headers doesn't match, then direct to the listen directive
+marked as `default_server`
+7) If all the `Host` headers doesn't match and there is no `default_server`,
+direct to the first server with a listen directive that satisfies first step
+
+<sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
 
 #### Matching location blocks
 
@@ -2701,7 +2702,7 @@ proxy_hide_header X-Drupal-Cache;
 
   The "SSL/TLS Deployment Best Practices" book say:
 
-  > _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in “too much” security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
+  > _The cryptographic handshake, which is used to establish secure connections, is an operation whose cost is highly influenced by private key size. Using a key that is too short is insecure, but using a key that is too long will result in "too much" security and slow operation. For most web sites, using RSA keys stronger than 2048 bits and ECDSA keys stronger than 256 bits is a waste of CPU power and might impair user experience. Similarly, there is little benefit to increasing the strength of the ephemeral key exchange beyond 2048 bits for DHE and 256 bits for ECDHE._
 
   Konstantin Ryabitsev (Reddit):
 
