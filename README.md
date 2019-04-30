@@ -2695,7 +2695,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > Longer keys take more time to generate and require more CPU (please use `openssl speed rsa` on your server) and power when used for encrypting and decrypting, also the SSL handshake at the start of each connection will be slower. It also has a small impact on the client side (e.g. browsers).
 
-  > Use of alternative solution: ECC Certificate Signing Request (CSR). ECDSA certificates contain an ECC public key. ECC keys are better than RSA & DSA keys in that the ECC algorithm is harder to break.
+  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2752,6 +2752,7 @@ certbot certonly -d domain.com -d www.domain.com
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
+- [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)
 
 #### :beginner: Keep only TLS 1.2 and TLS 1.3
 
