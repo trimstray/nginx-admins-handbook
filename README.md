@@ -233,7 +233,7 @@ Many of these recipes have been applied to the configuration of my private websi
 
   > Read about SSL Labs grading [here](https://community.qualys.com/docs/DOC-6321-ssl-labs-grading-2018) (SSL Labs Grading 2018).
 
-  > A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old programs).
+  > Short description: _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old programs)_.
 
 I finally got **A+** grade and following scores:
 
@@ -266,7 +266,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
-- A+ with all 100%’s on @ssllabs and 120/100 on @mozilla observatory:
+- **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
 
   > It provides very restrictive setup with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites.
 
@@ -275,7 +275,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
         alt="nginx-hardening-checklist-100p" width="75%" height="75%">
 </p>
 
-- A+ on @ssllabs and 120/100 on @mozilla observatory with TLS 1.3 support:
+- **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
   > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites.
 
@@ -1199,7 +1199,7 @@ Both keys also provides response status parameters indicating too many requests 
 
 For example, if you want to set the desired logging level for cases when the server limits the number of connections:
 
-```
+```bash
 # Add this to http context:
 limit_req_status 429;
 
@@ -1425,7 +1425,7 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 # 1) generate file with htpasswd command:
 htpasswd -c htpasswd_example.com.conf <username>
 
-# 2) include this file in specific context: (e.g. server)
+# 2) include this file in specific context: (e.g. server):
 server_name example.com;
 
   ...
@@ -1481,7 +1481,7 @@ map $remote_addr $globals_internal_map_acl {
 # 2) include this file in http context:
 include /etc/nginx/acls/allow.map.conf;
 
-# 3) turn on in a specific context (e.g. location)
+# 3) turn on in a specific context (e.g. location):
 server_name example.com;
 
   ...
@@ -1541,7 +1541,7 @@ geo $globals_internal_geo_acl {
 # 2) include this file in http context:
 include /etc/nginx/acls/allow.geo.conf;
 
-# 3) turn on in a specific context (e.g. location)
+# 3) turn on in a specific context (e.g. location):
 server_name example.com;
 
   ...
@@ -1584,7 +1584,7 @@ allow 35.228.233.xxx;
 # 2) include this file in http context:
 include /etc/nginx/acls/allow.conf;
 
-# 3) turn on in a specific context (e.g. server)
+# 3) turn on in a specific context (e.g. server):
 server_name example.com;
 
   include /etc/nginx/acls/allow.conf;
@@ -1617,7 +1617,7 @@ map $http_referer $invalid_referer {
 # 2) include this file in http context:
 include /etc/nginx/limits.conf;
 
-# 3) turn on in a specific context (e.g. server)
+# 3) turn on in a specific context (e.g. server):
 server_name example.com;
 
   if ($invalid_referer) { return 403; }
@@ -1628,7 +1628,7 @@ server_name example.com;
 Example 2:
 
 ```bash
-# 1) turn on in a specific context (e.g. location)
+# 1) turn on in a specific context (e.g. location):
 location /check_status {
 
   if ($http_referer ~ "spam1\.com|spam2\.com|spam3\.com") {
@@ -1660,7 +1660,7 @@ map $http_referer $limit_ip_key_by_referer {
 
 limit_req_zone $limit_ip_key_by_referer zone=req_for_remote_addr_by_referer:1m rate=5r/s;
 
-# 2) turn on in a specific context (e.g. server)
+# 2) turn on in a specific context (e.g. server):
 server_name example.com;
 
   limit_req zone=req_for_remote_addr_by_referer burst=2;
@@ -2078,6 +2078,8 @@ server {
 
   > You should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications.
 
+  > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
+
 ###### Example
 
 ```bash
@@ -2105,6 +2107,7 @@ server {
 ###### External resources
 
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
+- [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
 
 #### :beginner: Use geo/map modules instead allow/deny
 
@@ -2182,6 +2185,7 @@ map $http_user_agent $device_redirect {
 
 }
 
+# turn on in a specific context (e.g. location):
 if ($device_redirect = "mobile") {
 
   return 301 https://m.domain.com$request_uri;
@@ -2493,7 +2497,7 @@ server {
   >   - `limit_rate_after` - sets the amount of data transferred before the `limit_rate` directive takes effect
   >   - `limit_rate` - allows you to limit the transfer rate of individual client connections (past exceeding `limit_rate_after`)
 
-  > This solution limits nginx download speed per connection, so, if one user opens multiple e.g. video files, it will be able to download `X * the number of times` he connected to the video files.
+  > This solution limits Nginx download speed per connection, so, if one user opens multiple e.g. video files, it will be able to download `X * the number of times` he connected to the video files.
 
   > To prevent this situation use `limit_conn_zone` and `limit_conn` directives.
 
@@ -2626,7 +2630,7 @@ location ~ /\.(?!well-known\/) {
 
   > Disclosing the version of Nginx running can be undesirable, particularly in environments sensitive to information disclosure.
 
-  The "Official Apache Documentation (Apache Core Features)" say:
+  But the "Official Apache Documentation (Apache Core Features)" say:
 
   > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
 
@@ -2703,7 +2707,7 @@ proxy_hide_header X-Drupal-Cache;
 
   **My recommendation:**
 
-  > Use `2048-bit` key instead `4096-bit` at this moment.
+  > Use **2048-bit** key instead **4096-bit** at this moment.
 
 ###### Example
 
@@ -2765,7 +2769,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   **My recommendation:**
 
-  > Use only TLSv1.3 and TLSv1.2.
+  > Use only **TLSv1.3** and **TLSv1.2**.
 
 ###### Example
 
@@ -2831,7 +2835,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > If you want to get **A+ with 100%s on SSL Lab** (for Cipher Strength) you should definitely disable `128-bit` ciphers. That's the main reason why you should not use them.
 
-  > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 ciphersuites so at this moment it's always on. On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+  > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 ciphersuites so at this moment it's always on (also if you disable potentially weak cipher from Nginx). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys, so there is no forward secrecy.
 
@@ -2839,10 +2843,10 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   **My recommendation:**
 
-  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with above ciphersuites:
-  > ```bash
-    ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
-    ```
+  > Use only **[TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13)** with above ciphersuites:
+  ```bash
+  ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
+  ```
 
 ###### Example
 
@@ -2929,10 +2933,10 @@ ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+
 
   **My recommendation:**
 
-  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) and [only strong ciphers](#use-only-strong-ciphers) with above curves:
-  > ```bash
-    ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
-    ```
+  > Use only **[TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13)** and **[only strong ciphers](#use-only-strong-ciphers)** with above curves:
+  ```bash
+  ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
+  ```
 
 ###### Example
 
