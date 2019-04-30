@@ -177,7 +177,7 @@
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others](#others)**
-  * [Enable DNS CAA Policy](#enable-dns-caa-policy)
+  * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
 - **[Configuration Examples](#configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
@@ -474,6 +474,8 @@ _Written for experienced systems administrators and engineers, this book teaches
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers"><b>Guidelines for Setting Security Headers</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://zinoui.com/blog/security-http-headers"><b>Security HTTP Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
@@ -3064,12 +3066,19 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 ###### External resources
 
 - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
+- [Security HTTP Headers - Strict-Transport-Security](https://zinoui.com/blog/security-http-headers#strict-transport-security)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
 
 ###### Rationale
 
   > CSP reduce the risk and impact of XSS attacks in modern browsers.
+
+  > Whitelisting known-good resource origins, refusing to execute potentially dangerous inline scripts, and banning the use of eval are all effective mechanisms for mitigating cross-site scripting attacks.
+
+  > CSP is a good defence-in-depth measure to make exploitation of an accidental lapse in that less likely.
+
+  > Before enable this header you should discuss with developers about it. They probably going to have to update your application to remove any inline script and style, and make some additional modifications there.
 
 ###### Example
 
@@ -3082,6 +3091,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 
 - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
+- [Security HTTP Headers - Content-Security-Policy](https://zinoui.com/blog/security-http-headers#content-security-policy)
 
 #### :beginner: Control the behavior of the Referer header (Referrer-Policy)
 
@@ -3098,6 +3108,7 @@ add_header Referrer-Policy "no-referrer";
 ###### External resources
 
 - [A new security header: Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
+- [Security HTTP Headers - Referrer-Policy](https://zinoui.com/blog/security-http-headers#referrer-policy)
 
 #### :beginner: Provide clickjacking protection (X-Frame-Options)
 
@@ -3114,6 +3125,7 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 ###### External resources
 
 - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
+- [Security HTTP Headers - X-Frame-Options](https://zinoui.com/blog/security-http-headers#x-frame-options)
 
 #### :beginner: Prevent some categories of XSS attacks (X-XSS-Protection)
 
@@ -3130,6 +3142,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 ###### External resources
 
 - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
+- [Security HTTP Headers - X-XSS-Protection](https://zinoui.com/blog/security-http-headers#x-xss-protection)
 
 #### :beginner: Prevent Sniff Mimetype middleware (X-Content-Type-Options)
 
@@ -3146,6 +3159,7 @@ add_header X-Content-Type-Options "nosniff" always;
 ###### External resources
 
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
+- [Security HTTP Headers - X-Content-Type-Options](https://zinoui.com/blog/security-http-headers#x-content-type-options)
 
 #### :beginner: Deny the use of browser features (Feature-Policy)
 
@@ -3163,6 +3177,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
 - [Feature Policy Explainer](https://docs.google.com/document/d/1k0Ua-ZWlM_PsFCFdLMa8kaVTo32PeNZ4G7FFHqpFx4E/edit)
 - [Policy Controlled Features](https://github.com/w3c/webappsec-feature-policy/blob/master/features.md)
+- [Security HTTP Headers - Feature-Policy](https://zinoui.com/blog/security-http-headers#feature-policy)
 
 #### :beginner: Reject unsafe HTTP methods
 
