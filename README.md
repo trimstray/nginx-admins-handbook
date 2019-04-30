@@ -499,7 +499,7 @@ Mandatory requirements:
 - [OpenSSL](https://www.openssl.org/source/) library
 - [Zlib](https://zlib.net/) library
 - [PCRE](https://ftp.pcre.org/pub/pcre/) library
-- [LuaJIT](http://luajit.org/download.html) library
+- [LuaJIT v2.1](https://github.com/LuaJIT/LuaJIT) or [OpenResty's LuaJIT2](https://github.com/openresty/luajit2) library
 
 If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building Nginx:
 
@@ -558,7 +558,7 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
 ###### Install or build dependencies
 
-  > In my configuration I used all prebuilt dependencies without `libssl-dev` because I compiled it manually - for TLS 1.3 support.
+  > In my configuration I used all prebuilt dependencies without `libssl-dev` and `libluajit-5.1-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
 
 Before start please see this short system locations:
 
@@ -658,10 +658,10 @@ __EOF__
 LuaJIT:
 
 ```bash
-# I recommend to use LuaJIT-2.1.0-beta3 instead LuaJIT-2.0
-cd /usr/local/src/ && git clone https://github.com/LuaJIT/LuaJIT
+# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT):
+cd /usr/local/src/ && git clone https://github.com/openresty/luajit2
 
-cd LuaJIT
+cd luajit2
 
 make && make install
 
