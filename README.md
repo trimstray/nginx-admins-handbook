@@ -66,7 +66,7 @@
   * [Mastering Nginx](#mastering-nginx)
 - **[External Resources](#external-resources)**
   * [About Nginx](#about-nginx)
-  * [Nginx forks](#nginx-forks)
+  * [Based on the Nginx](#based-on-the-nginx)
   * [Cheatsheets & References](#cheatsheets--references)
   * [Performance & Hardening](#performance--hardening)
   * [Playgrounds](#playgrounds)
@@ -92,6 +92,7 @@
   * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
+  * [Tengine Web Server](#tengine-web-server)
   * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
@@ -271,8 +272,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
   > It provides very restrictive setup with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
 
 <p align="center">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls12-100p.png"
-        alt="nginx-hardening-checklist-100p" width="75%" height="75%">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls12-100p.png" alt="nginx-hardening-checklist-100p" width="75%" height="75%">
 </p>
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
@@ -280,8 +280,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
   > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites.
 
 <p align="center">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png"
-        alt="nginx-hardening-checklist-tls13" width="75%" height="75%">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png" alt="nginx-hardening-checklist-tls13" width="75%" height="75%">
 </p>
 
 # Books
@@ -355,7 +354,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official read-only mirror</b></a><br>
 </p>
 
-##### Nginx forks
+##### Based on the Nginx
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://openresty.org/"><b>OpenResty</b></a><br>
@@ -504,22 +503,23 @@ Mandatory requirements:
 
 If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building Nginx:
 
-| <b>Debian Like</b> | <b>RedHat Like</b> |
-| :---         | :---         |
-| `gcc make build-essential` | `gcc gcc-c++ kernel-devel` |
-| `perl libperl-dev` | `perl perl-ExtUtils-Embed` |
-| `libssl-dev`* | `openssl-devel`* |
-| `zlib1g-dev`* | `zlib-devel`* |
-| `libpcre2-dev`* | `pcre-devel`* |
-| `libluajit-5.1-dev`* | `luajit-devel`* |
-| `libxslt-dev` | `libxslt libxslt-devel` |
-| `libgd-dev` | `gd gd-devel` |
-| `libgeoip-dev` | `GeoIP-devel` |
-| `libxml2-dev` | `libxml2-dev` |
-| `libexpat-dev` | `expat-devel` |
-| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` |
-| | `cpio` |
-| | `gettext-devel` |
+| <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
+| :---         | :---         | :---         |
+| `gcc make build-essential` | `gcc gcc-c++ kernel-devel` | |
+| `perl libperl-dev` | `perl perl-ExtUtils-Embed` | |
+| `libssl-dev`* | `openssl-devel`* | |
+| `zlib1g-dev`* | `zlib-devel`* | |
+| `libpcre2-dev`* | `pcre-devel`* | |
+| `libluajit-5.1-dev`* | `luajit-devel`* | |
+| `libxslt-dev` | `libxslt libxslt-devel` | |
+| `libgd-dev` | `gd gd-devel` | |
+| `libgeoip-dev` | `GeoIP-devel` | |
+| `libxml2-dev` | `libxml2-dev` | |
+| `libexpat-dev` | `expat-devel` | |
+| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
+| | `cpio` | |
+| | `gettext-devel` | |
+| `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
 
 <sup><i>* If you don't use from sources.</i></sup>
 
@@ -527,10 +527,10 @@ Shell one-liner example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev cpio expat-devel gettext-devel gperftools-devel
+yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev expat-devel gperftools-devel cpio gettext-devel
 ```
 
 ##### Nginx package
@@ -581,7 +581,7 @@ Before start please see this short system locations:
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4
 
 # Also if you don't use sources:
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
@@ -633,7 +633,7 @@ wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.
 
 cd /usr/local/src/openssl-1.1.1b
 
-./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl2 no-ssl3 no-weak-ssl-ciphers
+./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl3 no-weak-ssl-ciphers
 
 make -j2 && make test
 make install
@@ -705,30 +705,53 @@ tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/mast
 
 ###### Download 3rd party modules
 
-  > You can download external modules from:
-  >   - [NGINX 3rd Party Modules](https://www.nginx.com/resources/wiki/modules/)
-  >   - [OpenResty - Components](https://openresty.org/en/components.html)
+You can download external modules from:
+
+- [NGINX 3rd Party Modules](https://www.nginx.com/resources/wiki/modules/)
+- [OpenResty - Components](https://openresty.org/en/components.html)
+- [Tengine - Modules](https://github.com/alibaba/tengine/tree/master/modules)
+
+  > Not all external modules can work properly. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your Nginx release.
 
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/modules/
 
 for i in \
-https://github.com/simpl/ngx_devel_kit \
-https://github.com/chaoslawful/lua-nginx-module \
-https://github.com/agentzh/memc-nginx-module \
+https://github.com/simplresty/ngx_devel_kit \
+https://github.com/openresty/lua-nginx-module \
 https://github.com/openresty/set-misc-nginx-module \
 https://github.com/openresty/echo-nginx-module \
 https://github.com/openresty/headers-more-nginx-module \
 https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/vozlt/nginx-module-sysguard \
-https://github.com/cfsego/ngx_log_if ; do
+https://github.com/openresty/array-var-nginx-module \
+https://github.com/openresty/encrypted-session-nginx-module \
+https://github.com/agentzh/memc-nginx-module \
+https://github.com/vozlt/nginx-module-sysguard ; do
 
   git clone --depth 1 "$i"
 
 done
 
+wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
+
 # Other modules:
 # https://github.com/arut/nginx-rtmp-module
+# https://github.com/aperezdc/ngx-fancyindex
+# https://github.com/cfsego/ngx_log_if
+```
+
+I also used some modules from Tengine:
+
+- `ngx_backtrace_module`
+- `ngx_debug_pool`
+- `ngx_debug_timer`
+- `ngx_http_upstream_check_module`
+
+```bash
+cd /usr/local/src/nginx-${ngx_version}/modules/
+
+git clone --depth 1 https://github.com/alibaba/tengine
 ```
 
 ###### Build Nginx
@@ -766,6 +789,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-http_geoip_module \
             --with-http_gunzip_module \
             --with-http_gzip_static_module \
+            --with-http_image_filter_module \
             --with-http_perl_module \
             --with-http_random_index_module \
             --with-http_realip_module \
@@ -777,7 +801,6 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-google_perftools_module \
             --with-openssl=/usr/local/src/openssl-1.1.1b \
             --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl2 \
             --with-openssl-opt=no-ssl3 \
             --without-http-cache \
             --without-http_memcached_module \
@@ -788,19 +811,27 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_scgi_module \
             --without-http_uwsgi_module \
             --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie' \
+            --with-ld-opt='-Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/echo-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/headers-more-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/replace-filter-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/array-var-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/delay-module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module
 
 # Other modules:
 #           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module
+#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx-fancyindex
+#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
 
 make -j2 && make install && ldconfig
 ```
@@ -830,7 +861,10 @@ tree
 ├── mime.types.default
 ├── modules
 │   ├── ndk_http_module.so
+│   ├── ngx_http_array_var_module.so
+│   ├── ngx_http_delay_module.so
 │   ├── ngx_http_echo_module.so
+│   ├── ngx_http_encrypted_session_module.so
 │   ├── ngx_http_headers_more_filter_module.so
 │   ├── ngx_http_lua_module.so
 │   ├── ngx_http_memc_module.so
@@ -845,7 +879,7 @@ tree
 ├── uwsgi_params.default
 └── win-utf
 
-2 directories, 25 files
+2 directories, 28 files
 ```
 
 ###### Post installation tasks
@@ -1003,6 +1037,12 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <pub_key>
 apt-get update
 apt-get install nginx
 ```
+
+#### Tengine Web Server
+
+  > Official github repository: [tengine](https://github.com/alibaba/tengine).
+
+Work in progress.
 
 #### Nginx directories and files
 
