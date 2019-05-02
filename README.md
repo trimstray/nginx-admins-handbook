@@ -558,7 +558,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-deve
 
 ###### Pre installation tasks
 
-Set the Nginx version (I used stable):
+Set the Nginx version (I use stable release):
 
 ```bash
 export ngx_version="1.16.0"
@@ -574,7 +574,7 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
 ###### Install or build dependencies
 
-  > In my configuration I used all prebuilt dependencies without `libssl-dev` and `libluajit-5.1-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
+  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
 
 Before start please see this short system locations:
 
@@ -698,7 +698,7 @@ ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 
 sregex:
 
-  > Required for `replace-filter-nginx-module` module. It must be compiled.
+  > Required for `replace-filter-nginx-module` module.
 
 ```bash
 cd /usr/local/src/ && git clone https://github.com/openresty/sregex
@@ -710,7 +710,7 @@ make && make install
 
 jemalloc:
 
-  > After Nginx start you can check how to `jemalloc` working using this command: `lsof -n | grep jemalloc`.
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
 cd /usr/local/src/ && git clone https://github.com/jemalloc/jemalloc
@@ -736,14 +736,18 @@ cd /usr/local/src/nginx-${ngx_version}
 wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
 
 # or alternative:
-#   git clone --depth 1 https://github.com/nginx/nginx
+#   git clone --depth 1 https://github.com/nginx/nginx master
 
 tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/master --strip 1
 ```
 
 ###### Download 3rd party modules
 
-  > Not all external modules can work properly. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your Nginx release.
+  > Not all external modules can work properly with your currently Nginx version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your Nginx release.
+
+Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into Nginx at runtime (`--add-dynamic-module`). On the other hand you can also built them into Nginx at compile time and linked to the Nginx binary statically (`--add-module`).
+
+I mixed both variants because some of the modules are built-in automatically.
 
 You can download external modules from:
 
@@ -778,7 +782,7 @@ A short description of the modules that used (not only) in this step-by-step tut
 - [`nginx-http-user-agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
 - [`ngx_http_auth_pam_module`](https://github.com/sto/ngx_http_auth_pam_module) - module to use PAM for simple http authentication
 
-<sup><i>* Available in Tengine Web Server (but these modules can be updated/patched by Tengine Team).</i></sup>
+<sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup>
 
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/modules/
@@ -803,15 +807,9 @@ done
 
 wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
-
-# Other modules:
-# https://github.com/agentzh/memc-nginx-module
-# https://github.com/arut/nginx-rtmp-module
-# https://github.com/aperezdc/ngx-fancyindex
-# https://github.com/cfsego/ngx_log_if
 ```
 
-I also used some modules from Tengine:
+I also use some modules from Tengine:
 
 - `ngx_backtrace_module`
 - `ngx_debug_pool`
@@ -884,8 +882,17 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
+            --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
             --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus/src/c \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_http_substitutions_filter_module \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-sticky-module-ng \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
@@ -893,25 +900,13 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/headers-more-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/replace-filter-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/array-var-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus/src/c \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_http_substitutions_filter_module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-sticky-module-ng \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/delay-module
 
-# Other modules:
-#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/memc-nginx-module
-#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-rtmp-module
-#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx-fancyindex
-#           --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_log_if
+make -j2 && make test
+make install
 
-make -j2 && make test && make install && ldconfig
+ldconfig
 ```
 
 Check Nginx version:
@@ -924,7 +919,6 @@ nginx version: nginx/1.16.0
 And list all files in `/etc/nginx`:
 
 ```bash
-tree
 .
 ├── fastcgi.conf
 ├── fastcgi.conf.default
@@ -1117,15 +1111,14 @@ apt-get install nginx
 
 #### Tengine Web Server
 
-  > Official github repository: [Tengine](https://github.com/alibaba/tengine).
+  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the Nginx HTTP server and has many advanced features._
 
-  > Official documentation: [Tengine Documentation](https://tengine.taobao.org/documentation.html)
-
-  > Short description: _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the Nginx HTTP server and has many advanced features._
+- Official github repository: [Tengine](https://github.com/alibaba/tengine).
+- Official documentation: [Tengine Documentation](https://tengine.taobao.org/documentation.html)
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar with [this](#installation-from-source). However, I will only specify the most important changes.
+The build and installation process is very similar to [Installation from source - Nginx](#installation-from-source). However, I will only specify the most important changes.
 
 ##### Example of installation on Ubuntu
 
@@ -1221,7 +1214,7 @@ ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 
 sregex:
 
-  > Required for `replace-filter-nginx-module` module. It must be compiled.
+  > Required for `replace-filter-nginx-module` module.
 
 ```bash
 cd /usr/local/src/ && git clone https://github.com/openresty/sregex
@@ -1232,6 +1225,8 @@ make && make install
 ```
 
 jemalloc:
+
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
 cd /usr/local/src/ && git clone https://github.com/jemalloc/jemalloc
@@ -1347,16 +1342,19 @@ cd /usr/local/src/tengine/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
+            --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
             --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
+            --add-module=/usr/local/src/tengine/modules/nginx-access-plus/src/c \
+            --add-module=/usr/local/src/tengine/modules/ngx_http_substitutions_filter_module \
             --add-dynamic-module=/usr/local/src/tengine/modules/echo-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/headers-more-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/replace-filter-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/nginx-access-plus/src/c \
-            --add-dynamic-module=/usr/local/src/tengine/modules/ngx_http_substitutions_filter_module \
             --add-dynamic-module=/usr/local/src/tengine/modules/delay-module
 
-make -j2 && make test && make install && ldconfig
+make -j2 && make test
+make install
+
+ldconfig
 ```
 
 Check Tengine version:
@@ -1401,7 +1399,7 @@ tree
 
 ###### Post installation tasks
 
-  > Please see [this](#post-installation-tasks) section.
+  > Check all post installation tasks from [Post installation tasks - Nginx](#post-installation-tasks) section.
 
 #### Nginx directories and files
 
