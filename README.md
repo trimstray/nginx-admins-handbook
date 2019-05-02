@@ -550,7 +550,7 @@ yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib
 
 ###### Pre installation tasks
 
-Set Nginx version:
+Set the Nginx version (I used stable):
 
 ```bash
 export ngx_version="1.16.0"
@@ -585,7 +585,7 @@ Before start please see this short system locations:
   - `/usr/local/lib` - shared libraries
   - `/usr/local/share` - manual pages, data
 
-1) Install prebuilt packages, export variables and set symbolic link:
+**Install prebuilt packages, export variables and set symbolic link:**
 
 ```bash
 apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
@@ -602,7 +602,7 @@ ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 
   > Remember to compile `sregex` also if you use above steps.
 
-2) Or download and compile them:
+**Or download and compile them:**
 
 ```bash
 cd /usr/local/src/
@@ -645,6 +645,9 @@ cd /usr/local/src/openssl-1.1.1b
 
 make -j2 && make test
 make install
+
+export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
+export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
 
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
@@ -1125,7 +1128,7 @@ mkdir /usr/local/src/tengine/modules
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
 # Also if you don't use sources:
 apt-get install zlib1g-dev libpcre2-dev
@@ -1146,6 +1149,9 @@ cd /usr/local/src/openssl-1.1.1b
 
 make -j2 && make test
 make install
+
+export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
+export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
 
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
@@ -1227,7 +1233,9 @@ cd /usr/local/src/tengine/modules/
 for i in \
 https://github.com/openresty/echo-nginx-module \
 https://github.com/openresty/headers-more-nginx-module \
-https://github.com/openresty/replace-filter-nginx-module ; do
+https://github.com/openresty/replace-filter-nginx-module \
+https://github.com/nginx-clojure/nginx-access-plus \
+https://github.com/yaoweibin/ngx_http_substitutions_filter_module ; do
 
   git clone --depth 1 "$i"
 
