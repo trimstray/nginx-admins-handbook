@@ -351,7 +351,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Official Project</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Official Documentation</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official read-only mirror</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official Read-only Mirror</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Official Admin Guide</b></a><br>
 </p>
 
@@ -431,11 +431,13 @@ _Written for experienced systems administrators and engineers, this book teaches
 ##### Benchmarking tools
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://httpd.apache.org/docs/2.4/programs/ab.html"><b>ab</b></a> - is a single-threaded command line tool for measuring the performance of HTTP web servers.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.joedog.org/siege-home/"><b>siege</b></a> - is an http load testing and benchmarking utility.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/wg/wrk"><b>wrk</b></a> - is a modern HTTP benchmarking tool capable of generating significant load.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/codesenberg/bombardier"><b>bombardier</b></a> - is a HTTP(S) benchmarking tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/cmpxchg16/gobench"><b>gobench</b></a> - is a HTTP/HTTPS load testing and benchmarking tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/rakyll/hey"><b>hey</b></a> - is a HTTP load generator, ApacheBench (ab) replacement, formerly known as rakyll/boom.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/tarekziade/boom"><b>boom</b></a> - is a script you can use to quickly smoke-test your web app deployment.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://jmeter.apache.org/"><b>JMeter™</b></a> - is designed to load test functional behavior and measure performance.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gatling.io/"><b>Gatling</b></a> - is a powerful open-source load and performance testing tool for web applications.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/locustio/locust"><b>locust</b></a> - is an easy-to-use, distributed, user load testing tool.<br>
@@ -532,10 +534,10 @@ Shell one-liner example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev expat-devel gperftools-devel cpio gettext-devel
+yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev expat-devel gperftools-devel cpio gettext-devel autoconf
 ```
 
 ##### Nginx package
@@ -744,19 +746,20 @@ A short description of the modules that used (not only) in this step-by-step tut
 - [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
 - [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
 - [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - module which can do both regular expression and fixed string substitutions for Nginx
-- [`delay-module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
-- [`backtrace_module`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
-- [`debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for Nginx memory pool
-- [`debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for Nginx
-- [`http_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for Nginx
-- [`nginx-sticky-module`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src)* - module to add a sticky cookie to be always forwarded to the same
-- [`http_footer_filter_module`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request
+- [`ngx_http_delay_module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
+- [`nginx-backtrace`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
+- [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for Nginx memory pool
+- [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for Nginx
+- [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for Nginx
+- [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src)* - module to add a sticky cookie to be always forwarded to the same
+- [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request
   upstream server
 - [`memc-nginx-module`](https://github.com/agentzh/memc-nginx-module) - extended version of the standard Memcached module
 - [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - Nginx-based Media Streaming Server
 - [`ngx-fancyindex`](https://github.com/aperezdc/ngx-fancyindex) - generates of file listings, like the built-in autoindex module does, but adding a touch of style
 - [`ngx_log_if`](https://github.com/cfsego/ngx_log_if) - allows you to control when not to write down access log
-- [`http_user_agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
+- [`nginx-http-user-agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
+- [`ngx_http_auth_pam_module`](https://github.com/sto/ngx_http_auth_pam_module) - module to use PAM for simple http authentication
 
 <sup><i>* Available in Tengine Web Server (but these modules can be updated/patched by Tengine Team).</i></sup>
 
