@@ -884,6 +884,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_uwsgi_module \
             --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
             --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
+            --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus/src/c \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_http_substitutions_filter_module \
@@ -893,7 +894,6 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/echo-nginx-module \
