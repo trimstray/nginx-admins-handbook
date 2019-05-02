@@ -588,7 +588,7 @@ Before start please see this short system locations:
 1) Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4
+apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
 # Also if you don't use sources:
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
