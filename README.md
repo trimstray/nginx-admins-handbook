@@ -511,7 +511,7 @@ If you download and compile above sources the good point is to install additiona
 
 | <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
 | :---         | :---         | :---         |
-| `gcc make build-essential` | `gcc gcc-c++ kernel-devel` | |
+| `gcc make build-essential bison` | `gcc gcc-c++ kernel-devel bison` | |
 | `perl libperl-dev` | `perl perl-ExtUtils-Embed` | |
 | `libssl-dev`* | `openssl-devel`* | |
 | `zlib1g-dev`* | `zlib-devel`* | |
@@ -525,7 +525,8 @@ If you download and compile above sources the good point is to install additiona
 | `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
 | | `cpio` | |
 | | `gettext-devel` | |
-| `autoconf` | `autoconf` | for `jemalloc` |
+| `autoconf` | `autoconf` | for `jemalloc` from sources |
+| `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
 | `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
 
 <sup><i>* If you don't use from sources.</i></sup>
@@ -534,10 +535,10 @@ Shell one-liner example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+apt-get install gcc make build-essential bison perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev expat-devel gperftools-devel cpio gettext-devel autoconf
+yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev expat-devel gperftools-devel cpio gettext-devel autoconf
 ```
 
 ##### Nginx package
@@ -588,7 +589,7 @@ Before start please see this short system locations:
 **Install prebuilt packages, export variables and set symbolic link:**
 
 ```bash
-apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
 # Also if you don't use sources:
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
@@ -604,13 +605,11 @@ ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 
 **Or download and compile them:**
 
-```bash
-cd /usr/local/src/
-```
-
 PCRE:
 
 ```bash
+cd /usr/local/src/
+
 wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
 
 cd /usr/local/src/pcre-8.42
@@ -619,11 +618,16 @@ cd /usr/local/src/pcre-8.42
 
 make -j2 && make test
 make install
+
+export PCRE_LIB=/usr/local/lib
+export PCRE_INC=/usr/local/include
 ```
 
 Zlib:
 
 ```bash
+cd /usr/local/src/
+
 wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
 
 cd /usr/local/src/zlib-1.2.11
@@ -637,6 +641,8 @@ make install
 OpenSSL:
 
 ```bash
+cd /usr/local/src/
+
 wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
 
 cd /usr/local/src/openssl-1.1.1b
@@ -702,6 +708,8 @@ jemalloc:
 ```bash
 cd /usr/local/src/ && git clone https://github.com/jemalloc/jemalloc
 
+cd jemalloc
+
 ./autogen.sh
 
 make && make install
@@ -728,13 +736,13 @@ tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/mast
 
 ###### Download 3rd party modules
 
+  > Not all external modules can work properly. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your Nginx release.
+
 You can download external modules from:
 
 - [NGINX 3rd Party Modules](https://www.nginx.com/resources/wiki/modules/)
 - [OpenResty - Components](https://openresty.org/en/components.html)
 - [Tengine - Modules](https://github.com/alibaba/tengine/tree/master/modules)
-
-  > Not all external modules can work properly. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your Nginx release.
 
 A short description of the modules that used (not only) in this step-by-step tutorial:
 
@@ -749,14 +757,13 @@ A short description of the modules that used (not only) in this step-by-step tut
 - [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
 - [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
 - [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - module which can do both regular expression and fixed string substitutions for Nginx
+- [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src) - module to add a sticky cookie to be always forwarded to the same
 - [`ngx_http_delay_module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
 - [`nginx-backtrace`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
 - [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for Nginx memory pool
 - [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for Nginx
 - [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for Nginx
-- [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src)* - module to add a sticky cookie to be always forwarded to the same
-- [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request
-  upstream server
+- [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request upstream server
 - [`memc-nginx-module`](https://github.com/agentzh/memc-nginx-module) - extended version of the standard Memcached module
 - [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - Nginx-based Media Streaming Server
 - [`ngx-fancyindex`](https://github.com/aperezdc/ngx-fancyindex) - generates of file listings, like the built-in autoindex module does, but adding a touch of style
@@ -780,7 +787,8 @@ https://github.com/openresty/array-var-nginx-module \
 https://github.com/openresty/encrypted-session-nginx-module \
 https://github.com/vozlt/nginx-module-sysguard \
 https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module ; do
+https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng ; do
 
   git clone --depth 1 "$i"
 
@@ -859,6 +867,8 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-openssl=/usr/local/src/openssl-1.1.1b \
             --with-openssl-opt=no-weak-ssl-ciphers \
             --with-openssl-opt=no-ssl3 \
+            --with-pcre=/usr/local/src/pcre-8.42 \
+            --with-pcre-jit \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
@@ -868,7 +878,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_scgi_module \
             --without-http_uwsgi_module \
             --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie,-ljemalloc' \
+            --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
@@ -878,14 +888,14 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/array-var-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus/src/c \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_http_substitutions_filter_module \
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-sticky-module-ng \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/delay-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_session_sticky_module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module
 
 # Other modules:
@@ -928,7 +938,6 @@ tree
 │   ├── ngx_http_encrypted_session_module.so
 │   ├── ngx_http_headers_more_filter_module.so
 │   ├── ngx_http_lua_module.so
-│   ├── ngx_http_memc_module.so
 │   ├── ngx_http_replace_filter_module.so
 │   ├── ngx_http_set_misc_module.so
 │   └── ngx_http_sysguard_module.so
@@ -940,7 +949,7 @@ tree
 ├── uwsgi_params.default
 └── win-utf
 
-2 directories, 28 files
+2 directories, 27 files
 ```
 
 ###### Post installation tasks
@@ -1128,19 +1137,35 @@ mkdir /usr/local/src/tengine/modules
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
 # Also if you don't use sources:
-apt-get install zlib1g-dev libpcre2-dev
+apt-get install zlib1g-dev
 ```
+
+PCRE:
 
 ```bash
 cd /usr/local/src/
+
+wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+
+cd /usr/local/src/pcre-8.42
+
+./configure
+
+make -j2 && make test
+make install
+
+export PCRE_LIB=/usr/local/lib
+export PCRE_INC=/usr/local/include
 ```
 
 OpenSSL:
 
 ```bash
+cd /usr/local/src/
+
 wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
 
 cd /usr/local/src/openssl-1.1.1b
@@ -1203,6 +1228,8 @@ jemalloc:
 
 ```bash
 cd /usr/local/src/ && git clone https://github.com/jemalloc/jemalloc
+
+cd jemalloc
 
 ./autogen.sh
 
@@ -1302,6 +1329,8 @@ cd /usr/local/src/tengine/master
             --with-openssl=/usr/local/src/openssl-1.1.1b \
             --with-openssl-opt=no-weak-ssl-ciphers \
             --with-openssl-opt=no-ssl3 \
+            --with-pcre=/usr/local/src/pcre-8.42 \
+            --with-pcre-jit \
             --with-jemalloc=/usr/local/src/jemalloc \
             --without-http-cache \
             --without-http_memcached_module \
@@ -1312,11 +1341,11 @@ cd /usr/local/src/tengine/master
             --without-http_scgi_module \
             --without-http_uwsgi_module \
             --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
+            --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
             --add-dynamic-module=/usr/local/src/tengine/modules/echo-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/headers-more-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/replace-filter-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/nginx-access-plus \
+            --add-dynamic-module=/usr/local/src/tengine/modules/nginx-access-plus/src/c \
             --add-dynamic-module=/usr/local/src/tengine/modules/ngx_http_substitutions_filter_module \
             --add-dynamic-module=/usr/local/src/tengine/modules/delay-module
 
