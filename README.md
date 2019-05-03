@@ -215,9 +215,9 @@ Nginx is a fast, light-weight and powerful web server that can also be used as a
 
 ## General disclaimer
 
-This is not an official document. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only). Many of these rules refer to external resources.
+This is not an official document. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only) and which may be useful especially for other administrators. Many of these rules refer to external resources.
 
-Throughout this reference you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
+Throughout this handbook you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
 I created this repository to helps us to configure high performing Nginx web and proxy servers that are fast, secure and stable.
 
@@ -245,7 +245,7 @@ Many of these recipes have been applied to the configuration of my private websi
 
   > Read about SSL Labs grading [here](https://community.qualys.com/docs/DOC-6321-ssl-labs-grading-2018) (SSL Labs Grading 2018).
 
-  > Short description: _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old programs)_.
+  > _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old programs)_.
 
 I finally got **A+** grade and following scores:
 
@@ -616,7 +616,7 @@ Global/Main Context
 - `NGX_HTTP_LOG_PHASE` - log processing
   - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
-You may feel lost now so I let myself put this great preview:
+You may feel lost now (me too...) so I let myself put this great preview:
 
 <p align="center">
   <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
@@ -630,7 +630,7 @@ You may feel lost now so I let myself put this great preview:
 
 Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [connection processing methods](https://nginx.org/en/docs/events.html) explanation.
 
-How many simultaneous connections can be processed by Nginx?
+Okay, so how many simultaneous connections can be processed by Nginx?
 
 ```bash
 worker_processes * max_connections = max clients
@@ -642,7 +642,7 @@ According to this: if you are only running **2** worker processes with **512** w
 
 #### Server blocks
 
-  > Nginx does have "Server Blocks" (like a Virtual Hosts is an Apache) that use the `server_name` and `listen` directives to bind to tcp sockets.
+  > Nginx does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `server_name` and `listen` directives to bind to tcp sockets.
 
 ##### Virtual server logic
 
@@ -677,8 +677,8 @@ Nginx use the `address:port` combination for handle incoming connections. This p
 The `listen` directive can be set to:
 
 - an IP address/port combination (`127.0.0.1:80;`)
-- a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80`
-- a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80` (equivalent for `*:80`)
+- a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
+- a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;` (equivalent for `*:80;`)
 - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
 
 If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
@@ -855,6 +855,14 @@ Without `nodelay` option Nginx would wait (no 503 response) and handle excessive
 
 #### Analyse configuration
 
+It is an essential way for testing Nginx configuration:
+
+```bash
+nginx -t -c /etc/nginx/nginx.conf;
+```
+
+An external tool for analyse Nginx configuration is `gixy`:
+
 ```bash
 gixy /etc/nginx/nginx.conf
 ```
@@ -869,7 +877,7 @@ gixy /etc/nginx/nginx.conf
   >   - `/etc/goaccess/goaccess.conf`
   >   - `/usr/local/etc/goaccess.conf`
 
-Before use GoAccess enable these parameters:
+Prior to start GoAccess enable these parameters:
 
 ```bash
 time-format %H:%M:%S
@@ -3334,7 +3342,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   **My recommendation:**
 
-  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with above ciphersuites:
+  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with below ciphersuites:
   ```bash
   ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
   ```
