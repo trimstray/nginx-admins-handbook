@@ -616,9 +616,19 @@ Global/Main Context
 - `NGX_HTTP_LOG_PHASE` - log processing
   - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
+You may feel lost now so I let myself put this great preview:
+
+<p align="center">
+  <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/request-flow.png" alt="request-flow">
+  </a>
+</p>
+
+<sup><i>This infographic comes from [Inside NGINX](https://www.nginx.com/resources/library/infographic-inside-nginx/) official library.</i></sup>
+
 #### Connection processing
 
-Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [connection processing methods](https://nginx.org/en/docs/events.html) explanation.
 
 How many simultaneous connections can be processed by Nginx?
 
@@ -642,12 +652,18 @@ Nginx uses the following logic to determining which virtual server should be use
 2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
 3) Match the `Host` header field against the `server_name` directive with a
 wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
-  - if one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request
+
+    > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+
 4) Match the `Host` header field against the `server_name` directive with a
 wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
-  - if one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request
+
+    > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+
 5) Match the `Host` header field against the `server_name` directive as a regular expression
-  - the first `server_name` with a regular expression that matches the `Host` header will be used to serve the request
+
+    > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
+
 6) If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server`
 7) If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
@@ -668,8 +684,8 @@ The `listen` directive can be set to:
 If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
 
 1) Nginx translates all incomplete listen directives by substituting missing values with their default values (see above)
-2) Nginx attempts to collect a list of the server blocks that match the request most specifically based on the IP address and port
-3) If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP address
+2) Nginx attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
+3) If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
 4) If there is only one most specific match, that server block will be used to serve the request
 5) If there are multiple server blocks with the same level of matching, Nginx then begins to evaluate the `server_name` directive of each server block
 
@@ -3533,7 +3549,7 @@ gzip off;
 add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" always;
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-http-strict-transport-security"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrowtr_A.png" alt="arrowtr_A+"></a></sub>
+&nbsp;&nbsp;<sub><a href="#beginner-http-strict-transport-security"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrowtr_A+.png" alt="arrowtr_A+"></a></sub>
 
 ###### External resources
 
