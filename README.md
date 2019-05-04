@@ -783,12 +783,20 @@ server {
 
  location ~ ^/(media|static)/ {
   root            /var/www/xyz.com/static;
-  expires         7d;
+  expires         10d;
  }
 
  location ~* ^/(media2|static2) {
   root            /var/www/xyz.com/static2;
   expires         20d;
+ }
+
+ location /static3 {
+  root            /var/www/xyz.com/static3;
+ }
+
+ location ^~ /static4 {
+  root            /var/www/xyz.com/static4;
  }
 
  location = /api {
@@ -801,6 +809,26 @@ server {
 
  location /backend {
   proxy_pass      http://127.0.0.1:8080;
+ }
+
+ location ~ logo.xcf$ {
+  root            /var/www/logo;
+  expires         48h;
+ }
+
+ location ~* .(png|ico|gif|xcf)$ {
+  root            /var/www/img;
+  expires         24h;
+ }
+
+ location ~ logo.ico$ {
+  root            /var/www/logo;
+  expires         96h;
+ }
+
+ location ~ logo.jpg$ {
+  root            /var/www/logo;
+  expires         48h;
  }
 
 }
@@ -817,6 +845,17 @@ server {
 | `http://xyz.com/static/header.png` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
 | `http://xyz.com/media2` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
 | `http://xyz.com/media2/` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
+| `http://xyz.com/static/logo.jpg` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media|static)/` | location = `^/(media|static)/` |
+| `http://xyz.com/static2/logo.jpg` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2|static2)` | location = `^/(media2|static2)` |
+| `http://xyz.com/static2/logo.png` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2|static2)` | location = `^/(media2|static2)` |
+| `http://xyz.com/static3/logo.jpg` | prefix match for `location /static3`<br>prefix match for `location /`<br>case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
+| `http://xyz.com/static3/logo.png` | prefix match for `location /static3`<br>prefix match for `location /`<br>case insensitive regex match for `location .(png|ico|gif)$` | location = `.(png|ico|gif)$` |
+| `http://xyz.com/static4/logo.jpg` | priority prefix match for `location /static4`<br>prefix match for `location /` | location = `/static4` |
+| `http://xyz.com/static4/logo.png` | priority prefix match for `location /static4`<br>prefix match for `location /` | location = `/static4` |
+| `http://xyz.com/static5/logo.jpg` | prefix match for `location /`<br>case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
+| `http://xyz.com/static5/logo.png` | prefix match for `location /`<br>prefix match for `location /` | location = `.(png|ico|gif|xcf)$` |
+| `http://xyz.com/static5/logo.xcf` | prefix match for `location /`<br>case sensitive regex match for `location logo.xcf$` | location = `logo.xcf$` |
+| `http://xyz.com/static5/logo.ico` | prefix match for `location /`<br>prefix match for `location /` | location = `.(png|ico|gif|xcf)$` |
 
 #### Error log severity levels
 
