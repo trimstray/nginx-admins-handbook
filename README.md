@@ -87,7 +87,7 @@
   * [Request processing stages](#request-processing-stages)
   * [Connection processing](#connection-processing)
   * [Server blocks](#server-blocks)
-    * [Virtual server logic](#virtual-server-logic)
+    * [Server blocks logic](#server-blocks-logic)
     * [The listen directive](#the-listen-directive)
     * [Matching location](#matching-location)
   * [Error log severity levels](#error-log-severity-levels)
@@ -145,6 +145,7 @@
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
+  * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly)
   * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
@@ -215,7 +216,7 @@ Nginx is a fast, light-weight and powerful web server that can also be used as a
 
 ## General disclaimer
 
-This is not an official document. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only) and which may be useful especially for other administrators. Many of these rules refer to external resources.
+This is not an official document. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only), and which may be useful especially for other administrators. Many of these rules refer to external resources.
 
 Throughout this handbook you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
@@ -239,13 +240,15 @@ If this project is useful and important for you, you can bring **positive energy
 
 Many of these recipes have been applied to the configuration of my private website.
 
-  > An example configuration is in [this](#configuration-examples) chapter.
+  > An example configuration is in [configuration examples](#configuration-examples) chapter.
+
+  > Is also based on this version of [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
 
 ### SSL Labs
 
   > Read about SSL Labs grading [here](https://community.qualys.com/docs/DOC-6321-ssl-labs-grading-2018) (SSL Labs Grading 2018).
 
-  > _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old programs)_.
+  > _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old clients)_.
 
 I finally got **A+** grade and following scores:
 
@@ -260,9 +263,9 @@ I finally got **A+** grade and following scores:
   </a>
 </p>
 
-  > TLS configuration of My site is also based on this version of [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
-
 ### Mozilla Observatory
+
+  > Read about Mozilla Observatory [here](https://observatory.mozilla.org/faq/).
 
 I also got the highest note from Mozilla:
 
@@ -482,6 +485,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://urlscan.io/"><b>Service to scan and analyse websites</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://regexr.com/"><b>Online tool to learn, build, & test Regular Expressions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regextester.com/"><b>Online Regex Tester & Debugger</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://nginx.viraptor.info/"><b>Nginx location match tester</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://cryptcheck.fr/suite/"><b>User agent compatibility (Cipher suite)</b></a><br>
 </p>
 
@@ -495,6 +499,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
 
 # Helpers
@@ -644,12 +649,14 @@ According to this: if you are only running **2** worker processes with **512** w
 
   > Nginx does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `server_name` and `listen` directives to bind to tcp sockets.
 
-##### Virtual server logic
+##### Server blocks logic
 
 Nginx uses the following logic to determining which virtual server should be used:
 
 1) Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
+
 2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
+
 3) Match the `Host` header field against the `server_name` directive with a
 wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
 
@@ -665,6 +672,7 @@ wildcard at the end of the string (the hash table with wildcard names ending wit
     > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
 
 6) If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server`
+
 7) If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
 
@@ -678,15 +686,19 @@ The `listen` directive can be set to:
 
 - an IP address/port combination (`127.0.0.1:80;`)
 - a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
-- a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;` (equivalent for `*:80;`)
+- a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
 - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
 
 If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
 
-1) Nginx translates all incomplete listen directives by substituting missing values with their default values (see above)
+1) Nginx translates all incomplete `listen` directives by substituting missing values with their default values (see above)
+
 2) Nginx attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
+
 3) If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
+
 4) If there is only one most specific match, that server block will be used to serve the request
+
 5) If there are multiple server blocks with the same level of matching, Nginx then begins to evaluate the `server_name` directive of each server block
 
 Look at this short example:
@@ -713,7 +725,92 @@ server {
 
 ##### Matching location
 
-Work in progress.
+  > For each request, Nginx goes through a process to choose the best location block that will be used to serve that request.
+
+First of all see on the following location syntax:
+
+```bash
+location optional_modifier location_match {
+
+  ...
+
+}
+```
+
+`location_match` in the above defines what Nginx should check the request URI against. In this are used two types of modifiers: _existence_ and _nonexistence_. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
+
+  - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
+
+  - `=`: if an equal sign is used, this block will be considered a match if the request URI exactly matches the location given
+
+  - `~`: if a tilde modifier is present, this location will be interpreted as a case-sensitive regular expression match (RE match)
+
+  - `~*`: if a tilde and asterisk modifier is used, the location block will be interpreted as a case-insensitive regular expression match (RE match)
+
+  - `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
+
+The process of choosing Nginx location block is as follows:
+
+1) Prefix-based Nginx location matches (=no regular expression). Each location will be checked against the request URI
+
+2) Nginx searches for an exact match. If a "=" modifier exactly matches the request URI, this specific location block is chosen right away
+
+3) If no exact (meaning no "=" modifier) location block is found, Nginx will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
+
+    - In case the longest matching prefix location has the "^~" modifier, Nginx will stop its search right away and choose this location
+
+    - Assuming the longest matching prefix location doesn’t use the "^~"modifier, the match is temporarily stored and the process continues
+
+4) As soon as the longest matching prefix location is chosen and stored, Nginx continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
+
+5) If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
+
+For better understanding please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
+
+<p align="center">
+  <a href="https://nginx.viraptor.info/">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_location_cheatsheet.png" alt="nginx-location-cheatsheet">
+  </a>
+</p>
+
+Ok, so we have following configuration:
+
+```bash
+server {
+
+ listen           80;
+ server_name      domain.com www.domain.com;
+
+ location ~ ^/(media|static)/
+ {
+  root            /var/www/domain.com/static;
+  expires         7d;
+ }
+
+ location = /api {
+  proxy_pass      http://127.0.0.1:8080;
+ }
+
+ location / {
+  proxy_pass      http://127.0.0.1:8080;
+ }
+
+ location /backend {
+  proxy_pass      http://127.0.0.1:8080;
+ }
+
+}
+```
+
+| <b>URI</b> | <b>LOCATIONS</b> | | <b>FINAL MATCH</b> |
+| :---         | :---         | :---         |
+| `http://domain.com` | prefix match for `location /` | location = `/` |
+| `http://domain.com/css` | prefix match for `location /` | location = `/` |
+| `http://domain.com/api` | exact match for `location /api` | location = `/api` |
+| `http://domain.com/api/` | prefix match for `location /` | location = `/` |
+| `http://domain.com/backend` | prefix match for `location /`<br>prefix match for `location /backend` | location = `/backend` |
+| `http://domain.com/static` | prefix match for `location /` | location = `/` |
+| `http://domain.com/static/header.png` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media|static)/` | location = `^/(media|static)/` |
 
 #### Error log severity levels
 
@@ -1544,7 +1641,7 @@ export LUA_INC=/usr/include/luajit-2.1/
 ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 ```
 
-  > Remember to compile `sregex` also if you use above steps.
+  > Remember to build [`sregex`](#sregex) also if you use above steps.
 
 **Or download and compile them:**
 
@@ -1632,7 +1729,7 @@ export LUA_INC=/usr/local/include/luajit-2.1/
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```
 
-sregex:
+<a id="sregex"></a>sregex:
 
   > Required for `replace-filter-nginx-module` module.
 
@@ -1683,7 +1780,7 @@ tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/mast
 
 Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into Nginx at runtime (`--add-dynamic-module`). On the other hand you can also built them into Nginx at compile time and linked to the Nginx binary statically (`--add-module`).
 
-I mixed both variants because some of the modules are built-in automatically.
+I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules.
 
 You can download external modules from:
 
@@ -1691,7 +1788,7 @@ You can download external modules from:
 - [OpenResty - Components](https://openresty.org/en/components.html)
 - [Tengine - Modules](https://github.com/alibaba/tengine/tree/master/modules)
 
-A short description of the modules that used (not only) in this step-by-step tutorial:
+A short description of the modules that I used (not only) in this step-by-step tutorial:
 
 - [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit) - module that adds additional generic tools that module developers can use in their own modules; is already being used in quite a few third party modules
 - [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into Nginx
@@ -2045,14 +2142,14 @@ apt-get install nginx
 
 #### Tengine Web Server
 
-  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the Nginx HTTP server and has many advanced features._
+  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the Nginx HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in Nginx._
 
-- Official github repository: [Tengine](https://github.com/alibaba/tengine).
+- Official github repository: [Tengine](https://github.com/alibaba/tengine)
 - Official documentation: [Tengine Documentation](https://tengine.taobao.org/documentation.html)
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar to [Installation from source - Nginx](#installation-from-source). However, I will only specify the most important changes.
+The build and installation process is very similar to [installation from source](#installation-from-source) for Nginx. However, I will only specify the most important changes.
 
 ##### Example of installation on Ubuntu
 
@@ -2333,7 +2430,7 @@ tree
 
 ###### Post installation tasks
 
-  > Check all post installation tasks from [Post installation tasks - Nginx](#post-installation-tasks) section.
+  > Check all post installation tasks from [post installation tasks - Nginx](#post-installation-tasks) section.
 
 # Base Rules
 
@@ -2374,7 +2471,7 @@ server {
 
 - [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
 
-#### :beginner: Separate listen directives for 80 and 443
+#### :beginner: Separate `listen` directives for 80 and 443
 
 ###### Rationale
 
@@ -2405,6 +2502,43 @@ server {
 ###### External resources
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
+
+#### :beginner: Define the `listen` directives explicitly with `address:port` pair
+
+###### Rationale
+
+  > Nginx translates all incomplete `listen` directives by substituting missing values with their default values.
+
+  > Nginx will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the listen directive.
+
+  > Set IP address and port number to prevents soft mistakes which may be difficult to debug.
+
+###### Example
+
+```bash
+server {
+
+  # This block will be processed:
+  listen 192.168.252.10;  # --> 192.168.252.10:80
+
+  ...
+
+}
+
+server {
+
+  listen 80;  # --> *:80 --> 0.0.0.0:80
+  server_name api.random.com;
+
+  ...
+
+}
+```
+
+###### External resources
+
+- [Nginx HTTP Core Module - Listen](https://nginx.org/en/docs/http/ngx_http_core_module.html#listen)
+- [Understanding different values for nginx 'listen' directive](https://serverfault.com/questions/875140/understanding-different-values-for-nginx-listen-directive)
 
 #### :beginner: Prevent processing requests with undefined server names
 
