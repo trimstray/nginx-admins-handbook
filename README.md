@@ -836,26 +836,26 @@ server {
 
 | <b>URI</b> | <b>LOCATIONS</b> | <b>FINAL MATCH</b> |
 | :---         | :---         | :---         |
-| `http://xyz.com` | prefix match for `location /` | location = `/` |
-| `http://xyz.com/css` | prefix match for `location /` | location = `/` |
-| `http://xyz.com/api` | exact match for `location /api` | location = `/api` |
-| `http://xyz.com/api/` | prefix match for `location /` | location = `/` |
-| `http://xyz.com/backend` | prefix match for `location /`<br>prefix match for `location /backend` | location = `/backend` |
-| `http://xyz.com/static` | prefix match for `location /` | location = `/` |
-| `http://xyz.com/static/header.png` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
-| `http://xyz.com/media2` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
-| `http://xyz.com/media2/` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
-| `http://xyz.com/static/logo.jpg` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media|static)/` | location = `^/(media|static)/` |
-| `http://xyz.com/static2/logo.jpg` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2|static2)` | location = `^/(media2|static2)` |
-| `http://xyz.com/static2/logo.png` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2|static2)` | location = `^/(media2|static2)` |
-| `http://xyz.com/static3/logo.jpg` | prefix match for `location /static3`<br>prefix match for `location /`<br>case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
-| `http://xyz.com/static3/logo.png` | prefix match for `location /static3`<br>prefix match for `location /`<br>case insensitive regex match for `location .(png|ico|gif)$` | location = `.(png|ico|gif)$` |
-| `http://xyz.com/static4/logo.jpg` | priority prefix match for `location /static4`<br>prefix match for `location /` | location = `/static4` |
-| `http://xyz.com/static4/logo.png` | priority prefix match for `location /static4`<br>prefix match for `location /` | location = `/static4` |
-| `http://xyz.com/static5/logo.jpg` | prefix match for `location /`<br>case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
-| `http://xyz.com/static5/logo.png` | prefix match for `location /`<br>prefix match for `location /` | location = `.(png|ico|gif|xcf)$` |
-| `http://xyz.com/static5/logo.xcf` | prefix match for `location /`<br>case sensitive regex match for `location logo.xcf$` | location = `logo.xcf$` |
-| `http://xyz.com/static5/logo.ico` | prefix match for `location /`<br>prefix match for `location /` | location = `.(png|ico|gif|xcf)$` |
+| `/` | <sup>1)</sup> prefix match for `location /` | location = `/` |
+| `/css` | <sup>1)</sup> prefix match for `location /` | location = `/` |
+| `/api` | <sup>1)</sup> exact match for `location /api` | location = `/api` |
+| `/api/` | <sup>1)</sup> prefix match for `location /` | location = `/` |
+| `/backend` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> prefix match for `location /backend` | location = `/backend` |
+| `/static` | <sup>1)</sup> prefix match for `location /` | location = `/` |
+| `/static/header.png` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
+| `/static/logo.jpg` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
+| `/media2` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
+| `/media2/` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
+| `/static2/logo.jpg` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
+| `/static2/logo.png` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
+| `/static3/logo.jpg` | <sup>1)</sup> prefix match for `location /static3`<br><sup>2)</sup> prefix match for `location /`<br><sup>3)</sup> case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
+| `/static3/logo.png` | <sup>1)</sup> prefix match for `location /static3`<br><sup>2)</sup> prefix match for `location /`<br><sup>3)</sup> case insensitive regex match for `location .(png\|ico\|gif)$` | location = `.(png\|ico\|gif\|xcf)$` |
+| `/static4/logo.jpg` | <sup>1)</sup> priority prefix match for `location /static4`<br><sup>2)</sup> prefix match for `location /` | location = `/static4` |
+| `/static4/logo.png` | <sup>1)</sup> priority prefix match for `location /static4`<br><sup>2)</sup> prefix match for `location /` | location = `/static4` |
+| `/static5/logo.jpg` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
+| `/static5/logo.png` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> prefix match for `location /` | location = `.(png\|ico\|gif\|xcf)$` |
+| `/static5/logo.xcf` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location logo.xcf$` | location = `logo.xcf$` |
+| `/static5/logo.ico` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> prefix match for `location /` | location = `.(png\|ico\|gif\|xcf)$` |
 
 #### Error log severity levels
 
