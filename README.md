@@ -781,8 +781,7 @@ server {
  listen           80;
  server_name      domain.com www.domain.com;
 
- location ~ ^/(media|static)/
- {
+ location ~ ^/(media|static)/ {
   root            /var/www/domain.com/static;
   expires         7d;
  }
@@ -802,7 +801,7 @@ server {
 }
 ```
 
-| <b>URI</b> | <b>LOCATIONS</b> | | <b>FINAL MATCH</b> |
+| <b>URI</b> | <b>LOCATIONS</b> | <b>FINAL MATCH</b> |
 | :---         | :---         | :---         |
 | `http://domain.com` | prefix match for `location /` | location = `/` |
 | `http://domain.com/css` | prefix match for `location /` | location = `/` |
