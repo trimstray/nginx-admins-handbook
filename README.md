@@ -779,11 +779,16 @@ Ok, so we have following configuration:
 server {
 
  listen           80;
- server_name      domain.com www.domain.com;
+ server_name      xyz.com www.xyz.com;
 
  location ~ ^/(media|static)/ {
-  root            /var/www/domain.com/static;
+  root            /var/www/xyz.com/static;
   expires         7d;
+ }
+
+ location ~* ^/(media2|static2) {
+  root            /var/www/xyz.com/static2;
+  expires         20d;
  }
 
  location = /api {
@@ -803,13 +808,15 @@ server {
 
 | <b>URI</b> | <b>LOCATIONS</b> | <b>FINAL MATCH</b> |
 | :---         | :---         | :---         |
-| `http://domain.com` | prefix match for `location /` | location = `/` |
-| `http://domain.com/css` | prefix match for `location /` | location = `/` |
-| `http://domain.com/api` | exact match for `location /api` | location = `/api` |
-| `http://domain.com/api/` | prefix match for `location /` | location = `/` |
-| `http://domain.com/backend` | prefix match for `location /`<br>prefix match for `location /backend` | location = `/backend` |
-| `http://domain.com/static` | prefix match for `location /` | location = `/` |
-| `http://domain.com/static/header.png` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media|static)/` | location = `^/(media|static)/` |
+| `http://xyz.com` | prefix match for `location /` | location = `/` |
+| `http://xyz.com/css` | prefix match for `location /` | location = `/` |
+| `http://xyz.com/api` | exact match for `location /api` | location = `/api` |
+| `http://xyz.com/api/` | prefix match for `location /` | location = `/` |
+| `http://xyz.com/backend` | prefix match for `location /`<br>prefix match for `location /backend` | location = `/backend` |
+| `http://xyz.com/static` | prefix match for `location /` | location = `/` |
+| `http://xyz.com/static/header.png` | prefix match for `location /`<br>case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
+| `http://xyz.com/media2` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
+| `http://xyz.com/media2/` | prefix match for `location /`<br>case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
 
 #### Error log severity levels
 
