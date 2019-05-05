@@ -241,14 +241,27 @@ If this project is useful and important for you, you can bring **positive energy
 ## ToDo list
 
 - [ ] Helpers: _Configuration syntax_
+- [ ] Helpers: _Tips and Methods for high load traffic testing (cheatsheet)_
+- [ ] Helpers: _Rewrite POST with payload to external API_
+- [ ] Helpers: _Adding and removing the "www" prefix_
+- [ ] Helpers: _Examples of Nginx codes_
+- [ ] Base Rules: _Never use a hostname in a listen directive_
+- [ ] Base Rules: _Making a rewrite absolute (with scheme)_
+- [ ] Base Rules: _Use "return" directive for URL redirection (301, 302)_
+- [ ] Performance: _Use "index" directive in the http block_
+- [ ] Performance: _Avoid multiple "index" directives_
+- [ ] Performance: _Use "$request_uri" to avoid using regular expressions_
+- [ ] Performance: _Use "try_files" directive to ensure a file exists_
+- [ ] Performacne: _Don't pass all requests to backends - use "try_files"_
+- [ ] Performance: _Set proxy timeouts for normal load and higher under heavy load_
+- [ ] Performance: _Configure kernel parameters for high load traffic_
+- [ ] Hardening: _Set properly files and directories permissions (also with acls) on a paths_
 
 ## Reports: blkcipher.info
 
 Many of these recipes have been applied to the configuration of my private website.
 
-  > An example configuration is in [configuration examples](#configuration-examples) chapter.
-
-  > Is also based on this version of [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
+  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on this version of [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
 
 ### SSL Labs
 
@@ -507,10 +520,12 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers"><b>Guidelines for Setting Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://zinoui.com/blog/security-http-headers"><b>Security HTTP Headers</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://nickcraver.com/blog/2017/05/22/https-on-stack-overflow/#the-beginning"><b>HTTPS on Stack Overflow: The End of a Long Road</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.kegel.com/c10k.html"><b>The C10K problem by Dan Kegel</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://hpbn.co/"><b>High Performance Browser Networking</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
 
@@ -2939,7 +2954,7 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Manage a large number of redirects with Nginx maps.
+  > Manage a large number of redirects with Nginx maps and use them to customize your key-value pairs.
 
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
