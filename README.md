@@ -244,7 +244,6 @@ If this project is useful and important for you, you can bring **positive energy
 - [ ] Helpers: _Tips and Methods for high load traffic testing (cheatsheet)_
 - [ ] Helpers: _Rewrite POST with payload to external API_
 - [ ] Helpers: _Adding and removing the "www" prefix_
-- [ ] Helpers: _Examples of Nginx codes_
 - [ ] Base Rules: _Never use a hostname in a listen directive_
 - [ ] Base Rules: _Making a rewrite absolute (with scheme)_
 - [ ] Base Rules: _Use "return" directive for URL redirection (301, 302)_
