@@ -159,8 +159,9 @@
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
-  * [Use exact names where possible](#beginner-use-exact-names-where-possible)
+  * [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
+  * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
@@ -490,6 +491,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regextester.com/"><b>Online Regex Tester & Debugger</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gchq.github.io/CyberChef/"><b>A web app for encryption, encoding, compression and data analysis</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.viraptor.info/"><b>Nginx location match tester</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://detailyang.github.io/nginx-location-match-visible/"><b>Nginx location match visible</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://cryptcheck.fr/suite/"><b>User agent compatibility (Cipher suite)</b></a><br>
 </p>
 
@@ -637,7 +639,7 @@ You may feel lost now (me too...) so I let myself put this great preview:
 
 #### Connection processing
 
-Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
 
 Okay, so how many simultaneous connections can be processed by Nginx?
 
@@ -651,11 +653,55 @@ According to this: if you are only running **2** worker processes with **512** w
 
 #### Server blocks
 
-  > Nginx does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `server_name` and `listen` directives to bind to tcp sockets.
+  > Nginx does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `listen` and `server_name` directives to bind to tcp sockets.
+
+Before start reading this chapter you should know what regular expressions are and how they works. I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
+
+- [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
+- [Regex cookbook — Top 10 Most wanted regex](https://medium.com/factory-mind/regex-cookbook-most-wanted-regex-aa721558c3c1)
+
+Why? Regular expressions can be used in both the `location` and `server_name` directives, and sometimes you must have a great skill of reading them. Of course, you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
+
+It's short example of server block context (two server blocks):
+
+```bash
+http {
+
+  index index.html;
+  root /var/www/example.com/default;
+
+  server {
+
+    listen 10.10.250.10:80;
+    server_name www.example.com;
+
+    access_log logs/example.access.log main;
+
+    root /var/www/example.com/public;
+
+    ...
+
+  }
+
+  server {
+
+    listen 10.10.250.11:80;
+    server_name "~^(api.)?example\.com api.de.example.com";
+
+    access_log logs/example.access.log main;
+
+    proxy_pass http://localhost:8080;
+
+    ...
+
+  }
+
+}
+```
 
 ##### Server blocks logic
 
-Nginx uses the following logic to determining which virtual server should be used:
+Nginx uses the following logic to determining which virtual server (server block) should be used:
 
 1) Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
 
@@ -679,6 +725,8 @@ wildcard at the end of the string (the hash table with wildcard names ending wit
 
 7) If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
+
+8) Finally, Nginx goes to the Location Context
 
 <sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
 
@@ -731,25 +779,65 @@ server {
 
   > For each request, Nginx goes through a process to choose the best location block that will be used to serve that request.
 
-First of all see on the following location syntax:
+Let's short introduction something about this:
+
+- the exact match is the best priority (processed first)
+- the prefix match is the second priority; there are two types of  prefixes: `^~` and `(none)`, if this match used the `^~` prefix, searching stops
+- the regular expression match has the lowest priority; in the order they are defined in the configuration file
+- if regular expression searching yielded a match, that result is used, otherwise, the match from prefix searching is used
+
+Short example from the [Nginx documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
 
 ```bash
-location optional_modifier location_match {
-
-  ...
-
+location = / {
+  # matches the query / only.
+  [ configuration A ]
+}
+location / {
+  # matches any query, since all queries begin with /, but regular
+  # expressions and any longer conventional blocks will be
+  # matched first.
+  [ configuration B ]
+}
+location /documents/ {
+  # matches any query beginning with /documents/ and continues searching,
+  # so regular expressions will be checked. This will be matched only if
+  # regular expressions don't find a match.
+  [ configuration C ]
+}
+location ^~ /images/ {
+  # matches any query beginning with /images/ and halts searching,
+  # so regular expressions will not be checked.
+  [ configuration D ]
+}
+location ~* \.(gif|jpg|jpeg)$ {
+  # matches any request ending in gif, jpg, or jpeg. However, all
+  # requests to the /images/ directory will be handled by
+  # Configuration D.
+  [ configuration E ]
 }
 ```
 
-`location_match` in the above defines what Nginx should check the request URI against. In this are used two types of modifiers: _existence_ and _nonexistence_. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
+To help you understand how does Nginx location match works:
+
+- [Nginx location match tester](https://nginx.viraptor.info/)
+- [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
+
+First of all please see on the following location syntax:
+
+```bash
+location optional_modifier location_match { ... }
+```
+
+`location_match` in the above defines what Nginx should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
 
   - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
 
-  - `=`: if an equal sign is used, this block will be considered a match if the request URI exactly matches the location given
+  - `=`: is an exact match, without any wildcards, prefix matching or regular expressions; forces a literal match between the request URI and the location parameter
 
-  - `~`: if a tilde modifier is present, this location will be interpreted as a case-sensitive regular expression match (RE match)
+  - `~`: if a tilde modifier is present, this location must be used for case sensitive matching (RE match)
 
-  - `~*`: if a tilde and asterisk modifier is used, the location block will be interpreted as a case-insensitive regular expression match (RE match)
+  - `~*`: if a tilde and asterisk modifier is used, the location must be used for case insensitive matching (RE match)
 
   - `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
 
@@ -769,15 +857,15 @@ The process of choosing Nginx location block is as follows:
 
 5) If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
 
-For better understanding please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
+In order to better understand how this process work please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
 
 <p align="center">
-  <a href="https://nginx.viraptor.info/">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_location_cheatsheet.png" alt="nginx-location-cheatsheet">
-  </a>
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_location_cheatsheet.png" alt="nginx-location-cheatsheet">
 </p>
 
-Ok, so we have following configuration:
+  > I recommend to use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
+
+Ok, so we have following more complicated configuration:
 
 ```bash
 server {
@@ -838,28 +926,30 @@ server {
 }
 ```
 
-| <b>URI</b> | <b>LOCATIONS</b> | <b>FINAL MATCH</b> |
+And here is the table with the results:
+
+| <b>URL</b> | <b>LOCATIONS FOUND</b> | <b>FINAL MATCH</b> |
 | :---         | :---         | :---         |
-| `/` | <sup>1)</sup> prefix match for `location /` | location = `/` |
-| `/css` | <sup>1)</sup> prefix match for `location /` | location = `/` |
-| `/api` | <sup>1)</sup> exact match for `location /api` | location = `/api` |
-| `/api/` | <sup>1)</sup> prefix match for `location /` | location = `/` |
-| `/backend` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> prefix match for `location /backend` | location = `/backend` |
-| `/static` | <sup>1)</sup> prefix match for `location /` | location = `/` |
-| `/static/header.png` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
-| `/static/logo.jpg` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location ^/(media\|static)/` | location = `^/(media\|static)/` |
-| `/media2` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
-| `/media2/` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
-| `/static2/logo.jpg` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
-| `/static2/logo.png` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case insensitive regex match for `location ^/(media2\|static2)` | location = `^/(media2\|static2)` |
-| `/static3/logo.jpg` | <sup>1)</sup> prefix match for `location /static3`<br><sup>2)</sup> prefix match for `location /`<br><sup>3)</sup> case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
-| `/static3/logo.png` | <sup>1)</sup> prefix match for `location /static3`<br><sup>2)</sup> prefix match for `location /`<br><sup>3)</sup> case insensitive regex match for `location .(png\|ico\|gif)$` | location = `.(png\|ico\|gif\|xcf)$` |
-| `/static4/logo.jpg` | <sup>1)</sup> priority prefix match for `location /static4`<br><sup>2)</sup> prefix match for `location /` | location = `/static4` |
-| `/static4/logo.png` | <sup>1)</sup> priority prefix match for `location /static4`<br><sup>2)</sup> prefix match for `location /` | location = `/static4` |
-| `/static5/logo.jpg` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location logo.jpg$` | location = `logo.jpg$` |
-| `/static5/logo.png` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> prefix match for `location /` | location = `.(png\|ico\|gif\|xcf)$` |
-| `/static5/logo.xcf` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> case sensitive regex match for `location logo.xcf$` | location = `logo.xcf$` |
-| `/static5/logo.ico` | <sup>1)</sup> prefix match for `location /`<br><sup>2)</sup> prefix match for `location /` | location = `.(png\|ico\|gif\|xcf)$` |
+| `/` | <sup>1)</sup> prefix match for `/` | `/` |
+| `/css` | <sup>1)</sup> prefix match for `/` | `/` |
+| `/api` | <sup>1)</sup> exact match for `/api` | `/api` |
+| `/api/` | <sup>1)</sup> prefix match for `/` | `/` |
+| `/backend` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> prefix match for `/backend` | `/backend` |
+| `/static` | <sup>1)</sup> prefix match for `/` | `/` |
+| `/static/header.png` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case sensitive regex match for `^/(media\|static)/` | `^/(media\|static)/` |
+| `/static/logo.jpg` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case sensitive regex match for `^/(media\|static)/` | `^/(media\|static)/` |
+| `/media2` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case insensitive regex match for `^/(media2\|static2)` | `^/(media2\|static2)` |
+| `/media2/` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case insensitive regex match for `^/(media2\|static2)` | `^/(media2\|static2)` |
+| `/static2/logo.jpg` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case insensitive regex match for `^/(media2\|static2)` | `^/(media2\|static2)` |
+| `/static2/logo.png` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case insensitive regex match for `^/(media2\|static2)` | `^/(media2\|static2)` |
+| `/static3/logo.jpg` | <sup>1)</sup> prefix match for `/static3`<br><sup>2)</sup> prefix match for `/`<br><sup>3)</sup> case sensitive regex match for `logo.jpg$` | `logo.jpg$` |
+| `/static3/logo.png` | <sup>1)</sup> prefix match for `/static3`<br><sup>2)</sup> prefix match for `/`<br><sup>3)</sup> case insensitive regex match for `.(png\|ico\|gif)$` | `.(png\|ico\|gif\|xcf)$` |
+| `/static4/logo.jpg` | <sup>1)</sup> priority prefix match for `/static4`<br><sup>2)</sup> prefix match for `/` | `/static4` |
+| `/static4/logo.png` | <sup>1)</sup> priority prefix match for `/static4`<br><sup>2)</sup> prefix match for `/` | `/static4` |
+| `/static5/logo.jpg` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case sensitive regex match for `logo.jpg$` | `logo.jpg$` |
+| `/static5/logo.png` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> prefix match for `/` | `.(png\|ico\|gif\|xcf)$` |
+| `/static5/logo.xcf` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case sensitive regex match for `logo.xcf$` | `logo.xcf$` |
+| `/static5/logo.ico` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> prefix match for `/` | `.(png\|ico\|gif\|xcf)$` |
 
 #### Error log severity levels
 
@@ -3074,7 +3164,7 @@ ssl_buffer_size 1400;
 - [SSL Session (cache)](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache)
 - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
 
-#### :beginner: Use exact names where possible
+#### :beginner: Use exact names in `server_name` directive where possible
 
 ###### Rationale
 
@@ -3169,6 +3259,44 @@ server {
 ###### External resources
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
+
+#### :beginner: Make an exact location match to speed up the selection process
+
+###### Rationale
+
+  > Exact location matches are often used to speed up the selection process by immediately ending the execution of the algorithm.
+
+###### Example
+
+```bash
+# Matches the query / only and stops searching:
+location = / {
+
+  ...
+
+}
+
+# Matches the query /v9 only and stops searching:
+location = /v9 {
+
+  ...
+
+}
+
+...
+
+# Matches any query due to the fact that all queries begin at /,
+# but regular expressions and any longer conventional blocks will be matched at first place:
+location / {
+
+  ...
+
+}
+```
+
+###### External resources
+
+- [Untangling the nginx location block matching algorithm](https://artfulrobot.uk/blog/untangling-nginx-location-block-matching-algorithm)
 
 #### :beginner: Use `limit_conn` to improve limiting the download speed
 
