@@ -54,6 +54,7 @@
 - **[Introduction](#introduction)**
   * [General disclaimer](#general-disclaimer)
   * [Contributing & Support](#contributing--support)
+  * [ToDo list](#todo-list)
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
@@ -211,7 +212,7 @@
 
 <p align="justify"><b>Nginx</b> (<i>/ˌɛndʒɪnˈɛks/ EN-jin-EKS</i>) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server, originally written by Igor Sysoev. For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.</p>
 
-To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/docs/)**.
+To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
 
 Nginx is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
 
@@ -236,6 +237,10 @@ If you find something which doesn't make sense, or something doesn't seem right,
 Before adding a pull request, please see the **[contributing guidelines](CONTRIBUTING.md)**.
 
 If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
+
+## ToDo list
+
+- [ ] Helpers: _Configuration syntax_
 
 ## Reports: blkcipher.info
 
@@ -367,7 +372,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Official Project</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Official Documentation</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official Read-only Mirror</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Official Admin Guide</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Official Admin's Guide</b></a><br>
 </p>
 
 ##### Based on the Nginx
@@ -641,6 +646,8 @@ You may feel lost now (me too...) so I let myself put this great preview:
 #### Connection processing
 
 Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+
+
 
 Okay, so how many simultaneous connections can be processed by Nginx?
 
@@ -3206,11 +3213,11 @@ server {
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
 - [Virtual server logic](#virtual-server-logic)
 
-#### :beginner: Avoid checks `server_name` with if directive
+#### :beginner: Avoid checks `server_name` with `if` directive
 
 ###### Rationale
 
-  > When Nginx receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this if directive is always evaluated. Since you’re requesting Nginx to check for the `Host` header for every request. It’s extremely inefficient.
+  > When Nginx receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this `if` directive is always evaluated. Since you’re requesting Nginx to check for the `Host` header for every request. It’s extremely inefficient.
 
   > Instead use two server directives like the example below. This approach decreases Nginx processing requirements.
 
