@@ -781,8 +781,8 @@ server {
 
 Let's short introduction something about this:
 
-- the exact match is the best priority (processed first)
-- the prefix match is the second priority; there are two types of  prefixes: `^~` and `(none)`, if this match used the `^~` prefix, searching stops
+- the exact match is the best priority (processed first); ends search if match
+- the prefix match is the second priority; there are two types of prefixes: `^~` and `(none)`, if this match used the `^~` prefix, searching stops
 - the regular expression match has the lowest priority; in the order they are defined in the configuration file
 - if regular expression searching yielded a match, that result is used, otherwise, the match from prefix searching is used
 
@@ -818,7 +818,7 @@ location ~* \.(gif|jpg|jpeg)$ {
 }
 ```
 
-To help you understand how does Nginx location match works:
+To help you understand how does the Nginx location match works:
 
 - [Nginx location match tester](https://nginx.viraptor.info/)
 - [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
