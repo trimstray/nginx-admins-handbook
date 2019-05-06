@@ -85,8 +85,8 @@
   * [Nginx processes](#nginx-processes)
   * [Configuration syntax](#configuration-syntax)
   * [Nginx contexts](#nginx-contexts)
-  * [Request processing stages](#request-processing-stages)
   * [Connection processing](#connection-processing)
+  * [Request processing stages](#request-processing-stages)
   * [Server blocks](#server-blocks)
     * [Server blocks logic](#server-blocks-logic)
     * [The listen directive](#the-listen-directive)
@@ -145,6 +145,7 @@
       * [Post installation tasks](#post-installation-tasks-1)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
+  * [Format, prettify and indent your NGINX code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
@@ -244,6 +245,7 @@ If this project is useful and important for you, you can bring **positive energy
 - [ ] Helpers: _Tips and Methods for high load traffic testing (cheatsheet)_
 - [ ] Helpers: _Rewrite POST with payload to external API_
 - [ ] Helpers: _Adding and removing the "www" prefix_
+- [x] Base Rules: _Format, prettify and indent your NGINX code_
 - [ ] Base Rules: _Never use a hostname in a listen directive_
 - [ ] Base Rules: _Making a rewrite absolute (with scheme)_
 - [ ] Base Rules: _Use "return" directive for URL redirection (301, 302)_
@@ -252,7 +254,7 @@ If this project is useful and important for you, you can bring **positive energy
 - [ ] Performance: _Use "$request_uri" to avoid using regular expressions_
 - [ ] Performance: _Use "try_files" directive to ensure a file exists_
 - [ ] Performacne: _Don't pass all requests to backends - use "try_files"_
-- [ ] Performance: _Set proxy timeouts for normal load and higher under heavy load_
+- [ ] Performance: _Set proxy timeouts for normal load and under heavy load_
 - [ ] Performance: _Configure kernel parameters for high load traffic_
 - [ ] Hardening: _Set properly files and directories permissions (also with acls) on a paths_
 
@@ -445,6 +447,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/yandex/gixy"><b>gixy</b></a> - is a tool to analyze Nginx configuration to prevent security misconfiguration and automate flaw detection.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/1connect/nginx-config-formatter"><b>nginx-config-formatter</b></a> - Nginx config file formatter/beautifier written in Python.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/vasilevich/nginxbeautifier"><b>nginxbeautifier</b></a> - format and beautify nginx config files.<br>
 </p>
 
 ##### Log analyzers
@@ -623,6 +626,20 @@ Global/Main Context
         +-----» Mail Context
 ```
 
+#### Connection processing
+
+Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+
+Okay, so how many simultaneous connections can be processed by Nginx?
+
+```bash
+worker_processes * max_connections = max clients
+```
+
+According to this: if you are only running **2** worker processes with **512** worker connections, you will be able to serve **1024** clients.
+
+  > It is a bit confusing because the value of `worker_connections` does not directly translate into the number of clients that can be served simultaneously. Each clients (e.g. browsers) opens a number of parallel connections to download various components that compose a web page, for example, images, scripts, and so on.
+
 #### Request processing stages
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
@@ -656,22 +673,6 @@ You may feel lost now (me too...) so I let myself put this great preview:
 </p>
 
 <sup><i>This infographic comes from [Inside NGINX](https://www.nginx.com/resources/library/infographic-inside-nginx/) official library.</i></sup>
-
-#### Connection processing
-
-Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
-
-
-
-Okay, so how many simultaneous connections can be processed by Nginx?
-
-```bash
-worker_processes * max_connections = max clients
-```
-
-According to this: if you are only running **2** worker processes with **512** worker connections, you will be able to serve **1024** clients.
-
-  > It is a bit confusing because the value of `worker_connections` does not directly translate into the number of clients that can be served simultaneously. Each clients (e.g. browsers) opens a number of parallel connections to download various components that compose a web page, for example, images, scripts, and so on.
 
 #### Server blocks
 
@@ -2631,6 +2632,78 @@ server {
 ###### External resources
 
 - [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
+
+#### :beginner: Format, prettify and indent your NGINX code
+
+###### Rationale
+
+  > Work with unreadable configuration files is terrible, it makes your eyes sore, you suffers from headaches and overall, just an overhead on your innocent mind.
+
+  > When your code is formatted, it is significantly easier to maintain, debug, optimize, and can be read and understood in a short amount of time. You should eliminate code style violations from your NGINX configuration files.
+
+  > Keep a consistent NGINX code style throughout your code base:
+  >
+  >   - use whitespaces and blank lines to arrange and separate code blocks
+  >   - use tabs for indents - they are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
+  >   - use comments to explain why things are done not what is done
+  >   - use meaningful naming conventions
+  >   - simple is better than complex but complex is better than complicated
+
+  > Of course, the NGINX configuration code is not a programming language, so we should not overdo it, but I think it's worth sticking to the general rules and make your and other NGINX adminstrators life easier.
+
+###### Example
+
+```bash
+# Good NGINX code style:
+http {
+
+  # Attach global rules:
+  include         /etc/nginx/proxy.conf;
+  include         /etc/nginx/fastcgi.conf;
+
+  index           index.html index.htm index.php;
+
+  default_type    application/octet-stream;
+
+  # Standard log format:
+  log_format      main '$remote_addr - $remote_user [$time_local]  $status '
+                       '"$request" $body_bytes_sent "$http_referer" '
+                       '"$http_user_agent" "$http_x_forwarded_for"';
+
+  access_log      /var/log/nginx/access.log main;
+
+  sendfile        on;
+  tcp_nopush      on;
+
+  # This seems to be required for some vhosts:
+  server_names_hash_bucket_size 128;
+
+  ...
+
+# Bad NGINX code style:
+http {
+  include    nginx/proxy.conf;
+  include    /etc/nginx/fastcgi.conf;
+  index    index.html index.htm index.php;
+
+  default_type application/octet-stream;
+  log_format   main '$remote_addr - $remote_user [$time_local]  $status '
+    '"$request" $body_bytes_sent "$http_referer" '
+    '"$http_user_agent" "$http_x_forwarded_for"';
+  access_log   logs/access.log    main;
+  sendfile on;
+  tcp_nopush   on;
+  server_names_hash_bucket_size 128; # this seems to be required for some vhosts
+
+  ...
+```
+
+###### External resources
+
+- [Programming style](https://en.wikipedia.org/wiki/Programming_style)
+- [Toward Developing Good Programming Style](https://www2.cs.arizona.edu/~mccann/style_c.html)
+- [nginx-config-formatter](https://github.com/1connect/nginx-config-formatter)
+- [Format and beautify nginx config files](https://github.com/vasilevich/nginxbeautifier)
 
 #### :beginner: Separate `listen` directives for 80 and 443
 
