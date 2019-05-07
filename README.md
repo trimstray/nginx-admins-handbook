@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  <b><code>My notes on Nginx administration basics, tips & tricks, caveats, and gotchas.</code></b>
+  <b><code>My notes on NGINX administration basics, tips & tricks, caveats, and gotchas.</code></b>
 </div>
 
 <br>
@@ -149,7 +149,7 @@
       * [Post installation tasks](#post-installation-tasks-1)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
-  * [Format, prettify and indent your NGINX code](#beginner-format-prettify-and-indent-your-nginx-code)
+  * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
@@ -213,23 +213,23 @@
 
 <a href="https://www.nginx.com/"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_logo.png" align="right"></a>
 
-  > Before using the **Nginx** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
+  > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
 <p align="justify"><b>Nginx</b> (<i>/ˌɛndʒɪnˈɛks/ EN-jin-EKS</i>, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by <a href="http://sysoev.ru/en/">Igor Sysoev</a>. For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.</p>
 
-To increase your knowledge, read **[Nginx Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
+To increase your knowledge, read **[NGINX Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
 
-Nginx is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
+NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
 
 ## General disclaimer
 
 This is not an official document. It is rather a collection of rules, notes and papers, best practices and recommendations used by me (also in production environments but not only). Many of these refer to external resources.
 
-I created this repository to helps us to configure high performing Nginx web and proxy servers that are fast, secure and stable.
+I created this repository to helps us to configure high performing NGINX web and proxy servers that are fast, secure and stable.
 
-I've never found one guide that covers everything about NGINX. Even if you do not have the time to read them all this multipurpose handbook may be useful - especially for other administrators. I hope you enjoy it.
+I've never found one guide that covers everything or as much as possible about NGINX. If you do not have the time to read them all this multipurpose handbook may be useful - especially for other administrators. I hope you enjoy it.
 
-Throughout this handbook you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
+Throughout this handbook you will explore the many features of NGINX and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX server.
 
 Before you start remember about the two most important things:
 
@@ -249,7 +249,7 @@ If this project is useful and important for you, you can bring **positive energy
 
 - **Helpers**
   - [x] _Configuration syntax_
-    - [x] _Enable syntax highlight for NGINX conf file_
+    - [x] _Enable syntax highlight for Nginx conf file_
     - [x] _Measurement units_
     - [x] _Comments_
     - [x] _Variables & Strings_
@@ -259,7 +259,7 @@ If this project is useful and important for you, you can bring **positive energy
   - [ ] _Adding and removing the "www" prefix_
 
 - **Base Rules**
-  - [x] _Format, prettify and indent your NGINX code_
+  - [x] _Format, prettify and indent your Nginx code_
   - [ ] _Never use a hostname in a listen directive_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [ ] _Use "return" directive for URL redirection (301, 302)_
@@ -553,38 +553,38 @@ _Written for experienced systems administrators and engineers, this book teaches
 
 #### Nginx directories and files
 
-  > If you compile Nginx server by default all files and directories are available from `/usr/local/nginx` location.
+  > If you compile NGINX server by default all files and directories are available from `/usr/local/nginx` location.
 
-For prebuilt Nginx package paths can be as follows:
+For prebuilt NGINX package paths can be as follows:
 
-- `/etc/nginx` - is the default configuration root for the Nginx service
-- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the Nginx services. Includes the top-level http block and all other configuration files
+- `/etc/nginx` - is the default configuration root for the NGINX service
+- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the NGINX services. Includes the top-level http block and all other configuration files
 - `/usr/share/nginx` - is the default root directory for requests, contains `html` directory and basic static files
-- `/var/log/nginx` - is the default log (access and error log) location for Nginx
-- `/var/lib/nginx` or `/var/cache/nginx` - is the default temporary files location for Nginx
+- `/var/log/nginx` - is the default log (access and error log) location for NGINX
+- `/var/lib/nginx` or `/var/cache/nginx` - is the default temporary files location for NGINX
 - `/etc/nginx/conf`, `/etc/nginx/conf.d` or `/etc/nginx/sites-enabled` - contains custom/vhosts configuration files
-- `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about Nginx process(es)
+- `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about NGINX process(es)
 
 #### Nginx commands
 
 - `nginx -h` - shows the help
-- `nginx -v` - shows the Nginx version
-- `nginx -V` - shows the extended information about Nginx: version, build parameters and configuration arguments
-- `nginx -t` - tests the Nginx configuration
+- `nginx -v` - shows the NGINX version
+- `nginx -V` - shows the extended information about NGINX: version, build parameters and configuration arguments
+- `nginx -t` - tests the NGINX configuration
 - `nginx -c` - sets configuration file (default: `/etc/nginx/nginx.conf`)
 - `nginx -p` - sets prefix path (default: `/etc/nginx/`)
-- `nginx -T` - tests the Nginx configuration and prints the validated configuration on the screen
-- `nginx -s` - sends a signal to the Nginx master process:
-  - `stop` - discontinues the Nginx process immediately
-  - `quit` - stops the Nginx process after it finishes processing
+- `nginx -T` - tests the NGINX configuration and prints the validated configuration on the screen
+- `nginx -s` - sends a signal to the NGINX master process:
+  - `stop` - discontinues the NGINX process immediately
+  - `quit` - stops the NGINX process after it finishes processing
 inflight requests
-  - `reload` - reloads the configuration without stopping Nginx processes
-  - `reopen` - instructs Nginx to reopen log files
+  - `reload` - reloads the configuration without stopping NGINX processes
+  - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
 #### Configuration syntax
 
-##### Enable syntax highlight for NGINX conf file
+##### Enable syntax highlight for Nginx conf file
 
 ###### vi/vim
 
@@ -737,17 +737,17 @@ Global/Main Context
 
 #### Nginx processes
 
-Nginx has **one master process** and **one or more worker processes**.
+NGINX has **one master process** and **one or more worker processes**.
 
 The main purposes of the master process is to read and evaluate configuration files, as well as maintain the worker processes (respawn when a worker dies), handle signals, notify workers, opens log files, and, of course binding to ports.
 
-Master process should be started as **root** user, because this will allow Nginx to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
+Master process should be started as **root** user, because this will allow NGINX to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
 The worker processes do the actual processing of requests and get commands from master process. They runs in an event loop, handle network connections, read and write content to disk, and communicate with upstream servers. These are spawned by the master process, and the user and group will as specified (unprivileged).
 
-  > Nginx has also cache loader and cache manager processes but only if you enable caching.
+  > NGINX has also cache loader and cache manager processes but only if you enable caching.
 
-The following signals can be sent to the Nginx master process:
+The following signals can be sent to the NGINX master process:
 
 | <b>SIGNAL</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -769,9 +769,9 @@ There’s no need to control the worker processes yourself. However, they suppor
 
 #### Connection processing
 
-Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+NGINX supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
 
-Okay, so how many simultaneous connections can be processed by Nginx?
+Okay, so how many simultaneous connections can be processed by NGINX?
 
 ```bash
 worker_processes * worker_connections = max clients (in theory)
@@ -817,7 +817,7 @@ You may feel lost now (me too...) so I let myself put this great preview:
 
 #### Server blocks
 
-  > Nginx does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `listen` and `server_name` directives to bind to tcp sockets.
+  > NGINX does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `listen` and `server_name` directives to bind to tcp sockets.
 
 Before start reading this chapter you should know what regular expressions are and how they works. I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
@@ -865,7 +865,7 @@ http {
 
 ##### Server blocks logic
 
-Nginx uses the following logic to determining which virtual server (server block) should be used:
+NGINX uses the following logic to determining which virtual server (server block) should be used:
 
 1) Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
 
@@ -890,13 +890,13 @@ wildcard at the end of the string (the hash table with wildcard names ending wit
 7) If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
 
-8) Finally, Nginx goes to the Location Context
+8) Finally, NGINX goes to the Location Context
 
 <sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
 
 ##### The `listen` directive
 
-Nginx use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
+NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
 
 The `listen` directive can be set to:
 
@@ -907,15 +907,15 @@ The `listen` directive can be set to:
 
 If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
 
-1) Nginx translates all incomplete `listen` directives by substituting missing values with their default values (see above)
+1) NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
 
-2) Nginx attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
+2) NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
 
 3) If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
 
 4) If there is only one most specific match, that server block will be used to serve the request
 
-5) If there are multiple server blocks with the same level of matching, Nginx then begins to evaluate the `server_name` directive of each server block
+5) If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
 
 Look at this short example:
 
@@ -941,7 +941,7 @@ server {
 
 ##### Matching location
 
-  > For each request, Nginx goes through a process to choose the best location block that will be used to serve that request.
+  > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
 Let's short introduction something about this:
 
@@ -982,7 +982,7 @@ location ~* \.(gif|jpg|jpeg)$ {
 }
 ```
 
-To help you understand how does the Nginx location match works:
+To help you understand how does the NGINX location match works:
 
 - [Nginx location match tester](https://nginx.viraptor.info/)
 - [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
@@ -993,7 +993,7 @@ First of all please see on the following location syntax:
 location optional_modifier location_match { ... }
 ```
 
-`location_match` in the above defines what Nginx should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
+`location_match` in the above defines what NGINX should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
 
   - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
 
@@ -1005,19 +1005,19 @@ location optional_modifier location_match { ... }
 
   - `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
 
-The process of choosing Nginx location block is as follows:
+The process of choosing NGINX location block is as follows:
 
-1) Prefix-based Nginx location matches (=no regular expression). Each location will be checked against the request URI
+1) Prefix-based NGINX location matches (=no regular expression). Each location will be checked against the request URI
 
-2) Nginx searches for an exact match. If a "=" modifier exactly matches the request URI, this specific location block is chosen right away
+2) NGINX searches for an exact match. If a "=" modifier exactly matches the request URI, this specific location block is chosen right away
 
-3) If no exact (meaning no "=" modifier) location block is found, Nginx will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
+3) If no exact (meaning no "=" modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
 
-    - In case the longest matching prefix location has the "^~" modifier, Nginx will stop its search right away and choose this location
+    - In case the longest matching prefix location has the "^~" modifier, NGINX will stop its search right away and choose this location
 
     - Assuming the longest matching prefix location doesn’t use the "^~"modifier, the match is temporarily stored and the process continues
 
-4) As soon as the longest matching prefix location is chosen and stored, Nginx continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
+4) As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
 
 5) If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
 
@@ -1134,7 +1134,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Rate Limiting
 
-  > All rate limiting rules (definitions) should be added to the Nginx `http` context.
+  > All rate limiting rules (definitions) should be added to the NGINX `http` context.
 
 Rate limiting rules are useful for:
 
@@ -1147,7 +1147,7 @@ Rate limiting rules are useful for:
 - mitigating ddos attacks
 - protect brute-force attacks
 
-Nginx has following variables (unique keys) that can be used in a rate limiting rules:
+NGINX has following variables (unique keys) that can be used in a rate limiting rules:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -1159,7 +1159,7 @@ Nginx has following variables (unique keys) that can be used in a rate limiting 
 
 <sup><i>Please see [official doc](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
 
-Nginx also provides following keys:
+NGINX also provides following keys:
 
 | <b>KEY</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -1173,7 +1173,7 @@ and directives:
 | `limit_req` | sets the shared memory zone and the maximum burst size of requests |
 | `limit_conn` | sets the shared memory zone and the maximum allowed number of connections to the server per a client IP |
 
-Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all Nginx worker processes.
+Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all NGINX worker processes.
 
 Both keys also provides response status parameters indicating too many requests or connections with specific http code (default **503**).
 
@@ -1247,21 +1247,21 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 | <b>PARAMETER</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
 | `burst=<num>` | sets the maximum number of excessive requests that await to be processed in a timely manner; maximum requests as `rate` * `burst` in `burst` seconds |
-| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests; default Nginx would return 503 response and not handle excessive requests |
+| `nodelay`| it imposes a rate limit without constraining the allowed spacing between requests; default NGINX would return 503 response and not handle excessive requests |
 
   > `nodelay` parameters are only useful when you also set a `burst`.
 
-Without `nodelay` option Nginx would wait (no 503 response) and handle excessive requests with some delay.
+Without `nodelay` option NGINX would wait (no 503 response) and handle excessive requests with some delay.
 
 #### Analyse configuration
 
-It is an essential way for testing Nginx configuration:
+It is an essential way for testing NGINX configuration:
 
 ```bash
 nginx -t -c /etc/nginx/nginx.conf;
 ```
 
-An external tool for analyse Nginx configuration is `gixy`:
+An external tool for analyse NGINX configuration is `gixy`:
 
 ```bash
 gixy /etc/nginx/nginx.conf
@@ -1833,7 +1833,7 @@ Shortest transaction:   0.38
 
 #### Installation from source
 
-There are currently two versions of Nginx:
+There are currently two versions of NGINX:
 
 - **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
 - **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
@@ -1850,7 +1850,7 @@ Mandatory requirements:
 - [LuaJIT v2.1](https://github.com/LuaJIT/LuaJIT) or [OpenResty's LuaJIT2](https://github.com/openresty/luajit2) library
 - [jemalloc](https://github.com/jemalloc/jemalloc) library
 
-If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building Nginx:
+If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building NGINX:
 
 | <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
 | :---         | :---         | :---         |
@@ -1886,7 +1886,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-deve
 
 ##### Nginx package
 
-- [Nginx](https://nginx.org/download/) source code
+- [NGINX](https://nginx.org/download/) source code
 
   > Before starting, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
@@ -1894,7 +1894,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-deve
 
 ###### Pre installation tasks
 
-Set the Nginx version (I use stable release):
+Set the NGINX version (I use stable release):
 
 ```bash
 export ngx_version="1.16.0"
@@ -2079,9 +2079,9 @@ tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/mast
 
 ###### Download 3rd party modules
 
-  > Not all external modules can work properly with your currently Nginx version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your Nginx release.
+  > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release.
 
-Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into Nginx at runtime (`--add-dynamic-module`). On the other hand you can also built them into Nginx at compile time and linked to the Nginx binary statically (`--add-module`).
+Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
 
 I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules.
 
@@ -2094,25 +2094,25 @@ You can download external modules from:
 A short description of the modules that I used (not only) in this step-by-step tutorial:
 
 - [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit) - module that adds additional generic tools that module developers can use in their own modules; is already being used in quite a few third party modules
-- [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into Nginx
-- [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to Nginx's rewrite module
-- [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to Nginx's config file
+- [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into NGINX
+- [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX's rewrite module
+- [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX's config file
 - [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) - set, add, and clear arbitrary output headers
 - [`replace-filter-nginx-module`](https://github.com/openresty/replace-filter-nginx-module) - streaming regular expression replacement in response bodies
-- [`array-var-nginx-module`](https://github.com/openresty/array-var-nginx-module) - add supports for array-typed variables to Nginx config files
-- [`encrypted-session-nginx-module`](https://github.com/openresty/encrypted-session-nginx-module) - encrypt and decrypt Nginx variable values
+- [`array-var-nginx-module`](https://github.com/openresty/array-var-nginx-module) - add supports for array-typed variables to NGINX config files
+- [`encrypted-session-nginx-module`](https://github.com/openresty/encrypted-session-nginx-module) - encrypt and decrypt NGINX variable values
 - [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
 - [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
 - [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - module which can do both regular expression and fixed string substitutions
 - [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src) - module to add a sticky cookie to be always forwarded to the same
 - [`ngx_http_delay_module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
 - [`nginx-backtrace`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
-- [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for Nginx memory pool
-- [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for Nginx
-- [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for Nginx
+- [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for NGINX memory pool
+- [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for NGINX
+- [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for NGINX
 - [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request upstream server
 - [`memc-nginx-module`](https://github.com/agentzh/memc-nginx-module) - extended version of the standard Memcached module
-- [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - Nginx-based Media Streaming Server
+- [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - NGINX-based Media Streaming Server
 - [`ngx-fancyindex`](https://github.com/aperezdc/ngx-fancyindex) - generates of file listings, like the built-in autoindex module does, but adding a touch of style
 - [`ngx_log_if`](https://github.com/cfsego/ngx_log_if) - allows you to control when not to write down access log
 - [`nginx-http-user-agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
@@ -2245,7 +2245,7 @@ make install
 ldconfig
 ```
 
-Check Nginx version:
+Check NGINX version:
 
 ```bash
 nginx -v
@@ -2350,13 +2350,13 @@ Reload systemd manager configuration:
 systemctl daemon-reload
 ```
 
-Enable Nginx service:
+Enable NGINX service:
 
 ```bash
 systemctl enable nginx
 ```
 
-Test Nginx configuration:
+Test NGINX configuration:
 
 ```bash
 nginx -t -c /etc/nginx/nginx.conf
@@ -2375,7 +2375,7 @@ yum install epel-release
 #   wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 #   yum install epel-release-latest-7.noarch.rpm
 
-# Install Nginx:
+# Install NGINX:
 yum install nginx
 ```
 
@@ -2386,10 +2386,10 @@ yum install nginx
 yum install centos-release-scl
 yum-config-manager --enable rhel-server-rhscl-7-rpms
 
-# Install Nginx (rh-nginx14, rh-nginx16, rh-nginx18):
+# Install NGINX (rh-nginx14, rh-nginx16, rh-nginx18):
 yum install rh-nginx16
 
-# Enable Nginx from SCL:
+# Enable NGINX from SCL:
 scl enable rh-nginx16 bash
 ```
 
@@ -2406,18 +2406,18 @@ gpgcheck=0
 enabled=1
 __EOF__
 
-# Install Nginx:
+# Install NGINX:
 yum install nginx
 ```
 
 ##### Debian or Ubuntu
 
-Check available flavors of Nginx before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
+Check available flavors of NGINX before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
 
 ###### From Debian/Ubuntu Repository
 
 ```bash
-# Install Nginx:
+# Install NGINX:
 apt-get install nginx
 ```
 
@@ -2438,21 +2438,21 @@ apt-get update
 # Download the public key (or <pub_key> from your GPG error):
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <pub_key>
 
-# Install Nginx:
+# Install NGINX:
 apt-get update
 apt-get install nginx
 ```
 
 #### Tengine Web Server
 
-  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the Nginx HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in Nginx._
+  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
 
 - Official github repository: [Tengine](https://github.com/alibaba/tengine)
 - Official documentation: [Tengine Documentation](https://tengine.taobao.org/documentation.html)
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar to [installation from source](#installation-from-source) for Nginx. However, I will only specify the most important changes.
+The build and installation process is very similar to [installation from source](#installation-from-source) for NGINX. However, I will only specify the most important changes.
 
 ##### Example of installation on Ubuntu
 
@@ -2733,7 +2733,7 @@ tree
 
 ###### Post installation tasks
 
-  > Check all post installation tasks from [post installation tasks - Nginx](#post-installation-tasks) section.
+  > Check all post installation tasks from [post installation tasks - NGINX](#post-installation-tasks) section.
 
 # Base Rules
 
@@ -2741,13 +2741,13 @@ tree
 
 ###### Rationale
 
-  > When your Nginx configuration grow, the need for organising your configuration will also grow. Well organised code is:
+  > When your NGINX configuration grow, the need for organising your configuration will also grow. Well organised code is:
   >
   > - easier to understand
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to move common server settings into a separate files and to attach your Nginx specific code to global config, contexts and other.
+  > Use `include` directive to move common server settings into a separate files and to attach your NGINX specific code to global config, contexts and other.
 
 ###### Example
 
@@ -2774,7 +2774,7 @@ server {
 
 - [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
 
-#### :beginner: Format, prettify and indent your NGINX code
+#### :beginner: Format, prettify and indent your Nginx code
 
 ###### Rationale
 
@@ -2882,9 +2882,9 @@ server {
 
 ###### Rationale
 
-  > Nginx translates all incomplete `listen` directives by substituting missing values with their default values.
+  > NGINX translates all incomplete `listen` directives by substituting missing values with their default values.
 
-  > Nginx will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the listen directive.
+  > NGINX will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the listen directive.
 
   > Set IP address and port number to prevents soft mistakes which may be difficult to debug.
 
@@ -2919,13 +2919,13 @@ server {
 
 ###### Rationale
 
-  > Nginx should prevent processing requests with undefined server names (also on IP address). It also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
+  > NGINX should prevent processing requests with undefined server names (also on IP address). It also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
 
-  > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that Nginx always has a default server).
+  > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that NGINX always has a default server).
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
-  > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in Nginx.
+  > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in NGINX.
 
 ###### Example
 
@@ -2992,11 +2992,11 @@ server {
 
 ###### Rationale
 
-  > Use the `reload` method of Nginx to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
+  > Use the `reload` method of NGINX to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
 
-  > This ability of Nginx is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
+  > This ability of NGINX is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
 
-  > When you restart Nginx you might encounter situation in which Nginx will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
+  > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
 
 ###### Example
 
@@ -3167,7 +3167,7 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Manage a large number of redirects with Nginx maps and use them to customize your key-value pairs.
+  > Manage a large number of redirects with NGINX maps and use them to customize your key-value pairs.
 
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
@@ -3265,14 +3265,14 @@ error_log /var/log/nginx/error-debug.log debug;
 
 ###### Rationale
 
-  > Anything you can access as a variable in Nginx config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
+  > Anything you can access as a variable in NGINX config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
 
   > This is extremely helpful for debugging specific `location` directives.
 
 ###### Example
 
 ```bash
-# Default main log format from nginx repository:
+# Default main log format from NGINX repository:
 log_format main
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
@@ -3328,13 +3328,13 @@ log_format debug-level-2
 
 ###### Rationale
 
-  > The `worker_processes` directive is the sturdy spine of life for Nginx. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
+  > The `worker_processes` directive is the sturdy spine of life for NGINX. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
 
   > I think for high load proxy servers (also standalone servers) good value is `ALL_CORES - 1` (please test it before used).
 
   > Rule of thumb: If much time is spent blocked on I/O, worker processes should be increased further.
 
-  Official Nginx documentation say:
+  Official NGINX documentation say:
 
   > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)._
 
@@ -3445,9 +3445,9 @@ server {
 
 ###### Rationale
 
-  > When Nginx receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this `if` directive is always evaluated. Since you’re requesting Nginx to check for the `Host` header for every request. It’s extremely inefficient.
+  > When NGINX receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this `if` directive is always evaluated. Since you’re requesting NGINX to check for the `Host` header for every request. It’s extremely inefficient.
 
-  > Instead use two server directives like the example below. This approach decreases Nginx processing requirements.
+  > Instead use two server directives like the example below. This approach decreases NGINX processing requirements.
 
 ###### Example
 
@@ -3538,11 +3538,11 @@ location / {
 
 ###### Rationale
 
-  > Nginx provides two directives to limiting download speed:
+  > NGINX provides two directives to limiting download speed:
   >   - `limit_rate_after` - sets the amount of data transferred before the `limit_rate` directive takes effect
   >   - `limit_rate` - allows you to limit the transfer rate of individual client connections (past exceeding `limit_rate_after`)
 
-  > This solution limits Nginx download speed per connection, so, if one user opens multiple e.g. video files, it will be able to download `X * the number of times` he connected to the video files.
+  > This solution limits NGINX download speed per connection, so, if one user opens multiple e.g. video files, it will be able to download `X * the number of times` he connected to the video files.
 
   > To prevent this situation use `limit_conn_zone` and `limit_conn` directives.
 
@@ -3673,7 +3673,7 @@ location ~ /\.(?!well-known\/) {
 
 ###### Rationale
 
-  > Disclosing the version of Nginx running can be undesirable, particularly in environments sensitive to information disclosure.
+  > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
 
   But the "Official Apache Documentation (Apache Core Features)" say:
 
@@ -3696,7 +3696,7 @@ server_tokens off;
 
   > In my opinion there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number.
 
-  > You should compile Nginx from sources with `ngx_headers_more` to used `more_set_headers` directive.
+  > You should compile NGINX from sources with `ngx_headers_more` to used `more_set_headers` directive.
 
 ###### Example
 
@@ -3713,7 +3713,7 @@ more_set_headers "Server: Unknown";
 
 ###### Rationale
 
-  > When Nginx is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (e.g. the version of PHP running).
+  > When NGINX is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (e.g. the version of PHP running).
 
 ###### Example
 
@@ -3811,7 +3811,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.1, TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > If you told Nginx to use TLS 1.3, it will use TLS 1.3 only where is available. Nginx supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
+  > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
   **My recommendation:**
 
@@ -3881,7 +3881,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > If you want to get **A+ with 100%s on SSL Lab** (for Cipher Strength) you should definitely disable `128-bit` ciphers. That's the main reason why you should not use them.
 
-  > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 ciphersuites so at this moment it's always on (also if you disable potentially weak cipher from Nginx). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+  > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 ciphersuites so at this moment it's always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys, so there is no forward secrecy.
 
@@ -3971,7 +3971,7 @@ ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+
 
   > If you use TLS 1.3 you should enable `prime256v1` signature algorithm. Without this SSL Lab reports `TLS_AES_128_GCM_SHA256 (0x1301)` signature as weak.
 
-  > If you do not set `ssh_ecdh_curve`, then the Nginx will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control the Nginx's default settings (seems to be `P-256`).
+  > If you do not set `ssh_ecdh_curve`, then the NGINX will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control the NGINX's default settings (seems to be `P-256`).
 
   > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**.
 
@@ -4016,7 +4016,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
 ###### Rationale
 
-  > The DH key is only used if DH ciphers are used. Modern clients prefer `ECDHE` instead and if your Nginx accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange.
+  > The DH key is only used if DH ciphers are used. Modern clients prefer `ECDHE` instead and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange.
 
   > Most of the "modern" profiles from places like Mozilla's ssl config generator no longer recommend using this.
 
@@ -4034,7 +4034,7 @@ openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 # To generate a ECDH key:
 openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
 
-# Nginx configuration:
+# NGINX configuration:
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
 
@@ -4248,7 +4248,7 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 
 ###### Rationale
 
-  > Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in Nginx we can set buffer size limitations for all clients.
+  > Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in NGINX we can set buffer size limitations for all clients.
 
 ###### Example
 
@@ -4289,7 +4289,7 @@ send_timeout 10s;
 
 ###### Rationale
 
-  > Monitoring for health is important on all types of load balancing mainly for business continuity. Passive checks watches for failed or timed-out connections as they pass through Nginx as requested by a client.
+  > Monitoring for health is important on all types of load balancing mainly for business continuity. Passive checks watches for failed or timed-out connections as they pass through NGINX as requested by a client.
 
   > This functionality is enabled by default but the parameters mentioned here allow you to tweak their behavior. Default values are: `max_fails=1` and `fail_timeout=10s`.
 
@@ -4316,7 +4316,7 @@ upstream backend {
 
   > Comments are good for really permanently disable servers or if you want to leave information for historical purposes.
 
-  > Nginx also provides a `backup` parameter which marks the server as a backup server. It will be passed requests when the primary servers are unavailable. I use this option rarely for the above purposes and only if I am sure that the backends will work at the maintenance time.
+  > NGINX also provides a `backup` parameter which marks the server as a backup server. It will be passed requests when the primary servers are unavailable. I use this option rarely for the above purposes and only if I am sure that the backends will work at the maintenance time.
 
 ###### Example
 
@@ -4339,7 +4339,7 @@ upstream backend {
 
 ###### Rationale
 
-  > This rule isn't strictly related to Nginx but in my opinion it's also very important important aspect of security.
+  > This rule isn't strictly related to NGINX but in my opinion it's also very important important aspect of security.
 
   > DNS CAA policy helps you to control which Certificat Authorities are allowed to issue certificates for your domain becaues if no CAA record is present, any CA is allowed to issue a certificate for the domain.
 
@@ -4381,7 +4381,7 @@ Configuration of Google Cloud instance:
 | vCPU | 2x | |
 | Memory | 4096MB | |
 | HTTP | Varnish on port 80 | |
-| HTTPS | Nginx on port 443 | |
+| HTTPS | NGINX on port 443 | |
 
 ## Reverse Proxy
 
@@ -4401,7 +4401,7 @@ tar czvfp ~/nginx.etc.tgz /etc/nginx && mv /etc/nginx /etc/nginx.old
 rsync -avur lib/nginx/ /etc/nginx/
 ```
 
-  > If you compiled Nginx you should also update/refresh modules. All compiled modules are stored in `/usr/local/src/nginx-${ngx_version}/master/objs` and installed in accordance with the value of the `--modules-path` variable.
+  > If you compiled NGINX you should also update/refresh modules. All compiled modules are stored in `/usr/local/src/nginx-${ngx_version}/master/objs` and installed in accordance with the value of the `--modules-path` variable.
 
 #### Set bind IP address
 
