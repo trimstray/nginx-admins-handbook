@@ -610,7 +610,7 @@ echo -en "\nexecute pathogen#infect()\n" >> ~/.vimrc
 
 git clone https://github.com/chr4/nginx.vim ~/.vim/bundle/nginx.vim
 
-# 3) Set location of NGINX config files:
+# 2) Set location of NGINX config files:
 cat > ~/.vim/filetype.vim << __EOF__
 au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/*,*/conf/nginx.conf if &ft == '' | setfiletype nginx | endif
 __EOF__
@@ -657,7 +657,7 @@ Lines containing directives must end with a `;` or NGINX will fail to load the c
 
 Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
 
-  > Some directives do not support variables, e.g. `access_log` or `error_log`.
+  > Some directives do not support variables, e.g. `access_log`, and `error_log`.
 
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
 
@@ -692,7 +692,7 @@ proxy_read_timeout 20s;
 
 ##### Directives, Blocks, and Contexts
 
-  > Read this great article about [NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
+  > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
 
 Configuration options in NGINX are called directives. We have four types of directives in NGINX:
 
