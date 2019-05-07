@@ -772,12 +772,12 @@ Nginx supports a variety of connection processing methods which depends on the p
 Okay, so how many simultaneous connections can be processed by Nginx?
 
 ```bash
-worker_processes * worker_connections = max clients
+worker_processes * worker_connections = max clients (in theory)
 ```
 
 According to this: if you are only running **2** worker processes with **512** worker connections, you will be able to serve **1024** clients.
 
-  > It is a bit confusing because the value of `worker_connections` does not directly translate into the number of clients that can be served simultaneously. Each clients (e.g. browsers) opens a number of parallel connections to download various components that compose a web page, for example, images, scripts, and so on.
+  > It is a bit confusing because the sum of `worker_processes` and `worker_connections` does not directly translate into the number of clients that can be served simultaneously. Each clients (e.g. browsers) opens a number of parallel connections to download various components that compose a web page, for example, images, scripts, and so on.
 
 #### Request processing stages
 
