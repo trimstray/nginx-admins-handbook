@@ -84,6 +84,7 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Configuration syntax](#configuration-syntax)
+    * [Enable syntax highlight for NGINX conf file](#enable-syntax-highlight-for-nginx-conf-file)
   * [Nginx contexts](#nginx-contexts)
   * [Connection processing](#connection-processing)
   * [Request processing stages](#request-processing-stages)
@@ -243,14 +244,17 @@ If this project is useful and important for you, you can bring **positive energy
 
 - **Helpers**
   - [ ] _Configuration syntax_
+    - [x] _Enable syntax highlight for NGINX conf file_
   - [ ] _Tips and Methods for high load traffic testing (cheatsheet)_
   - [ ] _Rewrite POST with payload to external API_
   - [ ] _Adding and removing the "www" prefix_
+
 - **Base Rules**
   - [x] _Format, prettify and indent your NGINX code_
   - [ ] _Never use a hostname in a listen directive_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [ ] _Use "return" directive for URL redirection (301, 302)_
+
 - **Performance**
   - [ ] _Use "index" directive in the http block_
   - [ ] _Avoid multiple "index" directives_
@@ -259,6 +263,7 @@ If this project is useful and important for you, you can bring **positive energy
   - [ ] _Don't pass all requests to backends - use "try_files"_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
+
 - **Hardening**
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
 
@@ -571,6 +576,61 @@ inflight requests
 #### Configuration syntax
 
 Work in progress.
+
+##### Enable syntax highlight for NGINX conf file
+
+###### vi/vim
+
+```bash
+# 1) Download vim plugin for NGINX:
+
+# Official NGINX vim plugin:
+mkdir -p ~/.vim/syntax/
+
+wget "http://www.vim.org/scripts/download_script.php?src_id=19394" -O ~/.vim/syntax/nginx.vim
+
+# Improved NGINX vim plugin (incl. syntax highlighting) with Pathogen:
+mkdir -p ~/.vim/{autoload,bundle}/
+
+curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+echo -en "\nexecute pathogen#infect()\n" >> ~/.vimrc
+
+git clone https://github.com/chr4/nginx.vim ~/.vim/bundle/nginx.vim
+
+# 3) Set location of NGINX config files:
+cat > ~/.vim/filetype.vim << __EOF__
+au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/*,*/conf/nginx.conf if &ft == '' | setfiletype nginx | endif
+__EOF__
+```
+
+###### Sublime Text
+
+Install `cabal` - system for building and packaging Haskell libraries and programs (on Ubuntu):
+
+```bash
+add-apt-repository -y ppa:hvr/ghc
+apt-get update
+
+apt-get install -y cabal-install-1.22 ghc-7.10.2
+
+# Add this to your shell main configuration file:
+export PATH=$HOME/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:$PATH
+source $HOME/.<shellrc>
+
+cabal update
+```
+
+- `nginx-lint`:
+
+  ```bash
+  git clone https://github.com/temoto/nginx-lint
+
+  cd nginx-lint && cabal install --global
+  ```
+
+- `sublime-nginx` + `SublimeLinter-contrib-nginx-lint`:
+
+  Bring up the _Command Palette_ and type `install`. Among the commands you should see _Package Control: Install Package_. Type `nginx` to install [sublime-nginx](https://github.com/brandonwamboldt/sublime-nginx) and after that do the above again for install [SublimeLinter-contrib-nginx-lint](https://github.com/irvinlim/SublimeLinter-contrib-nginx-lint): type `SublimeLinter-contrib-nginx-lint`.
 
 #### Nginx processes
 
