@@ -227,7 +227,7 @@ This is not an official document. It is rather a collection of rules, notes and 
 
 I created this repo to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable.
 
-I've never found one guide that covers everything or as much as possible about NGINX. If you do not have the time to read them all this multipurpose handbook may be useful - especially for other administrators. I hope you enjoy it.
+I've never found one guide that covers everything or as much as possible about NGINX. If you do not have the time to read them all this multipurpose handbook may be useful. I hope you enjoy it.
 
 Throughout this handbook you will explore the many features of NGINX and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX server.
 
