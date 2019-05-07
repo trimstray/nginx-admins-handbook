@@ -223,11 +223,13 @@ Nginx is a fast, light-weight and powerful web server that can also be used as a
 
 ## General disclaimer
 
-This is not an official document. It is rather a collection of some rules and papers, best practices and recommendations used by me (also in production environments but not only), and which may be useful especially for other administrators. Many of these rules refer to external resources.
-
-Throughout this handbook you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
+This is not an official document. It is rather a collection of rules, notes and papers, best practices and recommendations used by me (also in production environments but not only). Many of these refer to external resources.
 
 I created this repository to helps us to configure high performing Nginx web and proxy servers that are fast, secure and stable.
+
+I've never found one guide that covers everything about NGINX. Even if you do not have the time to read them all this multipurpose handbook may be useful - especially for other administrators. I hope you enjoy it.
+
+Throughout this handbook you will explore the many features of Nginx and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of Nginx server.
 
 Before you start remember about the two most important things:
 
