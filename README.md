@@ -83,6 +83,7 @@
   * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
+  * [Measurement units](#measurement-units)
   * [Configuration syntax](#configuration-syntax)
     * [Enable syntax highlight for NGINX conf file](#enable-syntax-highlight-for-nginx-conf-file)
   * [Nginx contexts](#nginx-contexts)
@@ -243,6 +244,7 @@ If this project is useful and important for you, you can bring **positive energy
 ## ToDo list
 
 - **Helpers**
+  - [x] _Measurement units_
   - [ ] _Configuration syntax_
     - [x] _Enable syntax highlight for NGINX conf file_
   - [ ] _Tips and Methods for high load traffic testing (cheatsheet)_
@@ -576,6 +578,33 @@ inflight requests
 #### Configuration syntax
 
 Work in progress.
+
+#### Measurement units
+
+Sizes can be specified in:
+
+- `k` or `K`: Kilobytes
+- `m` or `M`: Megabytes
+- `g` or `G`: Gigabytes
+
+```bash
+client_max_body_size 2M;
+```
+
+Time intervals can be specified in:
+
+- `ms`: Milliseconds
+- `s`: Seconds (default, without a suffix)
+- `m`: Minutes
+- `h`: Hours
+- `d`: Days
+- `w`: Weeks
+- `M`: Months (30 days)
+- `y`: Years (365 days)
+
+```bash
+proxy_read_timeout 20s;
+```
 
 ##### Enable syntax highlight for NGINX conf file
 
