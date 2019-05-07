@@ -83,10 +83,12 @@
   * [Nginx directories and files](#nginx-directories-and-files)
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
-  * [Measurement units](#measurement-units)
   * [Configuration syntax](#configuration-syntax)
     * [Enable syntax highlight for NGINX conf file](#enable-syntax-highlight-for-nginx-conf-file)
-  * [Nginx contexts](#nginx-contexts)
+    * [Measurement units](#measurement-units)
+    * [Comments](#comments)
+    * [Variables & Strings](#variables--strings)
+    * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
   * [Connection processing](#connection-processing)
   * [Request processing stages](#request-processing-stages)
   * [Server blocks](#server-blocks)
@@ -244,9 +246,12 @@ If this project is useful and important for you, you can bring **positive energy
 ## ToDo list
 
 - **Helpers**
-  - [x] _Measurement units_
-  - [ ] _Configuration syntax_
+  - [x] _Configuration syntax_
     - [x] _Enable syntax highlight for NGINX conf file_
+    - [x] _Measurement units_
+    - [x] _Comments_
+    - [x] _Variables & Strings_
+    - [x] _Directives, Blocks, and Contexts_
   - [ ] _Tips and Methods for high load traffic testing (cheatsheet)_
   - [ ] _Rewrite POST with payload to external API_
   - [ ] _Adding and removing the "www" prefix_
@@ -577,35 +582,6 @@ inflight requests
 
 #### Configuration syntax
 
-Work in progress.
-
-#### Measurement units
-
-Sizes can be specified in:
-
-- `k` or `K`: Kilobytes
-- `m` or `M`: Megabytes
-- `g` or `G`: Gigabytes
-
-```bash
-client_max_body_size 2M;
-```
-
-Time intervals can be specified in:
-
-- `ms`: Milliseconds
-- `s`: Seconds (default, without a suffix)
-- `m`: Minutes
-- `h`: Hours
-- `d`: Days
-- `w`: Weeks
-- `M`: Months (30 days)
-- `y`: Years (365 days)
-
-```bash
-proxy_read_timeout 20s;
-```
-
 ##### Enable syntax highlight for NGINX conf file
 
 ###### vi/vim
@@ -661,6 +637,102 @@ cabal update
 
   Bring up the _Command Palette_ and type `install`. Among the commands you should see _Package Control: Install Package_. Type `nginx` to install [sublime-nginx](https://github.com/brandonwamboldt/sublime-nginx) and after that do the above again for install [SublimeLinter-contrib-nginx-lint](https://github.com/irvinlim/SublimeLinter-contrib-nginx-lint): type `SublimeLinter-contrib-nginx-lint`.
 
+##### Comments
+
+NGINX configuration files don't support comment blocks; they only accept `#` at the beginning of a line for a comment.
+
+##### End of lines
+
+Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
+
+##### Variables & Strings
+
+Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
+
+  > Some directives do not support variables, e.g. `access_log` or `error_log`.
+
+Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
+
+Variables in quoted strings are expanded normally unless the `$` is escaped.
+
+##### Measurement units
+
+Sizes can be specified in:
+
+- `k` or `K`: Kilobytes
+- `m` or `M`: Megabytes
+- `g` or `G`: Gigabytes
+
+```bash
+client_max_body_size 2M;
+```
+
+Time intervals can be specified in:
+
+- `ms`: Milliseconds
+- `s`: Seconds (default, without a suffix)
+- `m`: Minutes
+- `h`: Hours
+- `d`: Days
+- `w`: Weeks
+- `M`: Months (30 days)
+- `y`: Years (365 days)
+
+```bash
+proxy_read_timeout 20s;
+```
+
+##### Directives, Blocks, and Contexts
+
+  > Read this great article about [NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
+
+Configuration options in NGINX are called directives. We have four types of directives in NGINX:
+
+- standard directive - one value per context, for example:
+  ```bash
+  worker_connections 512;
+  ```
+- array directive - multiple values per context, for example:
+  ```bash
+  error_log /var/log/nginx/localhost/localhost-error.log warn;
+  ```
+- action directive - something which does not just configure, for example:
+  ```bash
+  rewrite ^(.*)$ /msie/$1 break;
+  ```
+ - `try_files` directive, for example:
+  ```bash
+  try_files $uri $uri/ /test/index.html;
+  ```
+
+Directives are organized into groups known as blocks or contexts. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
+
+As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
+
+The NGINX contexts can be layered within one another so NGINX provides a level of inheritance. The NGINX contexts structure looks like this:
+
+```
+Global/Main Context
+        |
+        |
+        +-----» Events Context
+        |
+        |
+        +-----» HTTP Context
+        |          |
+        |          |
+        |          +-----» Server Context
+        |          |          |
+        |          |          |
+        |          |          +-----» Location Context
+        |          |
+        |          |
+        |          +-----» Upstream Context
+        |
+        |
+        +-----» Mail Context
+```
+
 #### Nginx processes
 
 Nginx has **one master process** and **one or more worker processes**.
@@ -693,32 +765,6 @@ There’s no need to control the worker processes yourself. However, they suppor
 | `QUIT` | graceful shutdown |
 | `USR1` | reopen the log files |
 
-#### Nginx contexts
-
-The Nginx contexts structure looks like this:
-
-```
-Global/Main Context
-        |
-        |
-        +-----» Events Context
-        |
-        |
-        +-----» HTTP Context
-        |          |
-        |          |
-        |          +-----» Server Context
-        |          |          |
-        |          |          |
-        |          |          +-----» Location Context
-        |          |
-        |          |
-        |          +-----» Upstream Context
-        |
-        |
-        +-----» Mail Context
-```
-
 #### Connection processing
 
 Nginx supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
@@ -726,7 +772,7 @@ Nginx supports a variety of connection processing methods which depends on the p
 Okay, so how many simultaneous connections can be processed by Nginx?
 
 ```bash
-worker_processes * max_connections = max clients
+worker_processes * worker_connections = max clients
 ```
 
 According to this: if you are only running **2** worker processes with **512** worker connections, you will be able to serve **1024** clients.
@@ -2742,7 +2788,7 @@ server {
   >   - use meaningful naming conventions
   >   - simple is better than complex but complex is better than complicated
 
-  > Of course, the NGINX configuration code is not a programming language, so we should not overdo it, but I think it's worth sticking to the general rules and make your and other NGINX adminstrators life easier.
+  > Of course, the NGINX configuration code is not a programming language. All files are written in their own language or syntax so we should not overdo it, but I think it's worth sticking to the general rules and make your and other NGINX adminstrators life easier.
 
 ###### Example
 
