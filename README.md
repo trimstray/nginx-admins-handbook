@@ -241,22 +241,26 @@ If this project is useful and important for you, you can bring **positive energy
 
 ## ToDo list
 
-- [ ] Helpers: _Configuration syntax_
-- [ ] Helpers: _Tips and Methods for high load traffic testing (cheatsheet)_
-- [ ] Helpers: _Rewrite POST with payload to external API_
-- [ ] Helpers: _Adding and removing the "www" prefix_
-- [x] Base Rules: _Format, prettify and indent your NGINX code_
-- [ ] Base Rules: _Never use a hostname in a listen directive_
-- [ ] Base Rules: _Making a rewrite absolute (with scheme)_
-- [ ] Base Rules: _Use "return" directive for URL redirection (301, 302)_
-- [ ] Performance: _Use "index" directive in the http block_
-- [ ] Performance: _Avoid multiple "index" directives_
-- [ ] Performance: _Use "$request_uri" to avoid using regular expressions_
-- [ ] Performance: _Use "try_files" directive to ensure a file exists_
-- [ ] Performacne: _Don't pass all requests to backends - use "try_files"_
-- [ ] Performance: _Set proxy timeouts for normal load and under heavy load_
-- [ ] Performance: _Configure kernel parameters for high load traffic_
-- [ ] Hardening: _Set properly files and directories permissions (also with acls) on a paths_
+- **Helpers**
+  - [ ] _Configuration syntax_
+  - [ ] _Tips and Methods for high load traffic testing (cheatsheet)_
+  - [ ] _Rewrite POST with payload to external API_
+  - [ ] _Adding and removing the "www" prefix_
+- **Base Rules**
+  - [x] _Format, prettify and indent your NGINX code_
+  - [ ] _Never use a hostname in a listen directive_
+  - [ ] _Making a rewrite absolute (with scheme)_
+  - [ ] _Use "return" directive for URL redirection (301, 302)_
+- **Performance**
+  - [ ] _Use "index" directive in the http block_
+  - [ ] _Avoid multiple "index" directives_
+  - [ ] _Use "$request_uri" to avoid using regular expressions_
+  - [ ] _Use "try_files" directive to ensure a file exists_
+  - [ ] _Don't pass all requests to backends - use "try_files"_
+  - [ ] _Set proxy timeouts for normal load and under heavy load_
+  - [ ] _Configure kernel parameters for high load traffic_
+- **Hardening**
+  - [ ] _Set properly files and directories permissions (also with acls) on a paths_
 
 ## Reports: blkcipher.info
 
@@ -2637,11 +2641,11 @@ server {
 
 ###### Rationale
 
-  > Work with unreadable configuration files is terrible, it makes your eyes sore, you suffers from headaches and overall, just an overhead on your innocent mind.
+  > Work with unreadable configuration files is terrible, if syntax isn’t very readable, it makes your eyes sore, and you suffers from headaches.
 
   > When your code is formatted, it is significantly easier to maintain, debug, optimize, and can be read and understood in a short amount of time. You should eliminate code style violations from your NGINX configuration files.
 
-  > Keep a consistent NGINX code style throughout your code base:
+  > Choose your formatter style and setup a common config for it. Some rules are universal, but the most important thing is to keep a consistent NGINX code style throughout your code base:
   >
   >   - use whitespaces and blank lines to arrange and separate code blocks
   >   - use tabs for indents - they are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
