@@ -407,10 +407,10 @@ _Written for experienced systems administrators and engineers, this book teaches
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Official Project</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Official Documentation</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official Read-only Mirror</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Official Admin's Guide</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://forum.nginx.org/"><b>Nginx Official Forum</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mailman.nginx.org/mailman/listinfo/nginx"><b>Nginx Official Mailing List</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Official Read-only Mirror</b></a><br>
 </p>
 
 ##### Based on the Nginx
