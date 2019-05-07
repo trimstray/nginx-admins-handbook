@@ -84,7 +84,7 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Configuration syntax](#configuration-syntax)
-    * [Enable syntax highlight for NGINX conf file](#enable-syntax-highlight-for-nginx-conf-file)
+    * [Enable syntax highlight for Nginx conf file](#enable-syntax-highlight-for-nginx-conf-file)
     * [Measurement units](#measurement-units)
     * [Comments](#comments)
     * [Variables & Strings](#variables--strings)
