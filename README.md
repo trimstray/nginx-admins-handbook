@@ -225,7 +225,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 
 This is not an official document. It is rather a collection of rules, notes and papers, best practices and recommendations used by me (also in production environments but not only). Many of these refer to external resources.
 
-I created this repository to helps us to configure high performing NGINX web and proxy servers that are fast, secure and stable.
+I created this repo to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable.
 
 I've never found one guide that covers everything or as much as possible about NGINX. If you do not have the time to read them all this multipurpose handbook may be useful - especially for other administrators. I hope you enjoy it.
 
