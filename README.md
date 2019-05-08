@@ -91,9 +91,8 @@
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
   * [Connection processing](#connection-processing)
   * [Request processing stages](#request-processing-stages)
-  * [Server blocks](#server-blocks)
-    * [Server blocks logic](#server-blocks-logic)
-    * [The listen directive](#the-listen-directive)
+  * [Server blocks logic](#server-blocks-logic)
+    * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
   * [Error log severity levels](#error-log-severity-levels)
   * [Rate Limiting](#rate-limiting)
@@ -821,7 +820,7 @@ You may feel lost now (me too...) so I let myself put this great preview:
 
 <sup><i>This infographic comes from [Inside NGINX](https://www.nginx.com/resources/library/infographic-inside-nginx/) official library.</i></sup>
 
-#### Server blocks
+#### Server blocks logic
 
   > NGINX does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `listen` and `server_name` directives to bind to tcp sockets.
 
@@ -830,7 +829,7 @@ Before start reading this chapter you should know what regular expressions are a
 - [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
 - [Regex cookbook — Top 10 Most wanted regex](https://medium.com/factory-mind/regex-cookbook-most-wanted-regex-aa721558c3c1)
 
-Why? Regular expressions can be used in both the `location` and `server_name` directives, and sometimes you must have a great skill of reading them. Of course, you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
+Why? Regular expressions can be used in both the `server_name` and `location` directives, and sometimes you must have a great skill of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
 It's short example of server block context (two server blocks):
 
@@ -869,11 +868,60 @@ http {
 }
 ```
 
-##### Server blocks logic
+##### Handle incoming connections
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
 1) Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
+
+    > NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
+
+    The `listen` directive can be set to:
+
+    - an IP address/port combination (`127.0.0.1:80;`)
+    - a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
+    - a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
+    - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
+
+    If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
+
+    The next steps are as follows:
+
+      - NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
+
+      - NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
+
+      - If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
+
+      - If there is only one most specific match, that server block will be used to serve the request
+
+      - If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
+
+    Look at this short example:
+
+      ```bash
+      # From client:
+      GET / HTTP/1.0
+      Host: api.random.com
+
+      server {
+
+        # This block will be processed:
+        listen 192.168.252.10;  # --> 192.168.252.10:80
+
+        ...
+
+      }
+
+      server {
+
+        listen 80;  # --> *:80 --> 0.0.0.0:80
+        server_name api.random.com;
+
+        ...
+
+      }
+      ```
 
 2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
 
@@ -896,54 +944,9 @@ wildcard at the end of the string (the hash table with wildcard names ending wit
 7) If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
 
-8) Finally, NGINX goes to the Location Context
+8) Finally, NGINX goes to the `location` context
 
 <sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
-
-##### The `listen` directive
-
-NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
-
-The `listen` directive can be set to:
-
-- an IP address/port combination (`127.0.0.1:80;`)
-- a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
-- a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
-- the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
-
-If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
-
-1) NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
-
-2) NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
-
-3) If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
-
-4) If there is only one most specific match, that server block will be used to serve the request
-
-5) If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
-
-Look at this short example:
-
-```bash
-server {
-
-  # This block will be processed:
-  listen 192.168.252.10;  # --> 192.168.252.10:80
-
-  ...
-
-}
-
-server {
-
-  listen 80;  # --> *:80 --> 0.0.0.0:80
-  server_name api.random.com;
-
-  ...
-
-}
-```
 
 ##### Matching location
 
@@ -1657,7 +1660,10 @@ map $http_referer $limit_ip_key_by_referer {
 
 limit_req_zone $limit_ip_key_by_referer zone=req_for_remote_addr_by_referer:1m rate=5r/s;
 
-# 2) turn on in a specific context (e.g. server):
+# 2) include this file in http context:
+include /etc/nginx/limits.conf;
+
+# 3) turn on in a specific context (e.g. server):
 server_name example.com;
 
   limit_req zone=req_for_remote_addr_by_referer burst=2;
