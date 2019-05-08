@@ -95,7 +95,7 @@
     * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
   * [Error log severity levels](#error-log-severity-levels)
-  * [Rate Limiting](#rate-limiting)
+  * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -963,28 +963,28 @@ Short example from the [Nginx documentation](https://nginx.org/en/docs/http/ngx_
 
 ```bash
 location = / {
-  # matches the query / only.
+  # Matches the query / only.
   [ configuration A ]
 }
 location / {
-  # matches any query, since all queries begin with /, but regular
+  # Matches any query, since all queries begin with /, but regular
   # expressions and any longer conventional blocks will be
   # matched first.
   [ configuration B ]
 }
 location /documents/ {
-  # matches any query beginning with /documents/ and continues searching,
+  # Matches any query beginning with /documents/ and continues searching,
   # so regular expressions will be checked. This will be matched only if
   # regular expressions don't find a match.
   [ configuration C ]
 }
 location ^~ /images/ {
-  # matches any query beginning with /images/ and halts searching,
+  # Matches any query beginning with /images/ and halts searching,
   # so regular expressions will not be checked.
   [ configuration D ]
 }
 location ~* \.(gif|jpg|jpeg)$ {
-  # matches any request ending in gif, jpg, or jpeg. However, all
+  # Matches any request ending in gif, jpg, or jpeg. However, all
   # requests to the /images/ directory will be handled by
   # Configuration D.
   [ configuration E ]
@@ -1141,7 +1141,7 @@ The following is a list of all severity levels:
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
 
-#### Rate Limiting
+#### Rate limiting
 
   > All rate limiting rules (definitions) should be added to the NGINX `http` context.
 
@@ -1422,10 +1422,10 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 ###### Restricting access with basic authentication
 
 ```bash
-# 1) generate file with htpasswd command:
+# 1) Generate file with htpasswd command:
 htpasswd -c htpasswd_example.com.conf <username>
 
-# 2) include this file in specific context: (e.g. server):
+# 2) Include this file in specific context: (e.g. server):
 server_name example.com;
 
   ...
@@ -1460,7 +1460,7 @@ server_name example.com;
 Example 1:
 
 ```bash
-# 1) file: /etc/nginx/acls/allow.map.conf
+# 1) File: /etc/nginx/acls/allow.map.conf
 
 # Map module:
 map $remote_addr $globals_internal_map_acl {
@@ -1478,10 +1478,10 @@ map $remote_addr $globals_internal_map_acl {
 
 }
 
-# 2) include this file in http context:
+# 2) Include this file in http context:
 include /etc/nginx/acls/allow.map.conf;
 
-# 3) turn on in a specific context (e.g. location):
+# 3) Turn on in a specific context (e.g. location):
 server_name example.com;
 
   ...
@@ -1501,14 +1501,14 @@ server_name example.com;
 
     }
 
-    if ($globals_internal_map_acl) {
+    if ($pass = 1) {
 
       proxy_pass http://localhost:80;
       client_max_body_size 10m;
 
     }
 
-    if ($globals_internal_map_acl) {
+    if ($pass != 1) {
 
       rewrite ^(.*) https://example.com;
 
@@ -1520,7 +1520,7 @@ server_name example.com;
 Example 2:
 
 ```bash
-# 1) file: /etc/nginx/acls/allow.geo.conf
+# 1) File: /etc/nginx/acls/allow.geo.conf
 
 # Geo module:
 geo $globals_internal_geo_acl {
@@ -1538,10 +1538,10 @@ geo $globals_internal_geo_acl {
 
 }
 
-# 2) include this file in http context:
+# 2) Include this file in http context:
 include /etc/nginx/acls/allow.geo.conf;
 
-# 3) turn on in a specific context (e.g. location):
+# 3) Turn on in a specific context (e.g. location):
 server_name example.com;
 
   ...
@@ -1570,7 +1570,7 @@ server_name example.com;
 Example 3:
 
 ```bash
-# 1) file: /etc/nginx/acls/allow.conf
+# 1) File: /etc/nginx/acls/allow.conf
 
 ### INTERNAL ###
 allow 10.255.10.0/24;
@@ -1581,10 +1581,10 @@ allow 192.168.0.0/16;
 ### EXTERNAL ###
 allow 35.228.233.xxx;
 
-# 2) include this file in http context:
+# 2) Include this file in http context:
 include /etc/nginx/acls/allow.conf;
 
-# 3) turn on in a specific context (e.g. server):
+# 3) Turn on in a specific context (e.g. server):
 server_name example.com;
 
   include /etc/nginx/acls/allow.conf;
@@ -1599,8 +1599,7 @@ server_name example.com;
 Example 1:
 
 ```bash
-# 1) file: /etc/nginx/limits.conf
-
+# 1) File: /etc/nginx/limits.conf
 map $http_referer $invalid_referer {
 
   hostnames;
@@ -1608,16 +1607,16 @@ map $http_referer $invalid_referer {
   default                   0;
 
   # Invalid referrers:
-  "https://invalid.com/"    1;
+  "invalid.com"             1;
   "~*spamdomain4.com"       1;
   "~*.invalid\.org"         1;
 
 }
 
-# 2) include this file in http context:
+# 2) Include this file in http context:
 include /etc/nginx/limits.conf;
 
-# 3) turn on in a specific context (e.g. server):
+# 3) Turn on in a specific context (e.g. server):
 server_name example.com;
 
   if ($invalid_referer) { return 403; }
@@ -1628,7 +1627,7 @@ server_name example.com;
 Example 2:
 
 ```bash
-# 1) turn on in a specific context (e.g. location):
+# 1) Turn on in a specific context (e.g. location):
 location /check_status {
 
   if ($http_referer ~ "spam1\.com|spam2\.com|spam3\.com") {
@@ -1640,35 +1639,80 @@ location /check_status {
   ...
 ```
 
+How to test?
+
+```bash
+siege -b -r 2 -c 40 -v https:/example.com/storage/img/header.jpg -H "Referer: https://spamdomain4.com/"
+** SIEGE 4.0.4
+** Preparing 5 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 403     0.11 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.12 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.18 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.18 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.19 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.10 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.11 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.11 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.12 secs:     124 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 403     0.12 secs:     124 bytes ==> GET  /storage/img/header.jpg
+
+...
+```
+
 ###### Limiting referrer spam
 
 Example 1:
 
 ```bash
-# 1) file: /etc/nginx/limits.conf
-
+# 1) File: /etc/nginx/limits.conf
 map $http_referer $limit_ip_key_by_referer {
 
-  default                   $binary_remote_addr;
+  hostnames;
 
-  # Invalid referrers:
-  "https://invalid.com/"    1;
-  "~*spamdomain4.com"       1;
-  "~*.invalid\.org"         1;
+  # It's important because if you set numeric value, e.g. 0 rate limiting rule will be catch all referers:
+  default                   "";
+
+  # Invalid referrers (we restrict them):
+  "invalid.com"             $binary_remote_addr;
+  "~referer-xyz.com"        $binary_remote_addr;
+  "~*spamdomain4.com"       $binary_remote_addr;
+  "~*.invalid\.org"         $binary_remote_addr;
 
 }
 
 limit_req_zone $limit_ip_key_by_referer zone=req_for_remote_addr_by_referer:1m rate=5r/s;
 
-# 2) include this file in http context:
+# 2) Include this file in http context:
 include /etc/nginx/limits.conf;
 
-# 3) turn on in a specific context (e.g. server):
+# 3) Turn on in a specific context (e.g. server):
 server_name example.com;
 
   limit_req zone=req_for_remote_addr_by_referer burst=2;
 
   ...
+```
+
+How to test?
+
+```bash
+siege -b -r 2 -c 40 -v https:/example.com/storage/img/header.jpg -H "Referer: https://spamdomain4.com/"
+** SIEGE 4.0.4
+** Preparing 5 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 200     0.13 secs:    3174 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 503     0.14 secs:     206 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 503     0.15 secs:     206 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 503     0.10 secs:     206 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 503     0.10 secs:     206 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 503     0.10 secs:     206 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 200     0.63 secs:    3174 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 200     1.13 secs:    3174 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 200     1.00 secs:    3174 bytes ==> GET  /storage/img/header.jpg
+HTTP/1.1 200     1.04 secs:    3174 bytes ==> GET  /storage/img/header.jpg
+
+...
 ```
 
 ###### Limiting the rate of requests with burst mode
@@ -3202,7 +3246,7 @@ map $http_user_agent $device_redirect {
 
 }
 
-# turn on in a specific context (e.g. location):
+# Turn on in a specific context (e.g. location):
 if ($device_redirect = "mobile") {
 
   return 301 https://m.domain.com$request_uri;
@@ -3212,6 +3256,7 @@ if ($device_redirect = "mobile") {
 
 ###### External resources
 
+- [Module ngx_http_map_module](http://nginx.org/en/docs/http/ngx_http_map_module.html)
 - [Cool Nginx feature of the week](https://www.ignoredbydinosaurs.com/posts/236-cool-nginx-feature-of-the-week)
 
 #### :beginner: Drop the same root inside location block
