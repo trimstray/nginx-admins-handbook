@@ -210,7 +210,11 @@
 
 # Introduction
 
-<a href="https://www.nginx.com/"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_admins_handbook_logo.png"></a>
+<p align="center">
+  <a href="https://www.nginx.com/">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_admins_handbook_logo.png">
+  </a>
+</p>
 
   > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
