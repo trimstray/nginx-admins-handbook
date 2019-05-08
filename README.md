@@ -84,7 +84,7 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Configuration syntax](#configuration-syntax)
-    * [Enable syntax highlight for Nginx conf file](#enable-syntax-highlight-for-nginx-conf-file)
+    * [Enable syntax highlight for Nginx configuration file](#enable-syntax-highlight-for-nginx-configuration-file)
     * [Measurement units](#measurement-units)
     * [Comments](#comments)
     * [Variables & Strings](#variables--strings)
@@ -210,11 +210,11 @@
 
 # Introduction
 
-<a href="https://www.nginx.com/"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_logo.png" align="right"></a>
+<a href="https://www.nginx.com/"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_admins_handbook_logo.png"></a>
 
   > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
 
-<p align="justify"><b>Nginx</b> (<i>/ˌɛndʒɪnˈɛks/ EN-jin-EKS</i>, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by <a href="http://sysoev.ru/en/">Igor Sysoev</a>. For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.</p>
+**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
 To increase your knowledge, read **[NGINX Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
 
@@ -248,28 +248,53 @@ If this project is useful and important for you, you can bring **positive energy
 
 ## ToDo list
 
-- **External Resources**
+New chapters:
+
+- [ ] **Caching**
+- [ ] **3rd party modules**
+- [ ] **Web Application Firewall**
+- [ ] **ModSecurity**
+
+Existing chapters:
+
+<details>
+<summary><b>External Resources</b></summary><br>
+
   - [x] _Nginx Official Forum_
   - [x] _Nginx Official Mailing List_
 
-- **Helpers**
+</details>
+
+<details>
+<summary><b>Helpers</b></summary><br>
+
   - [x] _Configuration syntax_
-    - [x] _Enable syntax highlight for Nginx conf file_
+    - [x] _Enable syntax highlight for Nginx configuration file_
     - [x] _Measurement units_
     - [x] _Comments_
     - [x] _Variables & Strings_
     - [x] _Directives, Blocks, and Contexts_
-  - [ ] _Tips and Methods for high load traffic testing (cheatsheet)_
-  - [ ] _Rewrite POST with payload to external API_
+  - [ ] _Custom error pages_
+  - [ ] _Rewrite POST request with payload to external API_
   - [ ] _Adding and removing the "www" prefix_
+  - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
 
-- **Base Rules**
+</details>
+
+<details>
+<summary><b>Base Rules</b></summary><br>
+
   - [x] _Format, prettify and indent your Nginx code_
   - [ ] _Never use a hostname in a listen directive_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [ ] _Use "return" directive for URL redirection (301, 302)_
+  - [ ] _Use mirror module to copy requests to another backend_
 
-- **Performance**
+</details>
+
+<details>
+<summary><b>Performance</b></summary><br>
+
   - [ ] _Use "index" directive in the http block_
   - [ ] _Avoid multiple "index" directives_
   - [ ] _Use "$request_uri" to avoid using regular expressions_
@@ -278,8 +303,14 @@ If this project is useful and important for you, you can bring **positive energy
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
 
-- **Hardening**
+</details>
+
+<details>
+<summary><b>Hardening</b></summary><br>
+
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
+
+</details>
 
 ## Reports: blkcipher.info
 
@@ -591,7 +622,7 @@ inflight requests
 
 #### Configuration syntax
 
-##### Enable syntax highlight for Nginx conf file
+##### Enable syntax highlight for Nginx configuration file
 
 ###### vi/vim
 
