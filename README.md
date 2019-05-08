@@ -996,7 +996,7 @@ To help you understand how does the NGINX location match works:
 - [Nginx location match tester](https://nginx.viraptor.info/)
 - [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
 
-First of all please see on the following location syntax:
+The location syntax looks like:
 
 ```bash
 location optional_modifier location_match { ... }
