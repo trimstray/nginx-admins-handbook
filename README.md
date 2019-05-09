@@ -181,7 +181,7 @@
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
-  * [Disable HTTP compression (mitigation of CRIME/BREACH attacks)](#beginner-disable-http-compression-mitigation-of-crimebreach-attacks)
+  * [Disable HTTP compression or compress only zero sensitive content (mitigation of CRIME/BREACH attacks)](#beginner-disable-http-compression-or-compress-only-zero-sensitive-content-mitigation-of-crimebreach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)
@@ -4170,11 +4170,13 @@ ssl_prefer_server_ciphers on;
 
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 
-#### :beginner: Disable HTTP compression (mitigation of CRIME/BREACH attacks)
+#### :beginner: Disable HTTP compression or compress only zero sensitive content (mitigation of CRIME/BREACH attacks)
 
 ###### Rationale
 
-  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540: 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2).
+  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540: 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
+
+  > CRIME exploits SSL/TLS compression which is disabled since nginx 1.3.2. BREACH exploits HTTP compression
 
   > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
 
@@ -4182,12 +4184,40 @@ ssl_prefer_server_ciphers on;
 
   > You shouldn't use HTTP compression on private responses when using TLS.
 
-  > Compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
+  > I would gonna to prioritize security over performance but compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
+
+  > Remember: by default, NGINX doesn't compress image files using its per-request gzip module.
+
+  > Gzip static module is better, for 2 reasons:
+  >
+  >   - you don't have to gzip for each request
+  >   - you can use a higher gzip level
+
+  > You should put the `gzip_static on;` inside the blocks that configure static files, but if you’re only running one site, it’s safe to just put it in the http block.
 
 ###### Example
 
 ```bash
+# Disable dynamic HTTP compression:
 gzip off;
+
+# Enable dynamic HTTP compression for specific location context:
+location / {
+
+  gzip on;
+
+  ...
+
+}
+
+# Enable static gzip compression:
+location ^~ /assets/ {
+
+  gzip_static on;
+
+  ...
+
+}
 ```
 
 ###### External resources
@@ -4198,6 +4228,8 @@ gzip off;
 - [Defending against the BREACH Attack](https://blog.qualys.com/ssllabs/2013/08/07/defending-against-the-breach-attack)
 - [To avoid BREACH, can we use gzip on non-token responses?](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses)
 - [Don't Worry About BREACH](https://blog.ircmaxell.com/2013/08/dont-worry-about-breach.html)
+- [Module ngx_http_gzip_static_module](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html)
+- [Offline Compression with Nginx](https://theartofmachinery.com/2016/06/06/nginx_gzip_static.html)
 
 #### :beginner: HTTP Strict Transport Security
 
