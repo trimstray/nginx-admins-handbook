@@ -210,11 +210,15 @@
 
 # Introduction
 
+<br>
+
 <p align="center">
   <a href="https://www.nginx.com/">
     <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_admins_handbook_logo.png">
   </a>
 </p>
+
+<br>
 
   > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
@@ -234,7 +238,7 @@ I think, however, there hasn't been a truly in-depth cheatsheet which describe a
 
 Throughout this handbook you will explore the many features of NGINX and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX.
 
-If you do not have the time to read them all this multipurpose handbook may be useful. I hope you enjoy it.
+If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I hope you enjoy it.
 
 Before you start remember about the two most important things:
 
