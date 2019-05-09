@@ -226,7 +226,7 @@
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
 
-To increase your knowledge, read **[NGINX Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
+To increase your knowledge, read **[Getting Started](https://www.nginx.com/resources/wiki/start/)** and **[NGINX Documentation](https://nginx.org/en/docs/)** resources.
 
 ## General disclaimer
 
@@ -324,7 +324,7 @@ Existing chapters:
 
 Many of these recipes have been applied to the configuration of my private website.
 
-  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on this version of [printable high-res hardening checklist](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png).
+  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png) version of printable high-res hardening checklist.
 
 ### SSL Labs
 
@@ -365,7 +365,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
 
 - **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
 
-  > It provides very restrictive setup with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
+  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls12-100p.png" alt="nginx-hardening-checklist-100p" width="75%" height="75%">
@@ -373,7 +373,7 @@ Hardening checklists (High-Res 5000x8200) based on these recipes:
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
-  > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites.
+  > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png" alt="nginx-hardening-checklist-tls13" width="75%" height="75%">
@@ -3835,6 +3835,8 @@ proxy_hide_header X-Drupal-Cache;
 
   > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per NIST).
 
+  > The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
+
   > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals.
 
   > If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main reason why you should use them.
@@ -3895,6 +3897,8 @@ certbot certonly -d domain.com -d www.domain.com
 ###### External resources
 
 - [Key Management Guidelines by NIST](https://csrc.nist.gov/Projects/Key-Management/Key-Management-Guidelines)
+- [Recommendation for Transitioning the Use of Cryptographic Algorithms and Key Lengths](https://csrc.nist.gov/publications/detail/sp/800-131a/archive/2011-01-13)
+- [FIPS PUB 186-4 - Digital Signature Standard (DSS)](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf) <sup>[pdf]</sup>
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
@@ -4191,6 +4195,7 @@ gzip off;
 - [Is HTTP compression safe?](https://security.stackexchange.com/questions/20406/is-http-compression-safe)
 - [HTTP compression continues to put encrypted communications at risk](https://www.pcworld.com/article/3051675/http-compression-continues-to-put-encrypted-communications-at-risk.html)
 - [SSL/TLS attacks: Part 2 – CRIME Attack](http://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-2-crime-attack/)
+- [Defending against the BREACH Attack](https://blog.qualys.com/ssllabs/2013/08/07/defending-against-the-breach-attack)
 - [To avoid BREACH, can we use gzip on non-token responses?](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses)
 - [Don't Worry About BREACH](https://blog.ircmaxell.com/2013/08/dont-worry-about-breach.html)
 
