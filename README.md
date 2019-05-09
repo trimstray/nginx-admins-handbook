@@ -216,13 +216,13 @@
   </a>
 </p>
 
-  > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**.
+  > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
 **Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
-To increase your knowledge, read **[NGINX Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
-
 NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
+
+To increase your knowledge, read **[NGINX Documentation](https://nginx.org/en/docs/)** and **[Getting Started](https://www.nginx.com/resources/wiki/start/)** document.
 
 ## General disclaimer
 
