@@ -317,6 +317,7 @@ Existing chapters:
 <summary><b>Hardening</b></summary><br>
 
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
+  - [ ] _Implement HTTPOnly and secure attributes on cookies_
 
 </details>
 
