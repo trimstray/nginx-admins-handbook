@@ -116,6 +116,7 @@
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
+    * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -286,6 +287,8 @@ Existing chapters:
   - [ ] _Rewrite POST request with payload to external API_
   - [ ] _Adding and removing the "www" prefix_
   - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
+  - [x] _Debugging_
+    - [x] _Check that the gzip_static module is working_
 
 </details>
 
@@ -1444,6 +1447,12 @@ strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 
 ```bash
 strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
+```
+
+###### Check that the `gzip_static` module is working
+
+```bash
+strace -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
 ```
 
 #### Shell aliases
