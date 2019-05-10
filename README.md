@@ -117,6 +117,7 @@
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
+    - [Which worker processing current requests](#which-worker-processing-current-requests)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -289,6 +290,7 @@ Existing chapters:
   - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - [x] _Debugging_
     - [x] _Check that the gzip_static module is working_
+    - [x] _Which worker processing current requests_
 
 </details>
 
@@ -1453,6 +1455,35 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 
 ```bash
 strace -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
+```
+
+###### Which worker processing current requests
+
+Example 1 (more elegant way):
+
+```bash
+log_format debug-req-trace
+                '$pid - "$request_method $scheme://$host$request_uri" '
+                '$remote_addr:$remote_port $server_addr:$server_port '
+                '$request_id';
+
+# Output example:
+31863 - "GET https://example.com/" 35.228.233.xxx:63784 10.240.20.2:443 be90154db5beb0e9dd13c5d91c8ecd4c
+```
+
+Example 2:
+
+```bash
+# Run strace in the background:
+nohup strace -s 256 -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 -o /tmp/nginx-req.trace </dev/null >/dev/null 2>/dev/null &
+
+# Watch output file:
+watch -n 0.1 "awk '/Host:/ {print \"pid: \" \$1 \", \" \"host: \" \$6}' /tmp/nginx-req.trace | sed 's/\\\r\\\n.*//'"
+
+# Output example:
+Every 0.1s: awk '/Host:/ {print "pid: " $1 ", " "host: " $6}' /tmp/nginx-req.trace | sed 's/\\r\\n.*//'
+
+pid: 31863, host: example.com
 ```
 
 #### Shell aliases
