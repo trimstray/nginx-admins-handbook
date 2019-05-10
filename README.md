@@ -3455,7 +3455,7 @@ log_format debug-level-2
                 '$upstream_connect_time $upstream_header_time '
                 '$upstream_response_time "$request_filename" $request_length '
                 '$request_completion $connection $connection_requests '
-                '$server_addr $server_port $remote_addr $remote_port';
+                '$remote_addr $remote_port $server_addr $server_port';
 ```
 
 ###### External resources
