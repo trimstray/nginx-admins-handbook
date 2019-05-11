@@ -177,6 +177,7 @@
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
+  * [Use only the latest supported OpenSSL versions](#beginner-use-only-the-latest-supported-openssl-versions)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
   * [Keep only TLS 1.2 and TLS 1.3](#beginner-keep-only-tls-12-and-tls-13)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
@@ -321,6 +322,7 @@ Existing chapters:
 <details>
 <summary><b>Hardening</b></summary><br>
 
+  - [x] _Use only the latest supported OpenSSL versions_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
 
@@ -365,7 +367,7 @@ I also got the highest note from Mozilla:
 
 ## Printable high-res hardening checklists
 
-Hardening checklists (High-Res 5000x8200) based on these recipes:
+I created printable posters with hardening checklists (High-Res 5000x8200) based on these recipes:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
@@ -589,6 +591,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers"><b>Guidelines for Setting Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://medium.freecodecamp.org/secure-your-web-application-with-these-http-headers-fd66e0367628"><b>Secure your web application with these HTTP headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://zinoui.com/blog/security-http-headers"><b>Security HTTP Headers</b></a><br>
@@ -3869,6 +3872,35 @@ proxy_hide_header X-Drupal-Cache;
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
 
+#### :beginner: Use only the latest supported OpenSSL versions
+
+###### Rationale
+
+  > Before start see [Release Strategy Policies](https://www.openssl.org/policies/releasestrat.html) and [Changelog](https://www.openssl.org/news/changelog.html) on the OpenSSL website.
+
+  > Criteria for choosing OpenSSL version can vary and it depends all on your use.
+
+  > The latest versions of the major OpenSSL library are (may be changed):
+  >
+  >   - the next version of OpenSSL will be 3.0.0
+  >   - version 1.1.1 will be supported until 2023-09-11 (LTS)
+  >     - last minor version: 1.1.1b (February 26, 2019)
+  >   - version 1.1.0 will be supported until 2019-09-11
+  >     - last minor version: 1.1.0j (November 20, 2018)
+  >   - version 1.0.2 will be supported until 2019-12-31 (LTS)
+  >     - last minor version: 1.0.2r (February 26, 2019)
+  >   - any other versions are no longer supported
+
+  > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1).
+
+  > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installation-from-source) process (see OpenSSL sub-section).
+
+###### External resources
+
+- [OpenSSL Official Website](https://www.openssl.org/)
+- [OpenSSL Official Blog](https://www.openssl.org/blog/)
+- [OpenSSL Official Newslog](https://www.openssl.org/news/newslog.html)
+
 #### :beginner: Use min. 2048-bit private keys
 
 ###### Rationale
@@ -4181,7 +4213,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > The DH key is only used if DH ciphers are used. Modern clients prefer `ECDHE` instead and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange.
 
-  > Most of the "modern" profiles from places like Mozilla's ssl config generator no longer recommend using this.
+  > Most of the modern profiles from places like Mozilla's ssl config generator no longer recommend using this.
 
   > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own `4096 bit` DH Group or use known safe ones pre-defined DH groups (it's recommended) from [mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
 
@@ -4215,7 +4247,15 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 
 ###### Rationale
 
-  > Enables server-side protection from BEAST attacks.
+  > Generally the BEAST attack relies on a weakness in the way CBC mode is used in SSL/TLS.
+
+  > More specifically, to successfully perform the BEAST attack, there are some conditions which needs to be met:
+  >
+  >   - vulnerable version of SSL must be used using a block cipher (CBC in particular)
+  >   - JavaScript or a Java applet injection - should be in the same origin of the web site
+  >   - data sniffing of the network connection must be possible
+
+  > To prevent possible use BEAST attacks you should enable server-side protection, which causes the server ciphers should be preferred over the client ciphers, and completely excluded TLS 1.0 from your protocol stack.
 
 ###### Example
 
@@ -4225,7 +4265,9 @@ ssl_prefer_server_ciphers on;
 
 ###### External resources
 
+- [An Illustrated Guide to the BEAST Attack](https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art027)
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
+- [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls)
 
 #### :beginner: Disable HTTP compression or compress only zero sensitive content (mitigation of CRIME/BREACH attacks)
 
