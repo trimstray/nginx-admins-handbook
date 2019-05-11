@@ -201,7 +201,7 @@
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
-  * [Define security policies with security.txt](#beginner-define-security-policies-with-security-txt)
+  * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
 - **[Configuration Examples](#configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
