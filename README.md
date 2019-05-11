@@ -274,7 +274,8 @@ Existing chapters:
 <details>
 <summary><b>Books</b></summary><br>
 
-  - [x] _CISCO ACE TO NGINX: Migration Guide_
+  - [x] _ModSecurity 3.0 and NGINX: Quick Start Guide_
+  - [x] _Cisco ACE to NGINX: Migration Guide_
 
 </details>
 
@@ -3825,7 +3826,7 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
 ###### Rationale
 
-  > Hidden directories and files should never be web accessible. If you use control version system you should defninitely drop the access to the critical hidden directories like a `.git` or `.svn` to prevent expose source code of your application.
+  > Hidden directories and files should never be web accessible - sometimes critical data are published during application deploy. If you use control version system you should defninitely drop the access to the critical hidden directories like a `.git` or `.svn` to prevent expose source code of your application.
 
   > Sensitive resources contains items that abusers can use to fully recreate the source code used by the site and look for bugs, vulnerabilities, and exposed passwords.
 
