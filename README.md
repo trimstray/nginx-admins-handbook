@@ -65,7 +65,8 @@
   * [Nginx HTTP Server](#nginx-http-server)
   * [Nginx High Performance](#nginx-high-performance)
   * [Mastering Nginx](#mastering-nginx)
-  * [CISCO ACE TO NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
+  * [ModSecurity 3.0 and NGINX: Quick Start Guide](#modsecurity-30-and-nginx-quick-start-guide)
+  * [Cisco ACE to NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
 - **[External Resources](#external-resources)**
   * [Nginx official](#nginx-official)
   * [Based on the Nginx](#based-on-the-nginx)
@@ -469,7 +470,15 @@ _Written for experienced systems administrators and engineers, this book teaches
 
 <sup><i>This short review comes from this book or the store.</i></sup>
 
-#### [CISCO ACE TO NGINX: Migration Guide](https://www.nginx.com/resources/library/cisco-ace-nginx-migration-guide/)
+#### [ModSecurity 3.0 and NGINX: Quick Start Guide](https://www.nginx.com/resources/library/modsecurity-3-nginx-quick-start-guide/)
+
+Authors: **Faisal Memon**, **Owen Garrett**, **Michael Pleshakov**
+
+_Learn in this ebook how to get started with ModSecurity, the world’s most widely deployed web application firewall (WAF), now available for NGINX and NGINX Plus._
+
+<sup><i>This short review comes from this book or the store.</i></sup>
+
+#### [Cisco ACE to NGINX: Migration Guide](https://www.nginx.com/resources/library/cisco-ace-nginx-migration-guide/)
 
 Authors: **Faisal Memon**
 
@@ -489,7 +498,9 @@ _In this ebook you will learn:_
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/"><b>Nginx Project</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.org/en/docs/"><b>Nginx Documentation</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/"><b>Nginx Wiki</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Admin's Guide</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/"><b>Nginx Pitfalls and Common Mistakes</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://forum.nginx.org/"><b>Nginx Forum</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mailman.nginx.org/mailman/listinfo/nginx"><b>Nginx Mailing List</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
@@ -505,7 +516,6 @@ _In this ebook you will learn:_
 ##### Cheatsheets & References
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/"><b>Pitfalls and Common Mistakes (Official)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gist.github.com/carlessanagustin/9509d0d31414804da03b"><b>Nginx Cheatsheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.scalescale.com/tips/nginx/"><b>Nginx Tutorials, Linux Sysadmin Configuration & Optimizing Tips and Tricks</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/h5bp/server-configs-nginx"><b>Nginx boilerplate configs</b></a><br>
