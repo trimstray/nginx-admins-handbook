@@ -60,11 +60,14 @@
     * [Mozilla Observatory](#mozilla-observatory)
   * [Printable high-res hardening checklists](#printable-high-res-hardening-checklists)
 - **[Books](#books)**
-  * [Nginx Essentials](#nginx-essentials)
-  * [Nginx Cookbook](#nginx-cookbook)
-  * [Nginx HTTP Server](#nginx-http-server)
-  * [Nginx High Performance](#nginx-high-performance)
-  * [Mastering Nginx](#mastering-nginx)
+  * [Official books](#official-books)
+    * [Nginx Essentials](#nginx-essentials)
+    * [Nginx Cookbook](#nginx-cookbook)
+    * [Nginx HTTP Server](#nginx-http-server)
+    * [Nginx High Performance](#nginx-high-performance)
+    * [Mastering Nginx](#mastering-nginx)
+  * [Other books](#other-books)
+    * [CISCO ACE TO NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
 - **[External Resources](#external-resources)**
   * [Nginx official](#nginx-official)
   * [Based on the Nginx](#based-on-the-nginx)
@@ -270,18 +273,28 @@ New chapters:
 Existing chapters:
 
 <details>
+<summary><b>Books</b></summary><br>
+
+  - _Other books_
+    - [x] _CISCO ACE TO NGINX: Migration Guide_
+
+</details>
+
+<details>
 <summary><b>External Resources</b></summary><br>
 
-  - [x] _Nginx Official Forum_
-  - [x] _Nginx Official Mailing List_
-  - [x] _nginx-minify-conf_
+  - _Nginx official_
+    - [x] _Nginx Official Forum_
+    - [x] _Nginx Official Mailing List_
+  - _Static analyzers_
+    - [x] _nginx-minify-conf_
 
 </details>
 
 <details>
 <summary><b>Helpers</b></summary><br>
 
-  - [x] _Configuration syntax_
+  - _Configuration syntax_
     - [x] _Enable syntax highlight for Nginx configuration file_
     - [x] _Measurement units_
     - [x] _Comments_
@@ -291,7 +304,7 @@ Existing chapters:
   - [ ] _Rewrite POST request with payload to external API_
   - [ ] _Adding and removing the "www" prefix_
   - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
-  - [x] _Debugging_
+  - _Debugging_
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current requests_
 
@@ -398,6 +411,10 @@ I created printable posters with hardening checklists (High-Res 5000x8200) based
 
 # Books
 
+## Official books
+
+  > These books are probably pay.
+
 #### [Nginx Essentials](https://www.amazon.com/Nginx-Essentials-Valery-Kholodkov/dp/1785289535)
 
 Authors: **Valery Kholodkov**
@@ -454,6 +471,23 @@ _Optimize NGINX for high-performance, scalable web applications._
 Authors: **Dimitri Aivaliotis**
 
 _Written for experienced systems administrators and engineers, this book teaches you from scratch how to configure Nginx for any situation. Step-by-step instructions and real-world code snippets clarify even the most complex areas._
+
+<sup><i>This short review comes from this book or the store.</i></sup>
+
+## Other books
+
+  > These books are probably pay or free. They can be official and unofficial.
+
+#### [CISCO ACE TO NGINX: Migration Guide](https://www.nginx.com/resources/library/cisco-ace-nginx-migration-guide/)
+
+Authors: **Faisal Memon**
+
+_This ebook provides step-by-step instructions on replacing Cisco ACE with NGINX and off-the-shelf servers. NGINX helps you cut costs and modernize._
+
+_In this ebook you will learn:_
+
+- _How to migrate Cisco ACE configuration to NGINX, with detailed examples_
+- _Why you should go with a software load balancer, and not hardware_
 
 <sup><i>This short review comes from this book or the store.</i></sup>
 
