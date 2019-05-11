@@ -200,6 +200,7 @@
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
+  * [Define security policies with security.txt](#beginner-define-security-policies-with-security-txt)
 - **[Configuration Examples](#configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
@@ -325,6 +326,13 @@ Existing chapters:
   - [x] _Use only the latest supported OpenSSL versions_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
+
+</details>
+
+<details>
+<summary><b>Others</b></summary><br>
+
+  - [x] _Define security policies with security.txt_
 
 </details>
 
@@ -4573,11 +4581,11 @@ upstream backend {
 
 # Others
 
+This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
+
 #### :beginner: Enable DNS CAA Policy
 
 ###### Rationale
-
-  > This rule isn't strictly related to NGINX but in my opinion it's also very important important aspect of security.
 
   > DNS CAA policy helps you to control which Certificat Authorities are allowed to issue certificates for your domain becaues if no CAA record is present, any CA is allowed to issue a certificate for the domain.
 
@@ -4600,6 +4608,48 @@ example.com. IN CAA 0 issue "letsencrypt.org"
 - [DNS Certification Authority Authorization (CAA) Resource Record](https://tools.ietf.org/html/rfc6844)
 - [CAA Records](https://support.dnsimple.com/articles/caa-record/)
 - [CAA Record Helper](https://sslmate.com/caa/)
+
+#### :beginner: Define security policies with `security.txt`
+
+###### Rationale
+
+  > The main purpose of `security.txt` is to help make things easier for companies and security researchers when trying to secure platforms. It also provides information to assist in disclosing security vulnerabilities.
+
+  > When security researchers detect potential vulnerabilities in a page or application, they will try to contact someone "appropriate" to "responsibly" reveal the problem. It's worth taking care of getting to the right address.
+
+  > This file should be placed under the `/.well-known/` path, e.g. `/.well-known/security.txt` ([RFC5785](https://tools.ietf.org/html/rfc5785)) of a domain name or IP address for web properties.
+
+###### Example
+
+```bash
+curl -ks https://example.com/.well-known/security.txt
+
+Contact: security@example.com
+Contact: +1-209-123-0123
+Encryption: https://example.com/pgp.txt
+Preferred-Languages: en
+Canonical: https://example.com/.well-known/security.txt
+Policy: https://example.com/security-policy.html
+```
+
+And from Google:
+
+```bash
+curl -ks https://www.google.com/.well-known/security.txt
+
+Contact: https://g.co/vulnz
+Contact: mailto:security@google.com
+Encryption: https://services.google.com/corporate/publickey.txt
+Acknowledgements: https://bughunter.withgoogle.com/
+Policy: https://g.co/vrp
+Hiring: https://g.co/SecurityPrivacyEngJobs
+# Flag: BountyCon{075e1e5eef2bc8d49bfe4a27cd17f0bf4b2b85cf}
+```
+
+###### External resources
+
+- [A Method for Web Security Policies](https://tools.ietf.org/html/draft-foudil-securitytxt-05)
+- [security.txt](https://securitytxt.org/)
 
 # Configuration Examples
 
