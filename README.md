@@ -274,6 +274,7 @@ Existing chapters:
 
   - [x] _Nginx Official Forum_
   - [x] _Nginx Official Mailing List_
+  - [x] _nginx-minify-conf_
 
 </details>
 
@@ -528,6 +529,7 @@ _Written for experienced systems administrators and engineers, this book teaches
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/yandex/gixy"><b>gixy</b></a> - is a tool to analyze Nginx configuration to prevent security misconfiguration and automate flaw detection.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/1connect/nginx-config-formatter"><b>nginx-config-formatter</b></a> - Nginx config file formatter/beautifier written in Python.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/vasilevich/nginxbeautifier"><b>nginxbeautifier</b></a> - format and beautify nginx config files.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/lovette/nginx-tools/tree/master/nginx-minify-conf"><b>nginx-minify-conf</b></a> - creates a minified version of a nginx configuration.<br>
 </p>
 
 ##### Log analyzers
@@ -716,7 +718,7 @@ Lines containing directives must end with a `;` or NGINX will fail to load the c
 
 Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
 
-  > Some directives do not support variables, e.g. `access_log`, and `error_log`.
+  > There are some directives that do not support variables, e.g. `access_log`, or `error_log`.
 
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
 
@@ -834,7 +836,7 @@ There’s no need to control the worker processes yourself. However, they suppor
 
 #### Connection processing
 
-NGINX supports a variety of connection processing methods which depends on the platform used. For more information please see [Connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+NGINX supports a variety of connection processing methods which depends on the platform used. For more information please see [connection processing methods](https://nginx.org/en/docs/events.html) explanation.
 
 Okay, so how many simultaneous connections can be processed by NGINX?
 
