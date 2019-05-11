@@ -119,7 +119,7 @@
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
-    - [Which worker processing current requests](#which-worker-processing-current-requests)
+    - [Which worker processing current request](#which-worker-processing-current-request)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -132,7 +132,7 @@
   * [Installation from source](#installation-from-source)
     * [Dependencies](#dependencies)
     * [Nginx package](#nginx-package)
-    * [Example of installation on Ubuntu](#example-of-installation-on-ubuntu)
+    * [Example of installation on Ubuntu 18.04](#example-of-installation-on-ubuntu-1804)
       * [Pre installation tasks](#pre-installation-tasks)
       * [Install or build dependencies](#install-or-build-dependencies)
       * [Get Nginx sources](#get-nginx-sources)
@@ -143,7 +143,7 @@
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
   * [Tengine Web Server](#tengine-web-server)
-    * [Example of installation on Ubuntu](#example-of-installation-on-ubuntu-1)
+    * [Example of installation on Ubuntu 18.04](##example-of-installation-on-ubuntu-1804-1)
       * [Pre installation tasks](#pre-installation-tasks-1)
       * [Install or build dependencies](#install-or-build-dependencies-1)
       * [Get Tengine sources](#get-tengine-sources)
@@ -305,7 +305,10 @@ Existing chapters:
   - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Debugging_
     - [x] _Check that the gzip_static module is working_
-    - [x] _Which worker processing current requests_
+    - [x] _Which worker processing current request_
+  - _Installation from source_
+    - [ ] _Add installation process on FreeBSD 11.2 (separate file)_
+    - [ ] _Add installation process on CentOS 7 for Tengine Web Server (separate file)_
 
 </details>
 
@@ -1505,7 +1508,7 @@ strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".
 strace -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
 ```
 
-###### Which worker processing current requests
+###### Which worker processing current request
 
 Example 1 (more elegant way):
 
@@ -2079,7 +2082,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-deve
 
   > Before starting, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
-##### Example of installation on Ubuntu
+##### Example of installation on Ubuntu 18.04
 
 ###### Pre installation tasks
 
@@ -2643,7 +2646,7 @@ Generally, Tengine is a great solution, including many patches, improvements, ad
 
 The build and installation process is very similar to [installation from source](#installation-from-source) for NGINX. However, I will only specify the most important changes.
 
-##### Example of installation on Ubuntu
+##### Example of installation on Ubuntu 18.04
 
 ###### Pre installation tasks
 
