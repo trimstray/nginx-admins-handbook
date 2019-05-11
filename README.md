@@ -2888,6 +2888,8 @@ tree
 
 # Base Rules
 
+These are the basic set of rules to keep NGINX in good condition.
+
 #### :beginner: Organising Nginx configuration
 
 ###### Rationale
@@ -3476,6 +3478,8 @@ log_format debug-level-2
 
 # Performance
 
+NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
+
 #### :beginner: Adjust worker processes
 
 ###### Rationale
@@ -3722,6 +3726,8 @@ location /videos {
 - [How to Limit Nginx download Speed](https://www.scalescale.com/tips/nginx/how-to-limit-nginx-download-speed/)
 
 # Hardening
+
+In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
 #### :beginner: Run as an unprivileged user
 
@@ -4530,6 +4536,8 @@ send_timeout 10s;
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 
 # Load Balancing
+
+Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
 #### :beginner: Tweak passive health checks
 
