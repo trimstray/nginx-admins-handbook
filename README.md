@@ -60,14 +60,12 @@
     * [Mozilla Observatory](#mozilla-observatory)
   * [Printable high-res hardening checklists](#printable-high-res-hardening-checklists)
 - **[Books](#books)**
-  * [Official books](#official-books)
-    * [Nginx Essentials](#nginx-essentials)
-    * [Nginx Cookbook](#nginx-cookbook)
-    * [Nginx HTTP Server](#nginx-http-server)
-    * [Nginx High Performance](#nginx-high-performance)
-    * [Mastering Nginx](#mastering-nginx)
-  * [Other books](#other-books)
-    * [CISCO ACE TO NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
+  * [Nginx Essentials](#nginx-essentials)
+  * [Nginx Cookbook](#nginx-cookbook)
+  * [Nginx HTTP Server](#nginx-http-server)
+  * [Nginx High Performance](#nginx-high-performance)
+  * [Mastering Nginx](#mastering-nginx)
+  * [CISCO ACE TO NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
 - **[External Resources](#external-resources)**
   * [Nginx official](#nginx-official)
   * [Based on the Nginx](#based-on-the-nginx)
@@ -275,8 +273,7 @@ Existing chapters:
 <details>
 <summary><b>Books</b></summary><br>
 
-  - _Other books_
-    - [x] _CISCO ACE TO NGINX: Migration Guide_
+  - [x] _CISCO ACE TO NGINX: Migration Guide_
 
 </details>
 
@@ -411,9 +408,7 @@ I created printable posters with hardening checklists (High-Res 5000x8200) based
 
 # Books
 
-## Official books
-
-  > These books are probably pay.
+  > These books are probably pay or free. They can be official and unofficial.
 
 #### [Nginx Essentials](https://www.amazon.com/Nginx-Essentials-Valery-Kholodkov/dp/1785289535)
 
@@ -473,10 +468,6 @@ Authors: **Dimitri Aivaliotis**
 _Written for experienced systems administrators and engineers, this book teaches you from scratch how to configure Nginx for any situation. Step-by-step instructions and real-world code snippets clarify even the most complex areas._
 
 <sup><i>This short review comes from this book or the store.</i></sup>
-
-## Other books
-
-  > These books are probably pay or free. They can be official and unofficial.
 
 #### [CISCO ACE TO NGINX: Migration Guide](https://www.nginx.com/resources/library/cisco-ace-nginx-migration-guide/)
 
