@@ -129,7 +129,7 @@
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
- * [Installation from source](#installation-from-source)
+  * [Installation from source](#installation-from-source)
     * [Dependencies](#dependencies)
     * [Nginx package](#nginx-package)
     * [Example of installation on Ubuntu](#example-of-installation-on-ubuntu)
