@@ -129,6 +129,7 @@
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
+    * [Rewrite POST request with payload to external endpoint](#rewrite-post-request-with-payload-to-external-endpoint)
   * [Installation from source](#installation-from-source)
     * [Dependencies](#dependencies)
     * [Nginx package](#nginx-package)
@@ -299,13 +300,14 @@ Existing chapters:
     - [x] _Comments_
     - [x] _Variables & Strings_
     - [x] _Directives, Blocks, and Contexts_
-  - [ ] _Custom error pages_
-  - [ ] _Rewrite POST request with payload to external API_
-  - [ ] _Adding and removing the "www" prefix_
-  - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Debugging_
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
+  - _Configuration snippets_
+    - [ ] _Custom error pages_
+    - [x] _Rewrite POST request with payload to external endpoint_
+    - [ ] _Adding and removing the "www" prefix_
+    - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
     - [ ] _Add installation process on FreeBSD 11.2 (separate file)_
     - [ ] _Add installation process on CentOS 7 for Tengine Web Server (separate file)_
@@ -2021,6 +2023,39 @@ Successful transactions: 364
 Failed transactions:     769
 Longest transaction:    1.10
 Shortest transaction:   0.38
+```
+
+###### Rewrite POST request with payload to external endpoint
+
+**POST** data is passed in the body of the request, which gets dropped if you do a standard redirect.
+
+Look at this:
+
+| <b>DESCRITPION</b> | <b>PERMANENT</b> | <b>TEMPORARY</b> |
+| :---         | :---         | :---         |
+| allows changing the request method from POST to GET | 301 | 302 |
+| does not allow changing the request method from POST to GET | 308 | 307 |
+
+You can try with the HTTP status code 307, a RFC compliant browser should repeat the post request. You just need to write a NGINX rewrite rule with HTTP status code 307 or 308:
+
+```bash
+location /api {
+
+  # HTTP 307 only for POST requests:
+  if ($request_method = POST) {
+
+    return 307 https://api.example.com?request_uri;
+
+  }
+
+  # You can keep this for non-POST requests:
+  rewrite ^ https://api.example.com?request_uri permanent;
+
+  client_max_body_size    10m;
+
+  ...
+
+}
 ```
 
 #### Installation from source
