@@ -131,6 +131,7 @@
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Rewrite POST request with payload to external endpoint](#rewrite-post-request-with-payload-to-external-endpoint)
+    * [Allow multiple cross-domains using the CORS headers](#allow-multiple cross-domains-using-the-cors-headers)
   * [Installation from source](#installation-from-source)
     * [Dependencies](#dependencies)
     * [Nginx package](#nginx-package)
@@ -308,6 +309,7 @@ Existing chapters:
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
     - [x] _Rewrite POST request with payload to external endpoint_
+    - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
     - [ ] _Add installation process on FreeBSD 11.2 (separate file)_
@@ -2087,6 +2089,74 @@ location /api {
   client_max_body_size    10m;
 
   ...
+
+}
+```
+
+##### Allow multiple cross-domains using the CORS headers
+
+Example 1:
+
+```bash
+location ~* \.(?:ttf|ttc|otf|eot|woff|woff2)$ {
+
+  if ( $http_origin ~* (https?://(.+\.)?(domain1|domain2|domain3)\.(?:me|co|com)$) ) {
+
+    add_header "Access-Control-Allow-Origin" "$http_origin";
+
+  }
+
+}
+```
+
+Example 2 (more slightly configuration; for GETs and POSTs):
+
+```bash
+location / {
+
+  if ($http_origin ~* (^https?://([^/]+\.)*(domainone|domaintwo)\.com$)) {
+
+    set $cors "true";
+
+  }
+
+  # Determine the HTTP request method used:
+  if ($request_method = 'GET') {
+
+    set $cors "${cors}get";
+
+  }
+
+  if ($request_method = 'POST') {
+
+    set $cors "${cors}post";
+
+  }
+
+  if ($cors = "true") {
+
+    # Catch all in case there's a request method we're not dealing with properly:
+    add_header 'Access-Control-Allow-Origin' "$http_origin";
+
+  }
+
+  if ($cors = "trueget") {
+
+    add_header 'Access-Control-Allow-Origin' "$http_origin";
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+    add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+
+  }
+
+  if ($cors = "truepost") {
+
+    add_header 'Access-Control-Allow-Origin' "$http_origin";
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+    add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+
+  }
 
 }
 ```
