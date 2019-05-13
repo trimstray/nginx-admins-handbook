@@ -309,4 +309,4 @@ tree
 
 ###### Post installation tasks
 
-  > Check all post installation tasks from [post installation tasks - NGINX](https://github.com/trimstray/nginx-admins-handbook/blob/master/extended/installation_nginx_on_ubuntu_1804.md#post-installation-tasks) section.
+  > Check all post installation tasks from [post installation tasks - NGINX](https://github.com/trimstray/nginx-admins-handbook/blob/master/extended/inst_tengine_ubuntu_1804.md#post-installation-tasks) section.
