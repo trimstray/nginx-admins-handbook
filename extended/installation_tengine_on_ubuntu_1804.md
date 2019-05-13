@@ -1,4 +1,14 @@
-#### Tengine Web Server
+#### Table of Contents
+
+* [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
+  * [Pre installation tasks](#pre-installation-tasks)
+  * [Install or build dependencies](#install-or-build-dependencies)
+  * [Get Tengine sources](#get-tengine-sources)
+  * [Download 3rd party modules](#download-3rd-party-modules)
+  * [Build Tengine](#build-tengine)
+  * [Post installation tasks](#post-installation-tasks)
+
+#### Installation Tengine on Ubuntu 18.04
 
   > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
 
@@ -7,9 +17,7 @@
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar to [installation from source](#installation-from-source) for NGINX. However, I will only specify the most important changes.
-
-##### Example of installation on Ubuntu 18.04
+The build and installation process is very similar to [installation from source](https://github.com/trimstray/nginx-admins-handbook#installation-from-source) for NGINX. However, I will only specify the most important changes.
 
 ###### Pre installation tasks
 
@@ -143,7 +151,7 @@ git clone https://github.com/alibaba/tengine master
 
 ###### Download 3rd party modules
 
-  > Not all modules from [this](#download-3rd-party-modules) section working properly with Tengine (e.g. `ndk_http_module` and other dependent on it).
+  > Not all modules from [this](https://github.com/trimstray/nginx-admins-handbook#download-3rd-party-modules) section working properly with Tengine (e.g. `ndk_http_module` and other dependent on it).
 
 ```bash
 cd /usr/local/src/tengine/modules/
@@ -301,4 +309,4 @@ tree
 
 ###### Post installation tasks
 
-  > Check all post installation tasks from [post installation tasks - NGINX](#post-installation-tasks) section.
+  > Check all post installation tasks from [post installation tasks - NGINX](https://github.com/trimstray/nginx-admins-handbook/blob/master/extended/installation_nginx_on_ubuntu_1804.md#post-installation-tasks) section.

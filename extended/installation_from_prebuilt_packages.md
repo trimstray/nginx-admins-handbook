@@ -1,3 +1,9 @@
+#### Table of Contents
+
+* [Installation from prebuilt packages](#installation-from-prebuilt-packages)
+  * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
+  * [Debian or Ubuntu](#debian-or-ubuntu)
+
 #### Installation from prebuilt packages
 
 ##### RHEL7 or CentOS 7

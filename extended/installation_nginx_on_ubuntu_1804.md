@@ -1,4 +1,14 @@
-##### Installation Nginx on Ubuntu 18.04
+#### Table of Contents
+
+* [Installation Nginx on Ubuntu 18.04](#installation-nginx-on-ubuntu-1804)
+  * [Pre installation tasks](#pre-installation-tasks)
+  * [Install or build dependencies](#install-or-build-dependencies)
+  * [Get Nginx sources](#get-nginx-sources)
+  * [Download 3rd party modules](#download-3rd-party-modules)
+  * [Build Nginx](#build-nginx)
+  * [Post installation tasks](#post-installation-tasks)
+
+#### Installation Nginx on Ubuntu 18.04
 
 ###### Pre installation tasks
 
