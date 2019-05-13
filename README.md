@@ -313,7 +313,7 @@ Existing chapters:
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
     - [ ] _Add SystemTap - Real-time analysis and diagnoistcs tools_
-    - [x] _Separation of installation methods_
+    - [x] _Separation and improvement of installation methods_
     - [ ] _Add installation process on FreeBSD 11.2 (separate file)_
     - [ ] _Add installation process on CentOS 7 for Tengine Web Server (separate file)_
 
@@ -2246,6 +2246,8 @@ apt-get install nginx
 
 #### Installation from source
 
+  > Before starting, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
+
 There are currently two versions of NGINX:
 
 - **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
@@ -2269,8 +2271,6 @@ Before start please see this short system locations:
   - `/usr/local/share` - manual pages, data
 
 ##### Nginx package
-
-  > Before starting, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
 Download NGINX source code from an official read-only mirror:
 
