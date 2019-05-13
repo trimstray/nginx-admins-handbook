@@ -86,11 +86,11 @@
   * [Nginx commands](#nginx-commands)
   * [Nginx processes](#nginx-processes)
   * [Configuration syntax](#configuration-syntax)
-    * [Enable syntax highlight for Nginx configuration file](#enable-syntax-highlight-for-nginx-configuration-file)
-    * [Measurement units](#measurement-units)
     * [Comments](#comments)
     * [Variables & Strings](#variables--strings)
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
+    * [Measurement units](#measurement-units)
+    * [Enable syntax highlight for Nginx configuration file](#enable-syntax-highlight-for-nginx-configuration-file)
   * [Connection processing](#connection-processing)
   * [Request processing stages](#request-processing-stages)
   * [Server blocks logic](#server-blocks-logic)
@@ -129,6 +129,7 @@
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
+    * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Rewrite POST request with payload to external endpoint](#rewrite-post-request-with-payload-to-external-endpoint)
   * [Installation from source](#installation-from-source)
     * [Dependencies](#dependencies)
@@ -305,8 +306,8 @@ Existing chapters:
     - [x] _Which worker processing current request_
   - _Configuration snippets_
     - [ ] _Custom error pages_
+    - [x] _Adding and removing the www prefix_
     - [x] _Rewrite POST request with payload to external endpoint_
-    - [ ] _Adding and removing the "www" prefix_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
     - [ ] _Add installation process on FreeBSD 11.2 (separate file)_
@@ -692,6 +693,102 @@ inflight requests
 
 #### Configuration syntax
 
+##### Comments
+
+NGINX configuration files don't support comment blocks; they only accept `#` at the beginning of a line for a comment.
+
+##### End of lines
+
+Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
+
+##### Variables & Strings
+
+Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
+
+  > There are some directives that do not support variables, e.g. `access_log`, or `error_log`.
+
+Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
+
+Variables in quoted strings are expanded normally unless the `$` is escaped.
+
+##### Directives, Blocks, and Contexts
+
+  > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
+
+Configuration options in NGINX are called directives. We have four types of directives in NGINX:
+
+- standard directive - one value per context, for example:
+  ```bash
+  worker_connections 512;
+  ```
+- array directive - multiple values per context, for example:
+  ```bash
+  error_log /var/log/nginx/localhost/localhost-error.log warn;
+  ```
+- action directive - something which does not just configure, for example:
+  ```bash
+  rewrite ^(.*)$ /msie/$1 break;
+  ```
+ - `try_files` directive, for example:
+  ```bash
+  try_files $uri $uri/ /test/index.html;
+  ```
+
+Directives are organized into groups known as blocks or contexts. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
+
+As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
+
+The NGINX contexts can be layered within one another so NGINX provides a level of inheritance. The NGINX contexts structure looks like this:
+
+```
+Global/Main Context
+        |
+        |
+        +-----» Events Context
+        |
+        |
+        +-----» HTTP Context
+        |          |
+        |          |
+        |          +-----» Server Context
+        |          |          |
+        |          |          |
+        |          |          +-----» Location Context
+        |          |
+        |          |
+        |          +-----» Upstream Context
+        |
+        |
+        +-----» Mail Context
+```
+
+##### Measurement units
+
+Sizes can be specified in:
+
+- `k` or `K`: Kilobytes
+- `m` or `M`: Megabytes
+- `g` or `G`: Gigabytes
+
+```bash
+client_max_body_size 2M;
+```
+
+Time intervals can be specified in:
+
+- `ms`: Milliseconds
+- `s`: Seconds (default, without a suffix)
+- `m`: Minutes
+- `h`: Hours
+- `d`: Days
+- `w`: Weeks
+- `M`: Months (30 days)
+- `y`: Years (365 days)
+
+```bash
+proxy_read_timeout 20s;
+```
+
 ##### Enable syntax highlight for Nginx configuration file
 
 ###### vi/vim
@@ -746,102 +843,6 @@ cabal update
 - `sublime-nginx` + `SublimeLinter-contrib-nginx-lint`:
 
   Bring up the _Command Palette_ and type `install`. Among the commands you should see _Package Control: Install Package_. Type `nginx` to install [sublime-nginx](https://github.com/brandonwamboldt/sublime-nginx) and after that do the above again for install [SublimeLinter-contrib-nginx-lint](https://github.com/irvinlim/SublimeLinter-contrib-nginx-lint): type `SublimeLinter-contrib-nginx-lint`.
-
-##### Comments
-
-NGINX configuration files don't support comment blocks; they only accept `#` at the beginning of a line for a comment.
-
-##### End of lines
-
-Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
-
-##### Variables & Strings
-
-Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
-
-  > There are some directives that do not support variables, e.g. `access_log`, or `error_log`.
-
-Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
-
-Variables in quoted strings are expanded normally unless the `$` is escaped.
-
-##### Measurement units
-
-Sizes can be specified in:
-
-- `k` or `K`: Kilobytes
-- `m` or `M`: Megabytes
-- `g` or `G`: Gigabytes
-
-```bash
-client_max_body_size 2M;
-```
-
-Time intervals can be specified in:
-
-- `ms`: Milliseconds
-- `s`: Seconds (default, without a suffix)
-- `m`: Minutes
-- `h`: Hours
-- `d`: Days
-- `w`: Weeks
-- `M`: Months (30 days)
-- `y`: Years (365 days)
-
-```bash
-proxy_read_timeout 20s;
-```
-
-##### Directives, Blocks, and Contexts
-
-  > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
-
-Configuration options in NGINX are called directives. We have four types of directives in NGINX:
-
-- standard directive - one value per context, for example:
-  ```bash
-  worker_connections 512;
-  ```
-- array directive - multiple values per context, for example:
-  ```bash
-  error_log /var/log/nginx/localhost/localhost-error.log warn;
-  ```
-- action directive - something which does not just configure, for example:
-  ```bash
-  rewrite ^(.*)$ /msie/$1 break;
-  ```
- - `try_files` directive, for example:
-  ```bash
-  try_files $uri $uri/ /test/index.html;
-  ```
-
-Directives are organized into groups known as blocks or contexts. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
-
-As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
-
-The NGINX contexts can be layered within one another so NGINX provides a level of inheritance. The NGINX contexts structure looks like this:
-
-```
-Global/Main Context
-        |
-        |
-        +-----» Events Context
-        |
-        |
-        +-----» HTTP Context
-        |          |
-        |          |
-        |          +-----» Server Context
-        |          |          |
-        |          |          |
-        |          |          +-----» Location Context
-        |          |
-        |          |
-        |          +-----» Upstream Context
-        |
-        |
-        +-----» Mail Context
-```
 
 #### Nginx processes
 
@@ -1557,7 +1558,7 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 
 #### Configuration snippets
 
-###### Restricting access with basic authentication
+##### Restricting access with basic authentication
 
 ```bash
 # 1) Generate file with htpasswd command:
@@ -1593,7 +1594,7 @@ server_name example.com;
   ...
 ```
 
-###### Blocking/allowing IP addresses
+##### Blocking/allowing IP addresses
 
 Example 1:
 
@@ -1732,7 +1733,7 @@ server_name example.com;
   ...
 ```
 
-###### Blocking referrer spam
+##### Blocking referrer spam
 
 Example 1:
 
@@ -1798,7 +1799,7 @@ HTTP/1.1 403     0.12 secs:     124 bytes ==> GET  /storage/img/header.jpg
 ...
 ```
 
-###### Limiting referrer spam
+##### Limiting referrer spam
 
 Example 1:
 
@@ -1853,7 +1854,7 @@ HTTP/1.1 200     1.04 secs:    3174 bytes ==> GET  /storage/img/header.jpg
 ...
 ```
 
-###### Limiting the rate of requests with burst mode
+##### Limiting the rate of requests with burst mode
 
 ```bash
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
@@ -1916,7 +1917,7 @@ Longest transaction:   30.32
 Shortest transaction:   0.20
 ```
 
-###### Limiting the rate of requests with burst mode and nodelay
+##### Limiting the rate of requests with burst mode and nodelay
 
 ```bash
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=2r/s;
@@ -1980,7 +1981,7 @@ Longest transaction:    0.22
 Shortest transaction:   0.18
 ```
 
-###### Limiting the number of connections
+##### Limiting the number of connections
 
 ```bash
 limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
@@ -2025,7 +2026,39 @@ Longest transaction:    1.10
 Shortest transaction:   0.38
 ```
 
-###### Rewrite POST request with payload to external endpoint
+##### Adding and removing the `www` prefix
+
+- `www` to `non-www`:
+
+```bash
+server {
+
+  ...
+
+  server_name www.domain.com;
+
+  # $scheme will get the http or https protocol:
+  return 301 $scheme://domain.com$request_uri;
+
+}
+```
+
+- `non-www` to `www`:
+
+```bash
+server {
+
+  ...
+
+  server_name domain.com;
+
+  # $scheme will get the http or https protocol:
+  return 301 $scheme://www.domain.com$request_uri;
+
+}
+```
+
+##### Rewrite POST request with payload to external endpoint
 
 **POST** data is passed in the body of the request, which gets dropped if you do a standard redirect.
 
