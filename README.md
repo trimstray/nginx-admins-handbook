@@ -2458,7 +2458,7 @@ cd /usr/local/src/
 #   cd /usr/local/src/zlib-1.2.11
 
 # For Cloudflare Zlib:
-git clone https://github.com/cloudflare/zlib
+git clone --depth 1 https://github.com/cloudflare/zlib
 
 cd /usr/local/src/zlib
 
@@ -2519,7 +2519,7 @@ cd /usr/local/src/
 #   cd /usr/local/src/luajit-2.0
 
 # For OpenResty's LuaJIT:
-git clone https://github.com/openresty/luajit2
+git clone --depth 1 https://github.com/openresty/luajit2
 
 cd /usr/local/src/luajit2
 
@@ -2538,7 +2538,7 @@ ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```bash
 cd /usr/local/src/
 
-git clone https://github.com/openresty/sregex
+git clone --depth 1 https://github.com/openresty/sregex
 
 cd /usr/local/src/sregex
 
@@ -2552,7 +2552,7 @@ jemalloc:
 ```bash
 cd /usr/local/src/
 
-git clone https://github.com/jemalloc/jemalloc
+git clone --depth 1 https://github.com/jemalloc/jemalloc
 
 cd /usr/local/src/jemalloc
 
@@ -2939,7 +2939,7 @@ cd /usr/local/src/
 #   cd /usr/local/src/luajit-2.0
 
 # For OpenResty's LuaJIT:
-git clone https://github.com/openresty/luajit2
+git clone --depth 1 https://github.com/openresty/luajit2
 
 cd /usr/local/src/luajit2
 
@@ -2958,7 +2958,7 @@ sregex:
 ```bash
 cd /usr/local/src/
 
-git clone https://github.com/openresty/sregex
+git clone --depth 1 https://github.com/openresty/sregex
 
 cd /usr/local/src/sregex
 
@@ -2972,7 +2972,7 @@ jemalloc:
 ```bash
 cd /usr/local/src/
 
-git clone https://github.com/jemalloc/jemalloc
+git clone --depth 1 https://github.com/jemalloc/jemalloc
 
 cd /usr/local/src/jemalloc
 
@@ -2994,7 +2994,7 @@ ldconfig
 ```bash
 cd /usr/local/src/tengine
 
-git clone https://github.com/alibaba/tengine master
+git clone --depth 1 https://github.com/alibaba/tengine master
 ```
 
 ###### Download 3rd party modules
