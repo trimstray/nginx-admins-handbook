@@ -2284,10 +2284,17 @@ Mandatory requirements:
   > Download, compile and install or install prebuilt packages from your distribution repository.
 
 - [OpenSSL](https://www.openssl.org/source/) library
-- [Zlib](https://zlib.net/) library
+- [Zlib](https://zlib.net/) or [Cloudflare Zlib](https://github.com/cloudflare/zlib) library
 - [PCRE](https://ftp.pcre.org/pub/pcre/) library
 - [LuaJIT v2.1](https://github.com/LuaJIT/LuaJIT) or [OpenResty's LuaJIT2](https://github.com/openresty/luajit2) library
 - [jemalloc](https://github.com/jemalloc/jemalloc) library
+
+OpenResty's LuaJIT uses its own branch of LuaJIT with various important bug fixes and optimizations for OpenResty's use cases.
+
+I also use Cloudflare Zlib version due to performance. See below articles:
+
+- [A comparison of Zlib implementations](http://www.htslib.org/benchmarks/zlib.html)
+- [Improving Nginx Zlib Compression Performance](https://medium.com/@centminmod/improving-nginx-zlib-compression-performance-eb961f3ac0f4)
 
 If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building NGINX:
 
@@ -2313,7 +2320,7 @@ If you download and compile above sources the good point is to install additiona
 
 <sup><i>* If you don't use from sources.</i></sup>
 
-Shell one-liner example:
+Shell one-liners example:
 
 ```bash
 # Ubuntu/Debian
@@ -2339,7 +2346,7 @@ You can download external modules from:
 
 A short description of the modules that I used (not only) in this step-by-step tutorial:
 
-- [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit) - module that adds additional generic tools that module developers can use in their own modules; is already being used in quite a few third party modules
+- [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit)** - adds additional generic tools that module developers can use in their own modules
 - [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into NGINX
 - [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX's rewrite module
 - [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX's config file
@@ -2349,7 +2356,7 @@ A short description of the modules that I used (not only) in this step-by-step t
 - [`encrypted-session-nginx-module`](https://github.com/openresty/encrypted-session-nginx-module) - encrypt and decrypt NGINX variable values
 - [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
 - [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
-- [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - module which can do both regular expression and fixed string substitutions
+- [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - can do both regular expression and fixed string substitutions
 - [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src) - module to add a sticky cookie to be always forwarded to the same
 - [`nginx-module-vts`](https://github.com/vozlt/nginx-module-vts) - Nginx virtual host traffic status module
 - [`ngx_brotli`](https://github.com/google/ngx_brotli) - module for Brotli compression
@@ -2371,7 +2378,8 @@ A short description of the modules that I used (not only) in this step-by-step t
 - [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
 - [`openresty-systemtap-toolkit`](https://github.com/openresty/openresty-systemtap-toolkit) - real-time analysis and diagnostics tools
 
-<sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup>
+<sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
+<sup><i>** Is already being used in quite a few third party modules.</i></sup>
 
 #### Installation Nginx on Ubuntu 18.04
 
@@ -2400,7 +2408,7 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 ```bash
 apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
-# Also if you don't use sources:
+# Also if you don't use sources, in this example we use sources for all below packages:
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
 
 # For LuaJIT:
@@ -2435,16 +2443,25 @@ export PCRE_INC=/usr/local/include
 Zlib:
 
 ```bash
+# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
 cd /usr/local/src/
 
-wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+# For original Zlib:
+#   wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+#   cd /usr/local/src/zlib-1.2.11
 
-cd /usr/local/src/zlib-1.2.11
+# For Cloudflare Zlib:
+git clone https://github.com/cloudflare/zlib
+
+cd /usr/local/src/zlib
 
 ./configure
 
 make -j2 && make test
 make install
+
+export ZLIB_LIB=/usr/local/lib
+export ZLIB_INC=/usr/local/include
 ```
 
 OpenSSL:
@@ -2485,10 +2502,17 @@ __EOF__
 LuaJIT:
 
 ```bash
-# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT):
-cd /usr/local/src/ && git clone https://github.com/openresty/luajit2
+# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+cd /usr/local/src/
 
-cd luajit2
+# For originall LuaJIT:
+#   git clone http://luajit.org/git/luajit-2.0
+#   cd /usr/local/src/luajit-2.0
+
+# For OpenResty's LuaJIT:
+git clone https://github.com/openresty/luajit2
+
+cd /usr/local/src/luajit2
 
 make && make install
 
@@ -2503,9 +2527,11 @@ ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
   > Required for `replace-filter-nginx-module` module.
 
 ```bash
-cd /usr/local/src/ && git clone https://github.com/openresty/sregex
+cd /usr/local/src/
 
-cd sregex
+git clone https://github.com/openresty/sregex
+
+cd /usr/local/src/sregex
 
 make && make install
 ```
@@ -2515,7 +2541,9 @@ jemalloc:
   > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
-cd /usr/local/src/ && git clone https://github.com/jemalloc/jemalloc
+cd /usr/local/src/
+
+git clone https://github.com/jemalloc/jemalloc
 
 cd jemalloc
 
@@ -2645,6 +2673,7 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-openssl-opt=no-ssl3 \
             --with-pcre=/usr/local/src/pcre-8.42 \
             --with-pcre-jit \
+            --with-zlib=/usr/local/src/zlib-1.2.11 \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
@@ -2828,7 +2857,7 @@ Install prebuilt packages, export variables and set symbolic link:
 ```bash
 apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
-# Also if you don't use sources:
+# In this example we don't use zlib sources:
 apt-get install zlib1g-dev
 ```
 
@@ -2888,10 +2917,17 @@ __EOF__
 LuaJIT:
 
 ```bash
-# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT):
-cd /usr/local/src/ && git clone https://github.com/openresty/luajit2
+# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+cd /usr/local/src/
 
-cd luajit2
+# For originall LuaJIT:
+#   git clone http://luajit.org/git/luajit-2.0
+#   cd /usr/local/src/luajit-2.0
+
+# For OpenResty's LuaJIT:
+git clone https://github.com/openresty/luajit2
+
+cd /usr/local/src/luajit2
 
 make && make install
 
@@ -2906,9 +2942,11 @@ sregex:
   > Required for `replace-filter-nginx-module` module.
 
 ```bash
-cd /usr/local/src/ && git clone https://github.com/openresty/sregex
+cd /usr/local/src/
 
-cd sregex
+git clone https://github.com/openresty/sregex
+
+cd /usr/local/src/sregex
 
 make && make install
 ```
@@ -2918,7 +2956,9 @@ jemalloc:
   > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
-cd /usr/local/src/ && git clone https://github.com/jemalloc/jemalloc
+cd /usr/local/src/
+
+git clone https://github.com/jemalloc/jemalloc
 
 cd jemalloc
 
