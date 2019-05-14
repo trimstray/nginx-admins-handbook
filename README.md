@@ -2246,14 +2246,9 @@ apt-get install nginx
 
 #### Installation from source
 
-  > Before starting, please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
+Before the beginning please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
 
-There are currently two versions of NGINX:
-
-- **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
-- **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
-
-Before start please see this short system locations:
+Look also on this short note about the system locations. That can be useful too:
 
 - For booting the system, rescues and maintenance: `/`
   - `/bin` - user programs
@@ -2271,6 +2266,11 @@ Before start please see this short system locations:
   - `/usr/local/share` - manual pages, data
 
 ##### Nginx package
+
+There are currently two versions of NGINX:
+
+- **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
+- **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
 
 Download NGINX source code from an official read-only mirror:
 
