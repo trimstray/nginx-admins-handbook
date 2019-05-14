@@ -2406,17 +2406,18 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
 ###### Install or build dependencies
 
-  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
+  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
 
 **Install prebuilt packages, export variables and set symbolic link:**
 
 ```bash
+# It's important and required, regardless of chosen sources.
 apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
-# Also if you don't use sources, in this example we use sources for all below packages:
+# In this example we use sources for all below packages so we do not install them:
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
 
-# For LuaJIT:
+# For LuaJIT (libluajit-5.1-dev):
 export LUA_LIB=/usr/local/x86_64-linux-gnu/
 export LUA_INC=/usr/include/luajit-2.1/
 
@@ -2633,7 +2634,8 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/master
 
-# You can also build Nginx without 3rd party modules.
+# - you can also build NGINX without 3rd party modules
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
@@ -3023,7 +3025,8 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ```bash
 cd /usr/local/src/tengine/master
 
-# You can also build Tengine without 3rd party modules.
+# - you can also build Tengine without 3rd party modules
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
