@@ -2246,7 +2246,10 @@ apt-get install nginx
 
 #### Installation from source
 
-Before the beginning please see [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/) and [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure).
+Before the beginning installation process please see two very important articles:
+
+- [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
+- [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
 
 Look also on this short note about the system locations. That can be useful too:
 
