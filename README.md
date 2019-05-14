@@ -3024,7 +3024,7 @@ mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 If you use NAXSI:
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/modules/
+cd /usr/local/src/tengine/modules/
 
 git clone --depth 1 https://github.com/nbs-system/naxsi
 ```
