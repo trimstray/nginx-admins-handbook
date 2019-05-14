@@ -2444,7 +2444,6 @@ make install
 
 export PCRE_LIB=/usr/local/lib
 export PCRE_INC=/usr/local/include
-
 export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
@@ -2470,7 +2469,6 @@ make install
 
 export ZLIB_LIB=/usr/local/lib
 export ZLIB_INC=/usr/local/include
-
 export ZLIB_DIRECTORY="/usr/local/src/zlib"
 ```
 
@@ -2490,7 +2488,6 @@ make install
 
 export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
 export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
-
 export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
@@ -2892,7 +2889,6 @@ make install
 
 export PCRE_LIB=/usr/local/lib
 export PCRE_INC=/usr/local/include
-
 export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
@@ -2912,7 +2908,6 @@ make install
 
 export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
 export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
-
 export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
