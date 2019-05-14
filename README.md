@@ -2277,16 +2277,16 @@ There are currently two versions of NGINX:
 
 You can download NGINX source code from an official read-only mirrors:
 
+  > Detailed instructions about download and compile the NGINX sources can be found later in the handbook.
+
 - [NGINX source code](https://nginx.org/download/)
 - [NGINX GitHub repository](https://github.com/nginx/nginx)
-
-Detailed instructions about download and compile the NGINX sources can be found later in the handbook.
 
 ##### Dependencies
 
 Mandatory requirements:
 
-  > Download, compile and install or install prebuilt packages from your distribution repository.
+  > Download, compile and install or install prebuilt packages from repository of your distribution.
 
 - [OpenSSL](https://www.openssl.org/source/) library
 - [Zlib](https://zlib.net/) or [Cloudflare Zlib](https://github.com/cloudflare/zlib) library
