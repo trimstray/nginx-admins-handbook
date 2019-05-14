@@ -2275,10 +2275,12 @@ There are currently two versions of NGINX:
 - **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
 - **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
 
-Download NGINX source code from an official read-only mirror:
+You can download NGINX source code from an official read-only mirror:
 
 - [NGINX source code](https://nginx.org/download/)
 - [NGINX GitHub repository](https://github.com/nginx/nginx)
+
+  > Detailed instructions about download NGINX sources can be found later in the handbook.
 
 ##### Dependencies
 
