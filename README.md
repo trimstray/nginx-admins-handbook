@@ -2444,6 +2444,8 @@ make install
 
 export PCRE_LIB=/usr/local/lib
 export PCRE_INC=/usr/local/include
+
+export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
 Zlib:
@@ -2468,6 +2470,8 @@ make install
 
 export ZLIB_LIB=/usr/local/lib
 export ZLIB_INC=/usr/local/include
+
+export ZLIB_DIRECTORY="/usr/local/src/zlib"
 ```
 
 OpenSSL:
@@ -2486,6 +2490,8 @@ make install
 
 export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
 export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
+
+export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
@@ -2551,11 +2557,13 @@ cd /usr/local/src/
 
 git clone https://github.com/jemalloc/jemalloc
 
-cd jemalloc
+cd /usr/local/src/jemalloc
 
 ./autogen.sh
 
 make && make install
+
+export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
 ```
 
 Update links and cache to the shared libraries for both types of installation:
@@ -2675,12 +2683,12 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-http_sub_module \
             --with-http_v2_module \
             --with-google_perftools_module \
-            --with-openssl=/usr/local/src/openssl-1.1.1b \
+            --with-openssl=${OPENSSL_DIRECTORY} \
             --with-openssl-opt=no-weak-ssl-ciphers \
             --with-openssl-opt=no-ssl3 \
-            --with-pcre=/usr/local/src/pcre-8.42 \
+            --with-pcre=${PCRE_DIRECTORY} \
             --with-pcre-jit \
-            --with-zlib=/usr/local/src/zlib-1.2.11 \
+            --with-zlib=${ZLIB_DIRECTORY} \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
@@ -2884,6 +2892,8 @@ make install
 
 export PCRE_LIB=/usr/local/lib
 export PCRE_INC=/usr/local/include
+
+export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
 OpenSSL:
@@ -2902,6 +2912,8 @@ make install
 
 export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
 export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
+
+export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
@@ -2967,11 +2979,13 @@ cd /usr/local/src/
 
 git clone https://github.com/jemalloc/jemalloc
 
-cd jemalloc
+cd /usr/local/src/jemalloc
 
 ./autogen.sh
 
 make && make install
+
+export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
 ```
 
 Update links and cache to the shared libraries for both types of installation:
@@ -3075,12 +3089,12 @@ cd /usr/local/src/tengine/master
             --with-http_upstream_session_sticky_module \
             --with-http_v2_module \
             --with-google_perftools_module \
-            --with-openssl=/usr/local/src/openssl-1.1.1b \
+            --with-openssl=${OPENSSL_DIRECTORY} \
             --with-openssl-opt=no-weak-ssl-ciphers \
             --with-openssl-opt=no-ssl3 \
-            --with-pcre=/usr/local/src/pcre-8.42 \
+            --with-pcre=${PCRE_DIRECTORY} \
             --with-pcre-jit \
-            --with-jemalloc=/usr/local/src/jemalloc \
+            --with-jemalloc=${JEMALLOC_DIRECTORY} \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
