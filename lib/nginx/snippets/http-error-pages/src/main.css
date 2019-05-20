@@ -1,0 +1,55 @@
+/* Error Page Styles */
+body {
+  padding-top: 20px;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+.base {
+  font-size: 12px;
+  font-weight: 400;
+  font-family: monospace;
+  line-height: 2;
+  color: inherit;
+  padding: 10px 0px;
+}
+.body-content {
+  font-size: 12px;
+  font-weight: 400;
+  font-family: monospace;
+  line-height: 2;
+  color: inherit;
+  padding: 0px 0px;
+}
+.h1 {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: sans;
+}
+.h2 {
+  font-size: 11px;
+  font-weight: 400;
+  font-family: sans;
+}
+.base, .body-content {
+  text-align: left;
+  background-color: transparent;
+}
+.h2 {
+  padding-left: 35px;
+  padding-right: 35px;
+}
+.info {
+  padding-left: 42px;
+  padding-right: 42px;
+  white-space: pre-line;
+}
+/* Colors */
+.green {
+  color:#5cb85c;
+}
+.orange {
+  color:#f0ad4e;
+}
+.red {
+  color:#d9534f;
+}

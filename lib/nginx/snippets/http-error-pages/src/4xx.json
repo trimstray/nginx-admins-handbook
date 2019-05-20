@@ -1,0 +1,92 @@
+[
+  {
+    "code": "400",
+    "title": "Bad Request",
+    "desc": "The server cannot or will not process the request due to an apparent client error\\n(e.g., malformed request syntax, size too large, invalid request message framing, or deceptive request routing).",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "401",
+    "title": "Unauthorized",
+    "desc": "The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "403",
+    "title": "Forbidden",
+    "desc": "The request was valid, but the server is refusing action.\\nThe user might not have the necessary permissions for a resource, or may need an account of some sort.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "404",
+    "title": "Not Found",
+    "desc": "The requested resource could not be found but may be available in the future.\\nSubsequent requests by the client are permissible.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "405",
+    "title": "Method Not Allowed",
+    "desc": "A request method is not supported for the requested resource;\\nfor example, a GET request on a form that requires data to be presented via POST, or a PUT request on a read-only resource.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "406",
+    "title": "Not Acceptable",
+    "desc": "The requested resource is capable of generating only content not acceptable according to the Accept headers sent in the request.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "407",
+    "title": "Proxy Authentication Required",
+    "desc": "The client must first authenticate itself with the proxy.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "408",
+    "title": "Request Timeout",
+    "desc": "The server timed out waiting for the request.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "411",
+    "title": "Length Required",
+    "desc": "The request did not specify the length of its content, which is required by the requested resource.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "413",
+    "title": "Payload Too Large",
+    "desc": "The request is larger than the server is willing or able to process.\\nPreviously called 'Request Entity Too Large'.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "414",
+    "title": "URI Too Long",
+    "desc": "The URI provided was too long for the server to process.\\nOften the result of too much data being encoded as a query-string of a GET request, in which case it should be converted to a POST request.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "415",
+    "title": "Unsupported Media Type",
+    "desc": "The request entity has a media type which the server or resource does not support.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "420",
+    "title": "Rate Limit",
+    "desc": "The best thing to do is to slow down with your requests and try again in a few minutes.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "429",
+    "title": "Too Many Requests",
+    "desc": "The user has sent too many requests in a given amount of time. Intended for use with rate-limiting schemes.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "431",
+    "title": "Request Header Fields Too Large",
+    "desc": "The server is unwilling to process the request because either an individual header field,\\nor all the header fields collectively, are too large.",
+    "icon": "fas fa-info-circle orange"
+  }
+]

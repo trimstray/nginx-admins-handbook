@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+
+# The array that store call parameters.
+# shellcheck disable=SC2034
+__init_params=()
+__script_params=("$@")
+
+# Store the name of the script and directory call.
+readonly _init_name="$(basename "$0")"
+readonly _init_directory="$(dirname "$(readlink -f "$0")")"
+
+# ``````````````````````````````````````````````````````````````````````````````
+# Function name: GenHttpCodes()
+#
+# Description:
+#   Generate http codes.
+#
+# Usage:
+#   GenHttpCodes "json" "dir"
+#
+# Examples:
+#   GenHttpCodes "src/4xx.json" "${_errors}/4xx"
+#
+
+function GenHttpCodes() {
+
+  local _jsonf="$1"
+  local _fdir="$2"
+
+  local _count
+
+  _count=$(jq -r ".[].code" "$_jsonf" | wc -l)
+
+  local _end=$((_count - 1))
+
+  mkdir -p "$_fdir"
+
+  for i in $(seq 0 $_end) ; do
+
+    GetData "${i}" "code"
+    _http_code="$_msg"
+
+    GetData "${i}" "title"
+    _http_title="$_msg"
+
+    GetData "${i}" "desc"
+    _http_desc="$_msg"
+
+    GetData "${i}" "icon"
+    _http_icon="$_msg"
+
+    if [[ "$_http_code" -ge 900 ]] ; then
+
+      _http_code=$(echo "$_http_title" | tr '[:upper:]' '[:lower:]' | tr " " "_")
+      _http_full_title="$_http_title"
+
+    else
+
+      _http_full_title="${_http_code} ${_http_title}"
+
+    fi
+
+    cp "${_templates}/_template.html" "${_fdir}/${_http_code}.html"
+
+    sed -i "s/HTTP_CODE/${_http_full_title}/g" "${_fdir}/${_http_code}.html"
+    sed -i "s/HTTP_DESCRIPTION/${_http_desc}/g" "${_fdir}/${_http_code}.html"
+    sed -i "s/FA_IMG/${_http_icon}/g" "${_fdir}/${_http_code}.html"
+    sed "s/^[ \t]*//" -i "${_fdir}/${_http_code}.html"
+
+  done
+
+  return "$_STATE"
+
+}
+
+# ``````````````````````````````````````````````````````````````````````````````
+# Function name: GetData()
+#
+# Description:
+#   Get data from json file.
+#
+# Usage:
+#   GetData key value
+#
+# Examples:
+#   GetData 1 "message"
+#
+
+function GetData() {
+
+  local _FUNCTION_ID="GetData"
+  local _STATE="0"
+
+  _msg=""
+
+  local _key="$1"
+  local _value="$2"
+
+  export _msg
+  _msg=$(jq -r ".[${_key}].${_value}" "$_jsonf")
+
+  return "$_STATE"
+
+}
+
+function __main__() {
+
+  local _FUNCTION_ID="__main__"
+  local _STATE="0"
+
+  cd "$_init_directory" || _exit_ 1
+
+  local _param="${__script_params[0]}"
+
+  local _templates="templates"
+  local _sites="sites"
+  local _http_code=""
+
+  mkdir -p "$_sites"
+
+  GenHttpCodes "src/4xx.json" "${_sites}/errors/4xx"
+  GenHttpCodes "src/5xx.json" "${_sites}/errors/5xx"
+  GenHttpCodes "src/other.json" "${_sites}/other"
+
+  # Copy default index.html for 'root' directory (eg. Nginx).
+  cp src/index.html "${_sites}/other"
+
+}
+
+# We pass arguments to the __main__ function.
+# It is required if you want to run on arguments type $1, $2, ...
+__main__ "${__script_params[@]}"

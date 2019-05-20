@@ -1,0 +1,38 @@
+[
+  {
+    "code": "500",
+    "title": "Internal Server Error",
+    "desc": "A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.",
+    "icon": "fas fa-exclamation-triangle red"
+  },
+  {
+    "code": "501",
+    "title": "Not Implemented",
+    "desc": "The server either does not recognize the request method, or it lacks the ability to fulfil the request.",
+    "icon": "fas fa-exclamation-triangle red"
+  },
+  {
+    "code": "502",
+    "title": "Bad Gateway",
+    "desc": "The server was acting as a gateway or proxy and received an invalid response from the upstream server.",
+    "icon": "fas fa-exclamation-triangle red"
+  },
+  {
+    "code": "503",
+    "title": "Service Unavailable",
+    "desc": "The server is currently unavailable (because it is overloaded or down for maintenance).",
+    "icon": "fas fa-exclamation-triangle red"
+  },
+  {
+    "code": "504",
+    "title": "Gateway Timeout",
+    "desc": "The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.",
+    "icon": "fas fa-exclamation-triangle red"
+  },
+  {
+    "code": "505",
+    "title": "HTTP Version Not Supported",
+    "desc": "The server does not support the HTTP protocol version used in the request.",
+    "icon": "fas fa-exclamation-triangle red"
+  }
+]

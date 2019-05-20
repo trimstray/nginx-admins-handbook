@@ -1,0 +1,20 @@
+[
+  {
+    "code": "900",
+    "title": "Invalid Domain",
+    "desc": "This domain is unsupported by the server.",
+    "icon": "fas fa-info-circle orange"
+  },
+  {
+    "code": "901",
+    "title": "Temporary Maintenance",
+    "desc": "The web server is currently undergoing some maintenance.",
+    "icon": "fas fa-info-circle green"
+  },
+  {
+    "code": "902",
+    "title": "Rate Limit",
+    "desc": "The best thing to do is to slow down with your requests and try again in a few minutes.",
+    "icon": "fas fa-info-circle orange"
+  }
+]
