@@ -149,20 +149,8 @@
       * [Download 3rd party modules](#download-3rd-party-modules)
       * [Build Nginx](#build-nginx)
       * [Post installation tasks](#post-installation-tasks)
-    * [Install OpenResty on CentOS 7](#install-nginx-on-centos-7)
-      * [Pre installation tasks](#pre-installation-tasks-1)
-      * [Install or build dependencies](#install-or-build-dependencies-1)
-      * [Get OpenResty sources](#get-openresty-sources-1)
-      * [Download 3rd party modules](#download-3rd-party-modules-1)
-      * [Build OpenResty](#build-openresty)
-      * [Post installation tasks](#post-installation-tasks-1)
+    * [Install OpenResty on CentOS 7](#install-openresty-on-centos-7)
     * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
-      * [Pre installation tasks](#pre-installation-tasks-2)
-      * [Install or build dependencies](#install-or-build-dependencies-2)
-      * [Get Tengine sources](#get-tengine-sources)
-      * [Download 3rd party modules](#download-3rd-party-modules-2)
-      * [Build Tengine](#build-tengine)
-      * [Post installation tasks](#post-installation-tasks-2)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
@@ -2893,7 +2881,7 @@ done
 
 Include the necessary error pages:
 
-  > After that remember to change paths to error pages. You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
 
 - default location: `/etc/nginx/html`
   ```bash
@@ -2932,7 +2920,7 @@ cat > /etc/logrotate.d/nginx << __EOF__
     invoke-rc.d nginx reload >/dev/null 2>&1
   endscript
 }
-__EOF
+__EOF__
 ```
 
 Add systemd service:
@@ -2991,9 +2979,9 @@ nginx -t -c /etc/nginx/nginx.conf
 
 #### Install OpenResty on CentOS 7
 
-  > _OpenResty is a full-fledged web application server by bundling the standard nginx core, lots of 3rd-party nginx modules, as well as most of their external dependencies.
+  > _OpenResty is a full-fledged web application server by bundling the standard nginx core, lots of 3rd-party nginx modules, as well as most of their external dependencies._
   >
-  > This bundle is maintained by Yichun Zhang ([agentzh](https://github.com/agentzh))._
+  > _This bundle is maintained by Yichun Zhang ([agentzh](https://github.com/agentzh))._
 
 - Official github repository: [OpenResty](https://github.com/openresty/openresty)
 - Official website: [OpenResty](https://openresty.org/en/)
@@ -3002,6 +2990,16 @@ nginx -t -c /etc/nginx/nginx.conf
 OpenResty is a more than web server. I would call it a superset of the NGINX web server. OpenResty comes with LuaJIT, a just-in-time compiler for the Lua scripting language and many Lua libraries, lots of high quality 3rd-party NGINX modules, and most of their external dependencies.
 
 OpenResty has good quality and performance. For me, the ability to run Lua scripts from within is also really great.
+
+<details>
+<summary><b>Show step-by-step OpenResty installation</b></summary><br>
+
+* [Pre installation tasks](#pre-installation-tasks-1)
+* [Install or build dependencies](#install-or-build-dependencies-1)
+* [Get OpenResty sources](#get-openresty-sources-1)
+* [Download 3rd party modules](#download-3rd-party-modules-1)
+* [Build OpenResty](#build-openresty)
+* [Post installation tasks](#post-installation-tasks-1)
 
 ###### Pre installation tasks
 
@@ -3726,6 +3724,8 @@ And list all files in `/etc/nginx`:
 
   > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
 
+</details>
+
 #### Install Tengine on Ubuntu 18.04
 
   > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
@@ -3736,6 +3736,16 @@ And list all files in `/etc/nginx`:
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
 The build and installation process is very similar to [Install Nginx on Centos 7](#install-nginx-on-centos-7). However, I will only specify the most important changes.
+
+<details>
+<summary><b>Show step-by-step Tengine installation</b></summary><br>
+
+* [Pre installation tasks](#pre-installation-tasks-2)
+* [Install or build dependencies](#install-or-build-dependencies-2)
+* [Get Tengine sources](#get-tengine-sources)
+* [Download 3rd party modules](#download-3rd-party-modules-2)
+* [Build Tengine](#build-tengine)
+* [Post installation tasks](#post-installation-tasks-2)
 
 ###### Pre installation tasks
 
@@ -4065,6 +4075,8 @@ tree
 ###### Post installation tasks
 
   > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
+
+</details>
 
 # Base Rules
 
@@ -5966,7 +5978,7 @@ for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_
 
 #### Generating the necessary error pages
 
-  > After that remember to change paths in your configuration. In the example (`lib/nginx`), error pages are included from `lib/nginx/master/_static/errors.conf` file.
+  > In the example (`lib/nginx`) error pages are included from `lib/nginx/master/_static/errors.conf` file.
 
 - default location: `/etc/nginx/html`:
   ```bash
