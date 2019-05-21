@@ -1427,6 +1427,8 @@ make -j2 && make install
 ln -s /usr/local/bin/goaccess /usr/bin/goaccess
 ```
 
+  > Default path to configuration file: `/etc/goaccess/goaccess.conf`. You can always copy it from `/usr/local/src/goaccess-<version>/config/goaccess.conf` source tree.
+
 ###### Analyse log file and enable all recorded statistics
 
 ```bash
@@ -2411,7 +2413,7 @@ A short description of the modules that I used (not only) in this step-by-step t
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
 
-#### Installation Nginx on CentOS 7
+#### Install Nginx on CentOS 7
 
 ###### Pre installation tasks
 
@@ -2925,7 +2927,7 @@ Test NGINX configuration:
 nginx -t -c /etc/nginx/nginx.conf
 ```
 
-#### Installation Tengine on Ubuntu 18.04
+#### Install Tengine on Ubuntu 18.04
 
   > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
 
