@@ -70,6 +70,7 @@
 - **[External Resources](#external-resources)**
   * [Nginx official](#nginx-official)
   * [Based on the Nginx](#based-on-the-nginx)
+  * [Comparison reviews](#comparison-reviews)
   * [Cheatsheets & References](#cheatsheets--references)
   * [Performance & Hardening](#performance--hardening)
   * [Playgrounds](#playgrounds)
@@ -140,6 +141,7 @@
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
+    * [SystemTap](#systemtap)
     * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks)
       * [Install or build dependencies](#install-or-build-dependencies)
@@ -147,13 +149,20 @@
       * [Download 3rd party modules](#download-3rd-party-modules)
       * [Build Nginx](#build-nginx)
       * [Post installation tasks](#post-installation-tasks)
-    * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+    * [Install OpenResty on CentOS 7](#install-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks-1)
       * [Install or build dependencies](#install-or-build-dependencies-1)
-      * [Get Tengine sources](#get-tengine-sources)
+      * [Get OpenResty sources](#get-openresty-sources-1)
       * [Download 3rd party modules](#download-3rd-party-modules-1)
-      * [Build Tengine](#build-tengine)
+      * [Build OpenResty](#build-openresty)
       * [Post installation tasks](#post-installation-tasks-1)
+    * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+      * [Pre installation tasks](#pre-installation-tasks-2)
+      * [Install or build dependencies](#install-or-build-dependencies-2)
+      * [Get Tengine sources](#get-tengine-sources)
+      * [Download 3rd party modules](#download-3rd-party-modules-2)
+      * [Build Tengine](#build-tengine)
+      * [Post installation tasks](#post-installation-tasks-2)
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
@@ -215,6 +224,8 @@
     * [Set bind IP address](#set-bind-ip-address)
     * [Set your domain name](#set-your-domain-name)
     * [Regenerate private keys and certs](#regenerate-private-keys-and-certs)
+    * [Update modules list](#update-modules-list)
+    * [Generating the necessary error pages](#generating-the-necessary-error-pages)
     * [Add new domain](#add-new-domain)
     * [Test your configuration](#test-your-configuration)
 
@@ -291,6 +302,7 @@ Existing chapters:
     - [x] _Nginx Official Mailing List_
   - _Static analyzers_
     - [x] _nginx-minify-conf_
+  - [x] _Comparison reviews_
 
 </details>
 
@@ -306,6 +318,7 @@ Existing chapters:
   - _Debugging_
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
+    - [ ] _SystemTap cheatsheet_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -313,10 +326,10 @@ Existing chapters:
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
-    - [ ] _Add SystemTap - Real-time analysis and diagnoistcs tools_
+    - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
     - [x] _Separation and improvement of installation methods_
     - [x] _Add installation process on CentOS 7 for NGINX_
-    - [ ] _Add installation process on CentOS 7 for OpenResty_
+    - [x] _Add installation process on CentOS 7 for OpenResty_
     - [ ] _Add installation process on FreeBSD 11.2_
 
 </details>
@@ -526,6 +539,13 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://tengine.taobao.org/"><b>The Tengine Web Server</b></a><br>
 </p>
 
+##### Comparison reviews
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.hostingadvice.com/how-to/nginx-vs-apache/"><b>NGINX vs. Apache (Pro/Con Review, Uses, & Hosting for Each)</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
+</p>
+
 ##### Cheatsheets & References
 
 <p>
@@ -659,7 +679,6 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.kegel.com/c10k.html"><b>The C10K problem by Dan Kegel</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jiangwenyuan/nuster/wiki/Web-cache-server-performance-benchmark:-nuster-vs-nginx-vs-varnish-vs-squid"><b>Web cache server performance benchmark: nuster vs nginx vs varnish vs squid</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://hpbn.co/"><b>High Performance Browser Networking</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
@@ -2278,6 +2297,12 @@ Before the beginning installation process please see two very important articles
 - [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
 - [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
 
+In this chapter I'll present three methods of installation. They relate to:
+
+- the [NGINX on CentOS 7](#install-nginx-on-centos-7)
+- the [OpenResty on CentOS 7](#install-openresty-on-centos-7)
+- the [Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+
 Look also on this short note about the system locations. That can be useful too:
 
 - For booting the system, rescues and maintenance: `/`
@@ -2350,6 +2375,8 @@ If you download and compile above sources the good point is to install additiona
 | `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
 | `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
 | `jq` | `jq` | for http error pages generator |
+| `libperl-dev` | `perl-devel` | |
+| `libphp-embed` | `perl-ExtUtils-Embed` | |
 
 <sup><i>* If you don't use from sources.</i></sup>
 
@@ -2357,10 +2384,10 @@ Shell one-liners example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential bison perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
+apt-get install gcc make build-essential bison perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq libperl-dev libphp-embed
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq perl-devel perl-ExtUtils-Embed
 ```
 
 ##### 3rd party modules
@@ -2413,6 +2440,32 @@ A short description of the modules that I used (not only) in this step-by-step t
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
 
+##### SystemTap
+
+  > SystemTap (`stap`) is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
+
+  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions.
+
+```bash
+cd /opt
+
+git clone --depth 1 https://github.com/openresty/openresty-systemtap-toolkit
+
+# RHEL/CentOS
+yum install yum-utils
+yum --enablerepo=base-debuginfo install kernel-devel-$(uname -r) kernel-headers-$(uname -r) kernel-debuginfo-$(uname -r) kernel-debuginfo-common-x86_64-$(uname -r)
+yum --enablerepo=base-debuginfo install systemtap systemtap-debuginfo
+
+reboot
+
+# Run this command for testing SystemTap:
+stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'
+```
+
+  > For installation SystemTap on Ubuntu/Debian:
+  >   - [Ubuntu Wiki - Systemtap](https://wiki.ubuntu.com/Kernel/Systemtap)
+  >   - [Install SystemTap in Ubuntu 14.04](https://blog.jeffli.me/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/)
+
 #### Install Nginx on CentOS 7
 
 ###### Pre installation tasks
@@ -2439,7 +2492,7 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq perl-devel perl-ExtUtils-Embed
 
 # In this example we use sources for all below packages so we do not install them:
 yum install openssl-devel zlib-devel pcre-devel luajit-devel
@@ -2652,7 +2705,6 @@ I also use some modules from Tengine:
 - `ngx_debug_pool`
 - `ngx_debug_timer`
 - `ngx_http_upstream_check_module`
-- `ngx_http_upstream_session_sticky_module`
 - `ngx_http_footer_filter_module`
 
 ```bash
@@ -2848,6 +2900,16 @@ Include the necessary error pages:
   50x.html  index.html
   ```
 
+Update modules list and include `modules.conf` to your configuration:
+
+```bash
+_mod_dir="/etc/nginx/modules"
+
+:>"${_mod_dir}.conf"
+
+for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf" ; done
+```
+
 Create `logrotate` configuration:
 
 ```bash
@@ -2927,6 +2989,743 @@ Test NGINX configuration:
 nginx -t -c /etc/nginx/nginx.conf
 ```
 
+#### Install OpenResty on CentOS 7
+
+  > _OpenResty is a full-fledged web application server by bundling the standard nginx core, lots of 3rd-party nginx modules, as well as most of their external dependencies.
+  >
+  > This bundle is maintained by Yichun Zhang ([agentzh](https://github.com/agentzh))._
+
+- Official github repository: [OpenResty](https://github.com/openresty/openresty)
+- Official website: [OpenResty](https://openresty.org/en/)
+- Official documentations: [OpenResty Getting Started](https://openresty.org/en/getting-started.html) and [OpenResty eBooks](https://openresty.org/en/ebooks.html)
+
+OpenResty is a more than web server. I would call it a superset of the NGINX web server. OpenResty comes with LuaJIT, a just-in-time compiler for the Lua scripting language and many Lua libraries, lots of high quality 3rd-party NGINX modules, and most of their external dependencies.
+
+OpenResty has good quality and performance. For me, the ability to run Lua scripts from within is also really great.
+
+###### Pre installation tasks
+
+Set the OpenResty version (I use newest and stable release):
+
+```bash
+export ngx_version="1.15.8.1"
+```
+
+Create directories:
+
+```bash
+mkdir /usr/local/src/openresty-${ngx_version}
+mkdir /usr/local/src/openresty-${ngx_version}/master
+mkdir /usr/local/src/openresty-${ngx_version}/modules
+```
+
+###### Install or build dependencies
+
+  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support. In addition, LuaJIT comes with OpenResty.
+
+**Install prebuilt packages, export variables and set symbolic link:**
+
+```bash
+# It's important and required, regardless of chosen sources:
+yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq perl-devel perl-ExtUtils-Embed
+
+# In this example we use sources for all below packages so we do not install them:
+yum install openssl-devel zlib-devel pcre-devel
+```
+
+  > Remember to build [`sregex`](#sregex) also if you use above steps.
+
+**Or download and compile them:**
+
+PCRE:
+
+```bash
+cd /usr/local/src/
+
+wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+
+cd /usr/local/src/pcre-8.42
+
+./configure
+
+make -j2 && make test
+make install
+
+export PCRE_LIB=/usr/local/lib
+export PCRE_INC=/usr/local/include
+export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
+```
+
+Zlib:
+
+```bash
+# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
+cd /usr/local/src/
+
+# For original Zlib:
+#   wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+#   cd /usr/local/src/zlib-1.2.11
+
+# For Cloudflare Zlib:
+git clone --depth 1 https://github.com/cloudflare/zlib
+
+cd /usr/local/src/zlib
+
+./configure
+
+make -j2 && make test
+make install
+
+export ZLIB_LIB=/usr/local/lib
+export ZLIB_INC=/usr/local/include
+export ZLIB_DIRECTORY="/usr/local/src/zlib"
+```
+
+OpenSSL:
+
+```bash
+cd /usr/local/src/
+
+wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
+
+cd /usr/local/src/openssl-1.1.1b
+
+./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl3 no-weak-ssl-ciphers
+
+make -j2 && make test
+make install
+
+export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
+export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
+export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
+
+# Setup PATH environment variables:
+cat > /etc/profile.d/openssl.sh << __EOF__
+#!/bin/sh
+export PATH=/usr/local/openssl-1.1.1b/bin:${PATH}
+export LD_LIBRARY_PATH=/usr/local/openssl-1.1.1b/lib:${LD_LIBRARY_PATH}
+__EOF__
+
+chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
+
+# To make the OpenSSL 1.1.1b version visible globally first:
+mv /usr/bin/openssl /usr/bin/openssl-1.1.0g
+ln -s /usr/local/openssl-1.1.1b/bin/openssl /usr/bin/openssl
+
+cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
+/usr/local/openssl-1.1.1b/lib
+__EOF__
+```
+
+<a id="sregex"></a>sregex:
+
+  > Required for `replace-filter-nginx-module` module.
+
+```bash
+cd /usr/local/src/
+
+git clone --depth 1 https://github.com/openresty/sregex
+
+cd /usr/local/src/sregex
+
+make && make install
+```
+
+jemalloc:
+
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
+
+```bash
+cd /usr/local/src/
+
+git clone --depth 1 https://github.com/jemalloc/jemalloc
+
+cd /usr/local/src/jemalloc
+
+./autogen.sh
+
+make && make install
+
+export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
+```
+
+###### Get OpenResty sources
+
+```bash
+cd /usr/local/src/openresty-${ngx_version}
+
+wget https://openresty.org/download/openresty-${ngx_version}.tar.gz
+
+tar zxvf openresty-${ngx_version}.tar.gz -C /usr/local/src/openresty-${ngx_version}/master --strip 1
+```
+
+###### Download 3rd party modules
+
+```bash
+cd /usr/local/src/openresty-${ngx_version}/modules/
+
+for i in \
+https://github.com/openresty/replace-filter-nginx-module \
+https://github.com/vozlt/nginx-module-sysguard \
+https://github.com/nginx-clojure/nginx-access-plus \
+https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
+https://github.com/vozlt/nginx-module-vts \
+https://github.com/google/ngx_brotli ; do
+
+  git clone --depth 1 "$i"
+
+done
+
+wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
+```
+
+For `ngx_brotli`:
+
+```bash
+cd /usr/local/src/openresty-${ngx_version}/modules/ngx_brotli
+
+git submodule update --init
+```
+
+I also use some modules from Tengine:
+
+- `ngx_backtrace_module`
+- `ngx_debug_pool`
+- `ngx_debug_timer`
+- `ngx_http_upstream_check_module`
+- `ngx_http_footer_filter_module`
+
+```bash
+cd /usr/local/src/openresty-${ngx_version}/modules/
+
+git clone --depth 1 https://github.com/alibaba/tengine
+```
+
+If you use NAXSI:
+
+```bash
+cd /usr/local/src/openresty-${ngx_version}/modules/
+
+git clone --depth 1 https://github.com/nbs-system/naxsi
+```
+
+###### Build OpenResty
+
+```bash
+cd /usr/local/src/openresty-${ngx_version}/master
+
+# Example of use compiler options:
+# 1)
+#   --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC'
+# 2)
+#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+# Example of use linker options:
+# 1)
+#   --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
+# 2)
+#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+# - you can also build OpenResty without 3rd party modules
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+./configure --prefix=/etc/nginx \
+            --conf-path=/etc/nginx/nginx.conf \
+            --sbin-path=/usr/sbin/nginx \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --user=nginx \
+            --group=nginx \
+            --modules-path=/etc/nginx/modules \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+            --with-compat \
+            --with-debug \
+            --with-file-aio \
+            --with-threads \
+            --with-stream \
+            --with-stream_geoip_module \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_degradation_module \
+            --with-http_geoip_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_image_filter_module \
+            --with-http_perl_module \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_slice_module \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-http_sub_module \
+            --with-http_v2_module \
+            --with-google_perftools_module \
+            --with-luajit \
+            --with-openssl=${OPENSSL_DIRECTORY} \
+            --with-openssl-opt=no-weak-ssl-ciphers \
+            --with-openssl-opt=no-ssl3 \
+            --with-pcre=${PCRE_DIRECTORY} \
+            --with-pcre-jit \
+            --with-zlib=${ZLIB_DIRECTORY} \
+            --without-http-cache \
+            --without-http_memcached_module \
+            --without-http_redis2_module \
+            --without-http_redis_module \
+            --without-http_rds_json_module \
+            --without-http_rds_csv_module \
+            --without-lua_redis_parser \
+            --without-lua_rds_parser \
+            --without-lua_resty_redis \
+            --without-lua_resty_memcached \
+            --without-lua_resty_mysql \
+            --without-lua_resty_websocket \
+            --without-mail_pop3_module \
+            --without-mail_imap_module \
+            --without-mail_smtp_module \
+            --without-http_fastcgi_module \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/nginx-access-plus/src/c \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/ngx_http_substitutions_filter_module \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/nginx-module-vts \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/ngx_brotli \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module \
+            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/replace-filter-nginx-module \
+            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/nginx-module-sysguard \
+            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/delay-module \
+            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+make -j2 && make test
+make install
+
+ldconfig
+```
+
+Check OpenResty version:
+
+```bash
+nginx -v
+nginx version: openresty/1.15.8.1
+```
+
+And list all files in `/etc/nginx`:
+
+```bash
+.
+├── bin
+│   ├── md2pod.pl
+│   ├── nginx-xml2pod
+│   ├── openresty -> /usr/sbin/nginx
+│   ├── opm
+│   ├── resty
+│   ├── restydoc
+│   └── restydoc-index
+├── COPYRIGHT
+├── fastcgi.conf
+├── fastcgi.conf.default
+├── fastcgi_params
+├── fastcgi_params.default
+├── koi-utf
+├── koi-win
+├── luajit
+│   ├── bin
+│   │   ├── luajit -> luajit-2.1.0-beta3
+│   │   └── luajit-2.1.0-beta3
+│   ├── include
+│   │   └── luajit-2.1
+│   │       ├── lauxlib.h
+│   │       ├── luaconf.h
+│   │       ├── lua.h
+│   │       ├── lua.hpp
+│   │       ├── luajit.h
+│   │       └── lualib.h
+│   ├── lib
+│   │   ├── libluajit-5.1.a
+│   │   ├── libluajit-5.1.so -> libluajit-5.1.so.2.1.0
+│   │   ├── libluajit-5.1.so.2 -> libluajit-5.1.so.2.1.0
+│   │   ├── libluajit-5.1.so.2.1.0
+│   │   ├── lua
+│   │   │   └── 5.1
+│   │   └── pkgconfig
+│   │       └── luajit.pc
+│   └── share
+│       ├── lua
+│       │   └── 5.1
+│       ├── luajit-2.1.0-beta3
+│       │   └── jit
+│       │       ├── bc.lua
+│       │       ├── bcsave.lua
+│       │       ├── dis_arm64be.lua
+│       │       ├── dis_arm64.lua
+│       │       ├── dis_arm.lua
+│       │       ├── dis_mips64el.lua
+│       │       ├── dis_mips64.lua
+│       │       ├── dis_mipsel.lua
+│       │       ├── dis_mips.lua
+│       │       ├── dis_ppc.lua
+│       │       ├── dis_x64.lua
+│       │       ├── dis_x86.lua
+│       │       ├── dump.lua
+│       │       ├── p.lua
+│       │       ├── v.lua
+│       │       ├── vmdef.lua
+│       │       └── zone.lua
+│       └── man
+│           └── man1
+│               └── luajit.1
+├── lualib
+│   ├── cjson.so
+│   ├── librestysignal.so
+│   ├── ngx
+│   │   ├── balancer.lua
+│   │   ├── base64.lua
+│   │   ├── errlog.lua
+│   │   ├── ocsp.lua
+│   │   ├── pipe.lua
+│   │   ├── process.lua
+│   │   ├── re.lua
+│   │   ├── resp.lua
+│   │   ├── semaphore.lua
+│   │   ├── ssl
+│   │   │   └── session.lua
+│   │   └── ssl.lua
+│   ├── resty
+│   │   ├── aes.lua
+│   │   ├── core
+│   │   │   ├── base64.lua
+│   │   │   ├── base.lua
+│   │   │   ├── ctx.lua
+│   │   │   ├── exit.lua
+│   │   │   ├── hash.lua
+│   │   │   ├── misc.lua
+│   │   │   ├── ndk.lua
+│   │   │   ├── phase.lua
+│   │   │   ├── regex.lua
+│   │   │   ├── request.lua
+│   │   │   ├── response.lua
+│   │   │   ├── shdict.lua
+│   │   │   ├── time.lua
+│   │   │   ├── uri.lua
+│   │   │   ├── utils.lua
+│   │   │   ├── var.lua
+│   │   │   └── worker.lua
+│   │   ├── core.lua
+│   │   ├── dns
+│   │   │   └── resolver.lua
+│   │   ├── limit
+│   │   │   ├── conn.lua
+│   │   │   ├── count.lua
+│   │   │   ├── req.lua
+│   │   │   └── traffic.lua
+│   │   ├── lock.lua
+│   │   ├── lrucache
+│   │   │   └── pureffi.lua
+│   │   ├── lrucache.lua
+│   │   ├── md5.lua
+│   │   ├── random.lua
+│   │   ├── sha1.lua
+│   │   ├── sha224.lua
+│   │   ├── sha256.lua
+│   │   ├── sha384.lua
+│   │   ├── sha512.lua
+│   │   ├── sha.lua
+│   │   ├── shell.lua
+│   │   ├── signal.lua
+│   │   ├── string.lua
+│   │   ├── upload.lua
+│   │   └── upstream
+│   │       └── healthcheck.lua
+│   └── tablepool.lua
+├── mime.types
+├── mime.types.default
+├── modules
+│   ├── ngx_http_delay_module.so
+│   ├── ngx_http_naxsi_module.so
+│   ├── ngx_http_replace_filter_module.so
+│   └── ngx_http_sysguard_module.so
+├── nginx
+│   └── html
+│       ├── 50x.html
+│       └── index.html
+├── nginx.conf
+├── nginx.conf.default
+├── pod
+│   ├── array-var-nginx-module-0.05
+│   │   └── array-var-nginx-module-0.05.pod
+│   ├── drizzle-nginx-module-0.1.11
+│   │   └── drizzle-nginx-module-0.1.11.pod
+│   ├── echo-nginx-module-0.61
+│   │   └── echo-nginx-module-0.61.pod
+│   ├── encrypted-session-nginx-module-0.08
+│   │   └── encrypted-session-nginx-module-0.08.pod
+│   ├── form-input-nginx-module-0.12
+│   │   └── form-input-nginx-module-0.12.pod
+│   ├── headers-more-nginx-module-0.33
+│   │   └── headers-more-nginx-module-0.33.pod
+│   ├── iconv-nginx-module-0.14
+│   │   └── iconv-nginx-module-0.14.pod
+│   ├── lua-5.1.5
+│   │   └── lua-5.1.5.pod
+│   ├── lua-cjson-2.1.0.7
+│   │   └── lua-cjson-2.1.0.7.pod
+│   ├── luajit-2.1
+│   │   ├── changes.pod
+│   │   ├── contact.pod
+│   │   ├── ext_c_api.pod
+│   │   ├── extensions.pod
+│   │   ├── ext_ffi_api.pod
+│   │   ├── ext_ffi.pod
+│   │   ├── ext_ffi_semantics.pod
+│   │   ├── ext_ffi_tutorial.pod
+│   │   ├── ext_jit.pod
+│   │   ├── ext_profiler.pod
+│   │   ├── faq.pod
+│   │   ├── install.pod
+│   │   ├── luajit-2.1.pod
+│   │   ├── running.pod
+│   │   └── status.pod
+│   ├── luajit-2.1-20190507
+│   │   └── luajit-2.1-20190507.pod
+│   ├── lua-rds-parser-0.06
+│   ├── lua-redis-parser-0.13
+│   │   └── lua-redis-parser-0.13.pod
+│   ├── lua-resty-core-0.1.17
+│   │   ├── lua-resty-core-0.1.17.pod
+│   │   ├── ngx.balancer.pod
+│   │   ├── ngx.base64.pod
+│   │   ├── ngx.errlog.pod
+│   │   ├── ngx.ocsp.pod
+│   │   ├── ngx.pipe.pod
+│   │   ├── ngx.process.pod
+│   │   ├── ngx.re.pod
+│   │   ├── ngx.resp.pod
+│   │   ├── ngx.semaphore.pod
+│   │   ├── ngx.ssl.pod
+│   │   └── ngx.ssl.session.pod
+│   ├── lua-resty-dns-0.21
+│   │   └── lua-resty-dns-0.21.pod
+│   ├── lua-resty-limit-traffic-0.06
+│   │   ├── lua-resty-limit-traffic-0.06.pod
+│   │   ├── resty.limit.conn.pod
+│   │   ├── resty.limit.count.pod
+│   │   ├── resty.limit.req.pod
+│   │   └── resty.limit.traffic.pod
+│   ├── lua-resty-lock-0.08
+│   │   └── lua-resty-lock-0.08.pod
+│   ├── lua-resty-lrucache-0.09
+│   │   └── lua-resty-lrucache-0.09.pod
+│   ├── lua-resty-memcached-0.14
+│   │   └── lua-resty-memcached-0.14.pod
+│   ├── lua-resty-mysql-0.21
+│   │   └── lua-resty-mysql-0.21.pod
+│   ├── lua-resty-redis-0.27
+│   │   └── lua-resty-redis-0.27.pod
+│   ├── lua-resty-shell-0.02
+│   │   └── lua-resty-shell-0.02.pod
+│   ├── lua-resty-signal-0.02
+│   │   └── lua-resty-signal-0.02.pod
+│   ├── lua-resty-string-0.11
+│   │   └── lua-resty-string-0.11.pod
+│   ├── lua-resty-upload-0.10
+│   │   └── lua-resty-upload-0.10.pod
+│   ├── lua-resty-upstream-healthcheck-0.06
+│   │   └── lua-resty-upstream-healthcheck-0.06.pod
+│   ├── lua-resty-websocket-0.07
+│   │   └── lua-resty-websocket-0.07.pod
+│   ├── lua-tablepool-0.01
+│   │   └── lua-tablepool-0.01.pod
+│   ├── memc-nginx-module-0.19
+│   │   └── memc-nginx-module-0.19.pod
+│   ├── nginx
+│   │   ├── accept_failed.pod
+│   │   ├── beginners_guide.pod
+│   │   ├── chunked_encoding_from_backend.pod
+│   │   ├── configure.pod
+│   │   ├── configuring_https_servers.pod
+│   │   ├── contributing_changes.pod
+│   │   ├── control.pod
+│   │   ├── converting_rewrite_rules.pod
+│   │   ├── daemon_master_process_off.pod
+│   │   ├── debugging_log.pod
+│   │   ├── development_guide.pod
+│   │   ├── events.pod
+│   │   ├── example.pod
+│   │   ├── faq.pod
+│   │   ├── freebsd_tuning.pod
+│   │   ├── hash.pod
+│   │   ├── howto_build_on_win32.pod
+│   │   ├── install.pod
+│   │   ├── license_copyright.pod
+│   │   ├── load_balancing.pod
+│   │   ├── nginx_dtrace_pid_provider.pod
+│   │   ├── nginx.pod
+│   │   ├── ngx_core_module.pod
+│   │   ├── ngx_google_perftools_module.pod
+│   │   ├── ngx_http_access_module.pod
+│   │   ├── ngx_http_addition_module.pod
+│   │   ├── ngx_http_api_module_head.pod
+│   │   ├── ngx_http_auth_basic_module.pod
+│   │   ├── ngx_http_auth_jwt_module.pod
+│   │   ├── ngx_http_auth_request_module.pod
+│   │   ├── ngx_http_autoindex_module.pod
+│   │   ├── ngx_http_browser_module.pod
+│   │   ├── ngx_http_charset_module.pod
+│   │   ├── ngx_http_core_module.pod
+│   │   ├── ngx_http_dav_module.pod
+│   │   ├── ngx_http_empty_gif_module.pod
+│   │   ├── ngx_http_f4f_module.pod
+│   │   ├── ngx_http_fastcgi_module.pod
+│   │   ├── ngx_http_flv_module.pod
+│   │   ├── ngx_http_geoip_module.pod
+│   │   ├── ngx_http_geo_module.pod
+│   │   ├── ngx_http_grpc_module.pod
+│   │   ├── ngx_http_gunzip_module.pod
+│   │   ├── ngx_http_gzip_module.pod
+│   │   ├── ngx_http_gzip_static_module.pod
+│   │   ├── ngx_http_headers_module.pod
+│   │   ├── ngx_http_hls_module.pod
+│   │   ├── ngx_http_image_filter_module.pod
+│   │   ├── ngx_http_index_module.pod
+│   │   ├── ngx_http_js_module.pod
+│   │   ├── ngx_http_keyval_module.pod
+│   │   ├── ngx_http_limit_conn_module.pod
+│   │   ├── ngx_http_limit_req_module.pod
+│   │   ├── ngx_http_log_module.pod
+│   │   ├── ngx_http_map_module.pod
+│   │   ├── ngx_http_memcached_module.pod
+│   │   ├── ngx_http_mirror_module.pod
+│   │   ├── ngx_http_mp4_module.pod
+│   │   ├── ngx_http_perl_module.pod
+│   │   ├── ngx_http_proxy_module.pod
+│   │   ├── ngx_http_random_index_module.pod
+│   │   ├── ngx_http_realip_module.pod
+│   │   ├── ngx_http_referer_module.pod
+│   │   ├── ngx_http_rewrite_module.pod
+│   │   ├── ngx_http_scgi_module.pod
+│   │   ├── ngx_http_secure_link_module.pod
+│   │   ├── ngx_http_session_log_module.pod
+│   │   ├── ngx_http_slice_module.pod
+│   │   ├── ngx_http_spdy_module.pod
+│   │   ├── ngx_http_split_clients_module.pod
+│   │   ├── ngx_http_ssi_module.pod
+│   │   ├── ngx_http_ssl_module.pod
+│   │   ├── ngx_http_status_module.pod
+│   │   ├── ngx_http_stub_status_module.pod
+│   │   ├── ngx_http_sub_module.pod
+│   │   ├── ngx_http_upstream_conf_module.pod
+│   │   ├── ngx_http_upstream_hc_module.pod
+│   │   ├── ngx_http_upstream_module.pod
+│   │   ├── ngx_http_userid_module.pod
+│   │   ├── ngx_http_uwsgi_module.pod
+│   │   ├── ngx_http_v2_module.pod
+│   │   ├── ngx_http_xslt_module.pod
+│   │   ├── ngx_mail_auth_http_module.pod
+│   │   ├── ngx_mail_core_module.pod
+│   │   ├── ngx_mail_imap_module.pod
+│   │   ├── ngx_mail_pop3_module.pod
+│   │   ├── ngx_mail_proxy_module.pod
+│   │   ├── ngx_mail_smtp_module.pod
+│   │   ├── ngx_mail_ssl_module.pod
+│   │   ├── ngx_stream_access_module.pod
+│   │   ├── ngx_stream_core_module.pod
+│   │   ├── ngx_stream_geoip_module.pod
+│   │   ├── ngx_stream_geo_module.pod
+│   │   ├── ngx_stream_js_module.pod
+│   │   ├── ngx_stream_keyval_module.pod
+│   │   ├── ngx_stream_limit_conn_module.pod
+│   │   ├── ngx_stream_log_module.pod
+│   │   ├── ngx_stream_map_module.pod
+│   │   ├── ngx_stream_proxy_module.pod
+│   │   ├── ngx_stream_realip_module.pod
+│   │   ├── ngx_stream_return_module.pod
+│   │   ├── ngx_stream_split_clients_module.pod
+│   │   ├── ngx_stream_ssl_module.pod
+│   │   ├── ngx_stream_ssl_preread_module.pod
+│   │   ├── ngx_stream_upstream_hc_module.pod
+│   │   ├── ngx_stream_upstream_module.pod
+│   │   ├── ngx_stream_zone_sync_module.pod
+│   │   ├── request_processing.pod
+│   │   ├── server_names.pod
+│   │   ├── stream_processing.pod
+│   │   ├── switches.pod
+│   │   ├── syntax.pod
+│   │   ├── sys_errlist.pod
+│   │   ├── syslog.pod
+│   │   ├── variables_in_config.pod
+│   │   ├── websocket.pod
+│   │   ├── welcome_nginx_facebook.pod
+│   │   └── windows.pod
+│   ├── ngx_coolkit-0.2
+│   ├── ngx_devel_kit-0.3.1rc1
+│   │   └── ngx_devel_kit-0.3.1rc1.pod
+│   ├── ngx_lua-0.10.15
+│   │   └── ngx_lua-0.10.15.pod
+│   ├── ngx_lua_upstream-0.07
+│   │   └── ngx_lua_upstream-0.07.pod
+│   ├── ngx_postgres-1.0
+│   │   ├── ngx_postgres-1.0.pod
+│   │   └── todo.pod
+│   ├── ngx_stream_lua-0.0.7
+│   │   ├── dev_notes.pod
+│   │   └── ngx_stream_lua-0.0.7.pod
+│   ├── opm-0.0.5
+│   │   └── opm-0.0.5.pod
+│   ├── rds-csv-nginx-module-0.09
+│   │   └── rds-csv-nginx-module-0.09.pod
+│   ├── rds-json-nginx-module-0.15
+│   │   └── rds-json-nginx-module-0.15.pod
+│   ├── redis2-nginx-module-0.15
+│   │   └── redis2-nginx-module-0.15.pod
+│   ├── redis-nginx-module-0.3.7
+│   ├── resty-cli-0.24
+│   │   └── resty-cli-0.24.pod
+│   ├── set-misc-nginx-module-0.32
+│   │   └── set-misc-nginx-module-0.32.pod
+│   ├── srcache-nginx-module-0.31
+│   │   └── srcache-nginx-module-0.31.pod
+│   └── xss-nginx-module-0.06
+│       └── xss-nginx-module-0.06.pod
+├── resty.index
+├── scgi_params
+├── scgi_params.default
+├── site
+│   ├── lualib
+│   ├── manifest
+│   └── pod
+├── uwsgi_params
+├── uwsgi_params.default
+└── win-utf
+
+78 directories, 305 files
+```
+
+###### Post installation tasks
+
+  > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
+
 #### Install Tengine on Ubuntu 18.04
 
   > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
@@ -2953,7 +3752,7 @@ mkdir /usr/local/src/tengine/modules
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq libperl-dev libphp-embed
 
 # In this example we don't use zlib sources:
 apt-get install zlib1g-dev
@@ -3213,8 +4012,8 @@ cd /usr/local/src/tengine/master
             --add-dynamic-module=/usr/local/src/tengine/modules/replace-filter-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/delay-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
-            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+            --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
+            --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
 
 make -j2 && make test
 make install
@@ -5153,7 +5952,19 @@ cp /etc/letsencrypt/live/example.com/fullchain.pem nginx_example.com_bundle.crt
 cp /etc/letsencrypt/live/example.com/privkey.pem example.com.key
 ```
 
-#### Generating the necessary error pages:
+#### Update modules list
+
+Update modules list and include `modules.conf` to your configuration:
+
+```bash
+_mod_dir="/etc/nginx/modules"
+
+:>"${_mod_dir}.conf"
+
+for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf" ; done
+```
+
+#### Generating the necessary error pages
 
   > After that remember to change paths in your configuration. In the example (`lib/nginx`), error pages are included from `lib/nginx/master/_static/errors.conf` file.
 
