@@ -101,6 +101,7 @@
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
+      * [Build and install](#build-and-install)
       * [Analyse log file and enable all recorded statistics](#analyse-log-file-and-enable-all-recorded-statistics)
       * [Analyse compressed log file](#analyse-compressed-log-file)
       * [Analyse log file remotely](#analyse-log-file-remotely)
@@ -139,7 +140,7 @@
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
-    * [Install Nginx on Ubuntu 18.04](#install-nginx-on-ubuntu-1804)
+    * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks)
       * [Install or build dependencies](#install-or-build-dependencies)
       * [Get Nginx sources](#get-nginx-sources)
@@ -314,8 +315,9 @@ Existing chapters:
   - _Installation from source_
     - [ ] _Add SystemTap - Real-time analysis and diagnoistcs tools_
     - [x] _Separation and improvement of installation methods_
-    - [ ] _Add installation process on FreeBSD 11.2 (separate file)_
-    - [ ] _Add installation process on CentOS 7 for Tengine Web Server (separate file)_
+    - [x] _Add installation process on CentOS 7 for NGINX_
+    - [ ] _Add installation process on CentOS 7 for OpenResty_
+    - [ ] _Add installation process on FreeBSD 11.2_
 
 </details>
 
@@ -1402,6 +1404,29 @@ date-format %d/%b/%Y
 log-format  %h %^[%d:%t %^] "%r" %s %b "%R" "%u"
 ```
 
+###### Build and install
+
+```bash
+# Ubuntu/Debian
+apt-get install gcc make libncursesw5-dev libgeoip-dev libtokyocabinet-dev
+
+# RHEL/CentOS
+yum install gcc ncurses-devel geoip-devel tokyocabinet-devel
+
+cd /usr/local/src/
+
+wget -c https://tar.goaccess.io/goaccess-1.3.tar.gz && \
+tar xzvfp goaccess-1.3.tar.gz
+
+cd goaccess-1.3
+
+./configure --enable-utf8 --enable-geoip=legacy --with-openssl=<path_to_openssl_sources> --sysconfdir=/etc/
+
+make -j2 && make install
+
+ln -s /usr/local/bin/goaccess /usr/bin/goaccess
+```
+
 ###### Analyse log file and enable all recorded statistics
 
 ```bash
@@ -2314,7 +2339,7 @@ If you download and compile above sources the good point is to install additiona
 | `libxslt-dev` | `libxslt libxslt-devel` | |
 | `libgd-dev` | `gd gd-devel` | |
 | `libgeoip-dev` | `GeoIP-devel` | |
-| `libxml2-dev` | `libxml2-dev` | |
+| `libxml2-dev` | `libxml2-devel` | |
 | `libexpat-dev` | `expat-devel` | |
 | `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
 | | `cpio` | |
@@ -2322,6 +2347,7 @@ If you download and compile above sources the good point is to install additiona
 | `autoconf` | `autoconf` | for `jemalloc` from sources |
 | `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
 | `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
+| `jq` | `jq` | for http error pages generator |
 
 <sup><i>* If you don't use from sources.</i></sup>
 
@@ -2329,10 +2355,10 @@ Shell one-liners example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential bison perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+apt-get install gcc make build-essential bison perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-dev expat-devel gperftools-devel cpio gettext-devel autoconf
+yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 ```
 
 ##### 3rd party modules
@@ -2381,12 +2407,11 @@ A short description of the modules that I used (not only) in this step-by-step t
 - [`ngx_http_google_filter_module`](https://github.com/cuber/ngx_http_google_filter_module) - is a filter module which makes google mirror much easier to deploy
 - [`nginx-push-stream-module`](https://github.com/wandenberg/nginx-push-stream-module) - a pure stream http push technology for your Nginx setup
 - [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
-- [`openresty-systemtap-toolkit`](https://github.com/openresty/openresty-systemtap-toolkit) - real-time analysis and diagnostics tools
 
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
 
-#### Installation Nginx on Ubuntu 18.04
+#### Installation Nginx on CentOS 7
 
 ###### Pre installation tasks
 
@@ -2411,11 +2436,11 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 **Install prebuilt packages, export variables and set symbolic link:**
 
 ```bash
-# It's important and required, regardless of chosen sources.
-apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+# It's important and required, regardless of chosen sources:
+yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 
 # In this example we use sources for all below packages so we do not install them:
-apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
+yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
 # For LuaJIT (libluajit-5.1-dev):
 export LUA_LIB=/usr/local/x86_64-linux-gnu/
@@ -2611,6 +2636,14 @@ wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-modu
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 ```
 
+For `ngx_brotli`:
+
+```bash
+cd /usr/local/src/nginx-${ngx_version}/modules/ngx_brotli
+
+git submodule update --init
+```
+
 I also use some modules from Tengine:
 
 - `ngx_backtrace_module`
@@ -2638,6 +2671,18 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/master
+
+# Example of use compiler options:
+# 1)
+#   --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC'
+# 2)
+#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+# Example of use linker options:
+# 1)
+#   --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
+# 2)
+#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 # - you can also build NGINX without 3rd party modules
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
@@ -2694,8 +2739,6 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
             --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus/src/c \
@@ -2716,7 +2759,9 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/array-var-nginx-module \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
             --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/naxsi/naxsi_src
+            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 make -j2 && make test
 make install
@@ -2752,6 +2797,7 @@ And list all files in `/etc/nginx`:
 │   ├── ngx_http_echo_module.so
 │   ├── ngx_http_headers_more_filter_module.so
 │   ├── ngx_http_lua_module.so
+│   ├── ngx_http_naxsi_module.so
 │   ├── ngx_http_replace_filter_module.so
 │   ├── ngx_http_set_misc_module.so
 │   └── ngx_http_sysguard_module.so
@@ -2763,7 +2809,7 @@ And list all files in `/etc/nginx`:
 ├── uwsgi_params.default
 └── win-utf
 
-2 directories, 25 files
+2 directories, 26 files
 ```
 
 ###### Post installation tasks
@@ -2771,7 +2817,11 @@ And list all files in `/etc/nginx`:
 Create a system user/group:
 
 ```bash
-adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos "nginx user" --group nginx
+groupadd -r -g 920 nginx
+
+adduser --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
+
+passwd -l nginx
 ```
 
 Create required directories:
@@ -2785,6 +2835,40 @@ for i in \
   mkdir -p "$i" && chown -R nginx:nginx "$i"
 
 done
+```
+
+Include the necessary error pages:
+
+  > After that remember to change paths to error pages. You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+
+- default location: `/etc/nginx/html`
+  ```bash
+  50x.html  index.html
+  ```
+
+Create `logrotate` configuration:
+
+```bash
+cat > /etc/logrotate.d/nginx << __EOF__
+/var/log/nginx/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 nginx nginx
+  sharedscripts
+  prerotate
+    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+      run-parts /etc/logrotate.d/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+__EOF
 ```
 
 Add systemd service:
@@ -2850,7 +2934,7 @@ nginx -t -c /etc/nginx/nginx.conf
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar to [Install Nginx on Ubuntu 18.04](#install-nginx-on-ubuntu-1804). However, I will only specify the most important changes.
+The build and installation process is very similar to [Install Nginx on Centos 7](#install-nginx-on-centos-7). However, I will only specify the most important changes.
 
 ###### Pre installation tasks
 
@@ -3021,6 +3105,14 @@ wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-modu
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 ```
 
+For `ngx_brotli`:
+
+```bash
+cd /usr/local/src/tengine/modules/ngx_brotli
+
+git submodule update --init
+```
+
 If you use NAXSI:
 
 ```bash
@@ -3033,6 +3125,18 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 
 ```bash
 cd /usr/local/src/tengine/master
+
+# Example of use compiler options:
+# 1)
+#   --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC'
+# 2)
+#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+# Example of use linker options:
+# 1)
+#   --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
+# 2)
+#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 # - you can also build Tengine without 3rd party modules
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
@@ -3098,8 +3202,6 @@ cd /usr/local/src/tengine/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie' \
             --add-module=/usr/local/src/tengine/modules/nginx-access-plus/src/c \
             --add-module=/usr/local/src/tengine/modules/ngx_http_substitutions_filter_module \
             --add-module=/usr/local/src/tengine/modules/nginx-module-vts \
@@ -3108,7 +3210,9 @@ cd /usr/local/src/tengine/master
             --add-dynamic-module=/usr/local/src/tengine/modules/headers-more-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/replace-filter-nginx-module \
             --add-dynamic-module=/usr/local/src/tengine/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/naxsi/naxsi_src
+            --add-dynamic-module=/usr/local/src/tengine/modules/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 make -j2 && make test
 make install
@@ -3144,6 +3248,7 @@ tree
 │   ├── ngx_http_delay_module.so
 │   ├── ngx_http_echo_module.so
 │   ├── ngx_http_headers_more_filter_module.so
+│   ├── ngx_http_naxsi_module.so
 │   └── ngx_http_replace_filter_module.so
 ├── nginx.conf
 ├── nginx.conf.default
@@ -3153,12 +3258,12 @@ tree
 ├── uwsgi_params.default
 └── win-utf
 
-2 directories, 21 files
+2 directories, 22 files
 ```
 
 ###### Post installation tasks
 
-  > Check all post installation tasks from [post installation tasks - NGINX](#post-installation-tasks) section.
+  > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
 
 # Base Rules
 
@@ -4964,7 +5069,7 @@ This chapter describes the basic configuration of my proxy server (for [blkciphe
 It's very simple - clone the repo, backup your current configuration and perform full directory sync:
 
 ```bash
-git clone https://github.com/trimstray/nginx-admins-handbook.git
+git clone https://github.com/trimstray/nginx-admins-handbook
 
 tar czvfp ~/nginx.etc.tgz /etc/nginx && mv /etc/nginx /etc/nginx.old
 
@@ -4979,14 +5084,14 @@ rsync -avur lib/nginx/ /etc/nginx/
 
 ```bash
 cd /etc/nginx
-find . -depth -name '*192.168.252.2*' -execdir bash -c 'mv -v "$1" "${1//192.168.252.2/xxx.xxx.xxx.xxx}"' _ {} \;
+find . -not -path '*/\.git*' -depth -name '*192.168.252.2*' -execdir bash -c 'mv -v "$1" "${1//192.168.252.2/xxx.xxx.xxx.xxx}"' _ {} \;
 ```
 
 ###### Find and replace 192.168.252.2 string in configuration files
 
 ```bash
 cd /etc/nginx
-find . -type f -print0 | xargs -0 sed -i 's/192.168.252.2/xxx.xxx.xxx.xxx/g'
+find . -not -path '*/\.git*' -type f -print0 | xargs -0 sed -i 's/192.168.252.2/xxx.xxx.xxx.xxx/g'
 ```
 
 #### Set your domain name
@@ -4995,15 +5100,15 @@ find . -type f -print0 | xargs -0 sed -i 's/192.168.252.2/xxx.xxx.xxx.xxx/g'
 
 ```bash
 cd /etc/nginx
-find . -depth -name '*blkcipher.info*' -execdir bash -c 'mv -v "$1" "${1//blkcipher.info/example.com}"' _ {} \;
+find . -not -path '*/\.git*' -depth -name '*blkcipher.info*' -execdir bash -c 'mv -v "$1" "${1//blkcipher.info/example.com}"' _ {} \;
 ```
 
 ###### Find and replace blkcipher.info string in configuration files
 
 ```bash
 cd /etc/nginx
-find . -type f -print0 | xargs -0 sed -i 's/blkcipher_info/example_com/g'
-find . -type f -print0 | xargs -0 sed -i 's/blkcipher.info/example.com/g'
+find . -not -path '*/\.git*' -type f -print0 | xargs -0 sed -i 's/blkcipher_info/example_com/g'
+find . -not -path '*/\.git*' -type f -print0 | xargs -0 sed -i 's/blkcipher.info/example.com/g'
 ```
 
 #### Regenerate private keys and certs
@@ -5046,6 +5151,25 @@ cp /etc/letsencrypt/live/example.com/fullchain.pem nginx_example.com_bundle.crt
 cp /etc/letsencrypt/live/example.com/privkey.pem example.com.key
 ```
 
+#### Generating the necessary error pages:
+
+  > After that remember to change paths in your configuration. In the example (`lib/nginx`), error pages are included from `lib/nginx/master/_static/errors.conf` file.
+
+- default location: `/etc/nginx/html`:
+  ```bash
+  50x.html  index.html
+  ```
+- custom location: `/usr/share/www`:
+  ```bash
+  cd /etc/nginx/snippets/http-error-pages
+
+  ./httpgen
+
+  # You can also sync sites/ directory with /etc/nginx/html:
+  #   rsync -var sites/ /etc/nginx/html/
+  rsync -var sites/ /usr/share/www/
+  ```
+
 #### Add new domain
 
 ###### Updated `nginx.conf`
@@ -5062,9 +5186,9 @@ cd /etc/nginx/cd master/_server
 cp -R example.com domain.com
 
 cd domain.com
-find . -depth -name '*example.com*' -execdir bash -c 'mv -v "$1" "${1//example.com/domain.com}"' _ {} \;
-find . -type f -print0 | xargs -0 sed -i 's/example_com/domain_com/g'
-find . -type f -print0 | xargs -0 sed -i 's/example.com/domain.com/g'
+find . -not -path '*/\.git*' -depth -name '*example.com*' -execdir bash -c 'mv -v "$1" "${1//example.com/domain.com}"' _ {} \;
+find . -not -path '*/\.git*' -type f -print0 | xargs -0 sed -i 's/example_com/domain_com/g'
+find . -not -path '*/\.git*' -type f -print0 | xargs -0 sed -i 's/example.com/domain.com/g'
 ```
 
 #### Create log directories
