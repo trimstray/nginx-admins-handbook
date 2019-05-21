@@ -362,6 +362,10 @@ Existing chapters:
 
 </details>
 
+Other stuff:
+
+  - [x] _Add static error pages generator to NGINX snippets directory_
+
 ## Reports: blkcipher.info
 
 Many of these recipes have been applied to the configuration of my private website.
@@ -2290,6 +2294,8 @@ In this chapter I'll present three methods of installation. They relate to:
 - the [NGINX on CentOS 7](#install-nginx-on-centos-7)
 - the [OpenResty on CentOS 7](#install-openresty-on-centos-7)
 - the [Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+
+Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
 
 Look also on this short note about the system locations. That can be useful too:
 
