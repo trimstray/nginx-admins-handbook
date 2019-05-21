@@ -2289,7 +2289,7 @@ Before the beginning installation process please see two very important articles
 - [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
 - [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
 
-In this chapter I'll present three methods of installation. They relate to:
+In this chapter I'll present three (very similar) methods of installation. They relate to:
 
 - the [NGINX on CentOS 7](#install-nginx-on-centos-7)
 - the [OpenResty on CentOS 7](#install-openresty-on-centos-7)
@@ -2863,6 +2863,10 @@ And list all files in `/etc/nginx`:
 Create a system user/group:
 
 ```bash
+# Ubuntu/Debian
+adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos "nginx user" --group nginx
+
+# RedHat/CentOS
 groupadd -r -g 920 nginx
 
 adduser --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
@@ -3320,7 +3324,7 @@ cd /usr/local/src/openresty-${ngx_version}/master
             --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
-make -j2 && make test
+make && make test
 make install
 
 ldconfig
