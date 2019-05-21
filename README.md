@@ -2352,7 +2352,7 @@ If you download and compile above sources the good point is to install additiona
 | <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
 | :---         | :---         | :---         |
 | `gcc make build-essential bison` | `gcc gcc-c++ kernel-devel bison` | |
-| `perl libperl-dev` | `perl perl-ExtUtils-Embed` | |
+| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | |
 | `libssl-dev`* | `openssl-devel`* | |
 | `zlib1g-dev`* | `zlib-devel`* | |
 | `libpcre2-dev`* | `pcre-devel`* | |
@@ -2369,8 +2369,6 @@ If you download and compile above sources the good point is to install additiona
 | `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
 | `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
 | `jq` | `jq` | for http error pages generator |
-| `libperl-dev` | `perl-devel` | |
-| `libphp-embed` | `perl-ExtUtils-Embed` | |
 
 <sup><i>* If you don't use from sources.</i></sup>
 
@@ -2378,10 +2376,10 @@ Shell one-liners example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential bison perl libperl-dev libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq libperl-dev libphp-embed
+apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq perl-devel perl-ExtUtils-Embed
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 ```
 
 ##### 3rd party modules
@@ -2486,7 +2484,7 @@ mkdir /usr/local/src/nginx-${ngx_version}/modules
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq perl-devel perl-ExtUtils-Embed
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 
 # In this example we use sources for all below packages so we do not install them:
 yum install openssl-devel zlib-devel pcre-devel luajit-devel
@@ -3031,7 +3029,7 @@ mkdir /usr/local/src/openresty-${ngx_version}/modules
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq perl-devel perl-ExtUtils-Embed
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 
 # In this example we use sources for all below packages so we do not install them:
 yum install openssl-devel zlib-devel pcre-devel
@@ -3768,7 +3766,7 @@ mkdir /usr/local/src/tengine/modules
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential bison perl libperl-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq libperl-dev libphp-embed
+apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
 
 # In this example we don't use zlib sources:
 apt-get install zlib1g-dev
