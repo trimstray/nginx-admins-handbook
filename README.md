@@ -316,7 +316,7 @@ Existing chapters:
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
-    - [ ] _Add autoinstaller for RHEL/Debian like distributions_
+    - [x] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
     - [x] _Separation and improvement of installation methods_
     - [x] _Add installation process on CentOS 7 for NGINX_
@@ -2354,7 +2354,7 @@ If you download and compile above sources the good point is to install additiona
 
 | <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
 | :---         | :---         | :---         |
-| `gcc make build-essential bison` | `gcc gcc-c++ kernel-devel bison` | |
+| `gcc`<br>`make`<br>`build-essential`<br>`linux-headers*`<br>`bison` | `gcc`<br>`gcc-c++`<br>`kernel-devel`<br>`bison` | |
 | `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | |
 | `libssl-dev`* | `openssl-devel`* | |
 | `zlib1g-dev`* | `zlib-devel`* | |
@@ -2453,8 +2453,9 @@ yum --enablerepo=base-debuginfo install systemtap systemtap-debuginfo
 
 reboot
 
-# Run this command for testing SystemTap:
+# Run this commands for testing SystemTap:
 stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'
+stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 ```
 
   > For installation SystemTap on Ubuntu/Debian:
