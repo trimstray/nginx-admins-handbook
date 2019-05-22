@@ -2317,6 +2317,13 @@ Look also on this short note about the system locations. That can be useful too:
   - `/usr/local/lib` - shared libraries
   - `/usr/local/share` - manual pages, data
 
+Installation from source consists of multiple steps. If you don't want to pass through all of them, you can run automated script. It is located in `lib/autoinstaller.sh`. By default, it show prompt to confirm steps but you can disable this if you want:
+
+```bash
+cd lib/
+export NGX_PROMPT=0 ; ./autoinstaller.sh
+```
+
 ##### Nginx package
 
 There are currently two versions of NGINX:
