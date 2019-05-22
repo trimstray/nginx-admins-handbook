@@ -257,13 +257,13 @@ Before you start remember about the two most important things:
 
 ## Contributing & Support
 
+  > _A real community, however, exists only when its members interact in a meaningful way that deepens their understanding of each other and leads to learning._
+
 If you find something which doesn't make sense, or something doesn't seem right, please make a pull request and please add valid and well-reasoned explanations about your changes or comments.
 
 Before adding a pull request, please see the **[contributing guidelines](CONTRIBUTING.md)**.
 
 If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
-
-  > _A real community, however, exists only when its members interact in a meaningful way that deepens their understanding of each other and leads to learning._
 
 ## ToDo list
 
