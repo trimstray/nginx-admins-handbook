@@ -316,6 +316,7 @@ Existing chapters:
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
+    - [ ] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
     - [x] _Separation and improvement of installation methods_
     - [x] _Add installation process on CentOS 7 for NGINX_
