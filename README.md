@@ -138,6 +138,7 @@
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
   * [Installation from source](#installation-from-source)
+    * [Automatic installation](#automatic-installation)
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
@@ -2316,6 +2317,8 @@ Look also on this short note about the system locations. That can be useful too:
   - `/usr/local/sbin` - system programs
   - `/usr/local/lib` - shared libraries
   - `/usr/local/share` - manual pages, data
+
+##### Automatic installation
 
 Installation from source consists of multiple steps. If you don't want to pass through all of them, you can run automated script. It is located in `lib/autoinstaller.sh`. By default, it show prompt to confirm steps but you can disable this if you want:
 
