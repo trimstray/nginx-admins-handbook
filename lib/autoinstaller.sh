@@ -124,7 +124,7 @@ function _f() {
 
   for _cl in $(seq 1 $_cnt) ; do
 
-    $_cmd
+    bash -c "$_cmd"
 
     _cstate="$?"
 
@@ -756,7 +756,7 @@ function _build_nginx() {
   _f "1" "make -j2"
   _f "1" "make install"
 
-  _f "1" "ldconfig"
+  ldconfig
 
   return "$_STATE"
 
