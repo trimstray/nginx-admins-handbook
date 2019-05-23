@@ -142,6 +142,7 @@
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
+    * [Compiler and linker](#compiler-and-linker)
     * [SystemTap](#systemtap)
     * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks)
@@ -318,6 +319,7 @@ Existing chapters:
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Installation from source_
     - [x] _Add autoinstaller for RHEL/Debian like distributions_
+    - [x] _Add compiler and linker options_
     - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
     - [x] _Separation and improvement of installation methods_
     - [x] _Add installation process on CentOS 7 for NGINX_
@@ -2320,7 +2322,9 @@ Look also on this short note about the system locations. That can be useful too:
 
 ##### Automatic installation
 
-Installation from source consists of multiple steps. If you don't want to pass through all of them, you can run automated script. It is located in `lib/autoinstaller.sh`. By default, it show prompt to confirm steps but you can disable this if you want:
+Installation from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
+
+This tool is located in `lib/autoinstaller.sh`. By default, it show prompt to confirm steps but you can disable this if you want:
 
 ```bash
 cd lib/
@@ -2445,6 +2449,25 @@ A short description of the modules that I used (not only) in this step-by-step t
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
 
+##### Compiler and linker
+
+Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimize for speed and/or security, you should probably provide a few compiler flags. See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat.
+
+There are examples:
+
+```bash
+# 1)
+#   --with-cc-opt="-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+# 2)
+#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+# Example of use linker options:
+# 1)
+#   --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+# 2)
+#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+```
+
 ##### SystemTap
 
   > SystemTap (`stap`) is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
@@ -2476,7 +2499,7 @@ stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 
 ###### Pre installation tasks
 
-Set the NGINX version (I use stable release):
+Set the NGINX version (I use stable and newest release):
 
 ```bash
 export ngx_version="1.16.0"
@@ -2504,8 +2527,8 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed l
 yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
 # For LuaJIT (libluajit-5.1-dev):
-export LUA_LIB=/usr/local/x86_64-linux-gnu/
-export LUA_INC=/usr/include/luajit-2.1/
+export LUA_LIB="/usr/local/x86_64-linux-gnu"
+export LUA_INC="/usr/include/luajit-2.1"
 
 ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 ```
@@ -2528,8 +2551,8 @@ cd /usr/local/src/pcre-8.42
 make -j2 && make test
 make install
 
-export PCRE_LIB=/usr/local/lib
-export PCRE_INC=/usr/local/include
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
 export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
@@ -2553,8 +2576,8 @@ cd /usr/local/src/zlib
 make -j2 && make test
 make install
 
-export ZLIB_LIB=/usr/local/lib
-export ZLIB_INC=/usr/local/include
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
 export ZLIB_DIRECTORY="/usr/local/src/zlib"
 ```
 
@@ -2572,8 +2595,8 @@ cd /usr/local/src/openssl-1.1.1b
 make -j2 && make test
 make install
 
-export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
-export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
+export OPENSSL_LIB="/usr/local/openssl-1.1.1b/lib"
+export OPENSSL_INC="/usr/local/openssl-1.1.1b/include"
 export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
@@ -2611,8 +2634,8 @@ cd /usr/local/src/luajit2
 
 make && make install
 
-export LUA_LIB=/usr/local/lib/
-export LUA_INC=/usr/local/include/luajit-2.1/
+export LUA_LIB="/usr/local/lib"
+export LUA_INC="/usr/local/include/luajit-2.1"
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```
@@ -2732,19 +2755,8 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ```bash
 cd /usr/local/src/nginx-${ngx_version}/master
 
-# Example of use compiler options:
-# 1)
-#   --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC'
-# 2)
-#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
-
-# Example of use linker options:
-# 1)
-#   --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
-# 2)
-#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-
 # - you can also build NGINX without 3rd party modules
+# - remember about compiler and linker options
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
@@ -2883,7 +2895,7 @@ adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin
 # RedHat/CentOS
 groupadd -r -g 920 nginx
 
-adduser --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
+useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
 
 passwd -l nginx
 ```
@@ -3071,8 +3083,8 @@ cd /usr/local/src/pcre-8.42
 make -j2 && make test
 make install
 
-export PCRE_LIB=/usr/local/lib
-export PCRE_INC=/usr/local/include
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
 export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
@@ -3096,8 +3108,8 @@ cd /usr/local/src/zlib
 make -j2 && make test
 make install
 
-export ZLIB_LIB=/usr/local/lib
-export ZLIB_INC=/usr/local/include
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
 export ZLIB_DIRECTORY="/usr/local/src/zlib"
 ```
 
@@ -3115,8 +3127,8 @@ cd /usr/local/src/openssl-1.1.1b
 make -j2 && make test
 make install
 
-export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
-export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
+export OPENSSL_LIB="/usr/local/openssl-1.1.1b/lib"
+export OPENSSL_INC="/usr/local/openssl-1.1.1b/include"
 export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
@@ -3242,19 +3254,8 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ```bash
 cd /usr/local/src/openresty-${ngx_version}/master
 
-# Example of use compiler options:
-# 1)
-#   --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC'
-# 2)
-#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
-
-# Example of use linker options:
-# 1)
-#   --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
-# 2)
-#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-
 # - you can also build OpenResty without 3rd party modules
+# - remember about compiler and linker options
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
@@ -3771,12 +3772,18 @@ The build and installation process is very similar to [Install Nginx on Centos 7
 
 ###### Pre installation tasks
 
+Set the Tengine version (I use newest and stable release):
+
+```bash
+export ngx_version="2.3.0"
+```
+
 Create directories:
 
 ```bash
-mkdir /usr/local/src/tengine
-mkdir /usr/local/src/tengine/master
-mkdir /usr/local/src/tengine/modules
+mkdir /usr/local/src/tengine-${ngx_version}
+mkdir /usr/local/src/tengine-${ngx_version}/master
+mkdir /usr/local/src/tengine-${ngx_version}/modules
 ```
 
 ###### Install or build dependencies
@@ -3804,8 +3811,8 @@ cd /usr/local/src/pcre-8.42
 make -j2 && make test
 make install
 
-export PCRE_LIB=/usr/local/lib
-export PCRE_INC=/usr/local/include
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
 export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
@@ -3823,8 +3830,8 @@ cd /usr/local/src/openssl-1.1.1b
 make -j2 && make test
 make install
 
-export OPENSSL_LIB=/usr/local/openssl-1.1.1b/lib
-export OPENSSL_INC=/usr/local/openssl-1.1.1b/include
+export OPENSSL_LIB="/usr/local/openssl-1.1.1b/lib"
+export OPENSSL_INC="/usr/local/openssl-1.1.1b/include"
 export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
 
 # Setup PATH environment variables:
@@ -3862,8 +3869,8 @@ cd /usr/local/src/luajit2
 
 make && make install
 
-export LUA_LIB=/usr/local/lib/
-export LUA_INC=/usr/local/include/luajit-2.1/
+export LUA_LIB="/usr/local/lib"
+export LUA_INC="/usr/local/include/luajit-2.1"
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```
@@ -3909,9 +3916,14 @@ ldconfig
 ###### Get Tengine sources
 
 ```bash
-cd /usr/local/src/tengine
+cd /usr/local/src/tengine-${ngx_version}
 
-git clone --depth 1 https://github.com/alibaba/tengine master
+wget https://tengine.taobao.org/download/tengine-${ngx_version}.tar.gz
+
+# or alternative:
+#   git clone --depth 1 https://github.com/alibaba/tengine master
+
+tar zxvf tengine-${ngx_version}.tar.gz -C /usr/local/src/tengine-${ngx_version}
 ```
 
 ###### Download 3rd party modules
@@ -3959,19 +3971,8 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ```bash
 cd /usr/local/src/tengine/master
 
-# Example of use compiler options:
-# 1)
-#   --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC'
-# 2)
-#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
-
-# Example of use linker options:
-# 1)
-#   --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
-# 2)
-#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-
 # - you can also build Tengine without 3rd party modules
+# - remember about compiler and linker options
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
@@ -4035,15 +4036,15 @@ cd /usr/local/src/tengine/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --add-module=/usr/local/src/tengine/modules/nginx-access-plus/src/c \
-            --add-module=/usr/local/src/tengine/modules/ngx_http_substitutions_filter_module \
-            --add-module=/usr/local/src/tengine/modules/nginx-module-vts \
-            --add-module=/usr/local/src/tengine/modules/ngx_brotli \
-            --add-dynamic-module=/usr/local/src/tengine/modules/echo-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/headers-more-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/replace-filter-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/tengine/modules/naxsi/naxsi_src \
+            --add-module=/usr/local/src/tengine-${ngx_version}/modules/nginx-access-plus/src/c \
+            --add-module=/usr/local/src/tengine-${ngx_version}/modules/ngx_http_substitutions_filter_module \
+            --add-module=/usr/local/src/tengine-${ngx_version}/modules/nginx-module-vts \
+            --add-module=/usr/local/src/tengine-${ngx_version}/modules/ngx_brotli \
+            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/echo-nginx-module \
+            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/headers-more-nginx-module \
+            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/replace-filter-nginx-module \
+            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/delay-module \
+            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/naxsi/naxsi_src \
             --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
             --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
 
