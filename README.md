@@ -2542,9 +2542,11 @@ PCRE:
 ```bash
 cd /usr/local/src/
 
-wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+export pcre_version="8.42"
 
-cd /usr/local/src/pcre-8.42
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd /usr/local/src/pcre-${pcre_version}
 
 ./configure
 
@@ -2553,7 +2555,7 @@ make install
 
 export PCRE_LIB="/usr/local/lib"
 export PCRE_INC="/usr/local/include"
-export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
+export PCRE_DIRECTORY="/usr/local/src/pcre-${pcre_version}"
 ```
 
 Zlib:
@@ -2563,8 +2565,9 @@ Zlib:
 cd /usr/local/src/
 
 # For original Zlib:
-#   wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
-#   cd /usr/local/src/zlib-1.2.11
+#   export zlib_version="1.2.11"
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   cd /usr/local/src/zlib-${zlib_version}
 
 # For Cloudflare Zlib:
 git clone --depth 1 https://github.com/cloudflare/zlib
@@ -2586,34 +2589,36 @@ OpenSSL:
 ```bash
 cd /usr/local/src/
 
-wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
+export openssl_version="1.1.1b"
 
-cd /usr/local/src/openssl-1.1.1b
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
 
-./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl3 no-weak-ssl-ciphers
+cd /usr/local/src/openssl-${openssl_version}
+
+./config --prefix=/usr/local/openssl-${openssl_version} --openssldir=/usr/local/openssl-${openssl_version} shared zlib no-ssl3 no-weak-ssl-ciphers
 
 make -j2 && make test
 make install
 
-export OPENSSL_LIB="/usr/local/openssl-1.1.1b/lib"
-export OPENSSL_INC="/usr/local/openssl-1.1.1b/include"
-export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
+export OPENSSL_LIB="/usr/local/openssl-${openssl_version}/lib"
+export OPENSSL_INC="/usr/local/openssl-${openssl_version}/include"
+export OPENSSL_DIRECTORY="/usr/local/src/openssl-${openssl_version}"
 
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
 #!/bin/sh
-export PATH=/usr/local/openssl-1.1.1b/bin:${PATH}
-export LD_LIBRARY_PATH=/usr/local/openssl-1.1.1b/lib:${LD_LIBRARY_PATH}
+export PATH=/usr/local/openssl-${openssl_version}/bin:${PATH}
+export LD_LIBRARY_PATH=/usr/local/openssl-${openssl_version}/lib:${LD_LIBRARY_PATH}
 __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-1.1.0g
-ln -s /usr/local/openssl-1.1.1b/bin/openssl /usr/bin/openssl
+mv /usr/bin/openssl /usr/bin/openssl-old
+ln -s /usr/local/openssl-${openssl_version}/bin/openssl /usr/bin/openssl
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-/usr/local/openssl-1.1.1b/lib
+/usr/local/openssl-${openssl_version}/lib
 __EOF__
 ```
 
