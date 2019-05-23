@@ -67,23 +67,34 @@ export ngx_version=""
 
 trgb_bold="1;1;38"
 trgb_red="1;1;31"
+trgb_red_x="0;49;91m"
 trgb_dark="2;2;38"
 trgb_light="1;1;36"
 trgb_bold_green="1;2;32"
-trgb_bground_yellow="7;30;43"
-trgb_bground_blue="1;1;1;44"
+trgb_bground_blue="1;37;44"
+trgb_bground_dark="1;37;40"
+
+if [[ -e "${_rel}/autoinstaller.config" ]] ; then
+
+  source "${_rel}/autoinstaller.config"
+
+fi
+
+__PARAMS="${COMPILER_OPTIONS} ${LINKER_OPTIONS}"
 
 function _f() {
 
-  local _FUNCTION_ID="_f"
   local _STATE="0"
 
-  local _cmd="$1"
+  local _cnt="$1"
+  local _cmd="$2"
 
   _x_trgb_rbold="1;4;4;41"
   _x_trgb_gbold="1;4;4;42"
 
-  printf '\n»»» \e['${trgb_red}'m%s\e[m\n\n\e['${trgb_dark}'m%s\e[m\n\n»»»\n\n' "command" "$_cmd"
+  printf '\n»»»»»»»»» \e['${trgb_red}'m%s\e[m\n\n' "COMMAND BEG"
+  printf '\e['${trgb_dark}'m%s\e[m\n\n' "$_cmd"
+  printf '\n»»»»»»»»» \e['${trgb_red}'m%s\e[m\n\n' "COMMAND END"
 
   # printf '=%.0s' {1..48}
 
@@ -111,7 +122,27 @@ function _f() {
 
   fi
 
-  $_cmd
+  for _cl in $(seq 1 $_cnt) ; do
+
+    $_cmd
+
+    _cstate="$?"
+
+    if [[ "$_cstate" -eq 0 ]] ; then
+
+      break
+
+    else
+
+      if [[ "$_cnt" -ne 1 ]] ; then
+
+        printf '\n > \e['${trgb_light}'m%s\e[m: %s\n' "command failed, reinit" "$_cl"
+
+      fi
+
+    fi
+
+  done
 
   # _output_cmd=$($_cmd)
 
@@ -125,11 +156,12 @@ function _f() {
   #
   # fi
 
-  if [[ "$?" -ne 0 ]] ; then
+  if [[ "$_cstate" -ne 0 ]] ; then
 
-    printf '\n\e['${_x_trgb_rbold}'m %s \e[m\n' "**STOP** from: $_FUNCTION_ID -- COMMAND:"
+    printf '\n\e['${_x_trgb_rbold}'m %s \e[m\n' "**STOP** from: ${_FUNCTION_ID}() -- COMMAND:"
 
-    printf "\e['${trgb_dark}'m%s\e[m\n" "$_cmd"
+    # printf '\e['${trgb_dark}'m%s\e[m\n' "$_cmd"
+    printf "\n%s\n" "$_cmd"
 
     exit 1
 
@@ -151,7 +183,7 @@ function _inst_base_packages() {
 
   if [[ "$_DIST_VERSION" == "debian" ]] ; then
 
-    _f "apt-get install -y \
+    _f "5" "apt-get install -y \
             gcc \
             make \
             build-essential \
@@ -172,7 +204,7 @@ function _inst_base_packages() {
 
   elif [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
-    _f "yum install -y \
+    _f "5" "yum install -y \
         gcc \
         gcc-c++ \
         kernel-devel \
@@ -198,9 +230,9 @@ function _inst_base_packages() {
 
 }
 
-function _inst_nginx_distribution() {
+function _inst_nginx_flavour() {
 
-  local _FUNCTION_ID="_inst_nginx_distribution"
+  local _FUNCTION_ID="_inst_nginx_flavour"
   local _STATE="0"
 
   if [[ "$ngx_distr" -eq 1 ]] ; then
@@ -211,15 +243,15 @@ function _inst_nginx_distribution() {
 
     for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
 
-      _f "mkdir -p $i"
+      _f "1" "mkdir -p $i"
 
     done
 
     cd "$_ngx_base"
 
-    _f "wget -c --no-check-certificate https://nginx.org/download/nginx-${ngx_version}.tar.gz"
+    _f "5" "wget -c --no-check-certificate https://nginx.org/download/nginx-${ngx_version}.tar.gz"
 
-    _f "tar zxvf nginx-${ngx_version}.tar.gz -C $_ngx_master --strip 1"
+    _f "1" "tar zxvf nginx-${ngx_version}.tar.gz -C $_ngx_master --strip 1"
 
   elif [[ "$ngx_distr" -eq 2 ]] ; then
 
@@ -229,31 +261,31 @@ function _inst_nginx_distribution() {
 
     for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
 
-      _f "mkdir -p $i"
+      _f "1" "mkdir -p $i"
 
     done
 
     cd "$_ngx_base"
 
-    _f "wget -c --no-check-certificate https://openresty.org/download/openresty-${ngx_version}.tar.gz"
+    _f "5" "wget -c --no-check-certificate https://openresty.org/download/openresty-${ngx_version}.tar.gz"
 
-    _f "tar zxvf openresty-${ngx_version}.tar.gz -C $_ngx_master --strip 1"
+    _f "1" "tar zxvf openresty-${ngx_version}.tar.gz -C $_ngx_master --strip 1"
 
   elif [[ "$ngx_distr" -eq 3 ]] ; then
 
-    _ngx_base="${_src}/tengine"
-    _ngx_master="${_src}/tengine/master"
-    _ngx_modules="${_src}/tengine/modules"
+    _ngx_base="${_src}/tengine-${ngx_version}"
+    _ngx_master="${_src}/tengine-${ngx_version}/master"
+    _ngx_modules="${_src}/tengine-${ngx_version}/modules"
 
     for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
 
-      _f "mkdir -p $i"
+      _f "1" "mkdir -p $i"
 
     done
 
     cd "$_ngx_base"
 
-    _f "git clone --depth 1 https://github.com/alibaba/tengine $_ngx_master"
+    _f "5" "git clone --depth 1 https://github.com/alibaba/tengine $_ngx_master"
 
   else
 
@@ -273,19 +305,19 @@ function _inst_pcre() {
 
   cd "$_src"
 
-  _f "wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${_pcre_version}.tar.gz"
+  _f "5" "wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${_pcre_version}.tar.gz"
 
-  _f "tar xzvf pcre-${_pcre_version}.tar.gz"
+  _f "1" "tar xzvf pcre-${_pcre_version}.tar.gz"
 
   cd "${_src}/pcre-${_pcre_version}"
 
-  _f "./configure"
+  _f "1" "./configure"
 
-  _f "make -j2"
-  _f "make install"
+  _f "1" "make -j2"
+  _f "1" "make install"
 
-  export PCRE_LIB=/usr/local/lib
-  export PCRE_INC=/usr/local/include
+  export PCRE_LIB="/usr/local/lib"
+  export PCRE_INC="/usr/local/include"
   export PCRE_DIRECTORY="/usr/local/src/pcre-${_pcre_version}"
 
   return "$_STATE"
@@ -299,17 +331,17 @@ function _inst_zlib() {
 
   cd "$_src"
 
-  _f "git clone --depth 1 https://github.com/cloudflare/zlib"
+  _f "5" "git clone --depth 1 https://github.com/cloudflare/zlib"
 
   cd "${_src}/zlib"
 
-  _f "./configure"
+  _f "1" "./configure"
 
-  _f "make -j2"
-  _f "make install"
+  _f "1" "make -j2"
+  _f "1" "make install"
 
-  export ZLIB_LIB=/usr/local/lib
-  export ZLIB_INC=/usr/local/include
+  export ZLIB_LIB="/usr/local/lib"
+  export ZLIB_INC="/usr/local/include"
   export ZLIB_DIRECTORY="/usr/local/src/zlib"
 
   return "$_STATE"
@@ -323,36 +355,48 @@ function _inst_openssl() {
 
   cd "$_src"
 
-  _f "wget -c --no-check-certificate https://www.openssl.org/source/openssl-${_openssl_version}.tar.gz"
+  _f "5" "wget -c --no-check-certificate https://www.openssl.org/source/openssl-${_openssl_version}.tar.gz"
 
-  _f "tar xzvf openssl-${_openssl_version}.tar.gz"
+  _f "1" "tar xzvf openssl-${_openssl_version}.tar.gz"
 
   cd "${_src}/openssl-$_openssl_version"
 
-  _f "./config --prefix=/usr/local/openssl-${_openssl_version} --openssldir=/usr/local/openssl-${_openssl_version} shared zlib no-ssl3 no-weak-ssl-ciphers"
+  _f "1" "./config --prefix=/usr/local/openssl-${_openssl_version} --openssldir=/usr/local/openssl-${_openssl_version} shared zlib no-ssl3 no-weak-ssl-ciphers"
 
-  _f "make -j2"
-  _f "make install"
+  _f "1" "make -j2"
+  _f "1" "make install"
 
-  export OPENSSL_LIB=/usr/local/openssl-${_openssl_version}/lib
-  export OPENSSL_INC=/usr/local/openssl-${_openssl_version}/include
+  export OPENSSL_LIB="/usr/local/openssl-${_openssl_version}/lib"
+  export OPENSSL_INC="/usr/local/openssl-${_openssl_version}/include"
   export OPENSSL_DIRECTORY="/usr/local/src/openssl-${_openssl_version}"
 
-  _f "cat > /etc/profile.d/openssl.sh << __EOF__
+  # Setup PATH environment variables:
+  cat > /etc/profile.d/openssl.sh << __EOF__
 #!/bin/sh
 export PATH=/usr/local/openssl-${_openssl_version}/bin:${PATH}
 export LD_LIBRARY_PATH=/usr/local/openssl-${_openssl_version}/lib:${LD_LIBRARY_PATH}
-__EOF__"
+__EOF__
 
-_f "chmod +x /etc/profile.d/openssl.sh"
-_f "source /etc/profile.d/openssl.sh"
+  echo
 
-_f "mv /usr/bin/openssl /usr/bin/openssl-old"
-_f "ln -s /usr/local/openssl-${_openssl_version}/bin/openssl /usr/bin/openssl"
+  _f "1" "chmod +x /etc/profile.d/openssl.sh"
+  _f "1" "source /etc/profile.d/openssl.sh"
 
-_f "cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
+  echo
+
+  _f "1" "mv /usr/bin/openssl /usr/bin/openssl-old"
+
+  echo
+
+  _f "1" "ln -s /usr/local/openssl-${_openssl_version}/bin/openssl /usr/bin/openssl"
+
+  echo
+
+  cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 /usr/local/openssl-${_openssl_version}/lib
-__EOF__"
+__EOF__
+
+  echo
 
   return "$_STATE"
 
@@ -365,17 +409,17 @@ function _inst_luajit() {
 
   cd "$_src"
 
-  _f "git clone --depth 1 https://github.com/openresty/luajit2"
+  _f "5" "git clone --depth 1 https://github.com/openresty/luajit2"
 
   cd "${_src}/luajit2"
 
-  _f "./configure"
+  _f "1" "make"
+  _f "1" "make install"
 
-  _f "make"
-  _f "make install"
+  _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so"
 
-  export LUA_LIB=/usr/local/lib/
-  export LUA_INC=/usr/local/include/luajit-2.1/
+  export LUA_LIB="/usr/local/lib"
+  export LUA_INC="/usr/local/include/luajit-2.1"
 
   return "$_STATE"
 
@@ -388,14 +432,12 @@ function _inst_sregex() {
 
   cd "$_src"
 
-  _f "git clone --depth 1 https://github.com/openresty/sregex"
+  _f "5" "git clone --depth 1 https://github.com/openresty/sregex"
 
   cd "${_src}/sregex"
 
-  _f "./configure"
-
-  _f "make"
-  _f "make install"
+  _f "1" "make"
+  _f "1" "make install"
 
   return "$_STATE"
 
@@ -408,14 +450,14 @@ function _inst_jemalloc() {
 
   cd "$_src"
 
-  _f "git clone --depth 1 https://github.com/jemalloc/jemalloc"
+  _f "5" "git clone --depth 1 https://github.com/jemalloc/jemalloc"
 
-  cd "${_src}/sregex"
+  cd "${_src}/jemalloc"
 
-  _f "./autogen.sh"
+  _f "1" "./autogen.sh"
 
-  _f "make"
-  _f "make install"
+  _f "1" "make"
+  _f "1" "make install"
 
   export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
 
@@ -446,24 +488,24 @@ function _inst_3_modules() {
     https://github.com/vozlt/nginx-module-vts \
     https://github.com/google/ngx_brotli ; do
 
-    _f "git clone --depth 1 $i"
+    _f "5" "git clone --depth 1 $i"
 
   done
 
-  _f "wget -c --no-check-certificate http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz"
+  _f "5" "wget -c --no-check-certificate http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz"
 
-  _f "mkdir -p delay-module"
+  _f "1" "mkdir -p delay-module"
 
-  _f "tar xzvf delay-module.tar.gz -C delay-module --strip 1"
+  _f "1" "tar xzvf delay-module.tar.gz -C delay-module --strip 1"
 
   cd "${_ngx_modules}/ngx_brotli"
-  _f "git submodule update --init"
+  _f "1" "git submodule update --init"
 
   cd "$_ngx_modules"
 
-  _f "git clone --depth 1 https://github.com/alibaba/tengine"
+  _f "5" "git clone --depth 1 https://github.com/alibaba/tengine"
 
-  _f "git clone --depth 1 https://github.com/nbs-system/naxsi"
+  _f "5" "git clone --depth 1 https://github.com/nbs-system/naxsi"
 
   return "$_STATE"
 
@@ -474,11 +516,11 @@ function _build_nginx() {
   local _FUNCTION_ID="_build_nginx"
   local _STATE="0"
 
-  cd "$_ngx_master" ; _f "$?"
+  cd "$_ngx_master"
 
   if [[ "$ngx_distr" -eq 1 ]] ; then
 
-    _f "./configure --prefix=/etc/nginx \
+    _f "1" "./configure --prefix=/etc/nginx \
                 --conf-path=/etc/nginx/nginx.conf \
                 --sbin-path=/usr/sbin/nginx \
                 --pid-path=/var/run/nginx.pid \
@@ -551,13 +593,11 @@ function _build_nginx() {
                 --add-dynamic-module=${_ngx_modules}/array-var-nginx-module \
                 --add-dynamic-module=${_ngx_modules}/nginx-module-sysguard \
                 --add-dynamic-module=${_ngx_modules}/delay-module \
-                --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src \
-                --with-cc-opt='-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf' \
-                --with-ld-opt='-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib'"
+                --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src ${__PARAMS}"
 
   elif [[ "$ngx_distr" -eq 2 ]] ; then
 
-    _f "./configure --prefix=/etc/nginx \
+    _f "1" "./configure --prefix=/etc/nginx \
                 --conf-path=/etc/nginx/nginx.conf \
                 --sbin-path=/usr/sbin/nginx \
                 --pid-path=/var/run/nginx.pid \
@@ -635,13 +675,11 @@ function _build_nginx() {
                 --add-dynamic-module=${_ngx_modules}/replace-filter-nginx-module \
                 --add-dynamic-module=${_ngx_modules}/nginx-module-sysguard \
                 --add-dynamic-module=${_ngx_modules}/delay-module \
-                --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src \
-                --with-cc-opt='-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf' \
-                --with-ld-opt='-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib'"
+                --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src ${__PARAMS}"
 
   elif [[ "$ngx_distr" -eq 3 ]] ; then
 
-    _f "./configure --prefix=/etc/nginx \
+    _f "1" "./configure --prefix=/etc/nginx \
                 --conf-path=/etc/nginx/nginx.conf \
                 --sbin-path=/usr/sbin/nginx \
                 --pid-path=/var/run/nginx.pid \
@@ -711,16 +749,14 @@ function _build_nginx() {
                 --add-dynamic-module=${_ngx_modules}/headers-more-nginx-module \
                 --add-dynamic-module=${_ngx_modules}/replace-filter-nginx-module \
                 --add-dynamic-module=${_ngx_modules}/delay-module \
-                --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src \
-                --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-${_openssl_version}/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-                --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'"
+                --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src ${__PARAMS}"
 
   fi
 
-  _f "make -j2"
-  _f "make install"
+  _f "1" "make -j2"
+  _f "1" "make install"
 
-  _f "ldconfig"
+  _f "1" "ldconfig"
 
   return "$_STATE"
 
@@ -733,15 +769,15 @@ function _create_user() {
 
   if [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
-    _f "adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos 'nginx user' --group nginx"
+    _f "1" "adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos 'nginx user' --group nginx"
 
   elif [[ "$_DIST_VERSION" == "debian" ]] ; then
 
-    _f "groupadd -r -g 920 nginx"
+    _f "1" "groupadd -r -g 920 nginx"
 
-    _f "adduser --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx"
+    _f "1" "useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx"
 
-    _f "passwd -l nginx"
+    _f "1" "passwd -l nginx"
 
   fi
 
@@ -773,7 +809,7 @@ function _init_logrotate() {
   local _FUNCTION_ID="_init_logrotate"
   local _STATE="0"
 
-  _f "cat > /etc/logrotate.d/nginx << __EOF__
+  cat > /etc/logrotate.d/nginx << __EOF__
 /var/log/nginx/*.log {
   daily
   missingok
@@ -792,7 +828,7 @@ function _init_logrotate() {
     invoke-rc.d nginx reload >/dev/null 2>&1
   endscript
 }
-__EOF__"
+__EOF__
 
   return "$_STATE"
 
@@ -803,7 +839,7 @@ function _init_systemd() {
   local _FUNCTION_ID="_init_systemd"
   local _STATE="0"
 
-  _f "cat > /lib/systemd/system/nginx.service << __EOF__
+  cat > /lib/systemd/system/nginx.service << __EOF__
 # Stop dance for nginx
 # =======================
 #
@@ -833,10 +869,10 @@ KillMode=mixed
 
 [Install]
 WantedBy=multi-user.target
-__EOF__"
+__EOF__
 
-  _f "systemctl daemon-reload"
-  _f "systemctl enable nginx"
+  _f "1" "systemctl daemon-reload"
+  _f "1" "systemctl enable nginx"
 
   return "$_STATE"
 
@@ -847,32 +883,181 @@ function __main__() {
   local _FUNCTION_ID="__main__"
   local _STATE="0"
 
-  printf '\n× \e['${trgb_bground_yellow}'m%s\e[m\n\n' "Set NGINX distribution"
+  clear
 
-  printf '  \e['${trgb_bground_blue}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "1" "NGINX" "https://www.nginx.com/"
-  printf '  \e['${trgb_bground_blue}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "2" "OpenResty" "https://openresty.org/"
-  printf '  \e['${trgb_bground_blue}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "3" "The Tengine Web Server" "https://tengine.taobao.org/"
+  _t_rst="0"
+  _c_rst="6"
+
+  _t_sst="66"
+
+  _t_bar="2;39"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst"
+
+  printf "\\e[${_t_bar}m%s\\e[m" \
+         "┌─────────────────────────────────────────────────────────────────┐"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  printf "%s\\e[1;31m%s\\e[m \\e[2;32m%s\\e[m \\e[1;37m%s\\e[m \\e[1;41m%s\\e[m" \
+         "          " \
+         "Φ"  \
+         "autoinstaller.sh" \
+         "(NGINX/OpenResty/Tengine)"
+
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst"; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  printf "%s\\e[1;37m%s\\e[m \\e[2;37m%s\\e[m" \
+         "   " \
+         "Project:"  \
+         "https://github.com/trimstray/nginx-admins-handbook"
+
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  printf "%s\\e[0;36m%s\\e[m" \
+         "               " \
+         "Debian - Ubuntu - RHEL - CentOS"
+
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 1))
+  tput cup "$_t_rst" "$_c_rst" ;
+
+  printf "\\e[${_t_bar}m%s\\e[m" \
+         "└─────────────────────────────────────────────────────────────────┘"
+
+  # ----------------------------------------------------------------------------
+
+  _t_rst=$((_t_rst + 2))
+  tput cup "$_t_rst" "$_c_rst"
+
+  printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
+
+  printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "1" "NGINX" "https://www.nginx.com/"
+  printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "2" "OpenResty" "https://openresty.org/"
+  printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "3" "The Tengine Web Server" "https://tengine.taobao.org/"
 
   printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
   read ngx_distr
 
-  printf '\n× \e['${trgb_bground_yellow}'m%s\e[m\n\n' "Set version of source package"
+  _ngx_distr=$(echo "$ngx_distr" | tr -d [:alpha:] | cut -c1)
 
-  if [[ "$ngx_distr" -eq 1 ]] ; then
+  if [[ -z "$_ngx_distr" ]] ; then
+
+    printf "incorrect value => [1-3]\n"
+    exit 1
+
+  else
+
+    if [[ "$_ngx_distr" -ne 1 ]] && \
+       [[ "$_ngx_distr" -ne 2 ]] && \
+       [[ "$_ngx_distr" -ne 3 ]] ; then
+
+      printf "incorrect value => [1-3]\n"
+      exit 1
+
+    fi
+
+  fi
+
+  printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set version of source package"
+
+  if [[ "$_ngx_distr" -eq 1 ]] ; then
 
     printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.0"
+    printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
 
-  elif [[ "$ngx_distr" -eq 2 ]] ; then
+    _ngx_distr_str="NGINX"
+
+  elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
     printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
+    printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
+
+    _ngx_distr_str="OpenResty"
+
+  elif [[ "$_ngx_distr" -eq 3 ]] ; then
+
+    printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
+    printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
+
+    _ngx_distr_str="Tengine"
 
   fi
 
   printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
   read ngx_version
 
+  if [[ -z "$ngx_version" ]] ; then
+
+    if [[ "$_ngx_distr" -eq 1 ]] ; then
+
+      ngx_version="1.16.0"
+
+    elif [[ "$_ngx_distr" -eq 1 ]] ; then
+
+      ngx_version="1.15.8.1"
+
+    elif [[ "$_ngx_distr" -eq 1 ]] ; then
+
+      ngx_version="2.3.0"
+
+    fi
+
+  fi
+
+  printf '\n\n     init directory : \e['${trgb_dark}'m%s\e[m\n' "$_init_directory"
+  printf '   source directory : \e['${trgb_dark}'m%s\e[m\n' "$_src"
+  printf ' configuration file : \e['${trgb_dark}'m%s\e[m\n' "${_rel}/autoinstaller.config"
+  printf '    package version : \e['${trgb_dark}'m%s, %s\e[m\n' "$_ngx_distr_str" "$ngx_version"
+  printf '       pcre version : \e['${trgb_dark}'m%s\e[m\n' "$_pcre_version"
+  printf '    openssl version : \e['${trgb_dark}'m%s\e[m\n' "$_openssl_version"
+  printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n\n' "cloudflare version"
+
   _inst_base_packages
-  _inst_nginx_distribution
+  _inst_nginx_flavour
 
   _inst_pcre
   _inst_zlib
