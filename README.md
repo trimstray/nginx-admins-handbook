@@ -2457,13 +2457,13 @@ There are examples:
 
 ```bash
 # 1)
-#   --with-cc-opt="-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+#   --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 # 2)
 #   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
 # Example of use linker options:
 # 1)
-#   --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+#   --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
 # 2)
 #   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 ```
@@ -2505,12 +2505,23 @@ Set the NGINX version (I use stable and newest release):
 export ngx_version="1.16.0"
 ```
 
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/nginx-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+```
+
 Create directories:
 
 ```bash
-mkdir /usr/local/src/nginx-${ngx_version}
-mkdir /usr/local/src/nginx-${ngx_version}/master
-mkdir /usr/local/src/nginx-${ngx_version}/modules
+for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+
+  mkdir "$i"
+
+done
 ```
 
 ###### Install or build dependencies
@@ -2527,8 +2538,8 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed l
 yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
 # For LuaJIT (libluajit-5.1-dev):
-export LUA_LIB="/usr/local/x86_64-linux-gnu"
-export LUA_INC="/usr/include/luajit-2.1"
+export LUAJIT_LIB="/usr/local/x86_64-linux-gnu"
+export LUAJIT_INC="/usr/include/luajit-2.1"
 
 ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 ```
@@ -2540,85 +2551,86 @@ ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 PCRE:
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
 export pcre_version="8.42"
 
+export PCRE_SRC="${ngx_src}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
 wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
 
-cd /usr/local/src/pcre-${pcre_version}
+cd "$PCRE_SRC"
 
 ./configure
 
 make -j2 && make test
 make install
-
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
-export PCRE_DIRECTORY="/usr/local/src/pcre-${pcre_version}"
 ```
 
 Zlib:
 
 ```bash
 # I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export ZLIB_SRC="${ngx_src}/zlib"
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
 #   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
-#   cd /usr/local/src/zlib-${zlib_version}
+#   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
 git clone --depth 1 https://github.com/cloudflare/zlib
 
-cd /usr/local/src/zlib
+cd "$ZLIB_SRC"
 
 ./configure
 
 make -j2 && make test
 make install
-
-export ZLIB_LIB="/usr/local/lib"
-export ZLIB_INC="/usr/local/include"
-export ZLIB_DIRECTORY="/usr/local/src/zlib"
 ```
 
 OpenSSL:
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
 export openssl_version="1.1.1b"
 
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+
 wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
 
-cd /usr/local/src/openssl-${openssl_version}
+cd "${ngx_src}/openssl-${openssl_version}"
 
-./config --prefix=/usr/local/openssl-${openssl_version} --openssldir=/usr/local/openssl-${openssl_version} shared zlib no-ssl3 no-weak-ssl-ciphers
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers
 
 make -j2 && make test
 make install
 
-export OPENSSL_LIB="/usr/local/openssl-${openssl_version}/lib"
-export OPENSSL_INC="/usr/local/openssl-${openssl_version}/include"
-export OPENSSL_DIRECTORY="/usr/local/src/openssl-${openssl_version}"
-
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
 #!/bin/sh
-export PATH=/usr/local/openssl-${openssl_version}/bin:${PATH}
-export LD_LIBRARY_PATH=/usr/local/openssl-${openssl_version}/lib:${LD_LIBRARY_PATH}
+export PATH=${OPENSSL_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
 __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
 mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s /usr/local/openssl-${openssl_version}/bin/openssl /usr/bin/openssl
+ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-/usr/local/openssl-${openssl_version}/lib
+${OPENSSL_DIR}/lib
 __EOF__
 ```
 
@@ -2626,21 +2638,22 @@ LuaJIT:
 
 ```bash
 # I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export LUAJIT_SRC="${ngx_src}/luajit2"
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For originall LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0
-#   cd /usr/local/src/luajit-2.0
+#   git clone http://luajit.org/git/luajit-2.0 luajit2
+#   cd "$LUAJIT_SRC"
 
 # For OpenResty's LuaJIT:
 git clone --depth 1 https://github.com/openresty/luajit2
 
-cd /usr/local/src/luajit2
+cd "$LUAJIT_SRC"
 
 make && make install
-
-export LUA_LIB="/usr/local/lib"
-export LUA_INC="/usr/local/include/luajit-2.1"
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```
@@ -2650,11 +2663,11 @@ ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
   > Required for `replace-filter-nginx-module` module.
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
 git clone --depth 1 https://github.com/openresty/sregex
 
-cd /usr/local/src/sregex
+cd "${ngx_src}/sregex"
 
 make && make install
 ```
@@ -2664,17 +2677,18 @@ jemalloc:
   > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="${ngx_src}/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
 
 git clone --depth 1 https://github.com/jemalloc/jemalloc
 
-cd /usr/local/src/jemalloc
+cd "$JEMALLOC_SRC"
 
 ./autogen.sh
 
 make && make install
-
-export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
 ```
 
 Update links and cache to the shared libraries for both types of installation:
@@ -2686,20 +2700,20 @@ ldconfig
 ###### Get Nginx sources
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}
+cd "${ngx_base}"
 
 wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
 
 # or alternative:
 #   git clone --depth 1 https://github.com/nginx/nginx master
 
-tar zxvf nginx-${ngx_version}.tar.gz -C /usr/local/src/nginx-${ngx_version}/master --strip 1
+tar zxvf nginx-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
 ```
 
 ###### Download 3rd party modules
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/modules/
+cd "${ngx_modules}"
 
 for i in \
 https://github.com/simplresty/ngx_devel_kit \
@@ -2728,7 +2742,7 @@ mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 For `ngx_brotli`:
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/modules/ngx_brotli
+cd "${ngx_modules}/ngx_brotli"
 
 git submodule update --init
 ```
@@ -2742,7 +2756,7 @@ I also use some modules from Tengine:
 - `ngx_http_footer_filter_module`
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/modules/
+cd "${ngx_modules}"
 
 git clone --depth 1 https://github.com/alibaba/tengine
 ```
@@ -2750,7 +2764,7 @@ git clone --depth 1 https://github.com/alibaba/tengine
 If you use NAXSI:
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/modules/
+cd "${ngx_modules}"
 
 git clone --depth 1 https://github.com/nbs-system/naxsi
 ```
@@ -2758,7 +2772,7 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ###### Build Nginx
 
 ```bash
-cd /usr/local/src/nginx-${ngx_version}/master
+cd "${ngx_master}"
 
 # - you can also build NGINX without 3rd party modules
 # - remember about compiler and linker options
@@ -2802,12 +2816,11 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --with-http_sub_module \
             --with-http_v2_module \
             --with-google_perftools_module \
-            --with-openssl=${OPENSSL_DIRECTORY} \
-            --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl3 \
-            --with-pcre=${PCRE_DIRECTORY} \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+            --with-pcre=${PCRE_SRC} \
             --with-pcre-jit \
-            --with-zlib=${ZLIB_DIRECTORY} \
+            --with-zlib=${ZLIB_SRC} \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
@@ -2816,27 +2829,27 @@ cd /usr/local/src/nginx-${ngx_version}/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_devel_kit \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/encrypted-session-nginx-module \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-access-plus/src/c \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_http_substitutions_filter_module \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-sticky-module-ng \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-vts \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/ngx_brotli \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
-            --add-module=/usr/local/src/nginx-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/lua-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/set-misc-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/echo-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/headers-more-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/replace-filter-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/array-var-nginx-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/nginx-module-sysguard \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/nginx-${ngx_version}/modules/naxsi/naxsi_src \
+            --add-module=${ngx_modules}/ngx_devel_kit \
+            --add-module=${ngx_modules}/encrypted-session-nginx-module \
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-sticky-module-ng \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-dynamic-module=${ngx_modules}/lua-nginx-module \
+            --add-dynamic-module=${ngx_modules}/set-misc-nginx-module \
+            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
+            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/array-var-nginx-module \
+            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
             --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
@@ -3048,12 +3061,23 @@ Set the OpenResty version (I use newest and stable release):
 export ngx_version="1.15.8.1"
 ```
 
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/openresty-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+```
+
 Create directories:
 
 ```bash
-mkdir /usr/local/src/openresty-${ngx_version}
-mkdir /usr/local/src/openresty-${ngx_version}/master
-mkdir /usr/local/src/openresty-${ngx_version}/modules
+for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+
+  mkdir "$i"
+
+done
 ```
 
 ###### Install or build dependencies
@@ -3077,80 +3101,86 @@ yum install openssl-devel zlib-devel pcre-devel
 PCRE:
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
-wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+export pcre_version="8.42"
 
-cd /usr/local/src/pcre-8.42
+export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd "$PCRE_SRC"
 
 ./configure
 
 make -j2 && make test
 make install
-
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
-export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
 Zlib:
 
 ```bash
 # I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export ZLIB_SRC="${ngx_src}/zlib"
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
-#   wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
-#   cd /usr/local/src/zlib-1.2.11
+#   export zlib_version="1.2.11"
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
 git clone --depth 1 https://github.com/cloudflare/zlib
 
-cd /usr/local/src/zlib
+cd "$ZLIB_SRC"
 
 ./configure
 
 make -j2 && make test
 make install
-
-export ZLIB_LIB="/usr/local/lib"
-export ZLIB_INC="/usr/local/include"
-export ZLIB_DIRECTORY="/usr/local/src/zlib"
 ```
 
 OpenSSL:
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
-wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
+export openssl_version="1.1.1b"
 
-cd /usr/local/src/openssl-1.1.1b
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
 
-./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl3 no-weak-ssl-ciphers
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers
 
 make -j2 && make test
 make install
 
-export OPENSSL_LIB="/usr/local/openssl-1.1.1b/lib"
-export OPENSSL_INC="/usr/local/openssl-1.1.1b/include"
-export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
-
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
 #!/bin/sh
-export PATH=/usr/local/openssl-1.1.1b/bin:${PATH}
-export LD_LIBRARY_PATH=/usr/local/openssl-1.1.1b/lib:${LD_LIBRARY_PATH}
+export PATH=${OPENSSL_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
 __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-1.1.0g
-ln -s /usr/local/openssl-1.1.1b/bin/openssl /usr/bin/openssl
+mv /usr/bin/openssl /usr/bin/openssl-old
+ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-/usr/local/openssl-1.1.1b/lib
+${OPENSSL_DIR}/lib
 __EOF__
 ```
 
@@ -3159,11 +3189,11 @@ __EOF__
   > Required for `replace-filter-nginx-module` module.
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
 git clone --depth 1 https://github.com/openresty/sregex
 
-cd /usr/local/src/sregex
+cd "${ngx_src}/sregex"
 
 make && make install
 ```
@@ -3173,17 +3203,18 @@ jemalloc:
   > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="/usr/local/src/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
 
 git clone --depth 1 https://github.com/jemalloc/jemalloc
 
-cd /usr/local/src/jemalloc
+cd "$JEMALLOC_SRC"
 
 ./autogen.sh
 
 make && make install
-
-export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
 ```
 
 Update links and cache to the shared libraries for both types of installation:
@@ -3195,17 +3226,17 @@ ldconfig
 ###### Get OpenResty sources
 
 ```bash
-cd /usr/local/src/openresty-${ngx_version}
+cd "${ngx_base}"
 
 wget https://openresty.org/download/openresty-${ngx_version}.tar.gz
 
-tar zxvf openresty-${ngx_version}.tar.gz -C /usr/local/src/openresty-${ngx_version}/master --strip 1
+tar zxvf openresty-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
 ```
 
 ###### Download 3rd party modules
 
 ```bash
-cd /usr/local/src/openresty-${ngx_version}/modules/
+cd "${ngx_modules}"
 
 for i in \
 https://github.com/openresty/replace-filter-nginx-module \
@@ -3227,7 +3258,7 @@ mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 For `ngx_brotli`:
 
 ```bash
-cd /usr/local/src/openresty-${ngx_version}/modules/ngx_brotli
+cd "${ngx_modules}/ngx_brotli"
 
 git submodule update --init
 ```
@@ -3241,7 +3272,7 @@ I also use some modules from Tengine:
 - `ngx_http_footer_filter_module`
 
 ```bash
-cd /usr/local/src/openresty-${ngx_version}/modules/
+cd "${ngx_modules}"
 
 git clone --depth 1 https://github.com/alibaba/tengine
 ```
@@ -3249,7 +3280,7 @@ git clone --depth 1 https://github.com/alibaba/tengine
 If you use NAXSI:
 
 ```bash
-cd /usr/local/src/openresty-${ngx_version}/modules/
+cd "${ngx_modules}"
 
 git clone --depth 1 https://github.com/nbs-system/naxsi
 ```
@@ -3257,7 +3288,7 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ###### Build OpenResty
 
 ```bash
-cd /usr/local/src/openresty-${ngx_version}/master
+cd "${ngx_master}"
 
 # - you can also build OpenResty without 3rd party modules
 # - remember about compiler and linker options
@@ -3304,12 +3335,11 @@ cd /usr/local/src/openresty-${ngx_version}/master
             --with-http_v2_module \
             --with-google_perftools_module \
             --with-luajit \
-            --with-openssl=${OPENSSL_DIRECTORY} \
-            --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl3 \
-            --with-pcre=${PCRE_DIRECTORY} \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+            --with-pcre=${PCRE_SRC} \
             --with-pcre-jit \
-            --with-zlib=${ZLIB_DIRECTORY} \
+            --with-zlib=${ZLIB_SRC} \
             --without-http-cache \
             --without-http_memcached_module \
             --without-http_redis2_module \
@@ -3328,19 +3358,19 @@ cd /usr/local/src/openresty-${ngx_version}/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/nginx-access-plus/src/c \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/ngx_http_substitutions_filter_module \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/nginx-module-vts \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/ngx_brotli \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_backtrace_module \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_debug_pool \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_debug_timer \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_http_upstream_check_module \
-            --add-module=/usr/local/src/openresty-${ngx_version}/modules/tengine/modules/ngx_http_footer_filter_module \
-            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/replace-filter-nginx-module \
-            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/nginx-module-sysguard \
-            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/openresty-${ngx_version}/modules/naxsi/naxsi_src \
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
             --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
@@ -3783,12 +3813,23 @@ Set the Tengine version (I use newest and stable release):
 export ngx_version="2.3.0"
 ```
 
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/tengine-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+```
+
 Create directories:
 
 ```bash
-mkdir /usr/local/src/tengine-${ngx_version}
-mkdir /usr/local/src/tengine-${ngx_version}/master
-mkdir /usr/local/src/tengine-${ngx_version}/modules
+for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+
+  mkdir "$i"
+
+done
 ```
 
 ###### Install or build dependencies
@@ -3805,55 +3846,60 @@ apt-get install zlib1g-dev
 PCRE:
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
-wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && tar xzvf pcre-8.42.tar.gz
+export pcre_version="8.42"
 
-cd /usr/local/src/pcre-8.42
+export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd "$PCRE_SRC"
 
 ./configure
 
 make -j2 && make test
 make install
-
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
-export PCRE_DIRECTORY="/usr/local/src/pcre-8.42"
 ```
 
 OpenSSL:
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
-wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz && tar xzvf openssl-1.1.1b.tar.gz
+export openssl_version="1.1.1b"
 
-cd /usr/local/src/openssl-1.1.1b
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
 
-./config --prefix=/usr/local/openssl-1.1.1b --openssldir=/usr/local/openssl-1.1.1b shared zlib no-ssl3 no-weak-ssl-ciphers
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers
 
 make -j2 && make test
 make install
 
-export OPENSSL_LIB="/usr/local/openssl-1.1.1b/lib"
-export OPENSSL_INC="/usr/local/openssl-1.1.1b/include"
-export OPENSSL_DIRECTORY="/usr/local/src/openssl-1.1.1b"
-
 # Setup PATH environment variables:
 cat > /etc/profile.d/openssl.sh << __EOF__
 #!/bin/sh
-export PATH=/usr/local/openssl-1.1.1b/bin:${PATH}
-export LD_LIBRARY_PATH=/usr/local/openssl-1.1.1b/lib:${LD_LIBRARY_PATH}
+export PATH=${OPENSSL_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
 __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-1.1.0g
-ln -s /usr/local/openssl-1.1.1b/bin/openssl /usr/bin/openssl
+mv /usr/bin/openssl /usr/bin/openssl-old
+ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-/usr/local/openssl-1.1.1b/lib
+${OPENSSL_DIR}/lib
 __EOF__
 ```
 
@@ -3861,21 +3907,22 @@ LuaJIT:
 
 ```bash
 # I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export LUAJIT_SRC="${ngx_src}/luajit2"
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For originall LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0
-#   cd /usr/local/src/luajit-2.0
+#   git clone http://luajit.org/git/luajit-2.0 luajit2
+#   cd "$LUAJIT_SRC"
 
 # For OpenResty's LuaJIT:
 git clone --depth 1 https://github.com/openresty/luajit2
 
-cd /usr/local/src/luajit2
+cd "$LUAJIT_SRC"
 
 make && make install
-
-export LUA_LIB="/usr/local/lib"
-export LUA_INC="/usr/local/include/luajit-2.1"
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
 ```
@@ -3885,11 +3932,11 @@ sregex:
   > Required for `replace-filter-nginx-module` module.
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
 
 git clone --depth 1 https://github.com/openresty/sregex
 
-cd /usr/local/src/sregex
+cd "${ngx_src}/sregex"
 
 make && make install
 ```
@@ -3899,17 +3946,18 @@ jemalloc:
   > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
 
 ```bash
-cd /usr/local/src/
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="/usr/local/src/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
 
 git clone --depth 1 https://github.com/jemalloc/jemalloc
 
-cd /usr/local/src/jemalloc
+cd "$JEMALLOC_SRC"
 
 ./autogen.sh
 
 make && make install
-
-export JEMALLOC_DIRECTORY="/usr/local/src/jemalloc"
 ```
 
 Update links and cache to the shared libraries for both types of installation:
@@ -3921,14 +3969,14 @@ ldconfig
 ###### Get Tengine sources
 
 ```bash
-cd /usr/local/src/tengine-${ngx_version}
+cd "${ngx_base}"
 
 wget https://tengine.taobao.org/download/tengine-${ngx_version}.tar.gz
 
 # or alternative:
 #   git clone --depth 1 https://github.com/alibaba/tengine master
 
-tar zxvf tengine-${ngx_version}.tar.gz -C /usr/local/src/tengine-${ngx_version}
+tar zxvf tengine-${ngx_version}.tar.gz -C "${ngx_master}"
 ```
 
 ###### Download 3rd party modules
@@ -3936,7 +3984,7 @@ tar zxvf tengine-${ngx_version}.tar.gz -C /usr/local/src/tengine-${ngx_version}
   > Not all modules from [this](#3rd-party-modules) section working properly with Tengine (e.g. `ndk_http_module` and other dependent on it).
 
 ```bash
-cd /usr/local/src/tengine/modules/
+cd "${ngx_modules}"
 
 for i in \
 https://github.com/openresty/echo-nginx-module \
@@ -3958,7 +4006,7 @@ mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 For `ngx_brotli`:
 
 ```bash
-cd /usr/local/src/tengine/modules/ngx_brotli
+cd "${ngx_modules}/ngx_brotli"
 
 git submodule update --init
 ```
@@ -3966,7 +4014,7 @@ git submodule update --init
 If you use NAXSI:
 
 ```bash
-cd /usr/local/src/tengine/modules/
+cd "${ngx_modules}"
 
 git clone --depth 1 https://github.com/nbs-system/naxsi
 ```
@@ -3974,7 +4022,7 @@ git clone --depth 1 https://github.com/nbs-system/naxsi
 ###### Build Tengine
 
 ```bash
-cd /usr/local/src/tengine/master
+cd "${ngx_master}"
 
 # - you can also build Tengine without 3rd party modules
 # - remember about compiler and linker options
@@ -4027,12 +4075,11 @@ cd /usr/local/src/tengine/master
             --with-http_upstream_session_sticky_module \
             --with-http_v2_module \
             --with-google_perftools_module \
-            --with-openssl=${OPENSSL_DIRECTORY} \
-            --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl3 \
-            --with-pcre=${PCRE_DIRECTORY} \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+            --with-pcre=${PCRE_SRC} \
             --with-pcre-jit \
-            --with-jemalloc=${JEMALLOC_DIRECTORY} \
+            --with-jemalloc=${JEMALLOC_SRC} \
             --without-http-cache \
             --without-http_memcached_module \
             --without-mail_pop3_module \
@@ -4041,17 +4088,17 @@ cd /usr/local/src/tengine/master
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
-            --add-module=/usr/local/src/tengine-${ngx_version}/modules/nginx-access-plus/src/c \
-            --add-module=/usr/local/src/tengine-${ngx_version}/modules/ngx_http_substitutions_filter_module \
-            --add-module=/usr/local/src/tengine-${ngx_version}/modules/nginx-module-vts \
-            --add-module=/usr/local/src/tengine-${ngx_version}/modules/ngx_brotli \
-            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/echo-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/headers-more-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/replace-filter-nginx-module \
-            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/delay-module \
-            --add-dynamic-module=/usr/local/src/tengine-${ngx_version}/modules/naxsi/naxsi_src \
-            --with-cc-opt='-I/usr/local/include -I/usr/local/openssl-1.1.1b/include -I/usr/local/include/luajit-2.1/ -I/usr/local/include/jemalloc -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' \
-            --with-ld-opt='-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie'
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
+            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
+            --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
 
 make -j2 && make test
 make install
