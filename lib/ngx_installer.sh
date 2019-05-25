@@ -823,11 +823,11 @@ function _create_user() {
   local _FUNCTION_ID="_create_user"
   local _STATE="0"
 
-  if [[ "$_DIST_VERSION" == "rhel" ]] ; then
+  if [[ "$_DIST_VERSION" == "debian" ]] ; then
 
     _f "1" "adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos 'nginx user' --group nginx"
 
-  elif [[ "$_DIST_VERSION" == "debian" ]] ; then
+  elif [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
     _f "1" "groupadd -r -g 920 nginx"
 
@@ -853,7 +853,7 @@ function _gen_modules() {
   # shellcheck disable=SC2045
   for _module in $(ls "${_mod_dir}/") ; do
 
-    _f "1" "echo -en \"load_module\t\t${_mod_dir}/$_module;\n\" >> \"${_mod_dir}.conf\""
+    echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
 
   done
 
