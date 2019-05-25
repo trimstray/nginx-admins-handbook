@@ -55,7 +55,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
 else
 
-  printf "Unsupported GNU/Linux distribution.\n"
+  printf "Unsupported GNU/Linux distribution.\\n"
   exit 1
 
 fi
@@ -72,6 +72,18 @@ fi
 readonly _rel="${_init_directory}"
 readonly _src="/usr/local/src"
 readonly _cfg="${_rel}/ngx_installer.conf"
+
+# shellcheck disable=SC1090
+if [[ -e "${_cfg}" ]] ; then
+
+  source "${_cfg}"
+
+else
+
+  printf "Not found configuration file: %s\\n" "$_cfg"
+  exit 1
+
+fi
 
 export _pcre_version="8.42"
 export _openssl_version="1.1.1b"
@@ -95,31 +107,6 @@ export OPENSSL_INC="${OPENSSL_DIR}/include"
 export LUAJIT_SRC="${_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
-# shellcheck disable=SC1090
-if [[ -e "${_cfg}" ]] ; then source "${_cfg}" ; fi
-
-if [[ -n "$OPENSSL_OPTIONS" ]] && \
-   [[ -n "$COMPILER_OPTIONS" ]] && \
-   [[ -n "$LINKER_OPTIONS" ]] ; then
-
-  # shellcheck disable=SC2178
-  __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
-  # shellcheck disable=SC2178
-  __CC_PARAMS=("\'${COMPILER_OPTIONS}\'")
-  # shellcheck disable=SC2178
-  __LD_PARAMS=("\'${LINKER_OPTIONS}\'")
-
-else
-
-  # shellcheck disable=SC2178
-  __OPENSSL_PARAMS=""
-  # shellcheck disable=SC2178
-  __CC_PARAMS=""
-  # shellcheck disable=SC2178
-  __LD_PARAMS=""
-
-fi
 
 # shellcheck disable=SC2155
 export _vcpu=$(nproc)
@@ -342,7 +329,7 @@ function _inst_nginx_dist() {
 
   else
 
-    printf "Unsupported NGINX distribution.\n"
+    printf "Unsupported NGINX distribution.\\n"
     exit 1
 
   fi
@@ -957,7 +944,7 @@ function _post_tasks() {
 
 function _test_config() {
 
-  local _FUNCTION_ID="_init_systemd"
+  local _FUNCTION_ID="_test_config"
   local _STATE="0"
 
   echo
@@ -1133,6 +1120,27 @@ function __main__() {
     _ngx_master="${_ngx_base}/master"
     _ngx_modules="${_ngx_base}/modules"
 
+    if [[ -z "$OPENSSL_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+
+    fi
+
+    if [[ -z "$COMPILER_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+    fi
+
+    if [[ -z "$LINKER_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+    fi
+
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
     if [[ -z "$ngx_version" ]] ; then ngx_version="1.15.8.1" ; fi
@@ -1141,6 +1149,27 @@ function __main__() {
     _ngx_base="${_ngx_src}/openresty-${ngx_version}"
     _ngx_master="${_ngx_base}/master"
     _ngx_modules="${_ngx_base}/modules"
+
+    if [[ -z "$OPENSSL_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+
+    fi
+
+    if [[ -z "$COMPILER_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+    fi
+
+    if [[ -z "$LINKER_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+    fi
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
@@ -1151,7 +1180,35 @@ function __main__() {
     _ngx_master="${_ngx_base}/master"
     _ngx_modules="${_ngx_base}/modules"
 
+    if [[ -z "$OPENSSL_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+
+    fi
+
+    if [[ -z "$COMPILER_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+
+    fi
+
+    if [[ -z "$LINKER_OPTIONS" ]] ; then
+
+      # shellcheck disable=SC2178
+      LINKER_OPTIONS="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+
+    fi
+
   fi
+
+  # shellcheck disable=SC2178
+  export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
+  # shellcheck disable=SC2178
+  export __CC_PARAMS=("\'${COMPILER_OPTIONS}\'")
+  # shellcheck disable=SC2178
+  export __LD_PARAMS=("\'${LINKER_OPTIONS}\'")
 
   printf '\n            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
   printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "$_DIST_VERSION"
@@ -1179,6 +1236,9 @@ function __main__() {
   printf '         LUAJIT_SRC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_SRC"
   printf '         LUAJIT_LIB : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_LIB"
   printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n\n' "$LUAJIT_INC"
+  printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}"
+  printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}"
+  printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__LD_PARAMS[@]}"
 
   printf '\e['${trgb_light}'m%s\e[m ' "(press any key to init) >>"
   read -r
@@ -1214,8 +1274,8 @@ function __main__() {
   _init_logrotate
   _init_systemd
 
-  _test_config
   _post_tasks
+  _test_config
 
   # ````````````````````````````````````````````````````````````````````````````
 
