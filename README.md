@@ -2324,11 +2324,13 @@ Look also on this short note about the system locations. That can be useful too:
 
 Installation from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
 
-This tool is located in `lib/autoinstaller.sh`. By default, it show prompt to confirm steps but you can disable this if you want:
+  > It supports Debian and RHEL like distributions.
+
+This tool is located in `lib/ngx_installer.sh`. Configuration file is in `lib/ngx_installer.conf`. By default, it show prompt to confirm steps but you can disable it if you want:
 
 ```bash
 cd lib/
-export NGX_PROMPT=0 ; ./autoinstaller.sh
+export NGX_PROMPT=0 ; bash ngx_installer.sh
 ```
 
 ##### Nginx package
