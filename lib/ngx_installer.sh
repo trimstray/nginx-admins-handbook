@@ -82,6 +82,7 @@ trgb_red_x="0;49;91"
 trgb_dark="2;2;38"
 trgb_light="1;1;36"
 trgb_bold_green="1;2;32"
+trgb_bold_yellow="1;33;40"
 trgb_bground_blue="1;37;44"
 trgb_bground_dark="1;37;40"
 
@@ -176,7 +177,7 @@ function _f() {
   _x_trgb_rbold="1;4;4;41"
   _x_trgb_gbold="1;4;4;42"
 
-  printf '\n»»»»»»»»» \e['${trgb_bold}'m%s\e[m\n\n' "from: ${_FUNCTION_ID}() -- INIT COMMAND:"
+  printf '\n»»»»»»»»» \e['${trgb_bold_yellow}'m%s\e[m\n\n' "from: ${_FUNCTION_ID}() -- INIT COMMAND:"
   printf '\e['${trgb_dark}'m%s\e[m\n\n' "$_cmd"
 
   # printf '=%.0s' {1..48}
@@ -607,247 +608,22 @@ function _build_nginx() {
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-    _f "1" "./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
-            --sbin-path=/usr/sbin/nginx \
-            --pid-path=/var/run/nginx.pid \
-            --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --http-client-body-temp-path=/var/cache/nginx/client_temp \
-            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-compat \
-            --with-debug \
-            --with-file-aio \
-            --with-threads \
-            --with-stream \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_degradation_module \
-            --with-http_geoip_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_image_filter_module \
-            --with-http_perl_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
-            --with-google_perftools_module \
-            --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt=${__OPENSSL_PARAMS[@]} \
-            --with-pcre=${PCRE_SRC} \
-            --with-pcre-jit \
-            --with-zlib=${ZLIB_SRC} \
-            --without-http-cache \
-            --without-http_memcached_module \
-            --without-mail_pop3_module \
-            --without-mail_imap_module \
-            --without-mail_smtp_module \
-            --without-http_fastcgi_module \
-            --without-http_scgi_module \
-            --without-http_uwsgi_module \
-            --add-module=${_ngx_modules}/ngx_devel_kit \
-            --add-module=${_ngx_modules}/encrypted-session-nginx-module \
-            --add-module=${_ngx_modules}/nginx-access-plus/src/c \
-            --add-module=${_ngx_modules}/ngx_http_substitutions_filter_module \
-            --add-module=${_ngx_modules}/nginx-sticky-module-ng \
-            --add-module=${_ngx_modules}/nginx-module-vts \
-            --add-module=${_ngx_modules}/ngx_brotli \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_backtrace_module \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_debug_pool \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
-            --add-dynamic-module=${_ngx_modules}/lua-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/set-misc-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/echo-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/headers-more-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/replace-filter-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/array-var-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/nginx-module-sysguard \
-            --add-dynamic-module=${_ngx_modules}/delay-module \
-            --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src \
+    _f "1" "./configure \
+            ${__BUILD_PARAMS[@]} \
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-    _f "1" "./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
-            --sbin-path=/usr/sbin/nginx \
-            --pid-path=/var/run/nginx.pid \
-            --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --http-client-body-temp-path=/var/cache/nginx/client_temp \
-            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-compat \
-            --with-debug \
-            --with-file-aio \
-            --with-threads \
-            --with-stream \
-            --with-stream_geoip_module \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_degradation_module \
-            --with-http_geoip_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_image_filter_module \
-            --with-http_perl_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_slice_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
-            --with-google_perftools_module \
-            --with-luajit \
-            --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt=${__OPENSSL_PARAMS[@]} \
-            --with-pcre=${PCRE_SRC} \
-            --with-pcre-jit \
-            --with-zlib=${ZLIB_SRC} \
-            --without-http-cache \
-            --without-http_memcached_module \
-            --without-http_redis2_module \
-            --without-http_redis_module \
-            --without-http_rds_json_module \
-            --without-http_rds_csv_module \
-            --without-lua_redis_parser \
-            --without-lua_rds_parser \
-            --without-lua_resty_redis \
-            --without-lua_resty_memcached \
-            --without-lua_resty_mysql \
-            --without-lua_resty_websocket \
-            --without-mail_pop3_module \
-            --without-mail_imap_module \
-            --without-mail_smtp_module \
-            --without-http_fastcgi_module \
-            --without-http_scgi_module \
-            --without-http_uwsgi_module \
-            --add-module=${_ngx_modules}/nginx-access-plus/src/c \
-            --add-module=${_ngx_modules}/ngx_http_substitutions_filter_module \
-            --add-module=${_ngx_modules}/nginx-module-vts \
-            --add-module=${_ngx_modules}/ngx_brotli \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_backtrace_module \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_debug_pool \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
-            --add-dynamic-module=${_ngx_modules}/replace-filter-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/nginx-module-sysguard \
-            --add-dynamic-module=${_ngx_modules}/delay-module \
-            --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src \
+    _f "1" "./configure \
+            ${__BUILD_PARAMS[@]} \
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-    _f "1" "./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
-            --sbin-path=/usr/sbin/nginx \
-            --pid-path=/var/run/nginx.pid \
-            --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --http-client-body-temp-path=/var/cache/nginx/client_temp \
-            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-compat \
-            --with-debug \
-            --with-file-aio \
-            --with-threads \
-            --with-stream \
-            --with-stream_geoip_module \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_degradation_module \
-            --with-http_geoip_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_image_filter_module \
-            --with-http_perl_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
-            --with-google_perftools_module \
-            --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt=${__OPENSSL_PARAMS[@]} \
-            --with-pcre=${PCRE_SRC} \
-            --with-pcre-jit \
-            --with-jemalloc=${JEMALLOC_SRC} \
-            --without-http-cache \
-            --without-http_memcached_module \
-            --without-mail_pop3_module \
-            --without-mail_imap_module \
-            --without-mail_smtp_module \
-            --without-http_fastcgi_module \
-            --without-http_scgi_module \
-            --without-http_uwsgi_module \
-            --without-http_upstream_keepalive_module \
-            --add-module=${_ngx_master}/modules/ngx_backtrace_module \
-            --add-module=${_ngx_master}/modules/ngx_debug_pool \
-            --add-module=${_ngx_master}/modules/ngx_debug_timer \
-            --add-module=${_ngx_master}/modules/ngx_http_footer_filter_module \
-            --add-module=${_ngx_master}/modules/ngx_http_lua_module \
-            --add-module=${_ngx_master}/modules/ngx_http_proxy_connect_module \
-            --add-module=${_ngx_master}/modules/ngx_http_reqstat_module \
-            --add-module=${_ngx_master}/modules/ngx_http_slice_module \
-            --add-module=${_ngx_master}/modules/ngx_http_sysguard_module \
-            --add-module=${_ngx_master}/modules/ngx_http_trim_filter_module \
-            --add-module=${_ngx_master}/modules/ngx_http_upstream_check_module \
-            --add-module=${_ngx_master}/modules/ngx_http_upstream_consistent_hash_module \
-            --add-module=${_ngx_master}/modules/ngx_http_upstream_dynamic_module \
-            --add-module=${_ngx_master}/modules/ngx_http_upstream_keepalive_module \
-            --add-module=${_ngx_master}/modules/ngx_http_upstream_session_sticky_module \
-            --add-module=${_ngx_master}/modules/ngx_http_user_agent_module \
-            --add-module=${_ngx_master}/modules/ngx_slab_stat \
-            --add-module=${_ngx_modules}/nginx-access-plus/src/c \
-            --add-module=${_ngx_modules}/ngx_http_substitutions_filter_module \
-            --add-module=${_ngx_modules}/nginx-module-vts \
-            --add-module=${_ngx_modules}/ngx_brotli \
-            --add-dynamic-module=${_ngx_modules}/echo-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/headers-more-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/replace-filter-nginx-module \
-            --add-dynamic-module=${_ngx_modules}/delay-module \
-            --add-dynamic-module=${_ngx_modules}/naxsi/naxsi_src \
+    _f "1" "./configure \
+            ${__BUILD_PARAMS[@]} \
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
@@ -1243,6 +1019,8 @@ function __main__() {
 
     LINKER_OPTIONS="$NGINX_LINKER_OPTIONS"
 
+    __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
+
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
     if [[ -z "$ngx_version" ]] ; then ngx_version="1.15.8.1" ; fi
@@ -1276,6 +1054,8 @@ function __main__() {
     fi
 
     LINKER_OPTIONS="$OPENRESTY_LINKER_OPTIONS"
+
+    __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
@@ -1311,6 +1091,8 @@ function __main__() {
 
     LINKER_OPTIONS="$TENGINE_LINKER_OPTIONS"
 
+    __BUILD_PARAMS=$(eval echo ${TENGINE_BUILD_PARAMS[@]})
+
   fi
 
   if [[ "${#__GCC_SSL[@]}" -eq 0 ]] ; then
@@ -1333,17 +1115,17 @@ function __main__() {
   printf '\n            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
   printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "${_DIST_VERSION} like"
   printf '         vcpu cores : \e['${trgb_dark}'m%s\e[m\n' "$_vcpu"
-  printf '       total memory : \e['${trgb_dark}'m%s\e[m\n' "$_pmem"
+  printf '       total memory : \e['${trgb_dark}'m%s\e[m\n\n' "$_pmem"
   printf '        config file : \e['${trgb_dark}'m%s\e[m\n' "$_cfg"
   printf '     init directory : \e['${trgb_dark}'m%s\e[m\n' "$_init_directory"
   printf '   source directory : \e['${trgb_dark}'m%s\e[m\n' "$_src"
   printf '    nginx directory : \e['${trgb_dark}'m%s\e[m\n' "$_ngx_master"
-  printf '  modules directory : \e['${trgb_dark}'m%s\e[m\n' "$_ngx_modules"
+  printf '  modules directory : \e['${trgb_dark}'m%s\e[m\n\n' "$_ngx_modules"
   printf '    package version : \e['${trgb_dark}'m%s, %s\e[m\n' "$_ngx_distr_str" "$ngx_version"
   printf '       pcre version : \e['${trgb_dark}'m%s\e[m\n' "$_pcre_version"
   printf '    openssl version : \e['${trgb_dark}'m%s\e[m\n' "$_openssl_version"
   printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "Cloudflare fork of zlib"
-  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "OpenResty's branch of LuaJIT 2"
+  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n\n' "OpenResty's branch of LuaJIT 2"
   printf '           PCRE_SRC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_SRC"
   printf '           PCRE_LIB : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_LIB"
   printf '           PCRE_INC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INC"
@@ -1356,11 +1138,12 @@ function __main__() {
   printf '        OPENSSL_INC : \e['${trgb_dark}'m%s\e[m\n' "$OPENSSL_INC"
   printf '         LUAJIT_SRC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_SRC"
   printf '         LUAJIT_LIB : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_LIB"
-  printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_INC"
+  printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n\n' "$LUAJIT_INC"
   printf '          MAKEFLAGS : \e['${trgb_dark}'m%s\e[m\n' "-j${_vcpu}"
   printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}" | tr -d "\\\'"
   printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
-  printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
+  printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
+  printf '     __BUILD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__BUILD_PARAMS[@]}"
 
   printf '\e['${trgb_light}'m%s\e[m ' "(press any key to init) >>"
   read -r
