@@ -4831,6 +4831,10 @@ worker_processes 3;
 
   > HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before because if the client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
 
+  > Also include the `ssl` parameter, required because browsers do not support HTTP/2 without encryption.
+
+  > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
+
 ###### Example
 
 ```bash
