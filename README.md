@@ -2838,7 +2838,7 @@ cd "${ngx_master}"
             --with-http_v2_module \
             --with-google_perftools_module \
             --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
             --with-pcre=${PCRE_SRC} \
             --with-pcre-jit \
             --with-zlib=${ZLIB_SRC} \
@@ -3374,7 +3374,7 @@ cd "${ngx_master}"
             --with-google_perftools_module \
             --with-luajit \
             --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
             --with-pcre=${PCRE_SRC} \
             --with-pcre-jit \
             --with-zlib=${ZLIB_SRC} \
@@ -4131,7 +4131,7 @@ cd "${ngx_master}"
             --with-http_v2_module \
             --with-google_perftools_module \
             --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
             --with-pcre=${PCRE_SRC} \
             --with-pcre-jit \
             --with-jemalloc=${JEMALLOC_SRC} \
