@@ -605,7 +605,7 @@ function _build_nginx() {
   cd "${_ngx_master}" || \
   ( printf "directory not exist: %s\\n" "$_ngx_master" ; exit 1 )
 
-  if [[ "$ngx_distr" -eq 1 ]] ; then
+  if [[ "$_ngx_distr" -eq 1 ]] ; then
 
     _f "1" "./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
@@ -683,7 +683,7 @@ function _build_nginx() {
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
-  elif [[ "$ngx_distr" -eq 2 ]] ; then
+  elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
     _f "1" "./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
@@ -766,7 +766,7 @@ function _build_nginx() {
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
-  elif [[ "$ngx_distr" -eq 3 ]] ; then
+  elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
     _f "1" "./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
