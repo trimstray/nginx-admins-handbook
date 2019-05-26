@@ -2613,7 +2613,7 @@ wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzv
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
-# Please run this add add compiler param:
+# Please run this and add as a compiler param:
 export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
 
 for _cc_opt in "${__GCC_SSL[@]}" ; do
@@ -3180,7 +3180,7 @@ wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzv
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
-# Please run this add add compiler param:
+# Please run this and add as a compiler param:
 export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
 
 for _cc_opt in "${__GCC_SSL[@]}" ; do
@@ -3916,7 +3916,7 @@ wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzv
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
-# Please run this add add compiler param:
+# Please run this and add as a compiler param:
 export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
 
 for _cc_opt in "${__GCC_SSL[@]}" ; do
