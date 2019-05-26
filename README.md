@@ -2455,6 +2455,8 @@ A short description of the modules that I used (not only) in this step-by-step t
 
 Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimize for speed and/or security, you should probably provide a few compiler flags. See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat.
 
+You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
+
 There are examples:
 
 ```bash
