@@ -442,7 +442,9 @@ function _inst_openssl() {
   cd "$OPENSSL_SRC" || \
   ( printf "directory not exist: %s\\n" "$OPENSSL_SRC" ; exit 1 )
 
-  _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS[@]}"
+  __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
+
+  _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
 
   _f "1" "make -j${_vcpu}"
   _f "1" "make install"
