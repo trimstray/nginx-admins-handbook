@@ -85,8 +85,25 @@ else
 
 fi
 
-export _pcre_version="8.42"
-export _openssl_version="1.1.1b"
+if [[ -z "$PCRE_LIBRARY" ]] ; then
+
+  export _pcre_version="8.42"
+
+else
+
+  export _pcre_version="$PCRE_LIBRARY"
+
+fi
+
+if [[ -z "$OPENSSL_LIBRARY" ]] ; then
+
+  export _openssl_version="1.1.1b"
+
+else
+
+  export _openssl_version="$OPENSSL_LIBRARY"
+
+fi
 
 export ngx_distr=""
 export ngx_version=""
@@ -1089,6 +1106,7 @@ function __main__() {
 
     printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.0"
     printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
+    printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
 
     _ngx_distr_str="NGINX"
 
@@ -1096,6 +1114,7 @@ function __main__() {
 
     printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
     printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
+    printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
 
     _ngx_distr_str="OpenResty"
 
@@ -1103,6 +1122,7 @@ function __main__() {
 
     printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
     printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
+    printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
 
     _ngx_distr_str="Tengine"
 
@@ -1211,7 +1231,7 @@ function __main__() {
   export __LD_PARAMS=("\'${LINKER_OPTIONS}\'")
 
   printf '\n            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
-  printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "$_DIST_VERSION"
+  printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "${_DIST_VERSION} like"
   printf '         vcpu cores : \e['${trgb_dark}'m%s\e[m\n' "$_vcpu"
   printf '       total memory : \e['${trgb_dark}'m%s\e[m\n' "$_pmem"
   printf '        config file : \e['${trgb_dark}'m%s\e[m\n' "$_cfg"
@@ -1222,7 +1242,8 @@ function __main__() {
   printf '    package version : \e['${trgb_dark}'m%s, %s\e[m\n' "$_ngx_distr_str" "$ngx_version"
   printf '       pcre version : \e['${trgb_dark}'m%s\e[m\n' "$_pcre_version"
   printf '    openssl version : \e['${trgb_dark}'m%s\e[m\n' "$_openssl_version"
-  printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "cloudflare version"
+  printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "Cloudflare fork of zlib"
+  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "OpenResty's branch of LuaJIT 2"
   printf '           PCRE_SRC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_SRC"
   printf '           PCRE_LIB : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_LIB"
   printf '           PCRE_INC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INC"
@@ -1235,10 +1256,11 @@ function __main__() {
   printf '        OPENSSL_INC : \e['${trgb_dark}'m%s\e[m\n' "$OPENSSL_INC"
   printf '         LUAJIT_SRC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_SRC"
   printf '         LUAJIT_LIB : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_LIB"
-  printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n\n' "$LUAJIT_INC"
-  printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}"
-  printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}"
-  printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__LD_PARAMS[@]}"
+  printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_INC"
+  printf '          MAKEFLAGS : \e['${trgb_dark}'m%s\e[m\n' "-j${_vcpu}"
+  printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}" | tr -d "\\\'"
+  printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
+  printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
 
   printf '\e['${trgb_light}'m%s\e[m ' "(press any key to init) >>"
   read -r
