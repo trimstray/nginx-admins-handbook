@@ -2,7 +2,7 @@
 
 # shellcheck shell=bash
 
-# shellcheck -s bash -e 1072,1094,2145 ngx_installer.sh
+# shellcheck -s bash -e 1072,1094,1107,2145 -x ngx_installer.conf ngx_installer.sh
 
 ### BEG SCRIPT INFO
 #
@@ -71,6 +71,7 @@ if [[ "$EUID" -ne 0 ]] ; then
 fi
 
 
+# Global variables.
 readonly _rel="${_init_directory}"
 readonly _src="/usr/local/src"
 readonly _cfg="${_rel}/ngx_installer.conf"
@@ -83,6 +84,13 @@ trgb_light="1;1;36"
 trgb_bold_green="1;2;32"
 trgb_bground_blue="1;37;44"
 trgb_bground_dark="1;37;40"
+
+# shellcheck disable=SC2155
+export _vcpu=$(nproc)
+# shellcheck disable=SC2155
+export _pmem=$(awk -F":" '$1~/MemTotal/{print $2}' /proc/meminfo | tr -d ' ')
+# shellcheck disable=SC2155
+export _openssl_gcc=""
 
 # shellcheck disable=SC1090
 if [[ -e "${_cfg}" ]] ; then
@@ -120,12 +128,14 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
 else
 
+  # shellcheck disable=SC2034
   export _pcre_version=$(curl -sL https://ftp.pcre.org/pub/pcre/ |
                          grep -Eo 'pcre\-[0-9.]+[0-9]' | \
                          sort -V | \
                          tail -n 1| \
                          cut -d '-' -f2-)
 
+  # shellcheck disable=SC2034
   export _openssl_version=$(curl -sL https://www.openssl.org/source/ |
                          grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
                          sort -V | \
@@ -153,11 +163,6 @@ export OPENSSL_INC="${OPENSSL_DIR}/include"
 export LUAJIT_SRC="${_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
-# shellcheck disable=SC2155
-export _vcpu=$(nproc)
-# shellcheck disable=SC2155
-export _pmem=$(awk -F":" '$1~/MemTotal/{print $2}' /proc/meminfo | tr -d ' ')
 
 
 # Global functions.
@@ -850,7 +855,7 @@ function _create_user() {
 
   if [[ "$_DIST_VERSION" == "debian" ]] ; then
 
-    _f "1" "adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos 'nginx user' --group nginx"
+    _f "1" "adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos \'nginx user\' --group nginx"
 
   elif [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
@@ -1271,7 +1276,7 @@ function __main__() {
     if [[ -z "$COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+      COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 
     fi
 
@@ -1284,8 +1289,18 @@ function __main__() {
 
   fi
 
-  # shellcheck disable=SC2178
-  export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
+  if [[ "${#__GCC_SSL[@]}" -eq 0 ]] ; then
+
+    # shellcheck disable=SC2178
+    export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
+
+  else
+
+    # shellcheck disable=SC2178
+    export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
+
+  fi
+
   # shellcheck disable=SC2178
   export __CC_PARAMS=("\'${COMPILER_OPTIONS}\'")
   # shellcheck disable=SC2178
@@ -1365,6 +1380,7 @@ function __main__() {
   return "$_STATE"
 
 }
+
 
 # We pass arguments to the __main__ function.
 # It is required if you want to run on arguments type $1, $2, ...
