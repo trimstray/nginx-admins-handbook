@@ -37,10 +37,12 @@
 #
 ### END SCRIPT INFO
 
+
 # The array that store call parameters.
 # shellcheck disable=SC2034
 __init_params=()
 __script_params=("$@")
+
 
 # Tasks for specific system version.
 if [[ "$OSTYPE" == "linux-gnu" ]] ; then
@@ -68,10 +70,19 @@ if [[ "$EUID" -ne 0 ]] ; then
 
 fi
 
-# Global variables.
+
 readonly _rel="${_init_directory}"
 readonly _src="/usr/local/src"
 readonly _cfg="${_rel}/ngx_installer.conf"
+
+trgb_bold="1;1;38"
+trgb_red="1;1;31"
+trgb_red_x="0;49;91"
+trgb_dark="2;2;38"
+trgb_light="1;1;36"
+trgb_bold_green="1;2;32"
+trgb_bground_blue="1;37;44"
+trgb_bground_dark="1;37;40"
 
 # shellcheck disable=SC1090
 if [[ -e "${_cfg}" ]] ; then
@@ -85,23 +96,41 @@ else
 
 fi
 
-if [[ -z "$PCRE_LIBRARY" ]] ; then
+if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
-  export _pcre_version="8.42"
+  if [[ -z "$PCRE_LIBRARY" ]] ; then
+
+    export _pcre_version="8.42"
+
+  else
+
+    export _pcre_version="$PCRE_LIBRARY"
+
+  fi
+
+  if [[ -z "$OPENSSL_LIBRARY" ]] ; then
+
+    export _openssl_version="1.1.1b"
+
+  else
+
+    export _openssl_version="$OPENSSL_LIBRARY"
+
+  fi
 
 else
 
-  export _pcre_version="$PCRE_LIBRARY"
+  export _pcre_version=$(curl -sL https://ftp.pcre.org/pub/pcre/ |
+                         grep -Eo 'pcre\-[0-9.]+[0-9]' | \
+                         sort -V | \
+                         tail -n 1| \
+                         cut -d '-' -f2-)
 
-fi
-
-if [[ -z "$OPENSSL_LIBRARY" ]] ; then
-
-  export _openssl_version="1.1.1b"
-
-else
-
-  export _openssl_version="$OPENSSL_LIBRARY"
+  export _openssl_version=$(curl -sL https://www.openssl.org/source/ |
+                         grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
+                         sort -V | \
+                         tail -n 1| \
+                         cut -d '-' -f2-)
 
 fi
 
@@ -130,14 +159,6 @@ export _vcpu=$(nproc)
 # shellcheck disable=SC2155
 export _pmem=$(awk -F":" '$1~/MemTotal/{print $2}' /proc/meminfo | tr -d ' ')
 
-trgb_bold="1;1;38"
-trgb_red="1;1;31"
-trgb_red_x="0;49;91"
-trgb_dark="2;2;38"
-trgb_light="1;1;36"
-trgb_bold_green="1;2;32"
-trgb_bground_blue="1;37;44"
-trgb_bground_dark="1;37;40"
 
 # Global functions.
 function _f() {
@@ -202,7 +223,7 @@ function _f() {
 
       if [[ "$_cnt" -ne 1 ]] ; then
 
-        printf '\n > \e['${trgb_light}'m%s\e[m: %s\n' "command failed, reinit" "$_cl"
+        printf '\n > \e['${trgb_red}'m%s\e[m: %s\n' "command failed, reinit" "$_cl"
 
       fi
 
@@ -1102,34 +1123,74 @@ function __main__() {
 
   printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set version of source package"
 
-  if [[ "$_ngx_distr" -eq 1 ]] ; then
+  if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
-    printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.0"
-    printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
-    printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
+    if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-    _ngx_distr_str="NGINX"
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.0"
+      printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
 
-  elif [[ "$_ngx_distr" -eq 2 ]] ; then
+      _ngx_distr_str="NGINX"
 
-    printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
-    printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
-    printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
+    elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-    _ngx_distr_str="OpenResty"
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
+      printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
 
-  elif [[ "$_ngx_distr" -eq 3 ]] ; then
+      _ngx_distr_str="OpenResty"
 
-    printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
-    printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
-    printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
+    elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-    _ngx_distr_str="Tengine"
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
+      printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
+
+      _ngx_distr_str="Tengine"
+
+    fi
+
+    printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
+    read -r ngx_version
+
+  else
+
+    if [[ "$_ngx_distr" -eq 1 ]] ; then
+
+      ngx_version=$(curl -sL https://nginx.org/download/ | \
+                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
+                    sort -V | \
+                    tail -n 1 | \
+                    cut -d '-' -f2-)
+
+      _ngx_distr_str="NGINX"
+
+    elif [[ "$_ngx_distr" -eq 2 ]] ; then
+
+      ngx_version=$(curl -sL https://openresty.org/en/download.html | \
+                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+\.[0-9]+' | \
+                    sort -V | \
+                    tail -n 1 | \
+                    cut -d '-' -f2-)
+
+      _ngx_distr_str="OpenResty"
+
+    elif [[ "$_ngx_distr" -eq 3 ]] ; then
+
+      ngx_version=$(curl -sL https://tengine.taobao.org/download.html | \
+                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
+                    sort -V | \
+                    tail -n 1 | \
+                    cut -d '-' -f2-)
+
+      _ngx_distr_str="Tengine"
+
+    fi
+
+    printf '  Latest for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "$_ngx_distr_str" "$ngx_version"
 
   fi
-
-  printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
-  read -r ngx_version
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
