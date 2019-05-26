@@ -368,7 +368,7 @@ function _inst_nginx_dist() {
     cd "${_ngx_base}" || \
     ( printf "directory not exist: %s\\n" "$_ngx_base" ; exit 1 )
 
-    _f "5" "git clone --depth 1 https://github.com/alibaba/tengine"
+    _f "5" "git clone --depth 1 https://github.com/alibaba/tengine master"
 
   else
 
