@@ -2472,7 +2472,7 @@ There are examples:
 
 ##### SystemTap
 
-  > SystemTap (`stap`) is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
+  > SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
 
   > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions.
 
@@ -2613,7 +2613,24 @@ wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzv
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers
+# Please run this add add compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
 make install
@@ -3163,7 +3180,24 @@ wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzv
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers
+# Please run this add add compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
 make install
@@ -3882,7 +3916,24 @@ wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzv
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers
+# Please run this add add compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
 make install
