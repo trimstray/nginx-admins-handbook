@@ -669,8 +669,8 @@ function _build_nginx() {
             --add-module=${_ngx_modules}/tengine/modules/ngx_backtrace_module \
             --add-module=${_ngx_modules}/tengine/modules/ngx_debug_pool \
             --add-module=${_ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-module=${_ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${_ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-dynamic-module=${_ngx_modules}/lua-nginx-module \
             --add-dynamic-module=${_ngx_modules}/set-misc-nginx-module \
             --add-dynamic-module=${_ngx_modules}/echo-nginx-module \
@@ -757,8 +757,8 @@ function _build_nginx() {
             --add-module=${_ngx_modules}/tengine/modules/ngx_backtrace_module \
             --add-module=${_ngx_modules}/tengine/modules/ngx_debug_pool \
             --add-module=${_ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${_ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-module=${_ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${_ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-dynamic-module=${_ngx_modules}/replace-filter-nginx-module \
             --add-dynamic-module=${_ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${_ngx_modules}/delay-module \
@@ -799,7 +799,6 @@ function _build_nginx() {
             --with-http_gunzip_module \
             --with-http_gzip_static_module \
             --with-http_image_filter_module \
-            --with-http_lua_module \
             --with-http_perl_module \
             --with-http_random_index_module \
             --with-http_realip_module \
@@ -807,7 +806,6 @@ function _build_nginx() {
             --with-http_ssl_module \
             --with-http_stub_status_module \
             --with-http_sub_module \
-            --with-http_sysguard_module \
             --with-http_v2_module \
             --with-google_perftools_module \
             --with-openssl=${OPENSSL_SRC} \
@@ -823,6 +821,24 @@ function _build_nginx() {
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
+            --without-http_upstream_keepalive_module \
+            --add-module=${_ngx_master}/modules/ngx_backtrace_module \
+            --add-module=${_ngx_master}/modules/ngx_debug_pool \
+            --add-module=${_ngx_master}/modules/ngx_debug_timer \
+            --add-module=${_ngx_master}/modules/ngx_http_footer_filter_module \
+            --add-module=${_ngx_master}/modules/ngx_http_lua_module \
+            --add-module=${_ngx_master}/modules/ngx_http_proxy_connect_module \
+            --add-module=${_ngx_master}/modules/ngx_http_reqstat_module \
+            --add-module=${_ngx_master}/modules/ngx_http_slice_module \
+            --add-module=${_ngx_master}/modules/ngx_http_sysguard_module \
+            --add-module=${_ngx_master}/modules/ngx_http_trim_filter_module \
+            --add-module=${_ngx_master}/modules/ngx_http_upstream_check_module \
+            --add-module=${_ngx_master}/modules/ngx_http_upstream_consistent_hash_module \
+            --add-module=${_ngx_master}/modules/ngx_http_upstream_dynamic_module \
+            --add-module=${_ngx_master}/modules/ngx_http_upstream_keepalive_module \
+            --add-module=${_ngx_master}/modules/ngx_http_upstream_session_sticky_module \
+            --add-module=${_ngx_master}/modules/ngx_http_user_agent_module \
+            --add-module=${_ngx_master}/modules/ngx_slab_stat \
             --add-module=${_ngx_modules}/nginx-access-plus/src/c \
             --add-module=${_ngx_modules}/ngx_http_substitutions_filter_module \
             --add-module=${_ngx_modules}/nginx-module-vts \
@@ -1209,19 +1225,23 @@ function __main__() {
 
     fi
 
-    if [[ -z "$COMPILER_OPTIONS" ]] ; then
+    if [[ -z "$NGINX_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      NGINX_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
     fi
 
-    if [[ -z "$LINKER_OPTIONS" ]] ; then
+    COMPILER_OPTIONS="$NGINX_COMPILER_OPTIONS"
+
+    if [[ -z "$NGINX_CLINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+      NGINX_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
     fi
+
+    LINKER_OPTIONS="$NGINX_LINKER_OPTIONS"
 
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
@@ -1239,19 +1259,23 @@ function __main__() {
 
     fi
 
-    if [[ -z "$COMPILER_OPTIONS" ]] ; then
+    if [[ -z "$OPENRESTY_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      OPENRESTY_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
     fi
 
-    if [[ -z "$LINKER_OPTIONS" ]] ; then
+    COMPILER_OPTIONS="$OPENRESTY_COMPILER_OPTIONS"
+
+    if [[ -z "$OPENRESTY_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+      OPENRESTY_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
     fi
+
+    LINKER_OPTIONS="$OPENRESTY_LINKER_OPTIONS"
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
@@ -1269,19 +1293,23 @@ function __main__() {
 
     fi
 
-    if [[ -z "$COMPILER_OPTIONS" ]] ; then
+    if [[ -z "$TENGINE_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+      TENGINE_COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 
     fi
 
-    if [[ -z "$LINKER_OPTIONS" ]] ; then
+    COMPILER_OPTIONS="$TENGINE_COMPILER_OPTIONS"
+
+    if [[ -z "$TENGINE_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      LINKER_OPTIONS="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+      TENGINE_LINKER_OPTIONS="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
 
     fi
+
+    LINKER_OPTIONS="$TENGINE_LINKER_OPTIONS"
 
   fi
 

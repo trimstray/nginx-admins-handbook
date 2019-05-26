@@ -2860,8 +2860,8 @@ cd "${ngx_master}"
             --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-dynamic-module=${ngx_modules}/lua-nginx-module \
             --add-dynamic-module=${ngx_modules}/set-misc-nginx-module \
             --add-dynamic-module=${ngx_modules}/echo-nginx-module \
@@ -3403,8 +3403,8 @@ cd "${ngx_master}"
             --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
             --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
             --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${ngx_modules}/delay-module \
@@ -4121,7 +4121,6 @@ cd "${ngx_master}"
             --with-http_ssl_module \
             --with-http_stub_status_module \
             --with-http_sub_module \
-            --with-http_sysguard_module \
             --with-http_v2_module \
             --with-google_perftools_module \
             --with-openssl=${OPENSSL_SRC} \
@@ -4137,6 +4136,24 @@ cd "${ngx_master}"
             --without-http_fastcgi_module \
             --without-http_scgi_module \
             --without-http_uwsgi_module \
+            --without-http_upstream_keepalive_module \
+            --add-module=${ngx_master}/modules/ngx_backtrace_module \
+            --add-module=${ngx_master}/modules/ngx_debug_pool \
+            --add-module=${ngx_master}/modules/ngx_debug_timer \
+            --add-module=${ngx_master}/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_master}/modules/ngx_http_lua_module \
+            --add-module=${ngx_master}/modules/ngx_http_proxy_connect_module \
+            --add-module=${ngx_master}/modules/ngx_http_reqstat_module \
+            --add-module=${ngx_master}/modules/ngx_http_slice_module \
+            --add-module=${ngx_master}/modules/ngx_http_sysguard_module \
+            --add-module=${ngx_master}/modules/ngx_http_trim_filter_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_consistent_hash_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_dynamic_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_keepalive_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_session_sticky_module \
+            --add-module=${ngx_master}/modules/ngx_http_user_agent_module \
+            --add-module=${ngx_master}/modules/ngx_slab_stat \
             --add-module=${ngx_modules}/nginx-access-plus/src/c \
             --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
             --add-module=${ngx_modules}/nginx-module-vts \
