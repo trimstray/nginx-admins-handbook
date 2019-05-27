@@ -2862,6 +2862,7 @@ cd "${ngx_master}"
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
             --add-dynamic-module=${ngx_modules}/lua-nginx-module \
             --add-dynamic-module=${ngx_modules}/set-misc-nginx-module \
             --add-dynamic-module=${ngx_modules}/echo-nginx-module \
@@ -3405,6 +3406,7 @@ cd "${ngx_master}"
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
             --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
             --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${ngx_modules}/delay-module \
