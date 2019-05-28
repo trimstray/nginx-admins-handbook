@@ -1454,25 +1454,25 @@ ln -s /usr/local/bin/goaccess /usr/bin/goaccess
 ###### Analyse log file and enable all recorded statistics
 
 ```bash
-goaccess -f /path/to/logfile -a
+goaccess -f access.log -a
 ```
 
 ###### Analyse compressed log file
 
 ```bash
-zcat /path/to/logfile.1.gz | goaccess -a -p /etc/goaccess/goaccess.conf
+zcat access.log.1.gz | goaccess -a -p /etc/goaccess/goaccess.conf
 ```
 
 ###### Analyse log file remotely
 
 ```bash
-ssh user@remote_host '/path/to/logfile' | goaccess -a
+ssh user@remote_host 'access.log' | goaccess -a
 ```
 
 ###### Analyse log file and generate html report
 
 ```bash
-goaccess -p /etc/goaccess/goaccess.conf -f /path/to/logfile --log-format=COMBINED -o /var/www/index.html
+goaccess -p /etc/goaccess/goaccess.conf -f access.log --log-format=COMBINED -o /var/www/index.html
 ```
 
 ##### Ngxtop
@@ -1480,19 +1480,19 @@ goaccess -p /etc/goaccess/goaccess.conf -f /path/to/logfile --log-format=COMBINE
 ###### Analyse log file
 
 ```bash
-ngxtop -l /path/to/logfile
+ngxtop -l access.log
 ```
 
 ###### Analyse log file and print requests with 4xx and 5xx
 
 ```bash
-ngxtop -l /path/to/logfile -i 'status >= 400' print request status
+ngxtop -l access.log -i 'status >= 400' print request status
 ```
 
 ###### Analyse log file remotely
 
 ```bash
-ssh user@remote_host tail -f /path/to/logfile | ngxtop -f combined
+ssh user@remote_host tail -f access.log | ngxtop -f combined
 ```
 
 #### Debugging
@@ -1503,47 +1503,101 @@ ssh user@remote_host tail -f /path/to/logfile | ngxtop -f combined
 nginx -V 2>&1 | grep -- 'http_geoip_module'
 ```
 
-###### See the top 5 IP addresses in a web server log
+###### Show the most requested IPs
 
 ```bash
-cut -d ' ' -f1 /path/to/logfile | sort | uniq -c | sort -nr | head -5 | nl
+# add this to the end for print header:
+#   ... | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "IP_ADDRESS"
+awk '{print $1}' access.log | sort | uniq -c | sort -nr
+```
+
+###### See the top 5 IP addresses
+
+```bash
+# add this to the end for print header:
+#   ... | xargs printf '%10s%10s%20s\n%10s%10s%20s\n' "NUM" "AMOUNT" "IP_ADDRESS"
+cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
+```
+
+###### Show the most requested urls
+
+```bash
+# add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
+awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
+```
+
+###### Show the most requested urls containing 'string'
+
+```bash
+# add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
+awk -F\" '($2 ~ "string"){print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
 ```
 
 ###### Analyse web server log and show only 2xx http codes
 
 ```bash
-tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [2]"
+tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [2]"
 ```
 
 ###### Analyse web server log and show only 5xx http codes
 
 ```bash
-tail -n 100 -f /path/to/logfile | grep "HTTP/[1-2].[0-1]\" [5]"
+tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
+```
+
+###### Show requests which result 502 and sort them by number per requests by url
+
+```bash
+awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -rn
+```
+
+###### Show requests which result 404 for php files and sort them by number per requests by url
+
+```bash
+awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -rn
+```
+
+###### Calculating amount of http response codes
+
+```bash
+# Not less than 1 minute:
+tail -2000 access.log | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M") '$4 ~ date' | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -rn
+
+# All from log file:
+tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -rn | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "HTTP_CODE"
 ```
 
 ###### Calculating requests per second
 
 ```bash
 # In real time:
-tail -F /path/to/logfile | pv -lr >/dev/null
+tail -F access.log | pv -lr >/dev/null
 
-awk '{print $4}' /path/to/logfile | uniq -c | sort -rn | head | tr -d "["
+awk '{print $4}' access.log | uniq -c | sort -rn | head | tr -d "["
 ```
 
 ###### Get range of dates in a web server log
 
 ```bash
 # 1)
-awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' /path/to/logfile
+awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' access.log
 
 # 2)
-awk '/'$(date -d "1 hours ago" "+%d\\/%b\\/%Y:%H:%M")'/,/'$(date "+%d\\/%b\\/%Y:%H:%M")'/ { print $0 }' /path/to/logfile
+awk '$4>"[05/Feb/2019:02:10" && $4<"[05/Feb/2019:08:20"' access.log
+```
+
+###### Get entries within last n hours
+
+```bash
+awk -v _date=`date -d'now-6 hours' +[%d/%b/%Y:%H:%M:%S` ' { if ($4 > _date) print $0}' access.log
 ```
 
 ###### Get line rates from web server log
 
 ```bash
-tail -F /path/to/logfile | pv -N RAW -lc 1>/dev/null
+tail -F access.log | pv -N RAW -lc 1>/dev/null
 ```
 
 ###### Trace network traffic for all Nginx processes
