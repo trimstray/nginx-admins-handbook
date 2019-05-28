@@ -307,6 +307,11 @@ Existing chapters:
     - [x] _Comments_
     - [x] _Variables & Strings_
     - [x] _Directives, Blocks, and Contexts_
+  - _Monitoring_
+    - [ ] _CollectD, Prometheus, and Grafana_
+      - [ ] _nginx-vts-exporter_
+    - [ ] _CollectD, InfluxDB, and Grafana_
+    - [ ] _Telegraf, InfluxDB, and Grafana_
   - _Debugging_
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
