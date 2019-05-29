@@ -79,6 +79,7 @@
   * [Log analyzers](#log-analyzers)
   * [Performance analyzers](#performance-analyzers)
   * [Benchmarking tools](#benchmarking-tools)
+  * [Debugging tools](#debugging-tools)
   * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
@@ -123,8 +124,9 @@
     * [Show requests which result 404 for php files and sort them by number per requests by url](#show-requests-which-result-404-for-php-files-and-sort-them-by-number-per-requests-by-url)
     * [Calculating amount of http response codes](#calculating-amount-of-http-response-codes)
     * [Calculating requests per second](#calculating-requests-per-second)
-    * [Get range of dates in a web server log](#get-range-of-dates-in-a-web-server-log)
+    * [Calculating requests per second with IP addresses](#calculating-requests-per-second-with-ip-addresses)
     * [Get entries within last n hours](#get-entries-within-last-n-hours)
+    * [Get entries between two timestamps (range of dates)](#get-entries-between-two-timestamps-range-of-dates)
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
@@ -164,10 +166,10 @@
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
+  * [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
-  * [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly)
   * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
@@ -287,6 +289,13 @@ New chapters:
 Existing chapters:
 
 <details>
+<summary><b>Introduction</b></summary><br>
+
+  - [ ] _All in one checklist as a quick introduction_
+
+</details>
+
+<details>
 <summary><b>Books</b></summary><br>
 
   - [x] _ModSecurity 3.0 and NGINX: Quick Start Guide_
@@ -303,6 +312,8 @@ Existing chapters:
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
+  - [x] _Debugging tools_
+    - [x] _htrace.sh_
 
 </details>
 
@@ -638,6 +649,12 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://jmeter.apache.org/"><b>JMeter™</b></a> - is designed to load test functional behavior and measure performance.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gatling.io/"><b>Gatling</b></a> - is a powerful open-source load and performance testing tool for web applications.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/locustio/locust"><b>locust</b></a> - is an easy-to-use, distributed, user load testing tool.<br>
+</p>
+
+##### Debugging tools
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/trimstray/htrace.sh"><b>htrace.sh</b></a> - is a simple Swiss Army knife for http/https troubleshooting and profiling.<br>
 </p>
 
 ##### Development
@@ -1540,7 +1557,7 @@ awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk -F\" '($2 ~ "string"){print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
+awk -F\" '($2 ~ "/string"){ print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
 ```
 
 ###### Analyse web server log and show only 2xx http codes
@@ -1558,12 +1575,16 @@ tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 ###### Show requests which result 502 and sort them by number per requests by url
 
 ```bash
+# add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
 awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -rn
 ```
 
 ###### Show requests which result 404 for php files and sort them by number per requests by url
 
 ```bash
+# add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
 awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -rn
 ```
 
@@ -1583,23 +1604,53 @@ tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort 
 # In real time:
 tail -F access.log | pv -lr >/dev/null
 
-awk '{print $4}' access.log | uniq -c | sort -rn | head | tr -d "["
+# add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "DATE"
+awk '{print $4 " " $1}' access.log | uniq -c | sort -rn | head | tr -d "["
 ```
 
-###### Get range of dates in a web server log
+###### Calculating requests per second with IP addresses
 
 ```bash
-# 1)
-awk '/05\/Feb\/2019:09:2.*/,/05\/Feb\/2019:09:5.*/' access.log
-
-# 2)
-awk '$4>"[05/Feb/2019:02:10" && $4<"[05/Feb/2019:08:20"' access.log
+# add this to the end for print header:
+#   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP"
+awk '{print $4 " " $1}' access.log | uniq -c | sort -rn | head | tr -d "["
 ```
 
 ###### Get entries within last n hours
 
 ```bash
-awk -v _date=`date -d'now-6 hours' +[%d/%b/%Y:%H:%M:%S` ' { if ($4 > _date) print $0}' access.log
+awk -v _date=`date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S` ' { if ($4 > _date) print $0}' access.log
+
+# date command shows output for specific locale, for prevent this you should set LANG variable:
+awk -v _date=$(LANG=en_us.utf-8 date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' access.log
+
+# or:
+export LANG=en_us.utf-8
+awk -v _date=$(date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' access.log
+```
+
+###### Get entries between two timestamps (range of dates)
+
+```bash
+# 1)
+awk '$4>"[05/Feb/2019:02:10" && $4<"[15/Feb/2019:08:20"' access.log
+
+# 2)
+# date command shows output for specific locale, for prevent this you should set LANG variable:
+awk -v _dateB=$(LANG=en_us.utf-8 date -d '10:20' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(LANG=en_us.utf-8 date -d '20:30' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+
+# or:
+export LANG=en_us.utf-8
+awk -v _dateB=$(date -d '10:20' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d '20:30' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+
+# 3)
+# date command shows output for specific locale, for prevent this you should set LANG variable:
+awk -v _dateB=$(LANG=en_us.utf-8 date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(LANG=en_us.utf-8 date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+
+# or:
+export LANG=en_us.utf-8
+awk -v _dateB=$(date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
 ```
 
 ###### Get line rates from web server log
@@ -4401,6 +4452,41 @@ http {
 - [nginx-config-formatter](https://github.com/1connect/nginx-config-formatter)
 - [Format and beautify nginx config files](https://github.com/vasilevich/nginxbeautifier)
 
+#### :beginner: Use `reload` method to change configurations on the fly
+
+###### Rationale
+
+  > Use the `reload` method of NGINX to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
+
+  > This ability of NGINX is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
+
+  > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
+
+###### Example
+
+```bash
+# 1)
+systemctl reload nginx
+
+# 2)
+service nginx reload
+
+# 3)
+/etc/init.d/nginx reload
+
+# 4)
+/usr/sbin/nginx -s reload
+
+# 5)
+kill -HUP $(cat /var/run/nginx.pid)
+# or
+kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+```
+
+###### External resources
+
+- [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
+
 #### :beginner: Separate `listen` directives for 80 and 443
 
 ###### Rationale
@@ -4542,41 +4628,6 @@ server {
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
 - [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
-
-#### :beginner: Use `reload` method to change configurations on the fly
-
-###### Rationale
-
-  > Use the `reload` method of NGINX to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
-
-  > This ability of NGINX is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
-
-  > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
-
-###### Example
-
-```bash
-# 1)
-systemctl reload nginx
-
-# 2)
-service nginx reload
-
-# 3)
-/etc/init.d/nginx reload
-
-# 4)
-/usr/sbin/nginx -s reload
-
-# 5)
-kill -HUP $(cat /var/run/nginx.pid)
-# or
-kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
-```
-
-###### External resources
-
-- [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
 
 #### :beginner: Use only one SSL config for specific listen directive
 
