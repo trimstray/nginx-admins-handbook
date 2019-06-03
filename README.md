@@ -2408,10 +2408,13 @@ apt-get install nginx
 
 #### Installation from source
 
-Before the beginning installation process please see two very important articles:
+The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
+
+Before the beginning installation process please read these important articles which describes exactly the entire installation process and the parameters using the `configure` command.
 
 - [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
 - [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
+- [Building nginx from Sources](https://nginx.org/en/docs/configure.html)
 
 In this chapter I'll present three (very similar) methods of installation. They relate to:
 
