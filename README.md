@@ -115,7 +115,7 @@
   * [Debugging](#debugging)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [Show the most requested IPs](#show-the-most-requested-ips)
-    * [See the top 5 IP addresses](#see-the-top-5-ip-addresses)
+    * [Show the top 5 IP addresses](#show-the-top-5-ip-addresses)
     * [Show the most requested urls](#show-the-most-requested-urls)
     * [Show the most requested urls containing 'string'](#show-the-most-requested-urls-containing-string)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
@@ -1536,7 +1536,7 @@ nginx -V 2>&1 | grep -- 'http_geoip_module'
 awk '{print $1}' access.log | sort | uniq -c | sort -nr
 ```
 
-###### See the top 5 IP addresses
+###### Show the top 5 IP addresses
 
 ```bash
 # add this to the end for print header:
@@ -1557,7 +1557,7 @@ awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk -F\" '($2 ~ "/string"){ print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
+awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
 ```
 
 ###### Analyse web server log and show only 2xx http codes
