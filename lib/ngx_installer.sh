@@ -1010,7 +1010,7 @@ function __main__() {
 
     COMPILER_OPTIONS="$NGINX_COMPILER_OPTIONS"
 
-    if [[ -z "$NGINX_CLINKER_OPTIONS" ]] ; then
+    if [[ -z "$NGINX_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
       NGINX_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
