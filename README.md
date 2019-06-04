@@ -112,6 +112,16 @@
       * [Analyse log file](#analyse-log-file)
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](##analyse-log-file-remotely-1)
+  * [Testing](#testing)
+    * [Send request to the specific ip:port and show response headers](#send-request-to-the-specific-ipport-and-show-response-headers)
+    * [Send request to the specific ip:port with http method, user-agent, follow redirects and show response headers](#send-request-to-the-specific-ipport-with-http-method-user-agent-follow-redirects-and-show-response-headers)
+    * [Send multiple requests to the specific ip:port](#send-multiple-requests-to-the-specific-ipport)
+    * [Testing SSL connection to the remote host](#testing-ssl-connection-to-the-remote-host)
+    * [Testing SSL connection to the remote host (with SNI support)](#testing-ssl-connection-to-the-remote-host-with-sni-support)
+    * [Testing SSL connection to the remote host with specific ssl version](#testing-ssl-connection-to-the-remote-host-with-specific-ssl-version)
+    * [Testing SSL connection to the remote host with specific ssl cipher](#testing-ssl-connection-to-the-remote-host-with-specific-ssl-cipher)
+    * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
+    * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
     * [Show information about the NGINX processes](#show-information-about-the-nginx-processes)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
@@ -132,7 +142,11 @@
     * [Trace network traffic for all Nginx processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a Nginx](#list-all-files-accessed-by-a-nginx)
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
-    - [Which worker processing current request](#which-worker-processing-current-request)
+    * [Which worker processing current request](#which-worker-processing-current-request)
+    * [Extract HTTP User Agent from HTTP request header](#extract-http-user-agent-from-http-request-header)
+    * [Capture only http requests](#capture-only-http-requests)
+    * [Capture only HTTP GET and POST packets](#capture-only-http-get-and-post-packets)
+    * [Capture requests to the specific server name and filter by source ip and destination port](#capture-requests-to-the-specific-server-name-and-filter-by-source-ip-and-destination-port)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -332,11 +346,25 @@ Existing chapters:
       - [ ] _nginx-vts-exporter_
     - [ ] _CollectD, InfluxDB, and Grafana_
     - [ ] _Telegraf, InfluxDB, and Grafana_
+  - _Testing_
+    - [x] _Send request to the specific ip:port and show response headers_
+    - [x] _Send request to the specific ip:port with http method, user-agent, follow redirects and show response headers_
+    - [x] _Send multiple requests to the specific ip:port_
+    - [x] _Testing SSL connection to the remote host_
+    - [x] _Testing SSL connection to the remote host (with SNI support)_
+    - [x] _Testing SSL connection to the remote host with specific ssl version_
+    - [x] _Testing SSL connection to the remote host with specific ssl cipher_
+    - [x] _TCP SYN flood Denial of Service attack_
+    - [x] _HTTP Denial of Service attack_
   - _Debugging_
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
     - [ ] _SystemTap cheatsheet_
     - [x] _Show information about the NGINX processes_
+    - [x] _Extract HTTP User Agent from HTTP request header_
+    - [x] _Capture only http requests_
+    - [x] _Capture only HTTP GET and POST packets_
+    - [x] _Capture requests to the specific server name and filter by source ip and destination port_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -1522,6 +1550,103 @@ ngxtop -l access.log -i 'status >= 400' print request status
 ssh user@remote_host tail -f access.log | ngxtop -f combined
 ```
 
+#### Testing
+
+###### Send request to the specific ip:port and show response headers
+
+```bash
+# 1)
+curl -Iks <scheme>://<server_name>:<port>
+
+# 2)
+http -p Hh <scheme>://<server_name>:<port>
+
+# 3)
+htrace.sh -u <scheme>://<server_name>:<port> -h
+```
+
+###### Send request to the specific ip:port with http method, user-agent, follow redirects and show response headers
+
+```bash
+# 1)
+curl -Iks --location -X GET -A "x-agent" <scheme>://<server_name>:<port>
+
+# 2)
+http -p Hh GET <scheme>://<server_name>:<port> User-Agent:x-agent --follow
+
+# 3)
+htrace.sh -u <scheme>://<server_name>:<port> -M GET --user-agent "x-agent" -h
+```
+
+###### Send multiple requests to the specific ip:port
+
+```bash
+# URL sequence substitution with a dummy query string:
+curl -ks <scheme>://<server_name>:<port>?[1-20]
+
+# With shell 'for' loop:
+for i in {1..20} ; do curl -ks <scheme>://<server_name>:<port> ; done
+```
+
+###### Testing SSL connection to the remote host
+
+```bash
+# 1)
+echo | openssl s_client -connect <server_name>:<port>
+
+# 2)
+gnutls-cli --disable-sni -p 443 <server_name>
+```
+
+###### Testing SSL connection to the remote host (with SNI support)
+
+```bash
+# 1)
+echo | openssl s_client -servername <server_name> -connect <server_name>:<port>
+
+# 2)
+gnutls-cli -p 443 <server_name>
+```
+
+###### Testing SSL connection to the remote host with specific ssl version
+
+```bash
+openssl s_client -tls1_2 -connect <server_name>:<port>
+```
+
+###### Testing SSL connection to the remote host with specific ssl cipher
+
+```bash
+openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
+```
+
+###### TCP SYN flood Denial of Service attack
+
+  > Only use this for testing the availability, performance and capacity planning of a web application of your environment.
+
+```bash
+hping3 -V -c 1000000 -d 120 -S -w 64 -p 80 --flood --rand-source <remote_host>
+```
+
+###### HTTP Denial of Service attack
+
+  > Only use this for testing the availability, performance and capacity planning of a web application of your environment.
+
+```bash
+# 1)
+slowhttptest -g -o http_dos.stats -H -c 1000 -i 15 -r 200 -t GET -x 24 -p 3 -u <scheme>://<server_name>/index.php
+
+slowhttptest -g -o http_dos.stats -B -c 5000 -i 5 -r 200 -t POST -l 180 -x 5 -u <scheme>://<server_name>/service/login
+
+# 2)
+pip3 install slowloris
+slowloris <server_name>
+
+# 3)
+git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
+./goldeneye.py  <scheme>://<server_name> -w 150 -s 75 -m GET
+```
+
 #### Debugging
 
 ###### Show information about the NGINX processes
@@ -1531,19 +1656,6 @@ with `ps`:
 ```bash
 ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx|[P]ID)'
 ```
-
-- `pid` - show process ID number
-- `ppid` - show parent process ID number
-- `gid` - show effective group ID number
-- `user` - show effective user name
-- `etime` - show elapsed time since the process was started
-- `%cpu` - show cpu utilization of the process
-- `%mem` - show ratio of the process’s resident set size to the physical memory on the machine
-- `vsz` - show virtual memory size of the process, includes all memory that the process can access, memory that is swapped out, memory that is allocated, but not used, and memory that is from shared libraries
-- `rss` - show the non-swapped physical memory that a task has used, show how much memory is allocated to that process and is in RAM. It does include memory from shared libraries as long as the pages from those libraries are actually in memory, and all stack and heap memory
-- `wchan` - show the name of the kernel function in which the process is sleeping, a "-" if the process is running, or a "\*" if the process is multi-threaded
-- `ni` - show nice value, this ranges from 19 (nicest) to -20 (not nice to others)
-- `command` - show name of executable with the args
 
 with `top`:
 
@@ -1733,6 +1845,35 @@ watch -n 0.1 "awk '/Host:/ {print \"pid: \" \$1 \", \" \"host: \" \$6}' /tmp/ngi
 Every 0.1s: awk '/Host:/ {print "pid: " $1 ", " "host: " $6}' /tmp/nginx-req.trace | sed 's/\\r\\n.*//'
 
 pid: 31863, host: example.com
+```
+
+###### Extract HTTP User Agent from HTTP request header
+
+```bash
+tcpdump -ei eth0 -nn -A -s1500 -l | grep "User-Agent:"
+```
+
+###### Capture only http requests
+
+```bash
+ngrep -d eth0 -qt 'HTTP' 'tcp'
+```
+
+###### Capture only HTTP GET and POST packets
+
+```bash
+# 1)
+tcpdump -ei eth0 -s 0 -A -vv \
+'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420' or 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x504f5354'
+
+# 2)
+tcpdump -ei eth0 -s 0 -v -n -l | egrep -i "POST /|GET /|Host:"
+```
+
+###### Capture requests to the specific server name and filter by source ip and destination port
+
+```bash
+ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
 ```
 
 #### Shell aliases
