@@ -113,6 +113,7 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](##analyse-log-file-remotely-1)
   * [Debugging](#debugging)
+    * [Show information about the NGINX processes](#show-information-about-the-nginx-processes)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [Show the most requested IPs](#show-the-most-requested-ips)
     * [Show the top 5 IP addresses](#show-the-top-5-ip-addresses)
@@ -335,6 +336,7 @@ Existing chapters:
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
     - [ ] _SystemTap cheatsheet_
+    - [x] _Show information about the NGINX processes_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -1522,6 +1524,33 @@ ssh user@remote_host tail -f access.log | ngxtop -f combined
 
 #### Debugging
 
+###### Show information about the NGINX processes
+
+with `ps`:
+
+```bash
+ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx|[P]ID)'
+```
+
+- `pid` - show process ID number
+- `ppid` - show parent process ID number
+- `gid` - show effective group ID number
+- `user` - show effective user name
+- `etime` - show elapsed time since the process was started
+- `%cpu` - show cpu utilization of the process
+- `%mem` - show ratio of the process’s resident set size to the physical memory on the machine
+- `vsz` - show virtual memory size of the process, includes all memory that the process can access, memory that is swapped out, memory that is allocated, but not used, and memory that is from shared libraries
+- `rss` - show the non-swapped physical memory that a task has used, show how much memory is allocated to that process and is in RAM. It does include memory from shared libraries as long as the pages from those libraries are actually in memory, and all stack and heap memory
+- `wchan` - show the name of the kernel function in which the process is sleeping, a "-" if the process is running, or a "\*" if the process is multi-threaded
+- `ni` - show nice value, this ranges from 19 (nicest) to -20 (not nice to others)
+- `command` - show name of executable with the args
+
+with `top`:
+
+```bash
+top -p $(pgrep -d , nginx)
+```
+
 ###### Check if the module has been compiled
 
 ```bash
@@ -2410,7 +2439,7 @@ apt-get install nginx
 
 The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
 
-Before the beginning installation process please read these important articles which describes exactly the entire installation process and the parameters using the `configure` command.
+Before the beginning installation process please read these important articles which describes exactly the entire installation process and the parameters using the `configure` command:
 
 - [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
 - [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
