@@ -281,9 +281,12 @@
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
 
-To increase your knowledge, read **[Getting Started](https://www.nginx.com/resources/wiki/start/)** and **[NGINX Documentation](https://nginx.org/en/docs/)**.
+To increase your knowledge about NGINX please read:
 
-In addition, I would like to recommend two great docs about HTTP:
+- **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
+- **[NGINX Documentation](https://nginx.org/en/docs/)**
+
+In addition, I would like to recommend two great documents about HTTP:
 
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
 - **[HTTP - Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
