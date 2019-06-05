@@ -163,9 +163,9 @@
     * [Create a temporary static backend](#create-a-temporary-static-backend)
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Generate private key without passphrase](#generate-private-key-without-passphrase)
-    * [Generate csr](#generate-csr)
-    * [Generate csr (metadata from exist certificate)](#generate-csr-metadata-from-exist-certificate)
-    * [Generate csr with -config param](#generate-csr-with--config-param)
+    * [Generate CSR](#generate-csr)
+    * [Generate CSR (metadata from exist certificate)](#generate-csr-metadata-from-exist-certificate)
+    * [Generate CSR with -config param](#generate-csr-with--config-param)
     * [Generate private key and csr](#generate-private-key-and-csr)
     * [Generate ECDSA private key](#generate-ecdsa-private-key)
     * [Generate private key with csr (ECC)](#generate-private-key-with-csr-ecc)
@@ -394,9 +394,9 @@ Existing chapters:
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
     - [x] _Generate private key without passphrase_
-    - [x] _Generate csr_
-    - [x] _Generate csr (metadata from exist certificate)_
-    - [x] _Generate csr with -config param_
+    - [x] _Generate CSR_
+    - [x] _Generate CSR (metadata from exist certificate)_
+    - [x] _Generate CSR with -config param_
     - [x] _Generate private key and csr_
     - [x] _Generate ECDSA private key_
     - [x] _Generate private key with csr (ECC)_
@@ -2594,21 +2594,21 @@ httpd.serve_forever()
 openssl genrsa -out ${_fd} ${_len} )
 ```
 
-###### Generate csr
+###### Generate CSR
 
 ```bash
 ( _fd="private.key" ; _fd_csr="request.csr" ; \
 openssl req -out ${_fd_csr} -new -key ${_fd} )
 ```
 
-###### Generate csr (metadata from exist certificate)
+###### Generate CSR (metadata from exist certificate)
 
 ```bash
 ( _fd="private.key" ; _fd_csr="request.csr" ; _fd_crt="cert.crt" ; \
 openssl x509 -x509toreq -in ${_fd_crt} -out ${_fd_csr} -signkey ${_fd} )
 ```
 
-###### Generate csr with -config param
+###### Generate CSR with -config param
 
 ```bash
 ( _fd="private.key" ; _fd_csr="request.csr" ; \
