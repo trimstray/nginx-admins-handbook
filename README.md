@@ -113,6 +113,8 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](##analyse-log-file-remotely-1)
   * [Testing](#testing)
+    * [Create a temporary static backend](#create-a-temporary-static-backend)
+    * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Send request and show response headers](#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
@@ -1552,6 +1554,55 @@ ssh user@remote_host tail -f access.log | ngxtop -f combined
 
 #### Testing
 
+  > You can change combinations and parameters of these commands.
+
+###### Create a temporary static backend
+
+Python 3.x:
+
+```bash
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Python 2.x:
+
+```bash
+python -m SimpleHTTPServer 8000
+```
+
+###### Create a temporary static backend with SSL support
+
+Python 3.x:
+
+```bash
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import ssl
+
+httpd = HTTPServer(('localhost', 4443), BaseHTTPRequestHandler)
+
+httpd.socket = ssl.wrap_socket (httpd.socket,
+        keyfile="path/to/key.pem",
+        certfile='path/to/cert.pem', server_side=True)
+
+httpd.serve_forever()
+```
+
+Python 2.x:
+
+```bash
+import BaseHTTPServer, SimpleHTTPServer
+import ssl
+
+httpd = BaseHTTPServer.HTTPServer(('localhost', 4443),
+        SimpleHTTPServer.SimpleHTTPRequestHandler)
+
+httpd.socket = ssl.wrap_socket (httpd.socket,
+        keyfile="path/tp/key.pem",
+        certfile='path/to/cert.pem', server_side=True)
+
+httpd.serve_forever()
+```
+
 ###### Send request and show response headers
 
 ```bash
@@ -1648,6 +1699,8 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 ```
 
 #### Debugging
+
+  > You can change combinations and parameters of these commands.
 
 ###### Show information about the NGINX processes
 
