@@ -113,13 +113,13 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](##analyse-log-file-remotely-1)
   * [Testing](#testing)
-    * [Send request to the remote host and show response headers](#send-request-to-the-remote-host-and-show-response-headers)
-    * [Send request to the remote host with http method, user-agent, follow redirects and show response headers](#send-request-to-the-remote-host-with-http-method-user-agent-follow-redirects-and-show-response-headers)
-    * [Send multiple requests to the remote host](#send-multiple-requests-to-the-remote-host)
-    * [Testing SSL connection to the remote host](#testing-ssl-connection-to-the-remote-host)
-    * [Testing SSL connection to the remote host (with SNI support)](#testing-ssl-connection-to-the-remote-host-with-sni-support)
-    * [Testing SSL connection to the remote host with specific version](#testing-ssl-connection-to-the-remote-host-with-specific-version)
-    * [Testing SSL connection to the remote host with specific cipher](#testing-ssl-connection-to-the-remote-host-with-specific-cipher)
+    * [Send request and show response headers](#send-request-and-show-response-headers)
+    * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
+    * [Send multiple requests](#send-multiple-requests)
+    * [Testing SSL connection](#testing-ssl-connection)
+    * [Testing SSL connection (with SNI support)](#testing-ssl-connection-with-sni-support)
+    * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
+    * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -143,10 +143,10 @@
     * [List all files accessed by a NGINX](#list-all-files-accessed-by-a-nginx)
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
     * [Which worker processing current request](#which-worker-processing-current-request)
-    * [Extract http User Agent from the http request header](#extract-http-user-agent-from-the-http-request-header)
-    * [Capture only http requests](#capture-only-http-requests)
+    * [Capture only http packets](#capture-only-http-packets)
+    * [Extract http User Agent from the http packets](#extract-http-user-agent-from-the-http-packets)
     * [Capture only http GET and POST packets](#capture-only-http-get-and-post-packets)
-    * [Capture requests to the remote host and filter by source ip and destination port](#capture-requests-to-the-remote-host-and-filter-by-source-ip-and-destination-port)
+    * [Capture requests and filter by source ip and destination port](#capture-requests-and-filter-by-source-ip-and-destination-port)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -347,13 +347,13 @@ Existing chapters:
     - [ ] _CollectD, InfluxDB, and Grafana_
     - [ ] _Telegraf, InfluxDB, and Grafana_
   - _Testing_
-    - [x] _Send request to the remote host and show response headers_
-    - [x] _Send request to the remote host with http method, user-agent, follow redirects and show response headers_
-    - [x] _Send multiple requests to the remote host_
-    - [x] _Testing SSL connection to the remote host_
-    - [x] _Testing SSL connection to the remote host (with SNI support)_
-    - [x] _Testing SSL connection to the remote host with specific version_
-    - [x] _Testing SSL connection to the remote host with specific cipher_
+    - [x] _Send request and show response headers_
+    - [x] _Send request with http method, user-agent, follow redirects and show response headers_
+    - [x] _Send multiple requests_
+    - [x] _Testing SSL connection_
+    - [x] _Testing SSL connection (with SNI support)_
+    - [x] _Testing SSL connection with specific SSL version_
+    - [x] _Testing SSL connection with specific cipher_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -361,10 +361,10 @@ Existing chapters:
     - [x] _Which worker processing current request_
     - [ ] _SystemTap cheatsheet_
     - [x] _Show information about the NGINX processes_
-    - [x] _Extract http User Agent from the http request header_
-    - [x] _Capture only http requests_
+    - [x] _Extract http User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
-    - [x] _Capture requests to the remote host and filter by source ip and destination port_
+    - [x] _Capture only http packets_
+    - [x] _Capture requests and filter by source ip and destination port_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -1552,7 +1552,7 @@ ssh user@remote_host tail -f access.log | ngxtop -f combined
 
 #### Testing
 
-###### Send request to the remote host and show response headers
+###### Send request and show response headers
 
 ```bash
 # 1)
@@ -1565,7 +1565,7 @@ http -p Hh <scheme>://<server_name>:<port>
 htrace.sh -u <scheme>://<server_name>:<port> -h
 ```
 
-###### Send request to the remote host with http method, user-agent, follow redirects and show response headers
+###### Send request with http method, user-agent, follow redirects and show response headers
 
 ```bash
 # 1)
@@ -1578,7 +1578,7 @@ http -p Hh GET <scheme>://<server_name>:<port> User-Agent:x-agent --follow
 htrace.sh -u <scheme>://<server_name>:<port> -M GET --user-agent "x-agent" -h
 ```
 
-###### Send multiple requests to the remote host
+###### Send multiple requests
 
 ```bash
 # URL sequence substitution with a dummy query string:
@@ -1588,7 +1588,7 @@ curl -ks <scheme>://<server_name>:<port>?[1-20]
 for i in {1..20} ; do curl -ks <scheme>://<server_name>:<port> ; done
 ```
 
-###### Testing SSL connection to the remote host
+###### Testing SSL connection
 
 ```bash
 # 1)
@@ -1598,7 +1598,7 @@ echo | openssl s_client -connect <server_name>:<port>
 gnutls-cli --disable-sni -p 443 <server_name>
 ```
 
-###### Testing SSL connection to the remote host (with SNI support)
+###### Testing SSL connection (with SNI support)
 
 ```bash
 # 1)
@@ -1608,13 +1608,13 @@ echo | openssl s_client -servername <server_name> -connect <server_name>:<port>
 gnutls-cli -p 443 <server_name>
 ```
 
-###### Testing SSL connection to the remote host with specific version
+###### Testing SSL connection with specific SSL version
 
 ```bash
 openssl s_client -tls1_2 -connect <server_name>:<port>
 ```
 
-###### Testing SSL connection to the remote host with specific cipher
+###### Testing SSL connection with specific cipher
 
 ```bash
 openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
@@ -1847,16 +1847,16 @@ Every 0.1s: awk '/Host:/ {print "pid: " $1 ", " "host: " $6}' /tmp/nginx-req.tra
 pid: 31863, host: example.com
 ```
 
-###### Extract http User Agent from the http request header
-
-```bash
-tcpdump -ei eth0 -nn -A -s1500 -l | grep "User-Agent:"
-```
-
-###### Capture only http requests
+###### Capture only http packets
 
 ```bash
 ngrep -d eth0 -qt 'HTTP' 'tcp'
+```
+
+###### Extract http User Agent from the http packets
+
+```bash
+tcpdump -ei eth0 -nn -A -s1500 -l | grep "User-Agent:"
 ```
 
 ###### Capture only http GET and POST packets
@@ -1870,7 +1870,7 @@ tcpdump -ei eth0 -s 0 -A -vv \
 tcpdump -ei eth0 -s 0 -v -n -l | egrep -i "POST /|GET /|Host:"
 ```
 
-###### Capture requests to the remote host and filter by source ip and destination port
+###### Capture requests and filter by source ip and destination port
 
 ```bash
 ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
