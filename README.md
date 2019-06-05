@@ -113,8 +113,6 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](##analyse-log-file-remotely-1)
   * [Testing](#testing)
-    * [Create a temporary static backend](#create-a-temporary-static-backend)
-    * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Send request and show response headers](#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
@@ -161,6 +159,25 @@
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Rewrite POST request with payload to external endpoint](#rewrite-post-request-with-payload-to-external-endpoint)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
+  * [Other snippets](#other-snippets)
+    * [Create a temporary static backend](#create-a-temporary-static-backend)
+    * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
+    * [Generate private key without passphrase](#generate-private-key-without-passphrase)
+    * [Generate csr](#generate-csr)
+    * [Generate csr (metadata from exist certificate)](#generate-csr-metadata-from-exist-certificate)
+    * [Generate csr with -config param](#generate-csr-with--config-param)
+    * [Generate private key and csr](#generate-private-key-and-csr)
+    * [Generate ECDSA private key](#generate-ecdsa-private-key)
+    * [Generate private key with csr (ECC)](#generate-private-key-with-csr-ecc)
+    * [Generate self-signed certificate](#generate-self-signed-certificate)
+    * [Generate self-signed certificate from existing private key](#generate-self-signed-certificate-from-existing-private-key)
+    * [Generate self-signed certificate from existing private key and csr](#generate-self-signed-certificate-from-existing-private-key-and-csr)
+    * [Generate multidomain certificate](#generate-multidomain-certificate)
+    * [Generate wildcard certificate](#generate-wildcard-certificate)
+    * [Generate certificate with 4096 bit private key](#generate-certificate-with-4096-bit-private-key)
+    * [Convert DER to PEM](#convert-der-to-pem)
+    * [Convert PEM to DER](#convert-pem-to-der)
+    * [Checking whether the private key and the certificate match](#checking-whether-the-private-key-and-the-certificate-match)
   * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
@@ -373,6 +390,25 @@ Existing chapters:
     - [x] _Rewrite POST request with payload to external endpoint_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
+  - _Other snippets_
+    - [x] _Create a temporary static backend_
+    - [x] _Create a temporary static backend with SSL support_
+    - [x] _Generate private key without passphrase_
+    - [x] _Generate csr_
+    - [x] _Generate csr (metadata from exist certificate)_
+    - [x] _Generate csr with -config param_
+    - [x] _Generate private key and csr_
+    - [x] _Generate ECDSA private key_
+    - [x] _Generate private key with csr (ECC)_
+    - [x] _Generate self-signed certificate_
+    - [x] _Generate self-signed certificate from existing private key_
+    - [x] _Generate self-signed certificate from existing private key and csr_
+    - [x] _Generate multidomain certificate_
+    - [x] _Generate wildcard certificate_
+    - [x] _Generate certificate with 4096 bit private key_
+    - [x] _Convert DER to PEM_
+    - [x] _Convert PEM to DER_
+    - [x] _Checking whether the private key and the certificate match_
   - _Installation from source_
     - [x] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add compiler and linker options_
@@ -1556,53 +1592,6 @@ ssh user@remote_host tail -f access.log | ngxtop -f combined
 
   > You can change combinations and parameters of these commands.
 
-###### Create a temporary static backend
-
-Python 3.x:
-
-```bash
-python3 -m http.server 8000 --bind 127.0.0.1
-```
-
-Python 2.x:
-
-```bash
-python -m SimpleHTTPServer 8000
-```
-
-###### Create a temporary static backend with SSL support
-
-Python 3.x:
-
-```bash
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import ssl
-
-httpd = HTTPServer(('localhost', 4443), BaseHTTPRequestHandler)
-
-httpd.socket = ssl.wrap_socket (httpd.socket,
-        keyfile="path/to/key.pem",
-        certfile='path/to/cert.pem', server_side=True)
-
-httpd.serve_forever()
-```
-
-Python 2.x:
-
-```bash
-import BaseHTTPServer, SimpleHTTPServer
-import ssl
-
-httpd = BaseHTTPServer.HTTPServer(('localhost', 4443),
-        SimpleHTTPServer.SimpleHTTPRequestHandler)
-
-httpd.socket = ssl.wrap_socket (httpd.socket,
-        keyfile="path/tp/key.pem",
-        certfile='path/to/cert.pem', server_side=True)
-
-httpd.serve_forever()
-```
-
 ###### Send request and show response headers
 
 ```bash
@@ -2546,6 +2535,204 @@ location / {
   }
 
 }
+```
+
+#### Other snippets
+
+###### Create a temporary static backend
+
+Python 3.x:
+
+```bash
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Python 2.x:
+
+```bash
+python -m SimpleHTTPServer 8000
+```
+
+###### Create a temporary static backend with SSL support
+
+Python 3.x:
+
+```bash
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import ssl
+
+httpd = HTTPServer(('localhost', 4443), BaseHTTPRequestHandler)
+
+httpd.socket = ssl.wrap_socket (httpd.socket,
+        keyfile="path/to/key.pem",
+        certfile='path/to/cert.pem', server_side=True)
+
+httpd.serve_forever()
+```
+
+Python 2.x:
+
+```bash
+import BaseHTTPServer, SimpleHTTPServer
+import ssl
+
+httpd = BaseHTTPServer.HTTPServer(('localhost', 4443),
+        SimpleHTTPServer.SimpleHTTPRequestHandler)
+
+httpd.socket = ssl.wrap_socket (httpd.socket,
+        keyfile="path/tp/key.pem",
+        certfile='path/to/cert.pem', server_side=True)
+
+httpd.serve_forever()
+```
+
+###### Generate private key without passphrase
+
+```bash
+# _len: 2048, 4096
+( _fd="private.key" ; _len="4096" ; \
+openssl genrsa -out ${_fd} ${_len} )
+```
+
+###### Generate csr
+
+```bash
+( _fd="private.key" ; _fd_csr="request.csr" ; \
+openssl req -out ${_fd_csr} -new -key ${_fd} )
+```
+
+###### Generate csr (metadata from exist certificate)
+
+```bash
+( _fd="private.key" ; _fd_csr="request.csr" ; _fd_crt="cert.crt" ; \
+openssl x509 -x509toreq -in ${_fd_crt} -out ${_fd_csr} -signkey ${_fd} )
+```
+
+###### Generate csr with -config param
+
+```bash
+( _fd="private.key" ; _fd_csr="request.csr" ; \
+openssl req -new -sha256 -key ${_fd} -out ${_fd_csr} \
+-config <(
+cat <<-EOF
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+req_extensions = req_ext
+distinguished_name = dn
+
+[ dn ]
+C=<two-letter ISO abbreviation for your country>
+ST=<state or province where your organization is legally located>
+L=<city where your organization is legally located>
+O=<legal name of your organization>
+OU=<section of the organization>
+CN=<fully qualified domain name>
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = <fully qualified domain name>
+DNS.2 = <next domain>
+DNS.3 = <next domain>
+EOF
+))
+```
+
+###### Generate private key and csr
+
+```bash
+( _fd="private.key" ; _fd_csr="request.csr" ; _len="4096" ; \
+openssl req -out ${_fd_csr} -new -newkey rsa:${_len} -nodes -keyout ${_fd} )
+```
+
+###### Generate ECDSA private key
+
+```bash
+# _curve: prime256v1, secp521r1, secp384r1
+( _fd="private.key" ; _curve="prime256v1" ; \
+openssl ecparam -out ${_fd} -name ${_curve} -genkey )
+
+# _curve: X25519
+( _fd="private.key" ; _curve="x25519" ; \
+openssl genpkey -algorithm ${_curve} -out ${_fd} )
+```
+
+###### Generate private key with csr (ECC)
+
+```bash
+# _curve: prime256v1, secp521r1, secp384r1
+( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; \
+openssl ecparam -out ${_fd} -name ${_curve} -genkey ; \
+openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
+```
+
+###### Generate self-signed certificate
+
+```bash
+# _len: 2048, 4096
+( _fd="domain.key" ; _fd_out="domain.crt" ; _len="4096" ; _days="365" ; \
+openssl req -newkey rsa:${_len} -nodes \
+-keyout ${_fd} -x509 -days ${_days} -out ${_fd_out} )
+```
+
+###### Generate self-signed certificate from existing private key
+
+```bash
+# _len: 2048, 4096
+( _fd="domain.key" ; _fd_out="domain.crt" ; _days="365" ; \
+openssl req -key ${_fd} -nodes \
+-x509 -days ${_days} -out ${_fd_out} )
+```
+
+###### Generate self-signed certificate from existing private key and csr
+
+```bash
+# _len: 2048, 4096
+( _fd="domain.key" ; _fd_csr="domain.csr" ; _fd_out="domain.crt" ; _days="365" ; \
+openssl x509 -signkey ${_fd} -nodes \
+-in ${_fd_csr} -req -days ${_days} -out ${_fd_out} )
+```
+
+###### Generate multidomain certificate
+
+```bash
+certbot certonly -d example.com -d www.example.com
+```
+
+###### Generate wildcard certificate
+
+```bash
+certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example.com
+```
+
+###### Generate certificate with 4096 bit private key
+
+```bash
+certbot certonly -d example.com -d www.example.com --rsa-key-size 4096
+```
+
+###### Convert DER to PEM
+
+```bash
+( _fd_der="cert.crt" ; _fd_pem="cert.pem" ; \
+openssl x509 -in ${_fd_der} -inform der -outform pem -out ${_fd_pem} )
+```
+
+###### Convert PEM to DER
+
+```bash
+( _fd_der="cert.crt" ; _fd_pem="cert.pem" ; \
+openssl x509 -in ${_fd_pem} -outform der -out ${_fd_der} )
+```
+
+###### Checking whether the private key and the certificate match
+
+```bash
+(openssl rsa -noout -modulus -in private.key | openssl md5 ; \
+openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 ```
 
 #### Installation from prebuilt packages
