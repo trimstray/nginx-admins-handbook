@@ -164,7 +164,7 @@
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Generate private key without passphrase](#generate-private-key-without-passphrase)
     * [Generate CSR](#generate-csr)
-    * [Generate CSR (metadata from exist certificate)](#generate-csr-metadata-from-exist-certificate)
+    * [Generate CSR (metadata from existing certificate)](#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](#generate-csr-with--config-param)
     * [Generate private key and csr](#generate-private-key-and-csr)
     * [Generate ECDSA private key](#generate-ecdsa-private-key)
@@ -175,9 +175,14 @@
     * [Generate multidomain certificate](#generate-multidomain-certificate)
     * [Generate wildcard certificate](#generate-wildcard-certificate)
     * [Generate certificate with 4096 bit private key](#generate-certificate-with-4096-bit-private-key)
+    * [Generate DH Param key](#generate-dh-param-key)
     * [Convert DER to PEM](#convert-der-to-pem)
     * [Convert PEM to DER](#convert-pem-to-der)
-    * [Checking whether the private key and the certificate match](#checking-whether-the-private-key-and-the-certificate-match)
+    * [Verification of the private key](#verification-of-the-private-key)
+    * [Verification of the public key](#verification-of-the-public-key)
+    * [Verification of the certificate](#verification-of-the-certificate)
+    * [Verification of the CSR](#verification-of-the-csr)
+    * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
   * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
@@ -403,7 +408,7 @@ Existing chapters:
     - [x] _Create a temporary static backend with SSL support_
     - [x] _Generate private key without passphrase_
     - [x] _Generate CSR_
-    - [x] _Generate CSR (metadata from exist certificate)_
+    - [x] _Generate CSR (metadata from existing certificate)_
     - [x] _Generate CSR with -config param_
     - [x] _Generate private key and csr_
     - [x] _Generate ECDSA private key_
@@ -414,9 +419,14 @@ Existing chapters:
     - [x] _Generate multidomain certificate_
     - [x] _Generate wildcard certificate_
     - [x] _Generate certificate with 4096 bit private key_
+    - [x] _Generate DH Param key_
     - [x] _Convert DER to PEM_
     - [x] _Convert PEM to DER_
-    - [x] _Checking whether the private key and the certificate match_
+    - [x] _Verification of the private key_
+    - [x] _Verification of the public key_
+    - [x] _Verification of the certificate_
+    - [x] _Verification of the CSR_
+    - [x] _Check whether the private key and the certificate match_
   - _Installation from source_
     - [x] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add compiler and linker options_
@@ -2609,7 +2619,7 @@ openssl genrsa -out ${_fd} ${_len} )
 openssl req -out ${_fd_csr} -new -key ${_fd} )
 ```
 
-###### Generate CSR (metadata from exist certificate)
+###### Generate CSR (metadata from existing certificate)
 
 ```bash
 ( _fd="private.key" ; _fd_csr="request.csr" ; _fd_crt="cert.crt" ; \
@@ -2649,7 +2659,7 @@ EOF
 ))
 ```
 
-###### Generate private key and csr
+###### Generate private key and CSR
 
 ```bash
 ( _fd="private.key" ; _fd_csr="request.csr" ; _len="4096" ; \
@@ -2668,7 +2678,7 @@ openssl ecparam -out ${_fd} -name ${_curve} -genkey )
 openssl genpkey -algorithm ${_curve} -out ${_fd} )
 ```
 
-###### Generate private key with csr (ECC)
+###### Generate private key with CSR (ECC)
 
 ```bash
 # _curve: prime256v1, secp521r1, secp384r1
@@ -2722,6 +2732,12 @@ certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example
 certbot certonly -d example.com -d www.example.com --rsa-key-size 4096
 ```
 
+###### Generate DH Param key
+
+```bash
+openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
+```
+
 ###### Convert DER to PEM
 
 ```bash
@@ -2736,7 +2752,41 @@ openssl x509 -in ${_fd_der} -inform der -outform pem -out ${_fd_pem} )
 openssl x509 -in ${_fd_pem} -outform der -out ${_fd_der} )
 ```
 
-###### Checking whether the private key and the certificate match
+###### Verification of the private key
+
+```bash
+( _fd="private.key" ; \
+openssl rsa -noout -text -in ${_fd} )
+```
+
+###### Verification of the public key
+
+```bash
+# 1)
+( _fd="public.key" ; \
+openssl pkey -noout -text -pubin -in ${_fd} )
+
+# 2)
+( _fd="private.key" ; \
+openssl rsa -inform PEM -noout -in ${_fd} &> /dev/null ; \
+if [ $? = 0 ] ; then echo -en "OK\n" ; fi )
+```
+
+###### Verification of the certificate
+
+```bash
+( _fd="certificate.crt" ; # format: pem, cer, crt \
+openssl x509 -noout -text -in ${_fd} )
+```
+
+###### Verification of the CSR
+
+```bash
+( _fd_csr="request.csr" ; \
+openssl req -text -noout -in ${_fd_csr} )
+```
+
+###### Check whether the private key and the certificate match
 
 ```bash
 (openssl rsa -noout -modulus -in private.key | openssl md5 ; \
