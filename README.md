@@ -249,6 +249,7 @@
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
+- **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
@@ -328,6 +329,7 @@ If this project is useful and important for you, you can bring **positive energy
 
 New chapters:
 
+- [ ] **Reverse Proxy**
 - [ ] **Caching**
 - [ ] **3rd party modules**
 - [ ] **Web Application Firewall**
@@ -468,6 +470,13 @@ Existing chapters:
   - [x] _Use only the latest supported OpenSSL version_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
+
+</details>
+
+<details>
+<summary><b>Reverse Proxy</b></summary><br>
+
+  - [ ] _Setting up FastCGI proxying_
 
 </details>
 
@@ -805,13 +814,18 @@ _In this ebook you will learn:_
 
 For prebuilt NGINX package paths can be as follows:
 
-- `/etc/nginx` - is the default configuration root for the NGINX service
-- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the NGINX services. Includes the top-level http block and all other configuration files
+- `/etc/nginx` - is the default configuration root for the NGINX service<br>
+  * other locations: `/usr/local/etc/nginx`, `/usr/local/nginx/conf`
+- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the NGINX services, includes the top-level http block and all other configuration contexts and files<br>
+  * other locations: `/usr/local/etc/nginx/nginx.conf`, `/usr/local/nginx/conf/nginx.conf`
 - `/usr/share/nginx` - is the default root directory for requests, contains `html` directory and basic static files
 - `/var/log/nginx` - is the default log (access and error log) location for NGINX
-- `/var/lib/nginx` or `/var/cache/nginx` - is the default temporary files location for NGINX
-- `/etc/nginx/conf`, `/etc/nginx/conf.d` or `/etc/nginx/sites-enabled` - contains custom/vhosts configuration files
-- `/usr/local/nginx/logs` or `/var/run/nginx` - contains information about NGINX process(es)
+- `/var/cache/nginx` - is the default temporary files location for NGINX<br>
+  * other locations: `/var/lib/nginx`
+- `/etc/nginx/conf` - contains custom/vhosts configuration files<br>
+  * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled`
+- `/var/run/nginx` - contains information about NGINX process(es)<br>
+  * other locations: `/usr/local/nginx/logs`
 
 #### Nginx commands
 
@@ -844,7 +858,7 @@ Lines containing directives must end with a `;` or NGINX will fail to load the c
 
 Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
 
-  > There are some directives that do not support variables, e.g. `access_log`, or `error_log`.
+  > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
 
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
 
@@ -873,9 +887,11 @@ Configuration options in NGINX are called directives. We have four types of dire
   try_files $uri $uri/ /test/index.html;
   ```
 
-Directives are organized into groups known as blocks or contexts. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
+Directives are organized into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
+
+  > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
 
 The NGINX contexts can be layered within one another so NGINX provides a level of inheritance. The NGINX contexts structure looks like this:
 
@@ -2996,7 +3012,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed o
 
 Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
 
-I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules.
+I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules (they are not support dynamic linking).
 
 You can download external modules from:
 
@@ -4927,11 +4943,15 @@ http {
 
 ###### Rationale
 
-  > Use the `reload` method of NGINX to achieve a graceful reload of the configuration without stopping the server and dropping any packets.
+  > Use the `reload` method of NGINX to achieve a graceful reload of the configuration without stopping the server and dropping any packets. This function of the master process allows to rolls back the changes and continues to work with stable and old working configuration.
 
   > This ability of NGINX is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
 
+  > Master process checks the syntax validity of the new configuration and tries to apply all changes. If this procedure has been accomplished, the master process create new worker processes and sends shutdown messages to old. Old workers stops accepting new connections after received a shut down signal but current requests are still processing. After that, the old workers exit.
+
   > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
+
+  > To stop NGINX processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
 
   From NGINX documentation:
 
@@ -6466,6 +6486,12 @@ send_timeout 10s;
 
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
+
+# Reverse Proxy
+
+One of the frequent uses of NGINX is setting it up as a proxy server.
+
+To be completed.
 
 # Load Balancing
 
