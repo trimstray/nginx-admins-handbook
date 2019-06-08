@@ -5405,7 +5405,8 @@ log_format debug-level-1
                 '$request_id $pid $msec $request_time '
                 '$upstream_connect_time $upstream_header_time '
                 '$upstream_response_time "$request_filename" $request_length '
-                '$request_completion $connection $connection_requests';
+                '$request_completion $connection $connection_requests '
+                '"$http_user_agent"';
 
 log_format debug-level-2
                 '$remote_addr - $remote_user [$time_local] '
@@ -5415,7 +5416,8 @@ log_format debug-level-2
                 '$upstream_connect_time $upstream_header_time '
                 '$upstream_response_time "$request_filename" $request_length '
                 '$request_completion $connection $connection_requests '
-                '$remote_addr $remote_port $server_addr $server_port';
+                '$remote_addr $remote_port $server_addr $server_port '
+                '$http_x_forwarded_for "$http_referer" "$http_user_agent"';
 ```
 
 ###### External resources
