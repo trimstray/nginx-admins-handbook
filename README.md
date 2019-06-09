@@ -295,7 +295,7 @@ To increase your knowledge about the NGINX please read:
 In addition, I would like to recommend two great articles focuses on the concept of the HTTP protocol:
 
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
-- **Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
+- **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
 
 ## General disclaimer
 
