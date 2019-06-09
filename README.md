@@ -287,19 +287,19 @@
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
 
-To increase your knowledge about NGINX please read:
+To increase your knowledge about the NGINX please read:
 
 - **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
 
-In addition, I would like to recommend two great documents about HTTP:
+In addition, I would like to recommend two great articles focuses on the concept of the HTTP protocol:
 
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
-- **[HTTP - Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
+- **Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
 
 ## General disclaimer
 
-It is not official document. This is rather a collection of rules, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
+This handbook is a collection of rules, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
 
 I've never found one guide that covers the most important things about NGINX, and around NGINX. Of course, we have [official documentation](https://nginx.org/en/docs/) - it's probably the best place for us.
 
@@ -307,7 +307,7 @@ I think, however, there hasn't been a truly in-depth cheatsheet which describe a
 
 Throughout this handbook you will explore the many features of NGINX and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX.
 
-If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for system and web administrators. I hope you enjoy it.
+If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I hope you enjoy it.
 
 Before you start remember about the two most important things:
 
