@@ -5418,6 +5418,15 @@ log_format debug-level-2
                 '$request_completion $connection $connection_requests '
                 '$remote_addr $remote_port $server_addr $server_port '
                 '$http_x_forwarded_for "$http_referer" "$http_user_agent"';
+
+# Debug log format for SSL:
+log_format debug-ssl-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '$request_time '
+                '$tls_version $ssl_protocol $ssl_cipher';
 ```
 
 ###### External resources
