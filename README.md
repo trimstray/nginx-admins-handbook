@@ -1723,7 +1723,7 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
 #### Debugging
 
-  > You can change combinations and parameters of these commands.
+  > You can change combinations and parameters of these commands. When carrying out the analysis, remember about the NGINX [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
 ###### Show information about the NGINX processes
 
@@ -5788,7 +5788,7 @@ location ~ /\.(?!well-known\/) {
 
 ###### External resources
 
-- [Hidden directories and files as a source of sensitive information about web application](https://medium.com/@_bl4de/hidden-directories-and-files-as-a-source-of-sensitive-information-about-web-application-84e5c534e5ad) - not available at this time
+- [Hidden directories and files as a source of sensitive information about web application](https://github.com/bl4de/research/tree/master/hidden_directories_leaks)
 
 #### :beginner: Hide Nginx version number
 
