@@ -1054,6 +1054,16 @@ There are also great resources (and comparisons) about them:
 - [I/O Multiplexing using epoll and kqueue System Calls](https://austingwalters.com/io-multiplexing/)
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
 
+Look also at this libevent benchmark:
+
+<p align="center">
+  <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/libevent-benchmark.jpg" alt="libevent-benchmark">
+  </a>
+</p>
+
+<sup><i>This infographic comes from [daemonforums - An interesting benchmark (kqueue vs. epoll)](http://daemonforums.org/showthread.php?t=2124).</i></sup>
+
 You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 
 - [FreeBSD NGINX Performance](https://devinteske.com/wp/freebsd-nginx-performance/)
