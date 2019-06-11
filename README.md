@@ -281,13 +281,13 @@
 
 <br>
 
-  > Before you start playing with **NGINX** please read this **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
+  > Before you start playing with NGINX please read an official **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
 **Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
-NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
+NGINX is a fast, light-weight and powerful web server that can also be used as a fast HTTP reverse proxy, reliable load balancer and high performance caching server. Generally it provides the core of complete web stacks.
 
-These essential documents should be the main source of knowledge for us:
+These essential documents should be the main source of knowledge for you:
 
 - **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
@@ -501,7 +501,7 @@ Many of these recipes have been applied to the configuration of my private websi
 
   > Read about SSL Labs grading [here](https://community.qualys.com/docs/DOC-6321-ssl-labs-grading-2018) (SSL Labs Grading 2018).
 
-  > _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old clients)_.
+  > Short SSL Labs grades explanation: _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old clients)_.
 
 I finally got **A+** grade and following scores:
 
@@ -868,21 +868,21 @@ Variables in quoted strings are expanded normally unless the `$` is escaped.
 
   > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
 
-Configuration options in NGINX are called directives. We have four types of directives in NGINX:
+Configuration options are called directives. We have four types of directives in NGINX:
 
-- standard directive - one value per context, for example:
+- standard directive - one value per context:
   ```bash
   worker_connections 512;
   ```
-- array directive - multiple values per context, for example:
+- array directive - multiple values per context:
   ```bash
   error_log /var/log/nginx/localhost/localhost-error.log warn;
   ```
-- action directive - something which does not just configure, for example:
+- action directive - something which does not just configure:
   ```bash
   rewrite ^(.*)$ /msie/$1 break;
   ```
- - `try_files` directive, for example:
+ - `try_files` directive:
   ```bash
   try_files $uri $uri/ /test/index.html;
   ```
@@ -1005,7 +1005,7 @@ NGINX has **one master process** and **one or more worker processes**.
 
 The main purposes of the master process is to read and evaluate configuration files, as well as maintain the worker processes (respawn when a worker dies), handle signals, notify workers, opens log files, and, of course binding to ports.
 
-Master process should be started as **root** user, because this will allow NGINX to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
+Master process should be started as root user, because this will allow NGINX to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
 The worker processes do the actual processing of requests and get commands from master process. They runs in an event loop, handle network connections, read and write content to disk, and communicate with upstream servers. These are spawned by the master process, and the user and group will as specified (unprivileged).
 
@@ -1034,6 +1034,30 @@ There’s no need to control the worker processes yourself. However, they suppor
 #### Connection processing
 
 NGINX supports a variety of connection processing methods which depends on the platform used. For more information please see [connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+
+In general there are four types of event multiplexing:
+
+- `select` - is anachronism and not recommended but installed on all platforms as a fallback
+- `poll` - is anachronism and not recommended
+- `epoll` - recommend if you're using GNU/Linux
+- `kqueue` - recommend if you're using BSD (is technically superior to `epoll`)
+
+There are also great resources (and comparisons) about them:
+
+- [poll vs select vs event-based](https://daniel.haxx.se/docs/poll-vs-select.html)
+- [select/poll/epoll: practical difference for system architects](http://www.ulduzsoft.com/2014/01/select-poll-epoll-practical-difference-for-system-architects/)
+- [Scalable Event Multiplexing: epoll vs. kqueue](https://people.eecs.berkeley.edu/~sangjin/2012/12/21/epoll-vs-kqueue.html)
+- [Async IO on Linux: select, poll, and epoll](https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/)
+- [A brief history of select(2)](https://idea.popcount.org/2016-11-01-a-brief-history-of-select2/)
+- [Select is fundamentally broken](https://idea.popcount.org/2017-01-06-select-is-fundamentally-broken/)
+- [Epoll is fundamentally broken](https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/)
+- [I/O Multiplexing using epoll and kqueue System Calls](https://austingwalters.com/io-multiplexing/)
+- [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
+
+You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
+
+- [FreeBSD NGINX Performance](https://devinteske.com/wp/freebsd-nginx-performance/)
+- [Why did Netflix use NGINX and FreeBSD to build their own CDN?](https://www.youtube.com/watch?v=KP_bKvXkoC4)
 
 Okay, so how many simultaneous connections can be processed by NGINX?
 
@@ -1081,7 +1105,7 @@ You may feel lost now (me too...) so I let myself put this great preview:
 
 #### Server blocks logic
 
-  > NGINX does have **Server Blocks** (like a Virtual Hosts is an Apache) that use the `listen` and `server_name` directives to bind to tcp sockets.
+  > NGINX does have **server blocks** (like a virtual hosts is an Apache) that use `listen` and `server_name` directives to bind to tcp sockets.
 
 Before start reading this chapter you should know what regular expressions are and how they works. I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
