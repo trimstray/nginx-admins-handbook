@@ -58,7 +58,7 @@
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
-  * [Printable high-res hardening checklists](#printable-high-res-hardening-checklists)
+  * [Printable high-res hardening cheatsheet](#printable-high-res-hardening-cheatsheet)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -495,7 +495,7 @@ Other stuff:
 
 Many of these recipes have been applied to the configuration of my private website.
 
-  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png) version of printable high-res hardening checklist.
+  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png) version of printable high-res hardening cheatsheet.
 
 ### SSL Labs
 
@@ -528,9 +528,9 @@ I also got the highest note from Mozilla:
   </a>
 </p>
 
-## Printable high-res hardening checklists
+## Printable high-res hardening cheatsheet
 
-I created printable posters with hardening checklists (High-Res 5000x8200) based on these recipes:
+I created printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
@@ -539,7 +539,7 @@ I created printable posters with hardening checklists (High-Res 5000x8200) based
   > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
 
 <p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls12-100p.png" alt="nginx-hardening-checklist-100p" width="75%" height="75%">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="75%" height="75%">
 </p>
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
@@ -547,7 +547,7 @@ I created printable posters with hardening checklists (High-Res 5000x8200) based
   > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
 
 <p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-checklist-tls13.png" alt="nginx-hardening-checklist-tls13" width="75%" height="75%">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="75%" height="75%">
 </p>
 
 # Books
