@@ -123,7 +123,7 @@
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
-    * [Show information about the NGINX processes](#show-information-about-the-nginx-processes)
+    * [Show information about NGINX processes](#show-information-about-nginx-processes)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [Show the most requested IPs](#show-the-most-requested-ips)
     * [Show the top 5 IP addresses](#show-the-top-5-ip-addresses)
@@ -281,13 +281,13 @@
 
 <br>
 
-  > Before using the **NGINX** please read **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
+  > Before you start playing with **NGINX** please read this **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
 **Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a load balancer and caching server. It provides the core of complete web stacks.
 
-To increase your knowledge about the NGINX please read:
+These essential documents should be the main source of knowledge for us:
 
 - **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
@@ -394,7 +394,7 @@ Existing chapters:
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
     - [ ] _SystemTap cheatsheet_
-    - [x] _Show information about the NGINX processes_
+    - [x] _Show information about NGINX processes_
     - [x] _Extract http User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture only http packets_
@@ -893,7 +893,7 @@ As a general rule, if a directive is valid in multiple nested scopes, a declarat
 
   > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
 
-The NGINX contexts can be layered within one another so NGINX provides a level of inheritance. The NGINX contexts structure looks like this:
+Contexts can be layered within one another so NGINX provides a level of inheritance. Their structure looks like this:
 
 ```
 Global/Main Context
@@ -1250,7 +1250,7 @@ location ~* \.(gif|jpg|jpeg)$ {
 }
 ```
 
-To help you understand how does the NGINX location match works:
+To help you understand how does location match works:
 
 - [Nginx location match tester](https://nginx.viraptor.info/)
 - [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
@@ -1723,9 +1723,9 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
 #### Debugging
 
-  > You can change combinations and parameters of these commands. When carrying out the analysis, remember about the NGINX [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
+  > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
-###### Show information about the NGINX processes
+###### Show information about NGINX processes
 
 with `ps`:
 
@@ -3108,7 +3108,7 @@ stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 
 ###### Pre installation tasks
 
-Set the NGINX version (I use stable and newest release):
+Set NGINX version (I use stable and newest release):
 
 ```bash
 export ngx_version="1.16.0"
@@ -6143,7 +6143,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
   > If you use TLS 1.3 you should enable `prime256v1` signature algorithm. Without this SSL Lab reports `TLS_AES_128_GCM_SHA256 (0x1301)` signature as weak.
 
-  > If you do not set `ssh_ecdh_curve`, then the NGINX will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control the NGINX's default settings (seems to be `P-256`).
+  > If you do not set `ssh_ecdh_curve`, then NGINX will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control default settings (seems to be `P-256`) from the NGINX.
 
   > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**.
 
