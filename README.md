@@ -59,6 +59,7 @@
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
   * [Printable high-res hardening cheatsheet](#printable-high-res-hardening-cheatsheet)
+  * [All in one checklist as a quick introduction](#all-in-one-checklist-as-a-quick-introduction)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -343,7 +344,7 @@ Existing chapters:
 <details>
 <summary><b>Introduction</b></summary><br>
 
-  - [ ] _All in one checklist as a quick introduction_
+  - [x] _All in one checklist as a quick introduction_
 
 </details>
 
@@ -555,6 +556,57 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="75%" height="75%">
 </p>
+
+## All in one checklist as a quick introduction
+
+  > This checklist contains 44 rules from this handbook.
+
+| <b>RULE</b> | <b>TYPE</b> | <b>PRIORITY</b> |
+| :---         | :---         | :---         |
+| Define the listen directives explicitly with address:port pair | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Prevent processing requests with undefined server names | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Force all connections over TLS | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Run as an unprivileged user | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Protect sensitive resources | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Use only the latest supported OpenSSL version | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Use min. 2048-bit private keys | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Keep only TLS 1.2 and TLS 1.3 | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Use only strong ciphers | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Use more secure ECDH Curve | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Use strong Key Exchange | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Defend against the BEAST attack | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Disable HTTP compression or compress only zero sensitive content (mitigation of CRIME/BREACH attacks) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| HTTP Strict Transport Security | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Reduce XSS risks (Content-Security-Policy) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Control the behavior of the Referer header (Referrer-Policy) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Provide clickjacking protection (X-Frame-Options) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Prevent some categories of XSS attacks (X-XSS-Protection) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Prevent Sniff Mimetype middleware (X-Content-Type-Options) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Reject unsafe HTTP methods | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Organising Nginx configuration | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Format, prettify and indent your Nginx code | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Use HTTP/2 | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Maintaining SSL sessions | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Use exact names in server_name directive where possible | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Avoid checks server_name with if directive | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Disable unnecessary modules | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Hide Nginx version number | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Hide Nginx server signature | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Hide upstream proxy headers | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Deny the use of browser features (Feature-Policy) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Control Buffer Overf<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> attacks | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Mitigating S<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> HTTP DoS attack (Closing S<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> Connections) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Enable DNS CAA Policy | Others | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Separate listen directives for 80 and 443 | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Use only one SSL config for specific listen directive | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Use geo/map modules instead al<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low">/deny | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Drop the same root inside location block | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Adjust worker processes | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Make an exact location match to speed up the selection process | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Use limit_conn to improve limiting the download speed | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Tweak passive health checks | Load Balancing | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Don't disable backends by comments, use down parameter | Load Balancing | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Define security policies with security.txt | Others | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
 
 # Books
 
