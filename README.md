@@ -111,7 +111,7 @@
     * [Ngxtop](#ngxtop)
       * [Analyse log file](#analyse-log-file)
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
-      * [Analyse log file remotely](##analyse-log-file-remotely-1)
+      * [Analyse log file remotely](#analyse-log-file-remotely-1)
   * [Testing](#testing)
     * [Send request and show response headers](#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
@@ -125,10 +125,12 @@
   * [Debugging](#debugging)
     * [Show information about NGINX processes](#show-information-about-nginx-processes)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
-    * [Show the most requested IPs](#show-the-most-requested-ips)
-    * [Show the top 5 IP addresses](#show-the-top-5-ip-addresses)
+    * [Show the most accessed IP addresses](#show-the-most-accessed-ip-addresses)
+    * [Show the top 5 visitors (IP addresses)](#show-the-top-5-visitors-ip-addresses)
     * [Show the most requested urls](#show-the-most-requested-urls)
     * [Show the most requested urls containing 'string'](#show-the-most-requested-urls-containing-string)
+    * [Show the most requested urls with http methods](#show-the-most-requested-urls-with-http-methods)
+    * [Show the most accessed response codes](#show-the-most-accessed-response-codes)
     * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
     * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
     * [Show requests which result 502 and sort them by number per requests by url](#show-requests-which-result-502-and-sort-them-by-number-per-requests-by-url)
@@ -136,6 +138,7 @@
     * [Calculating amount of http response codes](#calculating-amount-of-http-response-codes)
     * [Calculating requests per second](#calculating-requests-per-second)
     * [Calculating requests per second with IP addresses](#calculating-requests-per-second-with-ip-addresses)
+    * [Calculating requests per second with IP addresses and urls](#calculating-requests-per-second-with-ip-addresses-and-urls)
     * [Get entries within last n hours](#get-entries-within-last-n-hours)
     * [Get entries between two timestamps (range of dates)](#get-entries-between-two-timestamps-range-of-dates)
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
@@ -1759,6 +1762,8 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
+  > You should also adjust filtering rules to the log format.
+
 ###### Show information about NGINX processes
 
 with `ps`:
@@ -1779,40 +1784,57 @@ top -p $(pgrep -d , nginx)
 nginx -V 2>&1 | grep -- 'http_geoip_module'
 ```
 
-###### Show the most requested IPs
+###### Show the most accessed IP addresses
 
 ```bash
+# - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "IP_ADDRESS"
-# - add `head -n X` to the end to limit the result
 awk '{print $1}' access.log | sort | uniq -c | sort -nr
 ```
 
-###### Show the top 5 IP addresses
+###### Show the top 5 visitors (IP addresses)
 
 ```bash
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%10s%20s\n%10s%10s%20s\n' "NUM" "AMOUNT" "IP_ADDRESS"
-# - add `head -n X` to the end to limit the result
 cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
 ```
 
 ###### Show the most requested urls
 
 ```bash
+# - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-# - add `head -n X` to the end to limit the result
 awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
 ###### Show the most requested urls containing 'string'
 
 ```bash
+# - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-# - add `head -n X` to the end to limit the result
 awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
+```
+
+###### Show the most requested urls with http methods
+
+```bash
+# - add `head -n X` to the end to limit the result
+# - add this to the end for print header:
+#   ... | xargs printf '%10s %8s\t%s\n%10s %8s\t%s\n' "AMOUNT" "METHOD" "URL"
+awk -F\" '{print $2}' access.log | awk '{print $1 "\t" $2}' | sort | uniq -c | sort -nr
+```
+
+###### Show the most accessed response codes
+
+```bash
+# - add `head -n X` to the end to limit the result
+# - add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "HTTP_CODE"
+awk '{print $9}' access.log | sort | uniq -c | sort -nr
 ```
 
 ###### Analyse web server log and show only 2xx http codes
@@ -1830,18 +1852,18 @@ tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 ###### Show requests which result 502 and sort them by number per requests by url
 
 ```bash
+# - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-# - add `head -n X` to the end to limit the result
 awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
 ###### Show requests which result 404 for php files and sort them by number per requests by url
 
 ```bash
+# - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-# - add `head -n X` to the end to limit the result
 awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
@@ -1851,8 +1873,10 @@ awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | 
 # Not less than 1 minute:
 tail -2000 access.log | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M") '$4 ~ date' | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 
-# All from log file:
-tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "HTTP_CODE"
+# Last 2000 requests from log file:
+# - add this to the end for print header:
+#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "HTTP_CODE"
+tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 ```
 
 ###### Calculating requests per second
@@ -1861,19 +1885,28 @@ tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort 
 # In real time:
 tail -F access.log | pv -lr >/dev/null
 
-# - add this to the end for print header:
-#   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "DATE"
 # - add `head -n X` to the end to limit the result
-awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | head | tr -d "["
+# - add this to the end for print header:
+#   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP_ADDRESS"
+awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
 ```
 
 ###### Calculating requests per second with IP addresses
 
 ```bash
-# - add this to the end for print header:
-#   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP"
 # - add `head -n X` to the end to limit the result
-awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | head | tr -d "["
+# - add this to the end for print header:
+#   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP_ADDRESS"
+awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
+```
+
+###### Calculating requests per second with IP addresses and urls
+
+```bash
+# - add `head -n X` to the end to limit the result
+# - add this to the end for print header:
+#   ... | xargs printf '%10s%24s%18s\t%s\n%10s%24s%18s\t%s\n' "AMOUNT" "DATE" "IP_ADDRESS" "URL"
+awk '{print $4 " " $1 " " $7}' access.log | uniq -c | sort -nr | tr -d "["
 ```
 
 ###### Get entries within last n hours
