@@ -1800,7 +1800,7 @@ cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
+awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
 ###### Show the most requested urls containing 'string'
@@ -1808,7 +1808,7 @@ awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -r
+awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
 ###### Analyse web server log and show only 2xx http codes
@@ -1828,7 +1828,7 @@ tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -rn
+awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
 ###### Show requests which result 404 for php files and sort them by number per requests by url
@@ -1836,17 +1836,17 @@ awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -rn
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -rn
+awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
 ###### Calculating amount of http response codes
 
 ```bash
 # Not less than 1 minute:
-tail -2000 access.log | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M") '$4 ~ date' | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -rn
+tail -2000 access.log | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M") '$4 ~ date' | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 
 # All from log file:
-tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -rn | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "HTTP_CODE"
+tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "HTTP_CODE"
 ```
 
 ###### Calculating requests per second
@@ -1857,7 +1857,7 @@ tail -F access.log | pv -lr >/dev/null
 
 # add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "DATE"
-awk '{print $4 " " $1}' access.log | uniq -c | sort -rn | head | tr -d "["
+awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | head | tr -d "["
 ```
 
 ###### Calculating requests per second with IP addresses
@@ -1865,7 +1865,7 @@ awk '{print $4 " " $1}' access.log | uniq -c | sort -rn | head | tr -d "["
 ```bash
 # add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP"
-awk '{print $4 " " $1}' access.log | uniq -c | sort -rn | head | tr -d "["
+awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | head | tr -d "["
 ```
 
 ###### Get entries within last n hours
