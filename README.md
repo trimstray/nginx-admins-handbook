@@ -243,7 +243,7 @@
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
-  * [Disable HTTP compression or compress only zero sensitive content (mitigation of CRIME/BREACH attacks)](#beginner-disable-http-compression-or-compress-only-zero-sensitive-content-mitigation-of-crimebreach-attacks)
+  * [Mitigation of CRIME/BREACH attacks)](#beginner-mitigation-of-crimebreach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)
@@ -579,7 +579,7 @@ Generally, I think that each of these principles is important and should be cons
 | [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | [Use strong Key Exchange](#beginner-use-strong-key-exchange) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Mitigation of CRIME/BREACH attacks](#beginner-disable-http-compression-or-compress-only-zero-sensitive-content-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | [HTTP Strict Transport Security](#beginner-http-strict-transport-security)<br><sup>Tell browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defense-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
@@ -6396,9 +6396,11 @@ ssl_prefer_server_ciphers on;
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 - [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls)
 
-#### :beginner: Disable HTTP compression or compress only zero sensitive content (mitigation of CRIME/BREACH attacks)
+#### :beginner: Mitigation of CRIME/BREACH attacks
 
 ###### Rationale
+
+  > Disable HTTP compression or compress only zero sensitive content.
 
   > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540: 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
 
