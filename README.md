@@ -1782,32 +1782,36 @@ nginx -V 2>&1 | grep -- 'http_geoip_module'
 ###### Show the most requested IPs
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "IP_ADDRESS"
+# - add `head -n X` to the end to limit the result
 awk '{print $1}' access.log | sort | uniq -c | sort -nr
 ```
 
 ###### Show the top 5 IP addresses
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s%10s%20s\n%10s%10s%20s\n' "NUM" "AMOUNT" "IP_ADDRESS"
+# - add `head -n X` to the end to limit the result
 cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
 ```
 
 ###### Show the most requested urls
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
+# - add `head -n X` to the end to limit the result
 awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
 ###### Show the most requested urls containing 'string'
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
+# - add `head -n X` to the end to limit the result
 awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
@@ -1826,16 +1830,18 @@ tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 ###### Show requests which result 502 and sort them by number per requests by url
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
+# - add `head -n X` to the end to limit the result
 awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
 ###### Show requests which result 404 for php files and sort them by number per requests by url
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
+# - add `head -n X` to the end to limit the result
 awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
@@ -1855,16 +1861,18 @@ tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort 
 # In real time:
 tail -F access.log | pv -lr >/dev/null
 
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "DATE"
+# - add `head -n X` to the end to limit the result
 awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | head | tr -d "["
 ```
 
 ###### Calculating requests per second with IP addresses
 
 ```bash
-# add this to the end for print header:
+# - add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP"
+# - add `head -n X` to the end to limit the result
 awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | head | tr -d "["
 ```
 
