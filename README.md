@@ -1762,8 +1762,6 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
-  > You should also adjust filtering rules to the log format.
-
 ###### Show information about NGINX processes
 
 with `ps`:
