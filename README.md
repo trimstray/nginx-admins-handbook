@@ -229,6 +229,7 @@
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
+  * [Keep NGINX up-to-date](#keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
   * [Protect sensitive resources](#beginner-protect-sensitive-resources)
@@ -474,6 +475,7 @@ Existing chapters:
 <details>
 <summary><b>Hardening</b></summary><br>
 
+  - [x] _Keep NGINX up-to-date_
   - [x] _Use only the latest supported OpenSSL version_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
@@ -561,11 +563,12 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 
   > This checklist contains 44 rules from this handbook.
 
-| <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
+| <b>RULE</b> | <b>CHAPTER</b> | <b>SEVERITY</b> |
 | :---         | :---         | :---         |
 | Define the listen directives explicitly with address:port pair | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | Prevent processing requests with undefined server names | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | Force all connections over TLS | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
+| Keep NGINX up-to-date | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | Run as an unprivileged user | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | Protect sensitive resources | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | Use only the latest supported OpenSSL version | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
@@ -5819,6 +5822,23 @@ location /videos {
 # Hardening
 
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
+
+#### :beginner: Keep NGINX up-to-date
+
+###### Rationale
+
+  > NGINX is a very secure and stable but vulnerabilities in the main binary itself do pop up from time to time. It's the main reason for keep NGINX up-to-date as hard as you can.
+
+  > A very safe way to plan the update is once a new stable version is released but for me the most common way to handle NGINX updates is to wait a few weeks after the stable release.
+
+  > Before update/upgrade NGINX remember about do it on the testing environment.
+
+  > Most modern GNU/Linux distros will not push the latest version of NGINX into their default package lists so maybe you should consider install it from sources.
+
+###### External resources
+
+- [Installation from prebuilt packages](#installation-from-prebuilt-packages)
+- [Installation from source](#installation-from-source)
 
 #### :beginner: Run as an unprivileged user
 
