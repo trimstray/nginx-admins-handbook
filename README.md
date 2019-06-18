@@ -398,6 +398,9 @@ Existing chapters:
     - [x] _Which worker processing current request_
     - [ ] _SystemTap cheatsheet_
     - [x] _Show information about NGINX processes_
+    - [x] _Show the most requested urls with http methods_
+    - [x] _Show the most accessed response codes_
+    - [x] _Calculating requests per second with IP addresses and urls_
     - [x] _Extract http User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture only http packets_
