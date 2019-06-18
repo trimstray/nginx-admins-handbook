@@ -561,7 +561,7 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 
   > This checklist contains 44 rules from this handbook.
 
-| <b>RULE</b> | <b>TYPE</b> | <b>PRIORITY</b> |
+| <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
 | :---         | :---         | :---         |
 | Define the listen directives explicitly with address:port pair | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
 | Prevent processing requests with undefined server names | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
@@ -594,12 +594,12 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 | Hide Nginx server signature | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
 | Hide upstream proxy headers | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
 | Deny the use of browser features (Feature-Policy) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| Control Buffer Overf<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> attacks | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| Mitigating S<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> HTTP DoS attack (Closing S<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> Connections) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Control Buffer Overflow attacks | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
+| Mitigating Slow HTTP DoS attack (Closing Slow Connections) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
 | Enable DNS CAA Policy | Others | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
 | Separate listen directives for 80 and 443 | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
 | Use only one SSL config for specific listen directive | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| Use geo/map modules instead al<img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low">/deny | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| Use geo/map modules instead allow/deny | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
 | Drop the same root inside location block | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
 | Adjust worker processes | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
 | Make an exact location match to speed up the selection process | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
