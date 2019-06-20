@@ -58,7 +58,7 @@
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
-  * [Printable high-res hardening cheatsheet](#printable-high-res-hardening-cheatsheet)
+  * [Printable high-res hardening cheatsheets](#printable-high-res-hardening-cheatsheets)
   * [All in one checklist as a quick introduction](#all-in-one-checklist-as-a-quick-introduction)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
@@ -510,7 +510,7 @@ Other stuff:
 
 Many of these recipes have been applied to the configuration of my private website.
 
-  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png) version of printable high-res hardening cheatsheet.
+  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png) version of printable high-res hardening cheatsheets.
 
 ### SSL Labs
 
@@ -543,7 +543,7 @@ I also got the highest note from Mozilla:
   </a>
 </p>
 
-## Printable high-res hardening cheatsheet
+## Printable high-res hardening cheatsheets
 
 I created printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
 
@@ -576,7 +576,7 @@ Generally, I think that each of these principles is important and should be cons
 | ![high](static/img/high.png) | definitely use this rule, otherwise it will introduce high risks of your NGINX security, and other |
 | ![medium](static/img/medium.png) | it's also important but not critical and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/low.png) | there is no need to implement, but it is worth considering because it can improve the NGINX working |
-| ![info](static/img/info.png) | implementation is not required |
+| ![info](static/img/info.png) | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security or performance, you should adjust them as you see fit.
 
