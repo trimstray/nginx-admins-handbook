@@ -92,6 +92,7 @@
     * [Comments](#comments)
     * [Variables & Strings](#variables--strings)
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
+    * [Attaching external files](#attaching-external-files)
     * [Measurement units](#measurement-units)
     * [Enable syntax highlight for Nginx configuration file](#enable-syntax-highlight-for-nginx-configuration-file)
   * [Connection processing](#connection-processing)
