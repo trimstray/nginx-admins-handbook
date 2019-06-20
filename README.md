@@ -566,7 +566,7 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>DESCRIPTION</b> |
-| :---|        | :---         |
+| :---:        | :---         |
 | ![high](static/img/high.png) | you should definitely use this rule, if not implemented, they will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/medium.png) | it's also important and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/low.png) | it is not necessary to implement but it is worth considering it |
