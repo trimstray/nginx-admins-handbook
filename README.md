@@ -100,6 +100,7 @@
     * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
   * [Error log severity levels](#error-log-severity-levels)
+  * [Load balancing algorithms](#load-balancing-algorithms)
   * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
@@ -375,11 +376,16 @@ Existing chapters:
 <summary><b>Helpers</b></summary><br>
 
   - _Configuration syntax_
-    - [x] _Enable syntax highlight for Nginx configuration file_
-    - [x] _Measurement units_
     - [x] _Comments_
     - [x] _Variables & Strings_
     - [x] _Directives, Blocks, and Contexts_
+    - [x] _Attaching external files_
+    - [x] _Measurement units_
+    - [x] _Enable syntax highlight for Nginx configuration file_
+  - _Load balancing algorithms_
+    - [ ] _Round Robin_
+    - [ ] _Least Connections_
+    - [ ] _IP Hash_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
@@ -963,6 +969,8 @@ Configuration options are called directives. We have four types of directives in
   try_files $uri $uri/ /test/index.html;
   ```
 
+  > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
+
 Directives are organized into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
@@ -991,6 +999,14 @@ Global/Main Context
         |
         |
         +-----» Mail Context
+```
+
+##### Attaching external files
+
+`include` directive may appear inside any contexts to perform conditional inclusion. It attaching another file, or files matching the specified mask.
+
+```bash
+include /etc/nginx/proxy.conf
 ```
 
 ##### Measurement units
@@ -1509,6 +1525,16 @@ The following is a list of all severity levels:
 | `emerg` | the system is in an unusable state and requires immediate attention |
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
+
+#### Load balancing algorithms
+
+To be completed.
+
+##### Round Robin
+
+##### Least Connections
+
+##### IP Hash
 
 #### Rate limiting
 
