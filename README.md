@@ -569,10 +569,10 @@ Generally, I think that each of these principles is important and should be cons
 | :---:        | :---         |
 | ![high](static/img/high.png) | definitely use this rule, otherwise it will introduce high risks of your NGINX security, and other |
 | ![medium](static/img/medium.png) | it's also important but not critical and should still be addressed at the earliest possible opportunity |
-| ![low](static/img/low.png) | there is no need to implement, but it is worth considering because it can improve the NGINX |
-| ![info](static/img/info.png) | can improve the work with NGINX also, is for informational purposes only |
+| ![low](static/img/low.png) | there is no need to implement, but it is worth considering because it can improve the NGINX working |
+| ![info](static/img/info.png) | implementation is not required |
 
-Remember, these are only guidelines. If you feel these priority levels do not reflect your configurations commitment to security or performance, you should adjust them as you see fit.
+Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security or performance, you should adjust them as you see fit.
 
 | <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
 | :---         | :---         | :---:        |
@@ -589,7 +589,6 @@ Remember, these are only guidelines. If you feel these priority levels do not re
 | [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | ![high](static/img/high.png) |
 | [Use strong Key Exchange](#beginner-use-strong-key-exchange)<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | ![high](static/img/high.png) |
 | [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | ![high](static/img/high.png) |
-| [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![high](static/img/high.png) |
 | [HTTP Strict Transport Security](#beginner-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | ![high](static/img/high.png) |
 | [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defense-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | ![high](static/img/high.png) |
 | [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | ![high](static/img/high.png) |
@@ -599,6 +598,7 @@ Remember, these are only guidelines. If you feel these priority levels do not re
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration) | Base Rules | ![medium](static/img/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/medium.png) |
+| [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | Base Rules | ![medium](static/img/medium.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/medium.png) |
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/medium.png) |
 | [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible) | Performance | ![medium](static/img/medium.png) |
@@ -607,6 +607,7 @@ Remember, these are only guidelines. If you feel these priority levels do not re
 | [Hide Nginx version number](#beginner-hide-nginx-version-number) | Hardening | ![medium](static/img/medium.png) |
 | [Hide Nginx server signature](#beginner-hide-nginx-server-signature) | Hardening | ![medium](static/img/medium.png) |
 | [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version) | Hardening | ![medium](static/img/medium.png) |
+| [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy) | Hardening | ![medium](static/img/medium.png) |
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks) | Hardening | ![medium](static/img/medium.png) |
 | [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections) | Hardening | ![medium](static/img/medium.png) |
@@ -619,12 +620,11 @@ Remember, these are only guidelines. If you feel these priority levels do not re
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process) | Performance | ![low](static/img/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/low.png) |
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/low.png) |
-| [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![low](static/img/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/low.png) |
-| [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | Base Rules | ![info](static/img/info.png) |
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/info.png) |
 | [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | Base Rules | ![info](static/img/info.png) |
 | [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | Base Rules | ![info](static/img/info.png) |
+| [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/info.png) |
 
 # Books
 
@@ -5860,6 +5860,8 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 ###### Rationale
 
   > There is no real difference in security just by changing the process owner name. On the other hand in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
+
+  > This is the default NGINX behavior, but remember to check it.
 
 ###### Example
 
