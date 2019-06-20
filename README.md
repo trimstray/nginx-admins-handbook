@@ -566,7 +566,7 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>DESCRIPTION</b> |
-| :---         | :---         |
+| :---|        | :---         |
 | ![high](static/img/high.png) | you should definitely use this rule, if not implemented, they will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/medium.png) | it's also important and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/low.png) | it is not necessary to implement but it is worth considering it |
@@ -621,10 +621,10 @@ Remember, these are only guidelines. If you feel these priority levels do not re
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/low.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![low](static/img/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/low.png) |
-| [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | ![info](static/img/info.png) |
-| [Map all the things...](#beginner-map-all-the-things) | ![info](static/img/info.png) |
-| [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | ![info](static/img/info.png) |
-| [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | ![info](static/img/info.png) |
+| [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | Base Rules | ![info](static/img/info.png) |
+| [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/info.png) |
+| [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | Base Rules | ![info](static/img/info.png) |
+| [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | Base Rules | ![info](static/img/info.png) |
 
 # Books
 
