@@ -554,7 +554,7 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
   > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
 
 <p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="75%" height="75%">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="92%" height="92%">
 </p>
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
@@ -562,7 +562,7 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
   > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
 
 <p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="75%" height="75%">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
 </p>
 
 ## All in one checklist as a quick introduction
@@ -571,12 +571,12 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
-| <b>PRIORITY</b> | <b>DESCRIPTION</b> |
-| :---:        | :---         |
-| ![high](static/img/high.png) | definitely use this rule, otherwise it will introduce high risks of your NGINX security, and other |
-| ![medium](static/img/medium.png) | it's also important but not critical and should still be addressed at the earliest possible opportunity |
-| ![low](static/img/low.png) | there is no need to implement, but it is worth considering because it can improve the NGINX working |
-| ![info](static/img/info.png) | as an option to implement or use (not required) |
+| <b>PRIORITY</b> | <b>NAME</b> | <b>DESCRIPTION</b> |
+| :---:        | :---         | :---         |
+| ![high](static/img/high.png) | <i>critical</i> | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![medium](static/img/medium.png) | <i>major</i> | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![low](static/img/low.png) | <i>normal</i> | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
+| ![info](static/img/info.png) | <i>minor</i> | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security or performance, you should adjust them as you see fit.
 
