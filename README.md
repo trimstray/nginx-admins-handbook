@@ -104,6 +104,7 @@
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Round Robin](#round-robin)
     * [Weighted Round Robin](#weighted-round-robin)
+    * [Least Connections](#least-connections)
   * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
@@ -388,7 +389,8 @@ Existing chapters:
   - _Load balancing algorithms_
     - [x] _Round Robin_
     - [x] _Weighted Round Robin_
-    - [ ] _Least Connections_
+    - [x] _Least Connections_
+    - [ ] _Weighted Least Connections_
     - [ ] _IP Hash_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
@@ -1575,6 +1577,26 @@ upstream bck_testing_01 {
 ![weighted-round-robin](static/img/lb/nginx_lb_weighted-round-robin.png)
 
 ##### Least Connections
+
+This method tells the Load Balancer to look at the connections going to each server and send the next connection to the server with the least amount of connections.
+
+```bash
+upstream bck_testing_01 {
+
+  least_conn;
+
+  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+
+}
+```
+
+For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8 have already disconnected but A1, B3, B5, B6, C7 and A9 are still connected, the load balancer will assign client D10 to server 2 instead of server 1 and server 3. After that, client D11 will be assign to Server 1 and client D12 will be assign to Server 2.
+
+![least-conn](static/img/lb/nginx_lb_least-conn.png)
+
+##### Weighted Least Connections
 
 ##### IP Hash
 
