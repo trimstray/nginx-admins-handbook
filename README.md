@@ -561,57 +561,70 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 
 ## All in one checklist as a quick introduction
 
-  > This checklist contains 44 rules from this handbook.
+  > This checklist contains all rules from this handbook.
 
-Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into three levels of priority.
+Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
-| <b>RULE</b> | <b>CHAPTER</b> | <b>SEVERITY</b> |
+| <b>PRIORITY</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| ![high](static/img/high.png) | you should definitely use this rule, if not implemented, they will introduce high risks of your NGINX security, performance, and other |
+| ![medium](static/img/medium.png) | it's also important and should still be addressed at the earliest possible opportunity |
+| ![low](static/img/low.png) | it is not necessary to implement but it is worth considering it |
+| ![info](static/img/info.png) | only informational |
+
+Remember, these are only guidelines. If you feel these priority levels do not reflect your configurations commitment to security or performance, you should adjust them as you see fit.
+
+| <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
 | :---         | :---         | :---:        |
-| [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Force all connections over TLS](#beginner-force-all-connections-over-tls)<br><sup>Protects your website especially for handle sensitive communications.</sup> | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Keep NGINX up-to-date](#keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and use new features.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Keep only TLS 1.2 and TLS 1.3](#beginner-keep-only-tls-12-and-tls-13)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Use only strong ciphers](#beginner-use-only-strong-ciphers)<br><sup>Use only strong and not vulnerable cipher suites.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Use strong Key Exchange](#beginner-use-strong-key-exchange)<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [HTTP Strict Transport Security](#beginner-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defense-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)<br><sup>Defends against clickjacking attack.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)<br><sup>Prevents to render pages if a potential XSS reflection attack is detected.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/high.png" alt="high"> |
-| [Organising Nginx configuration](#beginner-organising-nginx-configuration) | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible) | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Hide Nginx version number](#beginner-hide-nginx-version-number) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Hide Nginx server signature](#beginner-hide-nginx-server-signature) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections) | Hardening | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy) | Others | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/medium.png" alt="medium"> |
-| [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive) | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny) | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Adjust worker processes](#beginner-adjust-worker-processes) | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process) | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
-| [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/low.png" alt="low"> |
+| [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/high.png) |
+| [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | ![high](static/img/high.png) |
+| [Force all connections over TLS](#beginner-force-all-connections-over-tls)<br><sup>Protects your website especially for handle sensitive communications.</sup> | Base Rules | ![high](static/img/high.png) |
+| [Keep NGINX up-to-date](#keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and use new features.</sup> | Hardening | ![high](static/img/high.png) |
+| [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/high.png) |
+| [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/high.png) |
+| [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/high.png) |
+| [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/high.png) |
+| [Keep only TLS 1.2 and TLS 1.3](#beginner-keep-only-tls-12-and-tls-13)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/high.png) |
+| [Use only strong ciphers](#beginner-use-only-strong-ciphers)<br><sup>Use only strong and not vulnerable cipher suites.</sup> | Hardening | ![high](static/img/high.png) |
+| [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | ![high](static/img/high.png) |
+| [Use strong Key Exchange](#beginner-use-strong-key-exchange)<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | ![high](static/img/high.png) |
+| [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | ![high](static/img/high.png) |
+| [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![high](static/img/high.png) |
+| [HTTP Strict Transport Security](#beginner-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | ![high](static/img/high.png) |
+| [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defense-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | ![high](static/img/high.png) |
+| [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | ![high](static/img/high.png) |
+| [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)<br><sup>Defends against clickjacking attack.</sup> | Hardening | ![high](static/img/high.png) |
+| [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)<br><sup>Prevents to render pages if a potential XSS reflection attack is detected.</sup> | Hardening | ![high](static/img/high.png) |
+| [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/high.png) |
+| [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/high.png) |
+| [Organising Nginx configuration](#beginner-organising-nginx-configuration) | Base Rules | ![medium](static/img/medium.png) |
+| [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/medium.png) |
+| [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/medium.png) |
+| [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/medium.png) |
+| [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible) | Performance | ![medium](static/img/medium.png) |
+| [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/medium.png) |
+| [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/medium.png) |
+| [Hide Nginx version number](#beginner-hide-nginx-version-number) | Hardening | ![medium](static/img/medium.png) |
+| [Hide Nginx server signature](#beginner-hide-nginx-server-signature) | Hardening | ![medium](static/img/medium.png) |
+| [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version) | Hardening | ![medium](static/img/medium.png) |
+| [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy) | Hardening | ![medium](static/img/medium.png) |
+| [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks) | Hardening | ![medium](static/img/medium.png) |
+| [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections) | Hardening | ![medium](static/img/medium.png) |
+| [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy) | Others | ![medium](static/img/medium.png) |
+| [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/low.png) |
+| [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive) | Base Rules | ![low](static/img/low.png) |
+| [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny) | Base Rules | ![low](static/img/low.png) |
+| [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | ![low](static/img/low.png) |
+| [Adjust worker processes](#beginner-adjust-worker-processes) | Performance | ![low](static/img/low.png) |
+| [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process) | Performance | ![low](static/img/low.png) |
+| [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/low.png) |
+| [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/low.png) |
+| [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![low](static/img/low.png) |
+| [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/low.png) |
+| [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | ![info](static/img/info.png) |
+| [Map all the things...](#beginner-map-all-the-things) | ![info](static/img/info.png) |
+| [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | ![info](static/img/info.png) |
+| [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | ![info](static/img/info.png) |
 
 # Books
 
