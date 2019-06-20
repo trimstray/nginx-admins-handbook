@@ -567,7 +567,7 @@ Generally, I think that each of these principles is important and should be cons
 
 | <b>PRIORITY</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         |
-| ![high](static/img/high.png) | definitely use this rule, if not implemented, it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/high.png) | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/medium.png) | it's also important but not critical and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/low.png) | there is no need to implement, but it is worth considering because it can improve the NGINX |
 | ![info](static/img/info.png) | can improve the work with NGINX, is for informational purposes only |
