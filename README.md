@@ -102,6 +102,8 @@
     * [Matching location](#matching-location)
   * [Error log severity levels](#error-log-severity-levels)
   * [Load balancing algorithms](#load-balancing-algorithms)
+    * [Round Robin](#round-robin)
+    * [Weighted Round Robin](#weighted-round-robin)
   * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
@@ -384,7 +386,8 @@ Existing chapters:
     - [x] _Measurement units_
     - [x] _Enable syntax highlight for Nginx configuration file_
   - _Load balancing algorithms_
-    - [ ] _Round Robin_
+    - [x] _Round Robin_
+    - [x] _Weighted Round Robin_
     - [ ] _Least Connections_
     - [ ] _IP Hash_
   - _Monitoring_
@@ -1529,9 +1532,47 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Load balancing algorithms
 
-To be completed.
+Load-Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks for example.
+
+I think you should always use this technique also if you have a simple blog or whatever else what you're sharing with other.
+
+The configurations are very simple. NGINX includes a `ngx_http_upstream_module` module to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
 
 ##### Round Robin
+
+It's the simpliest load balancing technique. Round Robin has the list of servers and forwards each request to each server from the list in order. Once it reaches the last server, the loop again jumps to the first server and start again.
+
+```bash
+upstream bck_testing_01 {
+
+  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+
+}
+```
+
+![round-robin](static/img/lb/nginx_lb_round-robin.png)
+
+##### Weighted Round Robin
+
+In weighted Round Robin load balancing algorithm, each server is allocated with a weight based on its configuration and ability to process the request.
+
+The Weighted Round Robin is similar to the Round Robin in a sense that the manner by which requests are assigned to the nodes is still cyclical, albeit with a twist. The node with the higher specs will be apportioned a greater number of requests.
+
+  > Default weight of the server is 1.
+
+```bash
+upstream bck_testing_01 {
+
+  server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s;
+  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s;
+
+}
+```
+
+![weighted-round-robin](static/img/lb/nginx_lb_weighted-round-robin.png)
 
 ##### Least Connections
 
