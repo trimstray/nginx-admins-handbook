@@ -105,6 +105,7 @@
     * [Round Robin](#round-robin)
     * [Weighted Round Robin](#weighted-round-robin)
     * [Least Connections](#least-connections)
+    * [Weighted Least Connections](#weighted-least-connections)
   * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
@@ -1555,7 +1556,9 @@ upstream bck_testing_01 {
 }
 ```
 
-![round-robin](static/img/lb/nginx_lb_round-robin.png)
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_round-robin.png" alt="round-robin">
+</p>
 
 ##### Weighted Round Robin
 
@@ -1575,7 +1578,9 @@ upstream bck_testing_01 {
 }
 ```
 
-![weighted-round-robin](static/img/lb/nginx_lb_weighted-round-robin.png)
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_weighted-round-robin.png" alt="weighted-round-robin">
+</p>
 
 ##### Least Connections
 
@@ -1595,7 +1600,9 @@ upstream bck_testing_01 {
 
 For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8 have already disconnected but A1, B3, B5, B6, C7 and A9 are still connected, the load balancer will assign client D10 to server 2 instead of server 1 and server 3. After that, client D11 will be assign to Server 1 and client D12 will be assign to Server 2.
 
-![least-conn](static/img/lb/nginx_lb_least-conn.png)
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_least-conn.png" alt="least-conn">
+</p>
 
 ##### Weighted Least Connections
 
@@ -1615,7 +1622,9 @@ upstream bck_testing_01 {
 
 For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8 have already disconnected but A1, B3, B5, B6, C7 and A9 are still connected, the load balancer will assign client D10 to server 2 or 3 (because they have least active connections) instead of server 1. After that, client D11 and D12 will be assign to Server 1 because it has `weight` parameter.
 
-![least-conn](static/img/lb/nginx_lb_weighted-least-conn.png)
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_weighted-least-conn.png" alt="weighted-least-conn">
+</p>
 
 ##### IP Hash
 
