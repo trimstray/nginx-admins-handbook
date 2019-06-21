@@ -1538,7 +1538,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 Load-Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks for example.
 
-I think you should always use this technique also if you have a simple blog or whatever else what you're sharing with other.
+I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
 The configurations are very simple. NGINX includes a `ngx_http_upstream_module` module to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
 
