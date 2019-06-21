@@ -258,7 +258,7 @@
   * [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
-  * [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)
+  * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
@@ -621,9 +621,9 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks) | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy) | Others | ![medium](static/img/priorities/medium.png) |
+| [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterized by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny) | Base Rules | ![low](static/img/priorities/low.png) |
@@ -832,6 +832,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://jmeter.apache.org/"><b>JMeter™</b></a> - is designed to load test functional behavior and measure performance.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gatling.io/"><b>Gatling</b></a> - is a powerful open-source load and performance testing tool for web applications.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/locustio/locust"><b>locust</b></a> - is an easy-to-use, distributed, user load testing tool.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/gkbrk/slowloris"><b>slowloris</b></a> - low bandwidth DoS tool. Slowloris rewrite in Python.<br>
 </p>
 
 ##### Debugging tools
@@ -6735,11 +6736,13 @@ large_client_header_buffers 2 1k;
 
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 
-#### :beginner: Mitigating Slow HTTP DoS attack (Closing Slow Connections)
+#### :beginner: Mitigating Slow HTTP DoS attacks (Closing Slow Connections)
 
 ###### Rationale
 
   > Close connections that are writing data too infrequently, which can represent an attempt to keep connections open as long as possible.
+
+  > You can close connections that are writing data too infrequently, which can represent an attempt to keep connections open as long as possible (thus reducing the server’s ability to accept new connections).
 
 ###### Example
 
@@ -6755,6 +6758,7 @@ send_timeout 10s;
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 - [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
+- [Effectively Using and Detecting The Slowloris HTTP DoS Tool](https://ma.ttias.be/effectively-using-detecting-the-slowloris-http-dos-tool/)
 
 # Reverse Proxy
 
