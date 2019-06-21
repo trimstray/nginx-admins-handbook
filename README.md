@@ -390,7 +390,7 @@ Existing chapters:
     - [x] _Round Robin_
     - [x] _Weighted Round Robin_
     - [x] _Least Connections_
-    - [ ] _Weighted Least Connections_
+    - [x] _Weighted Least Connections_
     - [ ] _IP Hash_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
@@ -1569,8 +1569,8 @@ This method is similar to the Round Robin in a sense that the manner by which re
 upstream bck_testing_01 {
 
   server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s;
-  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight 1
+  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight 1
 
 }
 ```
@@ -1598,6 +1598,24 @@ For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8
 ![least-conn](static/img/lb/nginx_lb_least-conn.png)
 
 ##### Weighted Least Connections
+
+This is, in general, a very fair distribution method, as it uses the ratio of the number of connections and theweight of a server. The server in the cluster with the lowest ratio automatically receives the next request.
+
+```bash
+upstream bck_testing_01 {
+
+  least_conn;
+
+  server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight 1
+  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight 1
+
+}
+```
+
+For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8 have already disconnected but A1, B3, B5, B6, C7 and A9 are still connected, the load balancer will assign client D10 to server 2 or 3 (because they have least active connections) instead of server 1. After that, client D11 and D12 will be assign to Server 1 because it has `weight` parameter.
+
+![least-conn](static/img/lb/nginx_lb_weighted-least-conn.png)
 
 ##### IP Hash
 
