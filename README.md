@@ -6188,7 +6188,7 @@ For `x25519`:
 openssl genpkey -algorithm ${_curve} -out ${_fd} )
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-use-min-2048-bit-private-keys"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_100.png" alt="arrowtr_100"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 ```bash
 ( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
@@ -6197,7 +6197,7 @@ openssl genpkey -algorithm ${_curve} -out ${_fd} )
 certbot certonly -d domain.com -d www.domain.com
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-use-min-2048-bit-private-keys"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_90.png" alt="arrowtr_90"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>90%</b>
 
 ###### External resources
 
@@ -6241,7 +6241,7 @@ TLS 1.2:
 ssl_protocols TLSv1.2;
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-keep-only-tls-12-and-tls-13"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_100.png" alt="arrowtr_100"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 TLS 1.3 + 1.2 + 1.1:
 
@@ -6255,7 +6255,7 @@ TLS 1.2 + 1.1:
 ssl_protocols TLSv1.2 TLSv1.1;
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-keep-only-tls-12-and-tls-13"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_95.png" alt="arrowtr_95"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>95%</b>
 
 ###### External resources
 
@@ -6322,7 +6322,7 @@ Cipher suites for TLS 1.2:
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-use-only-strong-ciphers"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_100.png" alt="arrowtr_100"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 Cipher suites for TLS 1.3:
 
@@ -6356,7 +6356,7 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:!AES256-GCM-SHA256:!AES256-GCM-SHA128:!aNULL:!MD5";
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-use-only-strong-ciphers"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_90.png" alt="arrowtr_90"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>90%</b>
 
 This will also give a baseline for comparison with [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/):
 
@@ -6420,7 +6420,7 @@ Curves for TLS 1.2:
 ssl_ecdh_curve secp521r1:secp384r1:prime256v1;
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-use-more-secure-ecdh-curve"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_100.png" alt="arrowtr_100"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 ```bash
 # Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order).
@@ -6466,7 +6466,7 @@ openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-use-strong-key-exchange"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_100.png" alt="arrowtr_100"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 ###### External resources
 
@@ -6577,7 +6577,7 @@ location ^~ /assets/ {
 add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" always;
 ```
 
-&nbsp;&nbsp;<sub><a href="#beginner-http-strict-transport-security"><img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/arrows/arrowtr_A+.png" alt="arrowtr_A+"></a></sub>
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>A+</b>
 
 ###### External resources
 
