@@ -584,7 +584,7 @@ Generally, I think that each of these principles is important and should be cons
 | ![low](static/img/priorities/low.png) | <i>normal</i> | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | as an option to implement or use (not required) |
 
-Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security or performance, you should adjust them as you see fit.
+Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
 
 | <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
 | :---         | :---         | :---:        |
@@ -616,13 +616,13 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Hide Nginx version number](#beginner-hide-nginx-version-number) | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Hide Nginx server signature](#beginner-hide-nginx-server-signature) | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version) | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Hide Nginx server signature](#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy) | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks) | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections) | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Mitigating Slow HTTP DoS attack (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy) | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive) | Base Rules | ![low](static/img/priorities/low.png) |
@@ -1558,9 +1558,9 @@ upstream bck_testing_01 {
 
 ##### Weighted Round Robin
 
-In weighted Round Robin load balancing algorithm, each server is allocated with a weight based on its configuration and ability to process the request.
+In Weighted Round Robin load balancing algorithm, each server is allocated with a weight based on its configuration and ability to process the request.
 
-The Weighted Round Robin is similar to the Round Robin in a sense that the manner by which requests are assigned to the nodes is still cyclical, albeit with a twist. The node with the higher specs will be apportioned a greater number of requests.
+This method is similar to the Round Robin in a sense that the manner by which requests are assigned to the nodes is still cyclical, albeit with a twist. The node with the higher specs will be apportioned a greater number of requests.
 
   > Default weight of the server is 1.
 
@@ -6754,6 +6754,7 @@ send_timeout 10s;
 
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
+- [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
 
 # Reverse Proxy
 
