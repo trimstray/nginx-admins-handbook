@@ -106,6 +106,7 @@
     * [Weighted Round Robin](#weighted-round-robin)
     * [Least Connections](#least-connections)
     * [Weighted Least Connections](#weighted-least-connections)
+    * [IP Hash](#ip-hash)
   * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
@@ -392,7 +393,7 @@ Existing chapters:
     - [x] _Weighted Round Robin_
     - [x] _Least Connections_
     - [x] _Weighted Least Connections_
-    - [ ] _IP Hash_
+    - [x] _IP Hash_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
@@ -1536,11 +1537,13 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Load balancing algorithms
 
-Load-Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks for example.
+Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks without downtime for example.
+
+Generaly is a technique used to distribute the workload across multiple computing resources and servers.
 
 I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
-The configurations are very simple. NGINX includes a `ngx_http_upstream_module` module to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
+The configuration is very simple. NGINX includes a `ngx_http_upstream_module` module to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
 
 ##### Round Robin
 
@@ -1572,8 +1575,8 @@ This method is similar to the Round Robin in a sense that the manner by which re
 upstream bck_testing_01 {
 
   server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight 1
-  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight 1
+  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight
+  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight
 
 }
 ```
@@ -1584,7 +1587,7 @@ upstream bck_testing_01 {
 
 ##### Least Connections
 
-This method tells the Load Balancer to look at the connections going to each server and send the next connection to the server with the least amount of connections.
+This method tells the load balancer to look at the connections going to each server and send the next connection to the server with the least amount of connections.
 
 ```bash
 upstream bck_testing_01 {
@@ -1608,14 +1611,16 @@ For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8
 
 This is, in general, a very fair distribution method, as it uses the ratio of the number of connections and the weight of a server. The server in the cluster with the lowest ratio automatically receives the next request.
 
+  > Default weight of the server is 1.
+
 ```bash
 upstream bck_testing_01 {
 
   least_conn;
 
   server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight 1
-  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight 1
+  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight
+  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight
 
 }
 ```
@@ -1627,6 +1632,26 @@ For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8
 </p>
 
 ##### IP Hash
+
+The IP Hash method uses the IP of the client to create a unique hash key and associates the hash with one of the servers. This ensures that a user is sent to the same server in future sessions (a basic kind of session persistence) except when this server is unavailable. If one of the servers needs to be temporarily removed, it should be marked with the `down` parameter in order to preserve the current hashing of client IP addresses.
+
+This technique is especially helpful if actions between sessions has to be kept alive e.g. products put in the shopping cart or if you do not have the mechanism to hold the sessions on the backend servers.
+
+```bash
+upstream bck_testing_01 {
+
+  ip_hash;
+
+  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+
+}
+```
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_ip-hash.png" alt="ip-hash">
+</p>
 
 #### Rate limiting
 
@@ -6825,6 +6850,8 @@ upstream backend {
 ###### Rationale
 
   > Sometimes we need to turn off backends e.g. at maintenance-time. I think good solution is marks the server as permanently unavailable with `down` parameter even if the downtime takes a short time.
+
+  > It's also important if you use IP Hash load balancing technique. If one of the servers needs to be temporarily removed, it should be marked with this parameter in order to preserve the current hashing of client IP addresses.
 
   > Comments are good for really permanently disable servers or if you want to leave information for historical purposes.
 
