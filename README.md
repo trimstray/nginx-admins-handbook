@@ -58,8 +58,8 @@
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
+  * [Checklist to rule them all](#checklist-to-rule-them-all)
   * [Printable high-res hardening cheatsheets](#printable-high-res-hardening-cheatsheets)
-  * [All in one checklist as a quick introduction](#all-in-one-checklist-as-a-quick-introduction)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -70,7 +70,7 @@
   * [Cisco ACE to NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
 - **[External Resources](#external-resources)**
   * [Nginx official](#nginx-official)
-  * [Based on the Nginx](#based-on-the-nginx)
+  * [Nginx distributions](#nginx-distributions)
   * [Comparison reviews](#comparison-reviews)
   * [Cheatsheets & References](#cheatsheets--references)
   * [Performance & Hardening](#performance--hardening)
@@ -85,16 +85,16 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[Helpers](#helpers)**
-  * [Nginx directories and files](#nginx-directories-and-files)
-  * [Nginx commands](#nginx-commands)
-  * [Nginx processes](#nginx-processes)
+  * [Directories and files](#directories-and-files)
+  * [Commands](#commands)
+  * [Processes](#processes)
   * [Configuration syntax](#configuration-syntax)
     * [Comments](#comments)
     * [Variables & Strings](#variables--strings)
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
-    * [Attaching external files](#attaching-external-files)
+    * [External files](#external-files)
     * [Measurement units](#measurement-units)
-    * [Enable syntax highlight for Nginx configuration file](#enable-syntax-highlight-for-nginx-configuration-file)
+    * [Enable syntax highlighting](#enable-syntax-highlighting)
   * [Connection processing](#connection-processing)
   * [Request processing stages](#request-processing-stages)
   * [Server blocks logic](#server-blocks-logic)
@@ -107,6 +107,8 @@
     * [Least Connections](#least-connections)
     * [Weighted Least Connections](#weighted-least-connections)
     * [IP Hash](#ip-hash)
+    * [Generic Hash](#generic-hash)
+    * [Other methods](#other-methods)
   * [Rate limiting](#rate-limiting)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
@@ -131,7 +133,7 @@
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
-    * [Show information about NGINX processes](#show-information-about-nginx-processes)
+    * [Show information about Processes](#show-information-about-nginx-processes)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [Show the most accessed IP addresses](#show-the-most-accessed-ip-addresses)
     * [Show the top 5 visitors (IP addresses)](#show-the-top-5-visitors-ip-addresses)
@@ -150,7 +152,7 @@
     * [Get entries within last n hours](#get-entries-within-last-n-hours)
     * [Get entries between two timestamps (range of dates)](#get-entries-between-two-timestamps-range-of-dates)
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
-    * [Trace network traffic for all NGINX processes](#trace-network-traffic-for-all-nginx-processes)
+    * [Trace network traffic for all Processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a NGINX](#list-all-files-accessed-by-a-nginx)
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
     * [Which worker processing current request](#which-worker-processing-current-request)
@@ -220,7 +222,7 @@
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
-  * [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive)
+  * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -231,7 +233,7 @@
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
-  * [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible)
+  * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
@@ -352,7 +354,7 @@ Existing chapters:
 <details>
 <summary><b>Introduction</b></summary><br>
 
-  - [x] _All in one checklist as a quick introduction_
+  - [x] _Checklist to rule them all_
 
 </details>
 
@@ -385,15 +387,18 @@ Existing chapters:
     - [x] _Comments_
     - [x] _Variables & Strings_
     - [x] _Directives, Blocks, and Contexts_
-    - [x] _Attaching external files_
+    - [x] _External files_
     - [x] _Measurement units_
-    - [x] _Enable syntax highlight for Nginx configuration file_
+    - [x] _Enable syntax highlighting_
   - _Load balancing algorithms_
     - [x] _Round Robin_
     - [x] _Weighted Round Robin_
     - [x] _Least Connections_
     - [x] _Weighted Least Connections_
     - [x] _IP Hash_
+    - [x] _Generic Hash_
+    - [ ] _Fair module_
+    - [x] _Other methods_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
@@ -413,7 +418,7 @@ Existing chapters:
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
     - [ ] _SystemTap cheatsheet_
-    - [x] _Show information about NGINX processes_
+    - [x] _Show information about Processes_
     - [x] _Show the most requested urls with http methods_
     - [x] _Show the most accessed response codes_
     - [x] _Calculating requests per second with IP addresses and urls_
@@ -551,29 +556,7 @@ I also got the highest note from Mozilla:
   </a>
 </p>
 
-## Printable high-res hardening cheatsheets
-
-I created printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
-
-  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
-
-- **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
-
-  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
-
-<p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="92%" height="92%">
-</p>
-
-- **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
-
-  > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
-
-<p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
-</p>
-
-## All in one checklist as a quick introduction
+## Checklist to rule them all
 
   > This checklist contains all rules from this handbook.
 
@@ -615,7 +598,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
-| [Use exact names in server_name directive where possible](#beginner-use-exact-names-in-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -627,7 +610,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/priorities/low.png) |
-| [Use only one SSL config for specific listen directive](#beginner-use-only-one-ssl-config-for-specific-listen-directive) | Base Rules | ![low](static/img/priorities/low.png) |
+| [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Adjust worker processes](#beginner-adjust-worker-processes) | Performance | ![low](static/img/priorities/low.png) |
@@ -639,6 +622,28 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | Base Rules | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
+
+## Printable high-res hardening cheatsheets
+
+I created printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
+
+  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
+
+- **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
+
+  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="92%" height="92%">
+</p>
+
+- **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
+
+  > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
+</p>
 
 # Books
 
@@ -739,7 +744,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
 </p>
 
-##### Based on the Nginx
+##### Nginx distributions
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://openresty.org/"><b>OpenResty</b></a><br>
@@ -835,6 +840,8 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://gatling.io/"><b>Gatling</b></a> - is a powerful open-source load and performance testing tool for web applications.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/locustio/locust"><b>locust</b></a> - is an easy-to-use, distributed, user load testing tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/gkbrk/slowloris"><b>slowloris</b></a> - low bandwidth DoS tool. Slowloris rewrite in Python.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/shekyan/slowhttptest"><b>slowhttptest</b></a> - application layer DoS attack simulator.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jseidl/GoldenEye"><b>GoldenEye</b></a> - GoldenEye Layer 7 (KeepAlive+NoCache) DoS test tool.<br>
 </p>
 
 ##### Debugging tools
@@ -899,7 +906,7 @@ _In this ebook you will learn:_
 
 # Helpers
 
-#### Nginx directories and files
+#### Directories and files
 
   > If you compile NGINX server by default all files and directories are available from `/usr/local/nginx` location.
 
@@ -918,7 +925,7 @@ For prebuilt NGINX package paths can be as follows:
 - `/var/run/nginx` - contains information about NGINX process(es)<br>
   * other locations: `/usr/local/nginx/logs`
 
-#### Nginx commands
+#### Commands
 
 - `nginx -h` - shows the help
 - `nginx -v` - shows the NGINX version
@@ -931,7 +938,7 @@ For prebuilt NGINX package paths can be as follows:
   - `stop` - discontinues the NGINX process immediately
   - `quit` - stops the NGINX process after it finishes processing
 inflight requests
-  - `reload` - reloads the configuration without stopping NGINX processes
+  - `reload` - reloads the configuration without stopping Processes
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
@@ -1010,7 +1017,7 @@ Global/Main Context
         +-----» Mail Context
 ```
 
-##### Attaching external files
+##### External files
 
 `include` directive may appear inside any contexts to perform conditional inclusion. It attaching another file, or files matching the specified mask.
 
@@ -1045,7 +1052,7 @@ Time intervals can be specified in:
 proxy_read_timeout 20s;
 ```
 
-##### Enable syntax highlight for Nginx configuration file
+##### Enable syntax highlighting
 
 ###### vi/vim
 
@@ -1100,7 +1107,7 @@ cabal update
 
   Bring up the _Command Palette_ and type `install`. Among the commands you should see _Package Control: Install Package_. Type `nginx` to install [sublime-nginx](https://github.com/brandonwamboldt/sublime-nginx) and after that do the above again for install [SublimeLinter-contrib-nginx-lint](https://github.com/irvinlim/SublimeLinter-contrib-nginx-lint): type `SublimeLinter-contrib-nginx-lint`.
 
-#### Nginx processes
+#### Processes
 
 NGINX has **one master process** and **one or more worker processes**.
 
@@ -1635,7 +1642,7 @@ For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8
 
 The IP Hash method uses the IP of the client to create a unique hash key and associates the hash with one of the servers. This ensures that a user is sent to the same server in future sessions (a basic kind of session persistence) except when this server is unavailable. If one of the servers needs to be temporarily removed, it should be marked with the `down` parameter in order to preserve the current hashing of client IP addresses.
 
-This technique is especially helpful if actions between sessions has to be kept alive e.g. products put in the shopping cart or if you do not have the mechanism to hold the sessions on the backend servers.
+This technique is especially helpful if actions between sessions has to be kept alive e.g. products put in the shopping cart or when the session state is of concern and not handled by shared memory of the application.
 
 ```bash
 upstream bck_testing_01 {
@@ -1652,6 +1659,67 @@ upstream bck_testing_01 {
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_ip-hash.png" alt="ip-hash">
 </p>
+
+##### Generic Hash
+
+This technique is very similar to the IP Hash but for each request the load balancer calculates a hash that is based on the combination of a text string, variable, or a combination you specify, and associates the hash with one of the servers.
+
+```bash
+upstream bck_testing_01 {
+
+  hash $request_uri;
+
+  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
+  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+
+}
+```
+
+For example: load balancer calculate hash from the full original request URI (with arguments). Clients A4, C7, C8 and A9 sends requests to the `/static` location and will be assign to server 1. Similarly clients A1, C2, B6 which get `/sitemap.xml` resource they will be assign to server 2. Clients B3 and B5 sends requests to the `/api/v4` and they will be assign to server 3.
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/lb/nginx_lb_generic-hash.png" alt="generic-hash">
+</p>
+
+##### Other methods
+
+It is similar to the Generic Hash method - you can also specify a unique hash identifier but the assignment to the appropriate server is under your control. I think it's a somewhat primitive method and I wouldn't say it is a full load balancing technique, but in some cases it is very useful.
+
+  > Mainly this helps reducing the mess on the configuration made by a lot of `location` blocks with similar configurations.
+
+First of all create a map:
+
+```bash
+map $request_uri $bck_testing_01 {
+
+  default       "192.168.250.220:8080";
+
+  /api/v4       "192.168.250.220:8080";
+  /api/v3       "192.168.250.221:8080";
+  /static       "192.168.250.222:8080";
+  /sitemap.xml  "192.168.250.222:8080";
+
+}
+```
+
+And add `proxy_pass` directive:
+
+```bash
+server {
+
+  ...
+
+  location / {
+
+    proxy_pass    http://$bck_testing_01;
+
+  }
+
+  ...
+
+}
+```
 
 #### Rate limiting
 
@@ -1978,7 +2046,7 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
-###### Show information about NGINX processes
+###### Show information about Processes
 
 with `ps`:
 
@@ -2165,7 +2233,7 @@ awk -v _dateB=$(date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d 
 tail -F access.log | pv -N RAW -lc 1>/dev/null
 ```
 
-###### Trace network traffic for all NGINX processes
+###### Trace network traffic for all Processes
 
 ```bash
 strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
@@ -5240,7 +5308,7 @@ http {
 
   > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
 
-  > To stop NGINX processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
+  > To stop Processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
 
   From NGINX documentation:
 
@@ -5410,10 +5478,10 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
-- [How nginx processes a request](https://nginx.org/en/docs/http/request_processing.html)
+- [How Processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
-#### :beginner: Use only one SSL config for specific listen directive
+#### :beginner: Use only one SSL config for the listen directive
 
 ###### Rationale
 
@@ -5808,7 +5876,7 @@ ssl_buffer_size 1400;
 - [SSL Session (cache)](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache)
 - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
 
-#### :beginner: Use exact names in `server_name` directive where possible
+#### :beginner: Use exact names in a `server_name` directive where possible
 
 ###### Rationale
 
