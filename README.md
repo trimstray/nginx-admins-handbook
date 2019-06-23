@@ -1546,7 +1546,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks without downtime for example.
 
-Generaly is a technique used to distribute the workload across multiple computing resources and servers.
+Generaly load balancing is a technique used to distribute the workload across multiple computing resources and servers.
 
 I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
@@ -1684,7 +1684,7 @@ For example: load balancer calculate hash from the full original request URI (wi
 
 ##### Other methods
 
-It is similar to the Generic Hash method - you can also specify a unique hash identifier but the assignment to the appropriate server is under your control. I think it's a somewhat primitive method and I wouldn't say it is a full load balancing technique, but in some cases it is very useful.
+It is similar to the Generic Hash method because you can also specify a unique hash identifier but the assignment to the appropriate server is under your control. I think it's a somewhat primitive method and I wouldn't say it is a full load balancing technique, but in some cases it is very useful.
 
   > Mainly this helps reducing the mess on the configuration made by a lot of `location` blocks with similar configurations.
 
