@@ -102,6 +102,7 @@
     * [Matching location](#matching-location)
   * [Error log severity levels](#error-log-severity-levels)
   * [Load balancing algorithms](#load-balancing-algorithms)
+    * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
     * [Weighted Round Robin](#weighted-round-robin)
     * [Least Connections](#least-connections)
@@ -391,6 +392,7 @@ Existing chapters:
     - [x] _Measurement units_
     - [x] _Enable syntax highlighting_
   - _Load balancing algorithms_
+    - [x] _Backend parameters_
     - [x] _Round Robin_
     - [x] _Weighted Round Robin_
     - [x] _Least Connections_
@@ -1551,6 +1553,17 @@ Generaly load balancing is a technique used to distribute the workload across mu
 I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
 The configuration is very simple. NGINX includes a `ngx_http_upstream_module` module to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
+
+##### Backend parameters
+
+Before we start talking about the load balancing techniques you should know something about `server` directive. It defines the address and other parameters of a backend servers.
+
+This directive accepts the following options:
+
+- `weight=<num>` - sets the weight of the origin server
+- `max_conns=<num>` - limits the maximum number of simultaneous active connections from the NGINX proxy server to an upstream server (default value: `0` = no limit)
+- `max_fails=<num>` - the number of unsuccessful attempts to communicate with the backend (default value: `1`, `0` disables the accounting of attempts)
+- `fail_timeout=<time>` - the time during which the specified number of unsuccessful attempts to communicate with the server should happen to consider the server unavailable (default value: `10 seconds`)
 
 ##### Round Robin
 
