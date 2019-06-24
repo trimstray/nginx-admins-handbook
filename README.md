@@ -134,7 +134,11 @@
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
-    * [Show information about Processes](#show-information-about-nginx-processes)
+    * [Show information about processes](#show-information-about-nginx-processes)
+    * [Check memory usage](#check-memoryusage)
+    * [Show open files](#show-open-files)
+    * [Dump configuration](#dump-configuration)
+    * [Get the list of configure arguments](#get-the-list-of-configure-arguments)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [Show the most accessed IP addresses](#show-the-most-accessed-ip-addresses)
     * [Show the top 5 visitors (IP addresses)](#show-the-top-5-visitors-ip-addresses)
@@ -206,6 +210,7 @@
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
     * [Compiler and linker](#compiler-and-linker)
+      * [Debugging Symbols](#debugging-symbols)
     * [SystemTap](#systemtap)
     * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks)
@@ -417,17 +422,22 @@ Existing chapters:
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
-    - [x] _Check that the gzip_static module is working_
-    - [x] _Which worker processing current request_
-    - [ ] _SystemTap cheatsheet_
-    - [x] _Show information about Processes_
+    - [x] _Show information about processes_
+    - [x] _Check memory usage_
+    - [x] _Show open files_
+    - [x] _Dump configuration_
+    - [x] _Get the list of configure arguments_
+    - [x] _Check if the module has been compiled_
     - [x] _Show the most requested urls with http methods_
     - [x] _Show the most accessed response codes_
     - [x] _Calculating requests per second with IP addresses and urls_
+    - [x] _Check that the gzip_static module is working_
+    - [x] _Which worker processing current request_
+    - [x] _Capture only http packets_
     - [x] _Extract http User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
-    - [x] _Capture only http packets_
     - [x] _Capture requests and filter by source ip and destination port_
+    - [ ] _SystemTap cheatsheet_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -461,6 +471,7 @@ Existing chapters:
   - _Installation from source_
     - [x] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add compiler and linker options_
+      - [x] _Debugging Symbols_
     - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
     - [x] _Separation and improvement of installation methods_
     - [x] _Add installation process on CentOS 7 for NGINX_
@@ -2059,18 +2070,120 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
-###### Show information about Processes
+###### Show information about processes
 
 with `ps`:
 
 ```bash
+# All processes (master + workers):
 ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx|[P]ID)'
+
+ps aux | grep [n]ginx
+ps -lfC nginx
+
+# Only master:
+ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx: master|[P]ID)'
+
+ps aux | grep "[n]ginx: master"
+
+# Only worker:
+ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx: worker|[P]ID)'
+
+ps aux | grep "[n]ginx: worker"
+
+# Show only pid, user and group:
+ps -eo pid,comm,euser,supgrp | grep nginx
 ```
 
 with `top`:
 
 ```bash
+# All processes (master + workers):
 top -p $(pgrep -d , nginx)
+
+# Only master:
+top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
+
+# Only worker:
+top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+```
+
+###### Check memory usage
+
+with `ps_mem`:
+
+```bash
+# All processes (master + workers):
+ps_mem -s -p $(pgrep -d , nginx)
+ps_mem -d -p $(pgrep -d , nginx)
+
+# Only master:
+ps_mem -s -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
+
+# Only worker:
+ps_mem -s -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+```
+
+with `pmap`:
+
+```bash
+# All processes (master + workers):
+pmap $(pgrep -d ' ' nginx)
+pmap $(pidof nginx)
+
+# Only master:
+pmap $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
+
+# Only worker:
+pmap $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+```
+
+###### Show open files
+
+```bash
+# All processes (master + workers):
+lsof -n -p $(pgrep -d , nginx)
+
+# Only master:
+lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
+
+# Only worker:
+lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+```
+
+###### Dump configuration
+
+  > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
+
+From configuration file and all attached files (on a disk):
+
+```bash
+nginx -T
+nginx -T -c /etc/nginx/nginx.conf
+```
+
+From a running process with `gdb`:
+
+```bash
+# Save gdb arguments to a file, e.g. nginx.gdb.args:
+set $cd = ngx_cycle->config_dump
+set $nelts = $cd.nelts
+set $elts = (ngx_conf_dump_t*)($cd.elts)
+while ($nelts-- > 0)
+set $name = $elts[$nelts]->name.data
+printf "Dumping %s to nginx.conf.running\n", $name
+append memory nginx.conf.running \
+  $elts[$nelts]->buffer.start $elts[$nelts]->buffer.end
+end
+
+# Run gdb in a batch mode:
+gdb -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}') -batch -x nginx.gdb.args
+```
+
+###### Get the list of configure arguments
+
+```bash
+nginx -V 2>&1 | grep arguments
 ```
 
 ###### Check if the module has been compiled
@@ -3447,6 +3560,25 @@ There are examples:
 #   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 ```
 
+###### Debugging Symbols
+
+Debug symbols helps obtain additional information for debugging, such as functions, variables, data structures, source file and line number information.
+
+However, if you get the `No symbol table info available` error when you run a `(gdb) backtrace` you should to recompile NGINX with support of debugging symbols. For this it is essential to include debugging symbols with the `-g` flag and make the debugger output easier to understand by disabling compiler optimization with the `-O0` flag:
+
+```bash
+./configure --with-debug --with-cc-opt='-O0 -g' ...
+```
+
+Also if you get errors similar to one of them:
+
+```bash
+Missing separate debuginfo for /usr/lib64/libluajit-5.1.so.2 ...
+Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found)...done.
+```
+
+You should also recompile libraries with `-g` compiler option.
+
 ##### SystemTap
 
   > SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
@@ -3481,7 +3613,7 @@ stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 Set NGINX version (I use stable and newest release):
 
 ```bash
-export ngx_version="1.16.0"
+export ngx_version="1.17.0"
 ```
 
 Set temporary variables:
