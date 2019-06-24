@@ -660,8 +660,6 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 
 # Books
 
-  > These books are probably pay or free. They can be official and unofficial.
-
 #### [Nginx Essentials](https://www.amazon.com/Nginx-Essentials-Valery-Kholodkov/dp/1785289535)
 
 Authors: **Valery Kholodkov**
@@ -3548,10 +3546,11 @@ You should also read [Compilation and Installation](https://wiki.openssl.org/ind
 There are examples:
 
 ```bash
+# Example of use compiler options:
 # 1)
 #   --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 # 2)
-#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O3 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
 # Example of use linker options:
 # 1)
@@ -3562,7 +3561,7 @@ There are examples:
 
 ###### Debugging Symbols
 
-Debug symbols helps obtain additional information for debugging, such as functions, variables, data structures, source file and line number information.
+Debugging symbols helps obtain additional information for debugging, such as functions, variables, data structures, source file and line number information.
 
 However, if you get the `No symbol table info available` error when you run a `(gdb) backtrace` you should to recompile NGINX with support of debugging symbols. For this it is essential to include debugging symbols with the `-g` flag and make the debugger output easier to understand by disabling compiler optimization with the `-O0` flag:
 
@@ -3574,10 +3573,10 @@ Also if you get errors similar to one of them:
 
 ```bash
 Missing separate debuginfo for /usr/lib64/libluajit-5.1.so.2 ...
-Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found)...done.
+Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found) ...
 ```
 
-You should also recompile libraries with `-g` compiler option.
+You should also recompile libraries with `-g` compiler option and optional with `-O0`.
 
 ##### SystemTap
 
@@ -3674,6 +3673,8 @@ wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-
 
 cd "$PCRE_SRC"
 
+# add to compile with debugging symbols:
+#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -3700,6 +3701,8 @@ git clone --depth 1 https://github.com/cloudflare/zlib
 
 cd "$ZLIB_SRC"
 
+# add to compile with debugging symbols:
+#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -3739,6 +3742,8 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
 done
 
+# add to compile with debugging symbols:
+#   -d
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
@@ -3979,7 +3984,7 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${ngx_modules}/delay-module \
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O0 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 make -j2 && make test
@@ -4242,6 +4247,8 @@ wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-
 
 cd "$PCRE_SRC"
 
+# add to compile with debugging symbols:
+#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -4268,6 +4275,8 @@ git clone --depth 1 https://github.com/cloudflare/zlib
 
 cd "$ZLIB_SRC"
 
+# add to compile with debugging symbols:
+#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -4307,6 +4316,8 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
 done
 
+# add to compile with debugging symbols:
+#   -d
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
@@ -4518,7 +4529,7 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${ngx_modules}/delay-module \
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O0 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 make && make test
@@ -5005,6 +5016,8 @@ wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-
 
 cd "$PCRE_SRC"
 
+# add to compile with debugging symbols:
+#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -5043,6 +5056,9 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
   fi
 
 done
+
+# add to compile with debugging symbols:
+#   -d
 
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
@@ -5272,7 +5288,7 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
             --add-dynamic-module=${ngx_modules}/delay-module \
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
+            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O0 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
             --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
 
 make -j2 && make test

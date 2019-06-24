@@ -397,7 +397,15 @@ function _inst_pcre() {
   cd "$PCRE_SRC" || \
   ( printf "directory not exist: %s\\n" "$PCRE_SRC" ; exit 1 )
 
-  _f "1" "./configure"
+  if [[ -z "$PCRE_DSYM" ]] ; then
+
+    _f "1" "./configure --with-cc-opt='$PCRE_DSYM'"
+
+  else
+
+    _f "1" "./configure"
+
+  fi
 
   _f "1" "make -j${_vcpu}"
   _f "1" "make install"
@@ -419,7 +427,15 @@ function _inst_zlib() {
   cd "$ZLIB_SRC" || \
   ( printf "directory not exist: %s\\n" "$ZLIB_SRC" ; exit 1 )
 
-  _f "1" "./configure"
+  if [[ ! -z "$ZLIB_DSYM" ]] ; then
+
+    _f "1" "./configure --with-cc-opt='$ZLIB_DSYM'"
+
+  else
+
+    _f "1" "./configure"
+
+  fi
 
   _f "1" "make -j${_vcpu}"
   _f "1" "make install"
@@ -445,7 +461,15 @@ function _inst_openssl() {
 
   __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
 
-  _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
+  if [[ ! -z "$OPENSSL_DSYM" ]] ; then
+
+    _f "1" "./config $OPENSSL_DSYM --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
+
+  else
+
+    _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
+
+  fi
 
   _f "1" "make -j${_vcpu}"
   _f "1" "make install"
@@ -605,6 +629,12 @@ function _build_nginx() {
 
   cd "${_ngx_master}" || \
   ( printf "directory not exist: %s\\n" "$_ngx_master" ; exit 1 )
+
+  if [[ ! -z "$NGINX_DSYM" ]] ; then
+
+    __CC_PARAMS+=("$NGINX_DSYM")
+
+  fi
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
@@ -1004,7 +1034,7 @@ function __main__() {
     if [[ -z "$NGINX_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      NGINX_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      NGINX_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
     fi
 
@@ -1040,7 +1070,7 @@ function __main__() {
     if [[ -z "$OPENRESTY_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      OPENRESTY_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -g -O3 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      OPENRESTY_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
     fi
 
@@ -1076,7 +1106,7 @@ function __main__() {
     if [[ -z "$TENGINE_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      TENGINE_COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+      TENGINE_COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 
     fi
 
