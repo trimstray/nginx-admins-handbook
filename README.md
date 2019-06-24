@@ -2153,8 +2153,6 @@ lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print 
 
 ###### Dump configuration
 
-  > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
-
 From configuration file and all attached files (on a disk):
 
 ```bash
@@ -2163,6 +2161,8 @@ nginx -T -c /etc/nginx/nginx.conf
 ```
 
 From a running process with `gdb`:
+
+  > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
 
 ```bash
 # Save gdb arguments to a file, e.g. nginx.gdb.args:
