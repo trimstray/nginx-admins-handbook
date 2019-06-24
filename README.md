@@ -6474,7 +6474,7 @@ certbot certonly -d domain.com -d www.domain.com
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 - [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)
 
-#### :beginner: Keep only TLS 1.2 and TLS 1.3
+#### :beginner: Keep only TLS 1.3 and TLS 1.2
 
 ###### Rationale
 
