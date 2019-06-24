@@ -165,6 +165,9 @@
     * [Extract http User Agent from the http packets](#extract-http-user-agent-from-the-http-packets)
     * [Capture only http GET and POST packets](#capture-only-http-get-and-post-packets)
     * [Capture requests and filter by source ip and destination port](#capture-requests-and-filter-by-source-ip-and-destination-port)
+    * [GNU Debugger (gdb)](#gnu-debugger-gdb)
+      * [Dump configuration from running process](#dump-configuration-from-running-process)
+      * [Show debug log in memory](#show-debug-log-in-memory)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -437,6 +440,9 @@ Existing chapters:
     - [x] _Extract http User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture requests and filter by source ip and destination port_
+    - _GNU Debugger (gdb)_
+      * [x] _Dump configuration from running process_
+      * [x] _Show debug log in memory_
     - [ ] _SystemTap cheatsheet_
   - _Configuration snippets_
     - [ ] _Custom error pages_
@@ -652,7 +658,7 @@ I created printable posters with hardening cheatsheets (High-Res 5000x8200) base
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
-  > It provides less restrictive setup with 2048-bit private key, TLS 1.2 and 1.3 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
+  > It provides less restrictive setup with 2048-bit private key, TLS 1.3 and 1.2 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
@@ -2073,37 +2079,43 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 with `ps`:
 
 ```bash
-# All processes (master + workers):
+# For all processes (master + workers):
 ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx|[P]ID)'
 
 ps aux | grep [n]ginx
 ps -lfC nginx
 
-# Only master:
+# For master process:
 ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx: master|[P]ID)'
 
 ps aux | grep "[n]ginx: master"
 
-# Only worker:
+# For worker/workers:
 ps axw -o pid,ppid,gid,user,etime,%cpu,%mem,vsz,rss,wchan,ni,command | egrep '([n]ginx: worker|[P]ID)'
 
 ps aux | grep "[n]ginx: worker"
 
-# Show only pid, user and group:
+# Show only pid, user and group for all NGINX processes:
 ps -eo pid,comm,euser,supgrp | grep nginx
 ```
 
 with `top`:
 
 ```bash
-# All processes (master + workers):
+# For all processes (master + workers):
 top -p $(pgrep -d , nginx)
 
-# Only master:
+# For master process:
+top -p $(pgrep -f "nginx: master")
 top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
 
-# Only worker:
+# For one worker:
+top -p $(pgrep -f "nginx: worker")
 top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+
+# For multiple workers:
+top -p $(pgrep -f "nginx: worker" | sed '$!s/$/,/' | tr -d '\n')
+top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
 ```
 
 ###### Check memory usage
@@ -2111,42 +2123,53 @@ top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}'
 with `ps_mem`:
 
 ```bash
-# All processes (master + workers):
+# For all processes (master + workers):
 ps_mem -s -p $(pgrep -d , nginx)
 ps_mem -d -p $(pgrep -d , nginx)
 
-# Only master:
+# For master process:
+ps_mem -s -p $(pgrep -f "nginx: master")
 ps_mem -s -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
 
-# Only worker:
+# For one worker:
+ps_mem -s -p $(pgrep -f "nginx: worker")
 ps_mem -s -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+
+# For multiple workers:
+ps_mem -s -p $(pgrep -f "nginx: worker" | sed '$!s/$/,/' | tr -d '\n')
+ps_mem -s -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
 ```
 
 with `pmap`:
 
 ```bash
-# All processes (master + workers):
+# For all processes (master + workers):
 pmap $(pgrep -d ' ' nginx)
 pmap $(pidof nginx)
 
-# Only master:
+# For master process:
+pmap $(pgrep -f "nginx: master")
 pmap $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
 
-# Only worker:
+# For one and multiple workers:
+pmap $(pgrep -f "nginx: worker")
 pmap $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
 ```
 
 ###### Show open files
 
 ```bash
-# All processes (master + workers):
+# For all processes (master + workers):
 lsof -n -p $(pgrep -d , nginx)
 
-# Only master:
+# For master process:
 lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}')
 
-# Only worker:
+# For one worker:
 lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
+
+# For multiple workers:
+lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
 ```
 
 ###### Dump configuration
@@ -2158,25 +2181,9 @@ nginx -T
 nginx -T -c /etc/nginx/nginx.conf
 ```
 
-From a running process with `gdb`:
+From a running process:
 
-  > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
-
-```bash
-# Save gdb arguments to a file, e.g. nginx.gdb.args:
-set $cd = ngx_cycle->config_dump
-set $nelts = $cd.nelts
-set $elts = (ngx_conf_dump_t*)($cd.elts)
-while ($nelts-- > 0)
-set $name = $elts[$nelts]->name.data
-printf "Dumping %s to nginx.conf.running\n", $name
-append memory nginx.conf.running \
-  $elts[$nelts]->buffer.start $elts[$nelts]->buffer.end
-end
-
-# Run gdb in a batch mode:
-gdb -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: master") { print $1}') -batch -x nginx.gdb.args
-```
+  > For more information please see [GNU Debugger (gdb) - Dump configuration from running process](#dump-configuration-from-running-process).
 
 ###### Get the list of configure arguments
 
@@ -2431,6 +2438,84 @@ tcpdump -ei eth0 -s 0 -v -n -l | egrep -i "POST /|GET /|Host:"
 
 ```bash
 ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
+```
+
+##### GNU Debugger (gdb)
+
+###### Dump configuration from running process
+
+  > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
+
+```bash
+
+set $cd = ngx_cycle->config_dump
+set $nelts = $cd.nelts
+set $elts = (ngx_conf_dump_t*)($cd.elts)
+while ($nelts-- > 0)
+set $name = $elts[$nelts]->name.data
+printf "Dumping %s to nginx.conf.running\n", $name
+append memory nginx.conf.running \
+  $elts[$nelts]->buffer.start $elts[$nelts]->buffer.end
+end
+
+# Run gdb in a batch mode:
+gdb -p $(pgrep -f "nginx: master") -batch -x nginx.gdb
+```
+
+or other solution:
+
+```bash
+# Save gdb arguments to a file, e.g. nginx.gdb:
+define dump_config
+  set $cd = ngx_cycle->config_dump
+  set $nelts = $cd.nelts
+  set $elts = (ngx_conf_dump_t*)($cd.elts)
+  while ($nelts-- > 0)
+    set $name = $elts[$nelts]->name.data
+    printf "Dumping %s to nginx.conf.running\n", $name
+  append memory nginx.conf.running \
+    $elts[$nelts]->buffer.start $elts[$nelts]->buffer.end
+  end
+end
+document dump_config
+  Dump nginx configuration.
+end
+
+# Run gdb in a batch mode:
+gdb -p $(pgrep -f "nginx: master") -iex "source nginx.gdb" -ex "dump_config" --batch
+```
+
+###### Show debug log in memory
+
+First of all a 64‑MB buffer for debug logging should be included:
+
+```bash
+error_log   memory:64m debug;
+```
+
+and:
+
+```bash
+# Save gdb arguments to a file, e.g. nginx.gdb:
+define dump_debug_log
+  set $log = ngx_cycle->log
+  while ($log != 0) && ($log->writer != ngx_log_memory_writer)
+    set $log = $log->next
+  end
+  if ($log->wdata != 0)
+    set $buf = (ngx_log_memory_buf_t *) $log->wdata
+    dump memory debug_mem.log $buf->start $buf->end
+  end
+end
+document dump_debug_log
+  Dump in memory debug log.
+end
+
+# Run gdb in a batch mode:
+gdb -p $(pgrep -f "nginx: master") -iex "source nginx.gdb" -ex "dump_debug_log" --batch
+
+# truncate the file:
+sed -i 's/[[:space:]]*$//' debug_mem.log
 ```
 
 #### Shell aliases
