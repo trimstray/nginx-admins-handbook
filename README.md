@@ -2447,7 +2447,7 @@ ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
   > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
 
 ```bash
-
+# Save gdb arguments to a file, e.g. nginx.gdb:
 set $cd = ngx_cycle->config_dump
 set $nelts = $cd.nelts
 set $elts = (ngx_conf_dump_t*)($cd.elts)
@@ -2460,6 +2460,9 @@ end
 
 # Run gdb in a batch mode:
 gdb -p $(pgrep -f "nginx: master") -batch -x nginx.gdb
+
+# And open NGINX config:
+less nginx.conf.running
 ```
 
 or other solution:
@@ -2478,11 +2481,14 @@ define dump_config
   end
 end
 document dump_config
-  Dump nginx configuration.
+  Dump NGINX configuration.
 end
 
 # Run gdb in a batch mode:
 gdb -p $(pgrep -f "nginx: master") -iex "source nginx.gdb" -ex "dump_config" --batch
+
+# And open NGINX config:
+less nginx.conf.running
 ```
 
 ###### Show debug log in memory
@@ -2516,6 +2522,9 @@ gdb -p $(pgrep -f "nginx: master") -iex "source nginx.gdb" -ex "dump_debug_log" 
 
 # truncate the file:
 sed -i 's/[[:space:]]*$//' debug_mem.log
+
+# And open NGINX debug log:
+less debug_mem.log
 ```
 
 #### Shell aliases
