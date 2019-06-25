@@ -128,7 +128,7 @@
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
     * [Testing SSL connection](#testing-ssl-connection)
-    * [Testing SSL connection (with SNI support)](#testing-ssl-connection-with-sni-support)
+    * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
@@ -189,9 +189,9 @@
     * [Generate CSR](#generate-csr)
     * [Generate CSR (metadata from existing certificate)](#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](#generate-csr-with--config-param)
-    * [Generate private key and csr](#generate-private-key-and-csr)
+    * [Generate private key and CSR](#generate-private-key-and-csr)
     * [Generate ECDSA private key](#generate-ecdsa-private-key)
-    * [Generate private key with csr (ECC)](#generate-private-key-with-csr-ecc)
+    * [Generate private key with CSR (ECC)](#generate-private-key-with-csr-ecc)
     * [Generate self-signed certificate](#generate-self-signed-certificate)
     * [Generate self-signed certificate from existing private key](#generate-self-signed-certificate-from-existing-private-key)
     * [Generate self-signed certificate from existing private key and csr](#generate-self-signed-certificate-from-existing-private-key-and-csr)
@@ -421,7 +421,7 @@ Existing chapters:
     - [x] _Send request with http method, user-agent, follow redirects and show response headers_
     - [x] _Send multiple requests_
     - [x] _Testing SSL connection_
-    - [x] _Testing SSL connection (with SNI support)_
+    - [x] _Testing SSL connection with SNI support_
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
     - [x] _TCP SYN flood Denial of Service attack_
@@ -462,9 +462,9 @@ Existing chapters:
     - [x] _Generate CSR_
     - [x] _Generate CSR (metadata from existing certificate)_
     - [x] _Generate CSR with -config param_
-    - [x] _Generate private key and csr_
+    - [x] _Generate private key and CSR_
     - [x] _Generate ECDSA private key_
-    - [x] _Generate private key with csr (ECC)_
+    - [x] _Generate private key with CSR (ECC)_
     - [x] _Generate self-signed certificate_
     - [x] _Generate self-signed certificate from existing private key_
     - [x] _Generate self-signed certificate from existing private key and csr_
@@ -2026,7 +2026,7 @@ echo | openssl s_client -connect <server_name>:<port>
 gnutls-cli --disable-sni -p 443 <server_name>
 ```
 
-###### Testing SSL connection (with SNI support)
+###### Testing SSL connection with SNI support
 
 ```bash
 # 1)
