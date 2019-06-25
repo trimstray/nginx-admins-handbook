@@ -5,9 +5,20 @@
 __init_params=()
 __script_params=("$@")
 
-# Store the name of the script and directory call.
-readonly _init_name="$(basename "$0")"
-readonly _init_directory="$(dirname "$(readlink -f "$0")")"
+# Tasks for specific system version.
+if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-musl" ]] ; then
+
+  # Store the name of the script and directory call.
+  readonly _init_name="$(basename "$0")"
+  # shellcheck disable=SC2001,SC2005
+  readonly _init_directory=$(dirname "$(readlink -f "$0" || echo "$(echo "$0" | sed -e 's,\\,/,g')")")
+
+else
+
+  printf "Unsupported system version.\\n"
+  exit 1
+
+fi
 
 # ``````````````````````````````````````````````````````````````````````````````
 # Function name: GenHttpCodes()
@@ -21,19 +32,18 @@ readonly _init_directory="$(dirname "$(readlink -f "$0")")"
 # Examples:
 #   GenHttpCodes "src/4xx.json" "${_errors}/4xx"
 #
-
 function GenHttpCodes() {
 
-  local _jsonf="$1"
+  local _jsof="$1"
   local _fdir="$2"
 
-  local _count
-
-  _count=$(jq -r ".[].code" "$_jsonf" | wc -l)
-
-  local _end=$((_count - 1))
+  local _count="0"
+  local _end="0"
 
   mkdir -p "$_fdir"
+
+  _count=$(jq -r ".[].code" "$_jsof" | wc -l)
+  _end=$((_count - 1))
 
   for i in $(seq 0 $_end) ; do
 
@@ -85,19 +95,17 @@ function GenHttpCodes() {
 # Examples:
 #   GetData 1 "message"
 #
-
 function GetData() {
 
   local _FUNCTION_ID="GetData"
   local _STATE="0"
 
-  _msg=""
-
   local _key="$1"
   local _value="$2"
 
-  export _msg
-  _msg=$(jq -r ".[${_key}].${_value}" "$_jsonf")
+  export _msg=""
+
+  _msg=$(jq -r ".[${_key}].${_value}" "$_jsof")
 
   return "$_STATE"
 
