@@ -3760,7 +3760,7 @@ You should also recompile libraries with `-g` compiler option and optional with 
 
   > SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
 
-  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions.
+  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
 
 ```bash
 cd /opt
