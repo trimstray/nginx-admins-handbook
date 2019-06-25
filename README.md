@@ -165,9 +165,11 @@
     * [Extract http User Agent from the http packets](#extract-http-user-agent-from-the-http-packets)
     * [Capture only http GET and POST packets](#capture-only-http-get-and-post-packets)
     * [Capture requests and filter by source ip and destination port](#capture-requests-and-filter-by-source-ip-and-destination-port)
+    * [Dump a process's memory](#dump-a-processs-memory)
     * [GNU Debugger (gdb)](#gnu-debugger-gdb)
-      * [Dump configuration from running process](#dump-configuration-from-running-process)
+      * [Dump configuration from a running process](#dump-configuration-from-a-running-process)
       * [Show debug log in memory](#show-debug-log-in-memory)
+      * [Core dump backtrace](#core-dump-backtrace)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -384,7 +386,7 @@ Existing chapters:
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
-  - [x] _Debugging tools_
+  - _Debugging tools_
     - [x] _htrace.sh_
 
 </details>
@@ -440,10 +442,13 @@ Existing chapters:
     - [x] _Extract http User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture requests and filter by source ip and destination port_
+    - [x] _Dump a process's memory_
     - _GNU Debugger (gdb)_
-      * [x] _Dump configuration from running process_
+      * [x] _Dump configuration from a running process_
       * [x] _Show debug log in memory_
-    - [ ] _SystemTap cheatsheet_
+      * [x] _Core dump backtrace_
+    - _SystemTap cheatsheet_
+      - [ ] _stapxx_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -2074,7 +2079,7 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
 
-###### Show information about processes
+##### Show information about processes
 
 with `ps`:
 
@@ -2118,7 +2123,7 @@ top -p $(pgrep -f "nginx: worker" | sed '$!s/$/,/' | tr -d '\n')
 top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
 ```
 
-###### Check memory usage
+##### Check memory usage
 
 with `ps_mem`:
 
@@ -2156,7 +2161,7 @@ pmap $(pgrep -f "nginx: worker")
 pmap $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}')
 ```
 
-###### Show open files
+##### Show open files
 
 ```bash
 # For all processes (master + workers):
@@ -2172,9 +2177,9 @@ lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print 
 lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
 ```
 
-###### Dump configuration
+##### Dump configuration
 
-From configuration file and all attached files (on a disk):
+From a configuration file and all attached files (from a disk, only what a new process would load):
 
 ```bash
 nginx -T
@@ -2183,21 +2188,21 @@ nginx -T -c /etc/nginx/nginx.conf
 
 From a running process:
 
-  > For more information please see [GNU Debugger (gdb) - Dump configuration from running process](#dump-configuration-from-running-process).
+  > For more information please see [GNU Debugger (gdb) - Dump configuration from a running process](#dump-configuration-from-a-running-process).
 
-###### Get the list of configure arguments
+##### Get the list of configure arguments
 
 ```bash
 nginx -V 2>&1 | grep arguments
 ```
 
-###### Check if the module has been compiled
+##### Check if the module has been compiled
 
 ```bash
 nginx -V 2>&1 | grep -- 'http_geoip_module'
 ```
 
-###### Show the most accessed IP addresses
+##### Show the most accessed IP addresses
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2206,7 +2211,7 @@ nginx -V 2>&1 | grep -- 'http_geoip_module'
 awk '{print $1}' access.log | sort | uniq -c | sort -nr
 ```
 
-###### Show the top 5 visitors (IP addresses)
+##### Show the top 5 visitors (IP addresses)
 
 ```bash
 # - add this to the end for print header:
@@ -2214,7 +2219,7 @@ awk '{print $1}' access.log | sort | uniq -c | sort -nr
 cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
 ```
 
-###### Show the most requested urls
+##### Show the most requested urls
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2223,7 +2228,7 @@ cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
 awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
-###### Show the most requested urls containing 'string'
+##### Show the most requested urls containing 'string'
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2232,7 +2237,7 @@ awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
-###### Show the most requested urls with http methods
+##### Show the most requested urls with http methods
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2241,7 +2246,7 @@ awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | u
 awk -F\" '{print $2}' access.log | awk '{print $1 "\t" $2}' | sort | uniq -c | sort -nr
 ```
 
-###### Show the most accessed response codes
+##### Show the most accessed response codes
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2250,19 +2255,19 @@ awk -F\" '{print $2}' access.log | awk '{print $1 "\t" $2}' | sort | uniq -c | s
 awk '{print $9}' access.log | sort | uniq -c | sort -nr
 ```
 
-###### Analyse web server log and show only 2xx http codes
+##### Analyse web server log and show only 2xx http codes
 
 ```bash
 tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [2]"
 ```
 
-###### Analyse web server log and show only 5xx http codes
+##### Analyse web server log and show only 5xx http codes
 
 ```bash
 tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 ```
 
-###### Show requests which result 502 and sort them by number per requests by url
+##### Show requests which result 502 and sort them by number per requests by url
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2271,7 +2276,7 @@ tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
-###### Show requests which result 404 for php files and sort them by number per requests by url
+##### Show requests which result 404 for php files and sort them by number per requests by url
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2280,7 +2285,7 @@ awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
 awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
-###### Calculating amount of http response codes
+##### Calculating amount of http response codes
 
 ```bash
 # Not less than 1 minute:
@@ -2292,7 +2297,7 @@ tail -2000 access.log | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M")
 tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 ```
 
-###### Calculating requests per second
+##### Calculating requests per second
 
 ```bash
 # In real time:
@@ -2304,7 +2309,7 @@ tail -F access.log | pv -lr >/dev/null
 awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
 ```
 
-###### Calculating requests per second with IP addresses
+##### Calculating requests per second with IP addresses
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2313,7 +2318,7 @@ awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
 awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
 ```
 
-###### Calculating requests per second with IP addresses and urls
+##### Calculating requests per second with IP addresses and urls
 
 ```bash
 # - add `head -n X` to the end to limit the result
@@ -2322,7 +2327,7 @@ awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
 awk '{print $4 " " $1 " " $7}' access.log | uniq -c | sort -nr | tr -d "["
 ```
 
-###### Get entries within last n hours
+##### Get entries within last n hours
 
 ```bash
 awk -v _date=`date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S` ' { if ($4 > _date) print $0}' access.log
@@ -2335,7 +2340,7 @@ export LANG=en_us.utf-8
 awk -v _date=$(date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' access.log
 ```
 
-###### Get entries between two timestamps (range of dates)
+##### Get entries between two timestamps (range of dates)
 
 ```bash
 # 1)
@@ -2358,31 +2363,31 @@ export LANG=en_us.utf-8
 awk -v _dateB=$(date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
 ```
 
-###### Get line rates from web server log
+##### Get line rates from web server log
 
 ```bash
 tail -F access.log | pv -N RAW -lc 1>/dev/null
 ```
 
-###### Trace network traffic for all Processes
+##### Trace network traffic for all Processes
 
 ```bash
 strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 ```
 
-###### List all files accessed by a NGINX
+##### List all files accessed by a NGINX
 
 ```bash
 strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
 
-###### Check that the `gzip_static` module is working
+##### Check that the `gzip_static` module is working
 
 ```bash
 strace -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
 ```
 
-###### Which worker processing current request
+##### Which worker processing current request
 
 Example 1 (more elegant way):
 
@@ -2411,19 +2416,19 @@ Every 0.1s: awk '/Host:/ {print "pid: " $1 ", " "host: " $6}' /tmp/nginx-req.tra
 pid: 31863, host: example.com
 ```
 
-###### Capture only http packets
+##### Capture only http packets
 
 ```bash
 ngrep -d eth0 -qt 'HTTP' 'tcp'
 ```
 
-###### Extract http User Agent from the http packets
+##### Extract http User Agent from the http packets
 
 ```bash
 tcpdump -ei eth0 -nn -A -s1500 -l | grep "User-Agent:"
 ```
 
-###### Capture only http GET and POST packets
+##### Capture only http GET and POST packets
 
 ```bash
 # 1)
@@ -2434,17 +2439,87 @@ tcpdump -ei eth0 -s 0 -A -vv \
 tcpdump -ei eth0 -s 0 -v -n -l | egrep -i "POST /|GET /|Host:"
 ```
 
-###### Capture requests and filter by source ip and destination port
+##### Capture requests and filter by source ip and destination port
 
 ```bash
 ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
 ```
 
+##### Dump a process's memory
+
+  > For more information about read core dumps please see [GNU Debugger (gdb) - Core dump backtrace](#core-dump-backtrace).
+
+A core dump is a file containing a process's address space (memory) when the process terminates unexpectedly. NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
+
+To enable core dumps from NGINX configuration file you should:
+
+```bash
+# In main NGINX configuration file:
+#   - specify the maximum possible size of the core dump for worker processes
+#   - specify the maximum number of open files for worker processes
+#   - specify a working directory in which a core dump file will be saved
+#   - enable global debugging (optional)
+worker_rlimit_core    500m;
+worker_rlimit_nofile  65535;
+working_directory     /var/dump/nginx;
+error_log             /var/log/nginx/error.log debug;
+
+# Make sure the /var/dump/nginx directory is writable:
+chown nginx:nginx /var/dump/nginx
+chmod 0770 /var/dump/nginx
+
+# Disable the limit for the maximum size of a core dump file:
+ulimit -c unlimited
+# or:
+sh -c "ulimit -c unlimited && exec su $LOGNAME"
+
+# Enable core dumps for the setuid and setgid processes:
+#   %e.%p.%h.%t - <executable_filename>.<pid>.<hostname>.<unix_time>
+echo "/var/dump/nginx/core.%e.%p.%h.%t" | tee /proc/sys/kernel/core_pattern
+sysctl -w fs.suid_dumpable=2 && sysctl -p
+```
+
+To generate a core dump of a running NGINX master process:
+
+```bash
+_pid=$(pgrep -f "nginx: master") ; gcore -o core.master $_pid
+```
+
+To generate a core dump of a running NGINX worker processes:
+
+```bash
+for _pid in $(pgrep -f "nginx: worker") ; do gcore -o core.worker $_pid ; done
+```
+
+or other solution for above (to dump memory regions of running NGINX process):
+
+```bash
+# Set pid of NGINX master process:
+_pid=$(pgrep -f "nginx: master")
+
+# Generate gdb commands from the process's memory mappings using awk:
+cat /proc/$_pid/maps | \
+awk '$6 !~ "^/" {split ($1,addrs,"-"); print "dump memory mem_" addrs[1] " 0x" addrs[1] " 0x" addrs[2] ;}END{print "quit"}' > gdb.args
+
+# Use gdb with the -x option to dump these memory regions to mem_* files:
+gdb -p $_pid -x gdb.args
+
+# Look for some (any) nginx.conf text:
+grep -a worker_connections mem_*
+grep -a server_name mem_*
+
+# or:
+strings mem_* | grep worker_connections
+strings mem_* | grep server_name
+```
+
 ##### GNU Debugger (gdb)
 
-###### Dump configuration from running process
+###### Dump configuration from a running process
 
   > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
+
+  > The `ngx_conf_t` is a type of a structure used for configuration parsing. It only exists during configuration parsing, and obviously you can't access it after configuration parsing is complete. For dump configuration from a running process you should use `ngx_conf_dump_t`.
 
 ```bash
 # Save gdb arguments to a file, e.g. nginx.gdb:
@@ -2525,6 +2600,15 @@ sed -i 's/[[:space:]]*$//' debug_mem.log
 
 # And open NGINX debug log:
 less debug_mem.log
+```
+
+###### Core dump backtrace
+
+To backtrace core dumps which saved in `working_directory`:
+
+```bash
+gdb /usr/sbin/nginx /var/dump/nginx/core.nginx.8125.x-9s-web01-prod.1561475764
+(gdb) bt
 ```
 
 #### Shell aliases
