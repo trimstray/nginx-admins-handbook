@@ -1592,9 +1592,10 @@ It's the simpliest load balancing technique. Round Robin has the list of servers
 ```bash
 upstream bck_testing_01 {
 
-  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+  # with default weight for all (weight=1)
+  server 192.168.250.220:8080
+  server 192.168.250.221:8080
+  server 192.168.250.222:8080
 
 }
 ```
@@ -1614,9 +1615,9 @@ This method is similar to the Round Robin in a sense that the manner by which re
 ```bash
 upstream bck_testing_01 {
 
-  server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight
-  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight
+  server 192.168.250.220:8080   weight=3
+  server 192.168.250.221:8080            # default weight
+  server 192.168.250.222:8080            # default weight
 
 }
 ```
@@ -1634,9 +1635,10 @@ upstream bck_testing_01 {
 
   least_conn;
 
-  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+  # with default weight for all (weight=1)
+  server 192.168.250.220:8080
+  server 192.168.250.221:8080
+  server 192.168.250.222:8080
 
 }
 ```
@@ -1658,9 +1660,9 @@ upstream bck_testing_01 {
 
   least_conn;
 
-  server 192.168.250.220:8080   weight=3  max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080             max_fails=3   fail_timeout=5s; # default weight
-  server 192.168.250.222:8080             max_fails=3   fail_timeout=5s; # default weight
+  server 192.168.250.220:8080   weight=3
+  server 192.168.250.221:8080            # default weight
+  server 192.168.250.222:8080            # default weight
 
 }
 ```
@@ -1682,9 +1684,10 @@ upstream bck_testing_01 {
 
   ip_hash;
 
-  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+  # with default weight for all (weight=1)
+  server 192.168.250.220:8080
+  server 192.168.250.221:8080
+  server 192.168.250.222:8080
 
 }
 ```
@@ -1702,9 +1705,10 @@ upstream bck_testing_01 {
 
   hash $request_uri;
 
-  server 192.168.250.220:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.221:8080   max_fails=3   fail_timeout=5s;
-  server 192.168.250.222:8080   max_fails=3   fail_timeout=5s;
+  # with default weight for all (weight=1)
+  server 192.168.250.220:8080
+  server 192.168.250.221:8080
+  server 192.168.250.222:8080
 
 }
 ```
