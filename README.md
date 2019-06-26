@@ -1580,10 +1580,15 @@ Before we start talking about the load balancing techniques you should know some
 
 This directive accepts the following options:
 
-- `weight=<num>` - sets the weight of the origin server
-- `max_conns=<num>` - limits the maximum number of simultaneous active connections from the NGINX proxy server to an upstream server (default value: `0` = no limit)
-- `max_fails=<num>` - the number of unsuccessful attempts to communicate with the backend (default value: `1`, `0` disables the accounting of attempts)
-- `fail_timeout=<time>` - the time during which the specified number of unsuccessful attempts to communicate with the server should happen to consider the server unavailable (default value: `10 seconds`)
+- `zone <name> <size>` - defines shared memory zone that keeps the group’s configuration and run-time state that are shared between worker processes, e.g. `zone backend 32k;`
+- `weight=<num>` - sets the weight of the origin server, e.g. `weight=10`
+- `max_conns=<num>` - limits the maximum number of simultaneous active connections from the NGINX proxy server to an upstream server (default value: `0` = no limit), e.g. `max_conns=8`
+  - if you set `max_conns=4` the 5th will be rejected
+  - if the server group does not reside in the shared memory (`zone` directive), the limitation works per each worker process
+- `max_fails=<num>` - the number of unsuccessful attempts to communicate with the backend (default value: `1`, `0` disables the accounting of attempts), e.g. `max_fails=3;`
+- `fail_timeout=<time>` - the time during which the specified number of unsuccessful attempts to communicate with the server should happen to consider the server unavailable (default value: `10 seconds`), e.g. `fail_timeout=30s;`
+- `backup` - if server is marked as a backup server it does not receive requests unless both of the other servers are unavailable
+- `down` - marks the server as permanently unavailable
 
 ##### Round Robin
 
@@ -1616,8 +1621,8 @@ This method is similar to the Round Robin in a sense that the manner by which re
 upstream bck_testing_01 {
 
   server 192.168.250.220:8080   weight=3
-  server 192.168.250.221:8080            # default weight
-  server 192.168.250.222:8080            # default weight
+  server 192.168.250.221:8080              # default weight=1
+  server 192.168.250.222:8080              # default weight=1
 
 }
 ```
@@ -1661,8 +1666,8 @@ upstream bck_testing_01 {
   least_conn;
 
   server 192.168.250.220:8080   weight=3
-  server 192.168.250.221:8080            # default weight
-  server 192.168.250.222:8080            # default weight
+  server 192.168.250.221:8080              # default weight=1
+  server 192.168.250.222:8080              # default weight=1
 
 }
 ```
