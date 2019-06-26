@@ -6057,6 +6057,8 @@ server {
 
   > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a very high-traffic sites).
 
+  > Remember: never leave debug logging on in production and absolutely use log rotation policy.
+
 ###### Example
 
 ```bash
@@ -6067,6 +6069,7 @@ error_log /var/log/nginx/error-debug.log debug;
 ###### External resources
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
+- [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
 
 #### :beginner: Use custom log formats for debugging
 
