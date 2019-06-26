@@ -399,7 +399,7 @@ function _inst_pcre() {
 
   if [[ -z "$__PCRE_DSYM" ]] ; then
 
-    _f "1" "./configure --with-cc-opt='$__PCRE_DSYM'"
+    _f "1" "CFLAGS='$__PCRE_DSYM' ./configure"
 
   else
 
@@ -427,15 +427,16 @@ function _inst_zlib() {
   cd "$ZLIB_SRC" || \
   ( printf "directory not exist: %s\\n" "$ZLIB_SRC" ; exit 1 )
 
-  if [[ ! -z "$__ZLIB_DSYM" ]] ; then
-
-    _f "1" "./configure --with-cc-opt='$__ZLIB_DSYM'"
-
-  else
-
-    _f "1" "./configure"
-
-  fi
+  # if [[ ! -z "$__ZLIB_DSYM" ]] ; then
+  #
+  #   _f "1" "./configure --with-cc-opt='$__ZLIB_DSYM'"
+  #
+  # else
+  #
+  #   _f "1" "./configure"
+  #
+  # fi
+  _f "1" "./configure"
 
   _f "1" "make -j${_vcpu}"
   _f "1" "make install"
@@ -1191,7 +1192,7 @@ function __main__() {
   printf '       __NGINX_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__NGINX_DSYM}"
   printf '     __OPENSSL_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_DSYM}"
   printf '        __PCRE_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__PCRE_DSYM}"
-  printf '        __ZLIB_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__ZLIB_DSYM}"
+  # printf '        __ZLIB_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__ZLIB_DSYM}"
   printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}" | tr -d "\\\'"
   printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
   printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
