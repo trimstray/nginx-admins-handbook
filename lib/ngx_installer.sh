@@ -397,9 +397,9 @@ function _inst_pcre() {
   cd "$PCRE_SRC" || \
   ( printf "directory not exist: %s\\n" "$PCRE_SRC" ; exit 1 )
 
-  if [[ -z "$PCRE_DSYM" ]] ; then
+  if [[ -z "$__PCRE_DSYM" ]] ; then
 
-    _f "1" "./configure --with-cc-opt='$PCRE_DSYM'"
+    _f "1" "./configure --with-cc-opt='$__PCRE_DSYM'"
 
   else
 
@@ -427,9 +427,9 @@ function _inst_zlib() {
   cd "$ZLIB_SRC" || \
   ( printf "directory not exist: %s\\n" "$ZLIB_SRC" ; exit 1 )
 
-  if [[ ! -z "$ZLIB_DSYM" ]] ; then
+  if [[ ! -z "$__ZLIB_DSYM" ]] ; then
 
-    _f "1" "./configure --with-cc-opt='$ZLIB_DSYM'"
+    _f "1" "./configure --with-cc-opt='$__ZLIB_DSYM'"
 
   else
 
@@ -461,15 +461,7 @@ function _inst_openssl() {
 
   __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
 
-  if [[ ! -z "$OPENSSL_DSYM" ]] ; then
-
-    _f "1" "./config $OPENSSL_DSYM --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
-
-  else
-
-    _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
-
-  fi
+  _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
 
   _f "1" "make -j${_vcpu}"
   _f "1" "make install"
@@ -629,12 +621,6 @@ function _build_nginx() {
 
   cd "${_ngx_master}" || \
   ( printf "directory not exist: %s\\n" "$_ngx_master" ; exit 1 )
-
-  if [[ ! -z "$NGINX_DSYM" ]] ; then
-
-    __CC_PARAMS+=("$NGINX_DSYM")
-
-  fi
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
@@ -1125,15 +1111,38 @@ function __main__() {
 
   fi
 
+  __ZLIB_DSYM="$ZLIB_DSYM"
+  __PCRE_DSYM="$PCRE_DSYM"
+  __OPENSSL_DSYM="$OPENSSL_DSYM"
+  __NGINX_DSYM="$NGINX_DSYM"
+
   if [[ "${#__GCC_SSL[@]}" -eq 0 ]] ; then
+
+    if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
+
+      OPENSSL_OPTIONS="$OPENSSL_OPTIONS $__OPENSSL_DSYM"
+
+    fi
 
     # shellcheck disable=SC2178
     export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
 
   else
 
+    if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
+
+      OPENSSL_OPTIONS="$OPENSSL_OPTIONS $__OPENSSL_DSYM"
+
+    fi
+
     # shellcheck disable=SC2178
     export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
+
+  fi
+
+  if [[ ! -z "$__NGINX_DSYM" ]] ; then
+
+    COMPILER_OPTIONS="$COMPILER_OPTIONS $__NGINX_DSYM"
 
   fi
 
@@ -1142,20 +1151,27 @@ function __main__() {
   # shellcheck disable=SC2178
   export __LD_PARAMS=("\'${LINKER_OPTIONS}\'")
 
-  printf '\n            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
+  printf '\n             \e['${trgb_bold}'m%s\e[m\n' "SYSTEM"
+  printf '            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
   printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "${_DIST_VERSION} like"
   printf '         vcpu cores : \e['${trgb_dark}'m%s\e[m\n' "$_vcpu"
-  printf '       total memory : \e['${trgb_dark}'m%s\e[m\n\n' "$_pmem"
+  printf '       total memory : \e['${trgb_dark}'m%s\e[m\n' "$_pmem"
+
+  printf '\n              \e['${trgb_bold}'m%s\e[m\n' "PATHS"
   printf '        config file : \e['${trgb_dark}'m%s\e[m\n' "$_cfg"
   printf '     init directory : \e['${trgb_dark}'m%s\e[m\n' "$_init_directory"
   printf '   source directory : \e['${trgb_dark}'m%s\e[m\n' "$_src"
   printf '    nginx directory : \e['${trgb_dark}'m%s\e[m\n' "$_ngx_master"
-  printf '  modules directory : \e['${trgb_dark}'m%s\e[m\n\n' "$_ngx_modules"
+  printf '  modules directory : \e['${trgb_dark}'m%s\e[m\n' "$_ngx_modules"
+
+  printf '\n           \e['${trgb_bold}'m%s\e[m\n' "PACKAGES"
   printf '    package version : \e['${trgb_dark}'m%s, %s\e[m\n' "$_ngx_distr_str" "$ngx_version"
   printf '       pcre version : \e['${trgb_dark}'m%s\e[m\n' "$_pcre_version"
   printf '    openssl version : \e['${trgb_dark}'m%s\e[m\n' "$_openssl_version"
   printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "Cloudflare fork of zlib"
-  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n\n' "OpenResty's branch of LuaJIT 2"
+  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "OpenResty's branch of LuaJIT 2"
+
+  printf '\n          \e['${trgb_bold}'m%s\e[m\n' "LIBRARIES"
   printf '           PCRE_SRC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_SRC"
   printf '           PCRE_LIB : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_LIB"
   printf '           PCRE_INC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INC"
@@ -1168,8 +1184,14 @@ function __main__() {
   printf '        OPENSSL_INC : \e['${trgb_dark}'m%s\e[m\n' "$OPENSSL_INC"
   printf '         LUAJIT_SRC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_SRC"
   printf '         LUAJIT_LIB : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_LIB"
-  printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n\n' "$LUAJIT_INC"
+  printf '         LUAJIT_INC : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_INC"
+
+  printf '\n  \e['${trgb_bold}'m%s\e[m\n' "COMPILER & LINKER"
   printf '          MAKEFLAGS : \e['${trgb_dark}'m%s\e[m\n' "-j${_vcpu}"
+  printf '       __NGINX_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__NGINX_DSYM}"
+  printf '     __OPENSSL_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_DSYM}"
+  printf '        __PCRE_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__PCRE_DSYM}"
+  printf '        __ZLIB_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__ZLIB_DSYM}"
   printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}" | tr -d "\\\'"
   printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
   printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
