@@ -397,7 +397,7 @@ function _inst_pcre() {
   cd "$PCRE_SRC" || \
   ( printf "directory not exist: %s\\n" "$PCRE_SRC" ; exit 1 )
 
-  if [[ -z "$__PCRE_DSYM" ]] ; then
+  if [[ ! -z "$__PCRE_DSYM" ]] ; then
 
     _f "1" "CFLAGS='$__PCRE_DSYM' ./configure"
 
@@ -427,15 +427,6 @@ function _inst_zlib() {
   cd "$ZLIB_SRC" || \
   ( printf "directory not exist: %s\\n" "$ZLIB_SRC" ; exit 1 )
 
-  # if [[ ! -z "$__ZLIB_DSYM" ]] ; then
-  #
-  #   _f "1" "./configure --with-cc-opt='$__ZLIB_DSYM'"
-  #
-  # else
-  #
-  #   _f "1" "./configure"
-  #
-  # fi
   _f "1" "./configure"
 
   _f "1" "make -j${_vcpu}"
@@ -512,7 +503,16 @@ function _inst_luajit() {
   cd "$LUAJIT_SRC" || \
   ( printf "directory not exist: %s\\n" "$LUAJIT_SRC" ; exit 1 )
 
-  _f "1" "make"
+  if [[ ! -z "$__LUAJIT_DSYM" ]] ; then
+
+    _f "1" "CFLAGS='-g' make"
+
+  else
+
+    _f "1" "make"
+
+  fi
+
   _f "1" "make install"
 
   _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so"
@@ -1114,6 +1114,7 @@ function __main__() {
 
   __ZLIB_DSYM="$ZLIB_DSYM"
   __PCRE_DSYM="$PCRE_DSYM"
+  __LUAJIT_DSYM="$LUAJIT_DSYM"
   __OPENSSL_DSYM="$OPENSSL_DSYM"
   __NGINX_DSYM="$NGINX_DSYM"
 
@@ -1193,6 +1194,7 @@ function __main__() {
   printf '     __OPENSSL_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_DSYM}"
   printf '        __PCRE_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__PCRE_DSYM}"
   # printf '        __ZLIB_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__ZLIB_DSYM}"
+  printf '      __LUAJIT_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__LUAJIT_DSYM}"
   printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}" | tr -d "\\\'"
   printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
   printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
