@@ -3763,7 +3763,7 @@ Missing separate debuginfo for /usr/lib64/libluajit-5.1.so.2 ...
 Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found) ...
 ```
 
-You should also recompile libraries with `-g` compiler option and optional with `-O0`.
+You should also recompile libraries with `-g` compiler option and optional with `-O0`. For more information please read [3.9 Options for Debugging Your Program](https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html).
 
 ##### SystemTap
 
