@@ -1121,7 +1121,7 @@ function __main__() {
 
     if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
 
-      OPENSSL_OPTIONS="$OPENSSL_OPTIONS $__OPENSSL_DSYM"
+      OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
 
     fi
 
@@ -1132,7 +1132,7 @@ function __main__() {
 
     if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
 
-      OPENSSL_OPTIONS="$OPENSSL_OPTIONS $__OPENSSL_DSYM"
+      OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
 
     fi
 
@@ -1143,7 +1143,7 @@ function __main__() {
 
   if [[ ! -z "$__NGINX_DSYM" ]] ; then
 
-    COMPILER_OPTIONS="$COMPILER_OPTIONS $__NGINX_DSYM"
+    COMPILER_OPTIONS="${COMPILER_OPTIONS} ${__NGINX_DSYM}"
 
   fi
 
