@@ -3752,6 +3752,8 @@ Debugging symbols helps obtain additional information for debugging, such as fun
 
 However, if you get the `No symbol table info available` error when you run a `(gdb) backtrace` you should to recompile NGINX with support of debugging symbols. For this it is essential to include debugging symbols with the `-g` flag and make the debugger output easier to understand by disabling compiler optimization with the `-O0` flag:
 
+  > If you use `-O0 -g` remember about disable `-D_FORTIFY_SOURCE=2`, if you do not do it you will get an error: `error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O)`
+
 ```bash
 ./configure --with-debug --with-cc-opt='-O0 -g' ...
 ```
@@ -3860,8 +3862,8 @@ wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-
 
 cd "$PCRE_SRC"
 
-# add to compile with debugging symbols:
-#   --with-cc-opt='-O0 -g'
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
 ./configure
 
 make -j2 && make test
@@ -3888,8 +3890,6 @@ git clone --depth 1 https://github.com/cloudflare/zlib
 
 cd "$ZLIB_SRC"
 
-# add to compile with debugging symbols:
-#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -3929,8 +3929,8 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
 done
 
-# add to compile with debugging symbols:
-#   -d
+# Add to compile with debugging symbols:
+#   ./config -d ...
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
@@ -3973,6 +3973,8 @@ git clone --depth 1 https://github.com/openresty/luajit2
 
 cd "$LUAJIT_SRC"
 
+# Add to compile with debugging symbols:
+#   CFLAGS='-g' make ...
 make && make install
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
@@ -4097,6 +4099,8 @@ cd "${ngx_master}"
 # - you can also build NGINX without 3rd party modules
 # - remember about compiler and linker options
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
@@ -4171,7 +4175,7 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${ngx_modules}/delay-module \
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O0 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O2 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 make -j2 && make test
@@ -4434,8 +4438,8 @@ wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-
 
 cd "$PCRE_SRC"
 
-# add to compile with debugging symbols:
-#   --with-cc-opt='-O0 -g'
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
 ./configure
 
 make -j2 && make test
@@ -4462,8 +4466,6 @@ git clone --depth 1 https://github.com/cloudflare/zlib
 
 cd "$ZLIB_SRC"
 
-# add to compile with debugging symbols:
-#   --with-cc-opt='-O0 -g'
 ./configure
 
 make -j2 && make test
@@ -4503,8 +4505,8 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
 done
 
-# add to compile with debugging symbols:
-#   -d
+# Add to compile with debugging symbols:
+#   ./config -d ...
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
@@ -4637,6 +4639,8 @@ cd "${ngx_master}"
 # - you can also build OpenResty without 3rd party modules
 # - remember about compiler and linker options
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
@@ -4716,7 +4720,7 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
             --add-dynamic-module=${ngx_modules}/delay-module \
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O0 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O2 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
             --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 
 make && make test
@@ -5203,8 +5207,8 @@ wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-
 
 cd "$PCRE_SRC"
 
-# add to compile with debugging symbols:
-#   --with-cc-opt='-O0 -g'
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
 ./configure
 
 make -j2 && make test
@@ -5244,9 +5248,8 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
 done
 
-# add to compile with debugging symbols:
-#   -d
-
+# Add to compile with debugging symbols:
+#   ./config -d ...
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 make -j2 && make test
@@ -5289,6 +5292,8 @@ git clone --depth 1 https://github.com/openresty/luajit2
 
 cd "$LUAJIT_SRC"
 
+# Add to compile with debugging symbols:
+#   CFLAGS='-g' make ...
 make && make install
 
 ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
@@ -5394,6 +5399,8 @@ cd "${ngx_master}"
 # - you can also build Tengine without 3rd party modules
 # - remember about compiler and linker options
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
 ./configure --prefix=/etc/nginx \
             --conf-path=/etc/nginx/nginx.conf \
             --sbin-path=/usr/sbin/nginx \
@@ -5475,7 +5482,7 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
             --add-dynamic-module=${ngx_modules}/delay-module \
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O0 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
+            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
             --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
 
 make -j2 && make test
