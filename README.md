@@ -6097,7 +6097,10 @@ NGINX has many methods for troubleshooting configuration problems. In this chapt
 
   > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in `http`, `server` or a `location` contexts.
 
-  > Remember: never leave debug logging to a file on in production and absolutely use log rotation policy.
+  > Words of caution:
+  >   - never leave debug logging to a file on in production
+  >   - don't forget to revert debug-level for `error_log` on a *very* high traffic sites
+  >   - absolutely use log rotation policy
 
 ###### Example
 
