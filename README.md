@@ -6947,6 +6947,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
 - [Cipher Suite Breakdown](https://blogs.technet.microsoft.com/askpfeplat/2017/12/26/cipher-suite-breakdown/)
 - [OpenSSL IANA Mapping](https://testssl.sh/openssl-iana.mapping.html)
+- [Goodbye TLS_RSA](https://lightshipsec.com/goodbye-tls_rsa/)
 
 #### :beginner: Use more secure ECDH Curve
 
