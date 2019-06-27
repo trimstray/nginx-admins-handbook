@@ -217,6 +217,7 @@
     * [Compiler and linker](#compiler-and-linker)
       * [Debugging Symbols](#debugging-symbols)
     * [SystemTap](#systemtap)
+      * [stapxx](#stapxx)
     * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks)
       * [Install or build dependencies](#install-or-build-dependencies)
@@ -238,6 +239,7 @@
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
+- **[Debugging](#debugging)
   * [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging)
   * [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging)
 - **[Performance](#performance)**
@@ -359,6 +361,7 @@ New chapters:
 - [ ] **3rd party modules**
 - [ ] **Web Application Firewall**
 - [ ] **ModSecurity**
+- [x] **Debugging**
 
 Existing chapters:
 
@@ -387,6 +390,7 @@ Existing chapters:
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
   - _Debugging tools_
+    - [x] _GDB_
     - [x] _htrace.sh_
 
 </details>
@@ -448,7 +452,7 @@ Existing chapters:
       * [x] _Show debug log in memory_
       * [x] _Core dump backtrace_
     - _SystemTap cheatsheet_
-      - [ ] _stapxx_
+      - [x] _stapxx_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -498,6 +502,12 @@ Existing chapters:
   - [ ] _Never use a hostname in a listen directive_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [ ] _Use "return" directive for URL redirection (301, 302)_
+
+</details>
+
+<details>
+<summary><b>Debugging</b></summary><br>
+
   - [ ] _Use mirror module to copy requests to another backend_
 
 </details>
@@ -643,8 +653,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
-| [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | Base Rules | ![info](static/img/priorities/info.png) |
-| [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | Base Rules | ![info](static/img/priorities/info.png) |
+| [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
 ## Printable high-res hardening cheatsheets
@@ -869,6 +879,10 @@ _In this ebook you will learn:_
 ##### Debugging tools
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://strace.io/"><b>strace</b></a> - is a diagnostic, debugging and instructional userspace utility (linux syscall tracer) for Linux.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.gnu.org/software/gdb/"><b>GDB</b></a> - allows you to see what is going on `inside' another program while it executes.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://sourceware.org/systemtap/"><b>SystemTap</b></a> - provides free software (GPL) infrastructure to simplify the gathering of information about the running Linux system.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/stapxx"><b>stapxx</b></a> - simple macro language extentions to SystemTap.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/trimstray/htrace.sh"><b>htrace.sh</b></a> - is a simple Swiss Army knife for http/https troubleshooting and profiling.<br>
 </p>
 
@@ -3794,6 +3808,10 @@ stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
   >   - [Ubuntu Wiki - Systemtap](https://wiki.ubuntu.com/Kernel/Systemtap)
   >   - [Install SystemTap in Ubuntu 14.04](https://blog.jeffli.me/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/)
 
+###### stapxx
+
+The author of OpenResty created great simple macro language extensions to SystemTap: [stapxx](https://github.com/openresty/stapxx).
+
 #### Install Nginx on CentOS 7
 
 ###### Pre installation tasks
@@ -6057,6 +6075,10 @@ server {
 ###### External resources
 
 - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
+
+# Debugging
+
+NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
 #### :beginner: Use debug mode for debugging
 
