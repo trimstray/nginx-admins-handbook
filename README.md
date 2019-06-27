@@ -924,6 +924,7 @@ _In this ebook you will learn:_
 ##### Other stuff
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/CheatSheetSeries/tree/master/cheatsheets"><b>CheatSheetSeries by OWASP</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>
@@ -7171,9 +7172,9 @@ location ^~ /assets/ {
   > You had better be pretty sure that your website is indeed all HTTPS before you turn this on because HSTS adds complexity to your rollback strategy. Google recommend enabling HSTS this way:
   >
   >   1) Roll out your HTTPS pages without HSTS first
-  >   2) Start sending HSTS headers with a short `max-age`. Monitor your traffic both from users and other clients, and also dependents' performance, such as ads.
-  >   3) Slowly increase the HSTS `max-age`.
-  >   4) If HSTS doesn't affect your users and search engines negatively, you can, if you wish, ask your site to be added to the HSTS preload list used by most major browsers.
+  >   2) Start sending HSTS headers with a short `max-age`. Monitor your traffic both from users and other clients, and also dependents' performance, such as ads
+  >   3) Slowly increase the HSTS `max-age`
+  >   4) If HSTS doesn't affect your users and search engines negatively, you can, if you wish, ask your site to be added to the HSTS preload list used by most major browsers
 
 ###### Example
 
