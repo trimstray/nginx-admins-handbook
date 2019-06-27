@@ -3752,7 +3752,7 @@ Debugging symbols helps obtain additional information for debugging, such as fun
 
 However, if you get the `No symbol table info available` error when you run a `(gdb) backtrace` you should to recompile NGINX with support of debugging symbols. For this it is essential to include debugging symbols with the `-g` flag and make the debugger output easier to understand by disabling compiler optimization with the `-O0` flag:
 
-  > If you use `-O0 -g` remember about disable `-D_FORTIFY_SOURCE=2`, if you do not do it you will get an error: `error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O)`
+  > If you use `-O0` remember about disable `-D_FORTIFY_SOURCE=2`, if you don't do it you will get: `error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O)`
 
 ```bash
 ./configure --with-debug --with-cc-opt='-O0 -g' ...
