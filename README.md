@@ -881,7 +881,7 @@ _In this ebook you will learn:_
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://strace.io/"><b>strace</b></a> - is a diagnostic, debugging and instructional userspace utility (linux syscall tracer) for Linux.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.gnu.org/software/gdb/"><b>GDB</b></a> - allows you to see what is going on `inside' another program while it executes.<br>
-&nbsp;&nbsp;:black_small_square: <a href="https://sourceware.org/systemtap/"><b>SystemTap</b></a> - provides free software (GPL) infrastructure to simplify the gathering of information about the running Linux system.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://sourceware.org/systemtap/"><b>SystemTap</b></a> - provides infrastructure to simplify the gathering of information about the running Linux system.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/stapxx"><b>stapxx</b></a> - simple macro language extentions to SystemTap.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/trimstray/htrace.sh"><b>htrace.sh</b></a> - is a simple Swiss Army knife for http/https troubleshooting and profiling.<br>
 </p>
