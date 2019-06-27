@@ -240,7 +240,7 @@
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
 - **[Debugging](#debugging)
-  * [Use debug mode for more debugging info](#beginner-use-debug-mode-for-more-debugging-info)
+  * [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior)
   * [Use custom log formats](#beginner-use-custom-log-formats)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
@@ -653,7 +653,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
-| [Use debug mode for more debugging info](#beginner-use-debug-mode-for-more-debugging-info) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
@@ -6083,15 +6083,19 @@ server {
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
-#### :beginner: Use debug mode for more debugging info
+#### :beginner: Use debug mode to track down unexpected behavior
 
 ###### Rationale
 
   > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a very high-traffic sites).
 
-  > You can also save the debug log to memory (to a cyclic memory buffer). The memory buffer on the debug level does not have significant impact on performance even under high load.
+  > Generally, the `error_log` directive is specified in the `main` context but you can specified inside a particular `server` or a `location` block, the global settings will be overridden and such `error_log` directive will set its own path to the log file and the level of logging.
 
-  > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in http, server or a location contexts.
+  > It is possible to enable the debugging log for a particular IP address or a range of IP addresses (see examples).
+
+  > The alternative method of storing the debug log is keep it in the memory (to a cyclic memory buffer). The memory buffer on the debug level does not have significant impact on performance even under high load.
+
+  > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in `http`, `server` or a `location` contexts.
 
   > Remember: never leave debug logging to a file on in production and absolutely use log rotation policy.
 
@@ -6114,6 +6118,40 @@ error_log memory:32m debug;
 ```
 
   > How to analyse error log in memory you can read [Show debug log in memory](#show-debug-log-in-memory) chapter.
+
+- Debugging log for a IP address/range:
+
+```bash
+events {
+
+  debug_connection    192.168.252.15/32;
+  debug_connection    10.10.10.0/24;
+
+}
+```
+
+- Debugging log for a each server:
+
+```bash
+error_log /var/log/nginx/debug.log debug;
+
+...
+
+http {
+
+  server {
+
+    # To enable debugging:
+    error_log /var/log/nginx/domain.com/domain.com-debug.log debug;
+    # To disable debugging:
+    error_log /var/log/nginx/domain.com/domain.com-debug.log;
+
+    ...
+
+  }
+
+}
+```
 
 ###### External resources
 
