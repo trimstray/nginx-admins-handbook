@@ -5915,15 +5915,21 @@ server {
 
 ###### Rationale
 
-  > You should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications.
+  > TLS provides two main services. For one, it validates the identity of the server that the user is connecting to for the user. It also protects the transmission of sensitive information from the user to the server.
 
-  > Always put login page, registration forms, and all subsequent authenticated pages in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
+  > In my opinion you should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications. The application can have many sensitive places that should be protected.
+
+  > Always put login page, registration forms, all subsequent authenticated pages, contact forms, and payment details forms in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
+
+  > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
+
+  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-http-strict-transport-security).
 
   > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
 
 ###### Example
 
-- force all traffic to TLS:
+- force all traffic to use TLS:
 
 ```bash
 server {
@@ -5947,7 +5953,7 @@ server {
 }
 ```
 
-- force login page to TLS:
+- force e.g. login page to use TLS:
 
 ```bash
 server {
@@ -5970,6 +5976,7 @@ server {
 ###### External resources
 
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
+- [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
 - [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
 
 #### :beginner: Use geo/map modules instead allow/deny
@@ -7157,7 +7164,16 @@ location ^~ /assets/ {
 
 ###### Rationale
 
+  > Generaly HSTS is a way for websites to tell browsers that the connection should only ever be encrypted.This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids.
+
   > The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
+
+  > You had better be pretty sure that your website is indeed all HTTPS before you turn this on because HSTS adds complexity to your rollback strategy. Google recommend enabling HSTS this way:
+  >
+  >   1) Roll out your HTTPS pages without HSTS first
+  >   2) Start sending HSTS headers with a short `max-age`. Monitor your traffic both from users and other clients, and also dependents' performance, such as ads.
+  >   3) Slowly increase the HSTS `max-age`.
+  >   4) If HSTS doesn't affect your users and search engines negatively, you can, if you wish, ask your site to be added to the HSTS preload list used by most major browsers.
 
 ###### Example
 
@@ -7171,6 +7187,8 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
 - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
 - [Security HTTP Headers - Strict-Transport-Security](https://zinoui.com/blog/security-http-headers#strict-transport-security)
+- [Is HSTS as a proper substitute for HTTP-to-HTTPS redirects?](https://www.reddit.com/r/bigseo/comments/8zw45d/is_hsts_as_a_proper_substitute_for_httptohttps/)
+- [How to configure HSTS on www and other subdomains](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
 
