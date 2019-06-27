@@ -6099,7 +6099,7 @@ NGINX has many methods for troubleshooting configuration problems. In this chapt
 
   > Words of caution:
   >   - never leave debug logging to a file on in production
-  >   - don't forget to revert debug-level for `error_log` on a *very* high traffic sites
+  >   - don't forget to revert debug-level for `error_log` on a very high traffic sites
   >   - absolutely use log rotation policy
 
 ###### Example
@@ -6846,7 +6846,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because `ECDHE` suites are faster, you want to use them whenever clients supports them.
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because `ECDHE` suites are faster, you want to use them whenever clients supports them. `Ephemeral DHE/ECDHE` are recommended and support Perfect Forward Secrecy.
 
   > For backward compatibility software components you should use less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2), you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
@@ -6857,6 +6857,8 @@ ssl_protocols TLSv1.2 TLSv1.1;
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 cipher suites so at this moment it's always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
+
+  > Disable TLS cipher modes (all ciphers that start with `TLS_RSA`) that use RSA encryption because they are vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support RSA key exchange are vulnerable. But it is recommended to disable RSA key exchange ciphers as it does not support forward secrecy.
 
   > You should also absolutely disable weak ciphers regardless of the TLS version do you use, like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
 
