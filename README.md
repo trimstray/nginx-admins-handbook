@@ -239,7 +239,7 @@
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
-- **[Debugging](#debugging)
+- **[Debugging](#debugging-1)**
   * [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior)
   * [Use custom log formats](#beginner-use-custom-log-formats)
 - **[Performance](#performance)**
