@@ -3787,6 +3787,9 @@ You should also recompile libraries with `-g` compiler option and optional with 
 
   > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
 
+  > Hint: Do not specify `--with-debug` while profiling. It slows everything down
+significantly.
+
 ```bash
 cd /opt
 
