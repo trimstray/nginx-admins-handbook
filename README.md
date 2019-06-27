@@ -240,8 +240,8 @@
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
 - **[Debugging](#debugging)
-  * [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging)
-  * [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging)
+  * [Use debug mode for more debugging info](#beginner-use-debug-mode-for-more-debugging-info)
+  * [Use custom log formats](#beginner-use-custom-log-formats)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
@@ -653,8 +653,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
-| [Use debug mode for debugging](#beginner-use-debug-mode-for-debugging) | Debugging | ![info](static/img/priorities/info.png) |
-| [Use custom log formats for debugging](#beginner-use-custom-log-formats-for-debugging) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use debug mode for more debugging info](#beginner-use-debug-mode-for-more-debugging-info) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
 ## Printable high-res hardening cheatsheets
@@ -1227,7 +1227,7 @@ According to this: if you are only running **2** worker processes with **512** w
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
   - example modules: [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
-- `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite directives defined in a server block
+- `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite directives defined in a server block; to change request URI using PCRE regular expressions, return redirects, and conditionally select configurations
   - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
 - `NGX_HTTP_FIND_CONFIG_PHASE` - replace the location according to URI (location lookup)
 - `NGX_HTTP_REWRITE_PHASE` - URI transformation on location level
@@ -3810,7 +3810,7 @@ stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 
 ###### stapxx
 
-The author of OpenResty created great simple macro language extensions to SystemTap: [stapxx](https://github.com/openresty/stapxx).
+The author of OpenResty created great and simple macro language extensions to SystemTap: [stapxx](https://github.com/openresty/stapxx).
 
 #### Install Nginx on CentOS 7
 
@@ -6080,27 +6080,44 @@ server {
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
-#### :beginner: Use debug mode for debugging
+#### :beginner: Use debug mode for more debugging info
 
 ###### Rationale
 
   > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a very high-traffic sites).
 
-  > Remember: never leave debug logging on in production and absolutely use log rotation policy.
+  > You can also save the debug log to memory (to a cyclic memory buffer). The memory buffer on the debug level does not have significant impact on performance even under high load.
+
+  > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in http, server or a location contexts.
+
+  > Remember: never leave debug logging to a file on in production and absolutely use log rotation policy.
 
 ###### Example
 
+- Debugging log to a file:
+
 ```bash
-rewrite_log on;
+# Turn on in a specific context, e.g.:
+#   - global    - for global logging
+#   - http      - for http and all locations logging
+#   - location  - for specific location
 error_log /var/log/nginx/error-debug.log debug;
 ```
+
+- Debugging log to memory:
+
+```bash
+error_log memory:32m debug;
+```
+
+  > How to analyse error log in memory you can read [Show debug log in memory](#show-debug-log-in-memory) chapter.
 
 ###### External resources
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 - [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
 
-#### :beginner: Use custom log formats for debugging
+#### :beginner: Use custom log formats
 
 ###### Rationale
 
