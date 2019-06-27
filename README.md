@@ -5917,9 +5917,13 @@ server {
 
   > You should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications.
 
+  > Always put login page, registration forms, and all subsequent authenticated pages in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
+
   > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
 
 ###### Example
+
+- force all traffic to TLS:
 
 ```bash
 server {
@@ -5939,6 +5943,26 @@ server {
   server_name domain.com;
 
   ...
+
+}
+```
+
+- force login page to TLS:
+
+```bash
+server {
+
+  listen 10.240.20.2:80;
+
+  server_name domain.com;
+
+  ...
+
+  location ^~ /login {
+
+    return 301 https://domain.com$request_uri;
+
+  }
 
 }
 ```
@@ -6846,7 +6870,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important; because `ECDHE` suites are faster, you want to use them whenever clients supports them. `Ephemeral DHE/ECDHE` are recommended and support Perfect Forward Secrecy.
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. `Ephemeral DHE/ECDHE` are recommended and support Perfect Forward Secrecy.
 
   > For backward compatibility software components you should use less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2), you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
