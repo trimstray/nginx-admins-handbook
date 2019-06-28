@@ -274,6 +274,7 @@
   * [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)
   * [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
+  * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy](#reverse-proxy)**
@@ -530,6 +531,7 @@ Existing chapters:
 
   - [x] _Keep NGINX up-to-date_
   - [x] _Use only the latest supported OpenSSL version_
+  - [x] _Prevent caching of sensitive data_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
 
@@ -627,6 +629,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)<br><sup>Prevents to render pages if a potential XSS reflection attack is detected.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration) | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -7323,6 +7326,41 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 ###### External resources
 
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
+
+#### :beginner: Prevent caching of sensitive data
+
+###### Rationale
+
+  > This policy should be implemented by the application architect, however, I know from experience that this does not always happen.
+
+  > Don' to cache or persist sensitive data. As browsers have different default behavior for caching HTTPS content, pages containing sensitive information should include a `Cache-Control` header to ensure that the contents are not cached.
+
+  > One option is to add anticaching headers to relevant HTTP/1.1 and HTTP/2 responses, e.g. `Cache-Control: no-cache, no-store` and `Expires: 0`.
+
+  > To cover various browser implementations the full set of headers to prevent content being cached should be:
+  >
+  > `Cache-Control: no-cache, no-store, private, must-revalidate, max-age=0, no-transform`
+  > `Pragma: no-cache`
+  > `Expires: 0`
+
+###### Example
+
+```bash
+location /api {
+
+  expires 0;
+  add_header Cache-Control "no-cache, no-store";
+
+}
+```
+
+###### External resources
+
+- [RFC 2616 - Hypertext Transfer Protocol (HTTP/1.1): Standards Track](https://tools.ietf.org/html/rfc2616)
+- [RFC 7234 - Hypertext Transfer Protocol (HTTP/1.1): Caching](https://tools.ietf.org/html/rfc7234)
+- [HTTP Cache Headers - A Complete Guide](https://www.keycdn.com/blog/http-cache-headers)
+- [Caching best practices & max-age gotchas](https://jakearchibald.com/2016/caching-best-practices/)
+- [HTTP Caching](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching)
 
 #### :beginner: Control Buffer Overflow attacks
 
