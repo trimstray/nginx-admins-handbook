@@ -1575,14 +1575,12 @@ And here is the table with the results:
 
 ##### `rewrite` vs `return`
 
-These directives are very useful but NGINX If Is Evil say:
+These directives are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
 
-  > _The only 100% safe things which may be done inside if in a location context are:_
-  >
-  >   - `return ...;`
-  >   - `rewrite ... last;`
-  >
-  > _Anything else may possibly cause unpredictable behaviour, including potential SIGSEGV._
+- `return ...;`
+- `rewrite ... last;`
+
+Anything else may possibly cause unpredictable behaviour, including potential `SIGSEGV`.
 
 Generally there are two ways of implementing redirects in NGINX (from the `ngx_http_rewrite_module`):
 
@@ -1608,11 +1606,6 @@ location / {
 ```
 
 `rewrite` directive accept optional flags:
-
-  > Note:
-  >
-  >   - that outside location blocks, `last` and `break` are effectively the same
-  >   - processing of rewrite directives at server level may be stopped via `break`, but the location lookup will follow anyway
 
 - `break` - basically completes processing of rewrite directives, stops processing, and breakes location lookup cycle by not doing any location lookup and internal jump at all
 
@@ -1649,6 +1642,11 @@ location / {
 
 - `redirect` - returns a temporary redirect with the 302 HTTP response code
 - `permanent` - returns a permanent redirect with the 301 HTTP response code
+
+Note:
+
+  > - that outside location blocks, `last` and `break` are effectively the same
+  > - processing of rewrite directives at server level may be stopped via `break`, but the location lookup will follow anyway
 
 <sup><i>This explanation is based on the awesome answer by [Pothi Kalimuthu](https://serverfault.com/users/102173/pothi-kalimuthu) to [nginx url rewriting: difference between break and last](https://serverfault.com/a/829148).</i></sup>
 
@@ -1755,7 +1753,7 @@ The `ngx_http_rewrite_module` module also provides additional directives:
 
 - `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired (see [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/))
 
-  > But the NGINX docs say: _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
+  > The NGINX docs say also: _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
 
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
