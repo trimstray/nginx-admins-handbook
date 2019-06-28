@@ -100,6 +100,8 @@
   * [Server blocks logic](#server-blocks-logic)
     * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
+    * [rewrite vs return](#rewrite-vs-return)
+    * [if, break and set](#if-break-and-set)
   * [Error log severity levels](#error-log-severity-levels)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
@@ -180,7 +182,7 @@
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
-    * [Rewrite POST request with payload to external endpoint](#rewrite-post-request-with-payload-to-external-endpoint)
+    * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
   * [Other snippets](#other-snippets)
     * [Create a temporary static backend](#create-a-temporary-static-backend)
@@ -247,6 +249,7 @@
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
+  * [Use return directive instead rewrite for redirects](#beginner-use-return-directive-instead-rewrite-for-redirects)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
@@ -399,6 +402,9 @@ Existing chapters:
 <details>
 <summary><b>Helpers</b></summary><br>
 
+  - _Server blocks logic_
+    - [x] _rewrite vs return_
+    - [x] _if, break and set_
   - _Configuration syntax_
     - [x] _Comments_
     - [x] _Variables & Strings_
@@ -457,7 +463,7 @@ Existing chapters:
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
-    - [x] _Rewrite POST request with payload to external endpoint_
+    - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
   - _Other snippets_
@@ -521,6 +527,7 @@ Existing chapters:
   - [ ] _Use "$request_uri" to avoid using regular expressions_
   - [ ] _Use "try_files" directive to ensure a file exists_
   - [ ] _Don't pass all requests to backends - use "try_files"_
+  - [x] _Use return directive instead rewrite for redirects_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
 
@@ -637,6 +644,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use return directive instead rewrite for redirects](#beginner-use-return-directive-instead-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -1564,6 +1572,214 @@ And here is the table with the results:
 | `/static5/logo.png` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case insensitive regex match for `.(png\|ico\|gif\|xcf)$` | `.(png\|ico\|gif\|xcf)$` |
 | `/static5/logo.xcf` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case sensitive regex match for `logo.xcf$` | `logo.xcf$` |
 | `/static5/logo.ico` | <sup>1)</sup> prefix match for `/`<br><sup>2)</sup> case insensitive regex match for `.(png\|ico\|gif\|xcf)$` | `.(png\|ico\|gif\|xcf)$` |
+
+##### `rewrite` vs `return`
+
+These directives are very useful but NGINX If Is Evil say:
+
+  > _The only 100% safe things which may be done inside if in a location context are:_
+  >
+  >   - `return ...;`
+  >   - `rewrite ... last;`
+  >
+  > _Anything else may possibly cause unpredictable behaviour, including potential SIGSEGV._
+
+Generally there are two ways of implementing redirects in NGINX (from the `ngx_http_rewrite_module`):
+
+###### `rewrite` directive
+
+The `rewrite` directives are executed sequentially in order of their appearance in the configuration file. It's slower (but still extremely fast) than a `return` and returns HTTP 302 in all cases, irrespective of `permanent`.
+
+Importantly only the part of the original url that matches the regex is rewritten. It can be used for temporary url changes.
+
+I sometimes used `rewrite` to capture elementes in the original URL, change or add elements in the path, and in general when I do something more complex:
+
+```bash
+location / {
+
+  ...
+
+  rewrite   ^/users/(.*)$       /user.php?username=$1 last;
+
+  # or:
+  rewrite   ^/users/(.*)/items$ /user.php?username=$1&page=items last;
+
+}
+```
+
+`rewrite` directive accept optional flags:
+
+  > Note:
+  >
+  >   - that outside location blocks, `last` and `break` are effectively the same
+  >   - processing of rewrite directives at server level may be stopped via `break`, but the location lookup will follow anyway
+
+- `break` - basically completes processing of rewrite directives, stops processing, and breakes location lookup cycle by not doing any location lookup and internal jump at all
+
+  - if you use `break` flag inside `location` block:
+
+    - no more parsing of rewrite conditions
+    - internal engine continues to parse the current `location` block
+
+    _Inside a location block, with `break`, NGINX only stops processing anymore rewrite conditions._
+
+  - if you use `break` flag outside `location` block:
+
+    - no more parsing of rewrite conditions
+    - internal engine goes to the next phase (searching for `location` match)
+
+    _Outside a location block, with `break`, NGINX stops processing anymore rewrite conditions._
+
+- `last` - basically completes processing of rewrite directives, stops processing, and starts a search for a new location matching the changed URI
+
+  - if you use `last` flag inside `location` block:
+
+    - no more parsing of rewrite conditions
+    - internal engine **starts to look** for another location match based on the result of the rewrite result
+    - no more parsing of rewrite conditions, even on the next location match
+
+    _Inside a location block, with last, NGINX stops processing anymore rewrite conditions and then **starts to look** for a new matching of location block! NGINX also ignores any rewrites in the new location block!_
+
+  - if you use `last` flag outside `location` block:
+
+    - no more parsing of rewrite conditions
+    - internal engine goes to the next phase (searching for `location` match)
+
+    _Outside a location block, with `last`, NGINX stops processing anymore rewrite conditions._
+
+- `redirect` - returns a temporary redirect with the 302 HTTP response code
+- `permanent` - returns a permanent redirect with the 301 HTTP response code
+
+<sup><i>This explanation is based on the awesome answer by [Pothi Kalimuthu](https://serverfault.com/users/102173/pothi-kalimuthu) to [nginx url rewriting: difference between break and last](https://serverfault.com/a/829148).</i></sup>
+
+For more info please read [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html).
+
+###### `return` directive
+
+The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
+
+I used `return` directive to:
+
+- force redirect from http to https:
+
+```bash
+server {
+
+  ...
+
+  return  301 https://example.com$request_uri;
+
+}
+```
+
+- redirect from www to non-www and vice versa:
+
+```bash
+server {
+
+  ...
+
+  if ($host = www.domain.com) {
+
+    return  301 https://domain.com$request_uri;
+
+  }
+
+}
+```
+
+- close the connection and log it internally:
+
+```bash
+server {
+
+  ...
+
+  return 444;
+
+}
+```
+
+- send 4xx HTTP response for a client without any other actions:
+
+```bash
+server {
+
+  ...
+
+  if ($request_method = POST) {
+
+    return 405;
+
+  }
+
+  # or:
+  if ($invalid_referer) {
+
+    return 403;
+
+  }
+
+  # or:
+  if ($request_uri ~ "^/app/(.+)$") {
+
+    return 403;
+
+  }
+
+  # or:
+  location ~ ^/(data|storage) {
+
+    return 403;
+
+  }
+
+}
+```
+
+##### `if`, `break` and `set`
+
+The `ngx_http_rewrite_module` module also provides additional directives:
+
+- `break` - stops processing, if is specified inside the `location`, further processing of the request continues in this location:
+
+  ```bash
+  # It's useful for:
+  if ($slow_resp) {
+
+    limit_rate 50k;
+    break;
+
+  }
+  ```
+
+- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired (see [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/))
+
+  > But the NGINX docs say: _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
+
+- `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
+
+Example of usage `if` and `set` directives:
+
+```bash
+# It comes from: https://gist.github.com/jrom/1760790:
+if ($request_uri = /) {
+  set $test  A;
+}
+
+if ($host ~* example.com) {
+  set $test  "${test}B";
+}
+
+if ($http_cookie !~* "auth_token") {
+  set $test  "${test}C";
+}
+
+if ($test = ABC) {
+  proxy_pass http://cms.example.com;
+  break;
+}
+```
 
 #### Error log severity levels
 
@@ -3156,7 +3372,7 @@ server {
 }
 ```
 
-##### Rewrite POST request with payload to external endpoint
+##### Redirect POST request with payload to external endpoint
 
 **POST** data is passed in the body of the request, which gets dropped if you do a standard redirect.
 
@@ -6379,6 +6595,38 @@ server {
 ###### External resources
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
+- [if, break and set (from this Handbook)](#if-break-and-set)
+
+#### :beginner: Use `return` directive instead `rewrite` for redirects
+
+###### Rationale
+
+  > You should use server blocks and `return` statements as they're way simpler and faster than evaluating RegEx via location blocks. This directive stops processing and returns the specified code to a client.
+
+###### Example
+
+```bash
+server {
+
+  ...
+
+  if ($host = www.domain.com) {
+
+    return                    403;
+    # or other examples:
+    # return                  301 https://domain.com$request_uri;
+    # return                  301 $scheme://$host$request_uri;
+
+  }
+
+  ...
+```
+
+###### External resources
+
+- [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
+- [NGINX - rewrite vs redirect](http://think-devops.com/blogs/nginx-rewrite-redirect.html)
+- [rewrite vs return (from this Handbook)](#rewrite-vs-return)
 
 #### :beginner: Make an exact location match to speed up the selection process
 
@@ -6471,8 +6719,8 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 
 ###### External resources
 
-- [Installation from prebuilt packages](#installation-from-prebuilt-packages)
-- [Installation from source](#installation-from-source)
+- [Installation from prebuilt packages (from this Handbook)](#installation-from-prebuilt-packages)
+- [Installation from source (from this Handbook)](#installation-from-source)
 
 #### :beginner: Run as an unprivileged user
 
@@ -6502,7 +6750,9 @@ chown -R nginx:nginx /var/www/domain.com
 
   > It is recommended to disable any modules which are not required as this will minimize the risk of any potential attacks by limiting the operations allowed by the web server.
 
-  > The best way to disable unused modules you should use the `configure` option during installation.
+  > The best way to unload unused modules is use the `configure` option during installation.
+
+  > If you have static linking a shared module you should re-compile NGINX.
 
 ###### Example
 
@@ -7360,6 +7610,7 @@ location /api {
 - [RFC 7234 - Hypertext Transfer Protocol (HTTP/1.1): Caching](https://tools.ietf.org/html/rfc7234)
 - [HTTP Cache Headers - A Complete Guide](https://www.keycdn.com/blog/http-cache-headers)
 - [Caching best practices & max-age gotchas](https://jakearchibald.com/2016/caching-best-practices/)
+- [Increasing Application Performance with HTTP Cache Headers](https://devcenter.heroku.com/articles/increasing-application-performance-with-http-cache-headers)
 - [HTTP Caching](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching)
 
 #### :beginner: Control Buffer Overflow attacks
