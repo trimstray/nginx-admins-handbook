@@ -235,7 +235,6 @@
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
-  * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
@@ -258,6 +257,7 @@
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
+  * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
   * [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
@@ -609,11 +609,11 @@ Remember, these are only guidelines. My point of view may be different from your
 | :---         | :---         | :---:        |
 | [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
-| [Force all connections over TLS](#beginner-force-all-connections-over-tls)<br><sup>Protects your website especially for handle sensitive communications.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Keep NGINX up-to-date](#keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Force all connections over TLS](#beginner-force-all-connections-over-tls)<br><sup>Protects your website especially for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use only strong ciphers](#beginner-use-only-strong-ciphers)<br><sup>Use only strong and not vulnerable cipher suites.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -5912,74 +5912,6 @@ server {
 
 - [Nginx one ip and multiple ssl certificates](https://serverfault.com/questions/766831/nginx-one-ip-and-multiple-ssl-certificates)
 
-#### :beginner: Force all connections over TLS
-
-###### Rationale
-
-  > TLS provides two main services. For one, it validates the identity of the server that the user is connecting to for the user. It also protects the transmission of sensitive information from the user to the server.
-
-  > In my opinion you should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications. The application can have many sensitive places that should be protected.
-
-  > Always put login page, registration forms, all subsequent authenticated pages, contact forms, and payment details forms in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
-
-  > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
-
-  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-http-strict-transport-security).
-
-  > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
-
-###### Example
-
-- force all traffic to use TLS:
-
-```bash
-server {
-
-  listen 10.240.20.2:80;
-
-  server_name domain.com;
-
-  return 301 https://$host$request_uri;
-
-}
-
-server {
-
-  listen 10.240.20.2:443 ssl;
-
-  server_name domain.com;
-
-  ...
-
-}
-```
-
-- force e.g. login page to use TLS:
-
-```bash
-server {
-
-  listen 10.240.20.2:80;
-
-  server_name domain.com;
-
-  ...
-
-  location ^~ /login {
-
-    return 301 https://domain.com$request_uri;
-
-  }
-
-}
-```
-
-###### External resources
-
-- [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
-- [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
-- [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
-
 #### :beginner: Use geo/map modules instead allow/deny
 
 ###### Rationale
@@ -6697,6 +6629,74 @@ proxy_hide_header X-Drupal-Cache;
 ###### External resources
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
+
+#### :beginner: Force all connections over TLS
+
+###### Rationale
+
+  > TLS provides two main services. For one, it validates the identity of the server that the user is connecting to for the user. It also protects the transmission of sensitive information from the user to the server.
+
+  > In my opinion you should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications. The application can have many sensitive places that should be protected.
+
+  > Always put login page, registration forms, all subsequent authenticated pages, contact forms, and payment details forms in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
+
+  > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
+
+  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-http-strict-transport-security).
+
+  > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
+
+###### Example
+
+- force all traffic to use TLS:
+
+```bash
+server {
+
+  listen 10.240.20.2:80;
+
+  server_name domain.com;
+
+  return 301 https://$host$request_uri;
+
+}
+
+server {
+
+  listen 10.240.20.2:443 ssl;
+
+  server_name domain.com;
+
+  ...
+
+}
+```
+
+- force e.g. login page to use TLS:
+
+```bash
+server {
+
+  listen 10.240.20.2:80;
+
+  server_name domain.com;
+
+  ...
+
+  location ^~ /login {
+
+    return 301 https://domain.com$request_uri;
+
+  }
+
+}
+```
+
+###### External resources
+
+- [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
+- [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
+- [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
 
 #### :beginner: Use only the latest supported OpenSSL version
 
