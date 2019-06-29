@@ -86,6 +86,8 @@ trgb_bold_yellow="1;33;40"
 trgb_bground_blue="1;37;44"
 trgb_bground_dark="1;37;40"
 
+trgb_ttime="1;1;39"
+
 # shellcheck disable=SC2155
 export _vcpu=$(nproc)
 # shellcheck disable=SC2155
@@ -1208,6 +1210,12 @@ function __main__() {
   # Put here all your variable declarations, function calls
   # and all the other code blocks.
 
+  if [[ "$NGX_PROMPT" -eq 0 ]] ; then
+
+    _begtime=$(date +%s)
+
+  fi
+
   _inst_base_packages
   _inst_nginx_dist
 
@@ -1236,6 +1244,18 @@ function __main__() {
 
   _post_tasks
   _test_config
+
+  if [[ "$NGX_PROMPT" -eq 0 ]] ; then
+
+    # Counting the execution time.
+    _endtime=$(date +%s)
+    _totaltime=$((_endtime - _begtime))
+
+    # Print time header.
+    printf '\n\n\e[m\e['${trgb_ttime}'mTOTAL TIME: %dh:%dm:%ds\e[m\n' \
+            $((_totaltime/3600)) $((_totaltime%3600/60)) $((_totaltime%60))
+
+  fi
 
   # ````````````````````````````````````````````````````````````````````````````
 
