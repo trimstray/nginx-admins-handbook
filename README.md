@@ -994,6 +994,36 @@ inflight requests
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
+Some snippets for test, start, stop, and restart processes:
+
+- for test configuration:
+
+```bash
+nginx -t -q -g 'daemon on; master_process on;'
+```
+
+- for start daemon:
+
+```bash
+nginx -g 'daemon on; master_process on;'
+```
+
+- for stop daemon:
+
+```bash
+nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
+nginx -s stop     # fast shutdown (kill connections immediately)
+
+# You can also stop NGINX from start-stop-daemon script:
+/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
+```
+
+- for reload daemon:
+
+```bash
+nginx -g 'daemon on; master_process on;' -s reload
+```
+
 #### Configuration syntax
 
 ##### Comments
@@ -1232,12 +1262,48 @@ You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 Okay, so how many simultaneous connections can be processed by NGINX?
 
 ```bash
-worker_processes * worker_connections = max clients (in theory)
+worker_processes * worker_connections = max connections
 ```
 
-According to this: if you are only running **2** worker processes with **512** worker connections, you will be able to serve **1024** clients.
+According to this: if you are running **4** worker processes with **4096** worker connections per worker, you will be able to serve **16384** connections.
 
-  > It is a bit confusing because the sum of `worker_processes` and `worker_connections` does not directly translate into the number of clients that can be served simultaneously. Each clients (e.g. browsers) opens a number of parallel connections to download various components that compose a web page, for example, images, scripts, and so on.
+  > I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. It is a bit confusing and not true because each clients (e.g. browsers) opens a number of parallel connections to download various components that compose a web page, for example, images, scripts, and so on. On the other hand this includes all connections (e.g. connections with proxied servers, among others), not only connections with clients.
+
+Be aware that every worker connection (in the sleeping state) needs 256 bytes of memory, so you can increase it easily.
+
+The number of connections is limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. For change the limit of the maximum file descriptors that can be opened by a single worker process you can edit the `worker_rlimit_nofile` directive (with this you shouldn't restarting the main process). If you don't set this directive manually, then the OS settings will determine how many file descriptors can be used by NGINX.
+
+  > Before increasing the number of `worker_processes` or `worker_connections` verify the open file limit.
+
+Each connection needs:
+
+- one file handler for the client's connection
+- one file handler for opening file (e.g. static file) or for the proxied connection
+
+  > You can test the hard and soft limits applying to the NGINX process with this: `grep "Max open files" /proc/$(pgrep -f "nginx: master")/limits`.
+
+To change/improve the limitations you should:
+
+```bash
+# Add to /etc/sysctl.d/99-fs.conf:
+fs.file-max = 50000
+
+# Add to /etc/security/limits.conf:
+nginx       soft    nofile    10000
+nginx       hard    nofile    20000
+
+# Update worker_rlimit_nofile in nginx.conf within the main context:
+worker_rlimit_nofile          20000;
+```
+
+So I think that the correct value of `worker_rlimit_nofile` is:
+
+```bash
+worker_rlimit_nofile = worker_connections
+
+# So maximum number of open files by the NGINX is equal:
+worker_processes * worker_rlimit_nofile = max open files
+```
 
 #### Request processing stages
 
@@ -5920,7 +5986,7 @@ http {
 
   > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
 
-  > To stop Processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
+  > To stop processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
 
   From NGINX documentation:
 
@@ -5944,7 +6010,10 @@ service nginx reload
 # 5)
 kill -HUP $(cat /var/run/nginx.pid)
 # or
-kill -HUP $(ps auxw | grep [n]ginx | grep master | awk '{print $2}')
+kill -HUP $(pgrep -f "nginx: master")
+
+# 6)
+/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
 ```
 
 ###### External resources
