@@ -159,7 +159,7 @@
     * [Get entries within last n hours](#get-entries-within-last-n-hours)
     * [Get entries between two timestamps (range of dates)](#get-entries-between-two-timestamps-range-of-dates)
     * [Get line rates from web server log](#get-line-rates-from-web-server-log)
-    * [Trace network traffic for all Processes](#trace-network-traffic-for-all-nginx-processes)
+    * [Trace network traffic for all processes](#trace-network-traffic-for-all-nginx-processes)
     * [List all files accessed by a NGINX](#list-all-files-accessed-by-a-nginx)
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
     * [Which worker processing current request](#which-worker-processing-current-request)
@@ -882,6 +882,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/cmpxchg16/gobench"><b>gobench</b></a> - is a HTTP/HTTPS load testing and benchmarking tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/rakyll/hey"><b>hey</b></a> - is a HTTP load generator, ApacheBench (ab) replacement, formerly known as rakyll/boom.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/tarekziade/boom"><b>boom</b></a> - is a script you can use to quickly smoke-test your web app deployment.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/tarekziade/httperf"><b>httperf</b></a> - the httperf HTTP load generator.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://jmeter.apache.org/"><b>JMeter™</b></a> - is designed to load test functional behavior and measure performance.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gatling.io/"><b>Gatling</b></a> - is a powerful open-source load and performance testing tool for web applications.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/locustio/locust"><b>locust</b></a> - is an easy-to-use, distributed, user load testing tool.<br>
@@ -989,7 +990,7 @@ For prebuilt NGINX package paths can be as follows:
   - `stop` - discontinues the NGINX process immediately
   - `quit` - stops the NGINX process after it finishes processing
 inflight requests
-  - `reload` - reloads the configuration without stopping Processes
+  - `reload` - reloads the configuration without stopping processes
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
@@ -1213,7 +1214,7 @@ There are also great resources (and comparisons) about them:
 - [I/O Multiplexing using epoll and kqueue System Calls](https://austingwalters.com/io-multiplexing/)
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
 
-Look also at this libevent benchmark:
+Look also at this benchmark:
 
 <p align="center">
   <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
@@ -2613,22 +2614,22 @@ awk -v _dateB=$(date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d 
 tail -F access.log | pv -N RAW -lc 1>/dev/null
 ```
 
-##### Trace network traffic for all Processes
+##### Trace network traffic for all processes
 
 ```bash
-strace -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
+strace -q -e trace=network -p `pidof nginx | sed -e 's/ /,/g'`
 ```
 
 ##### List all files accessed by a NGINX
 
 ```bash
-strace -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
+strace -q -ff -e trace=file nginx 2>&1 | perl -ne 's/^[^"]+"(([^\\"]|\\[\\"nt])*)".*/$1/ && print'
 ```
 
 ##### Check that the `gzip_static` module is working
 
 ```bash
-strace -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
+strace -q -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
 ```
 
 ##### Which worker processing current request
@@ -2649,7 +2650,7 @@ Example 2:
 
 ```bash
 # Run strace in the background:
-nohup strace -s 256 -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 -o /tmp/nginx-req.trace </dev/null >/dev/null 2>/dev/null &
+nohup strace -q -s 256 -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 -o /tmp/nginx-req.trace </dev/null >/dev/null 2>/dev/null &
 
 # Watch output file:
 watch -n 0.1 "awk '/Host:/ {print \"pid: \" \$1 \", \" \"host: \" \$6}' /tmp/nginx-req.trace | sed 's/\\\r\\\n.*//'"
@@ -6089,7 +6090,7 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
-- [How Processes a request](https://nginx.org/en/docs/http/request_processing.html)
+- [How processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
 #### :beginner: Use only one SSL config for the listen directive
