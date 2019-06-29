@@ -1252,7 +1252,7 @@ function __main__() {
     _totaltime=$((_endtime - _begtime))
 
     # Print time header.
-    printf '\n\n\e[m\e['${trgb_ttime}'mTOTAL TIME: %dh:%dm:%ds\e[m\n' \
+    printf '\n\e[m\e['${trgb_ttime}'mTOTAL EXECUTION TIME: %dh:%dm:%ds\e[m\n\n' \
             $((_totaltime/3600)) $((_totaltime%3600/60)) $((_totaltime%60))
 
   fi
