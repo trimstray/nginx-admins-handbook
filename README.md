@@ -243,6 +243,7 @@
 - **[Debugging](#debugging-1)**
   * [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior)
   * [Use custom log formats](#beginner-use-custom-log-formats)
+  * [Memory analysis from core dumps](#beginner-memory-analysis-from-core-dumps)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
@@ -516,6 +517,7 @@ Existing chapters:
 <summary><b>Debugging</b></summary><br>
 
   - [ ] _Use mirror module to copy requests to another backend_
+  - [x] _Memory analysis from core dumps_
 
 </details>
 
@@ -666,6 +668,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
+| [Memory analysis from core dumps](#beginner-memory-analysis-from-core-dumps) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
 ## Printable high-res hardening cheatsheets
@@ -2690,7 +2693,11 @@ ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
 
   > For more information about read core dumps please see [GNU Debugger (gdb) - Core dump backtrace](#core-dump-backtrace).
 
-A core dump is a file containing a process's address space (memory) when the process terminates unexpectedly. NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
+A core dump is a file containing a process's address space (memory) when the process terminates unexpectedly. In other words is an instantaneous picture of a failing process at the moment it attempts to do something very wrong.
+
+NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
+
+I think the best practice for core dumps are a properly collected core files, and associated information, we can often solve, and otherwise extract valuable information about the failing process.
 
 To enable core dumps from NGINX configuration file you should:
 
@@ -2756,6 +2763,8 @@ strings mem_* | grep server_name
 
 ##### GNU Debugger (gdb)
 
+You can use GDB to extract very useful information about NGINX instances, e.g. the log from memory or configuration from running process.
+
 ###### Dump configuration from a running process
 
   > It's very useful when you need to verify which configuration has been loaded and restore a previous configuration if the version on disk has been accidentally removed or overwritten.
@@ -2784,7 +2793,7 @@ less nginx.conf.running
 or other solution:
 
 ```bash
-# Save gdb arguments to a file, e.g. nginx.gdb:
+# Save gdb functions to a file, e.g. nginx.gdb:
 define dump_config
   set $cd = ngx_cycle->config_dump
   set $nelts = $cd.nelts
@@ -2818,7 +2827,7 @@ error_log   memory:64m debug;
 and:
 
 ```bash
-# Save gdb arguments to a file, e.g. nginx.gdb:
+# Save gdb functions to a file, e.g. nginx.gdb:
 define dump_debug_log
   set $log = ngx_cycle->log
   while ($log != 0) && ($log->writer != ngx_log_memory_writer)
@@ -2845,11 +2854,19 @@ less debug_mem.log
 
 ###### Core dump backtrace
 
+  > The above functions ([GNU Debugger (gdb)](#gnu-debugger-gdb)) under discussion can be used with core files.
+
 To backtrace core dumps which saved in `working_directory`:
 
 ```bash
 gdb /usr/sbin/nginx /var/dump/nginx/core.nginx.8125.x-9s-web01-prod.1561475764
 (gdb) bt
+```
+
+You can use also this recipe:
+
+```bash
+gdb --core /var/dump/nginx/core.nginx.8125.x-9s-web01-prod.1561475764
 ```
 
 #### Shell aliases
@@ -6413,6 +6430,31 @@ log_format debug-ssl-level-0
 - [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 - [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
 - [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
+
+#### :beginner: Memory analysis from core dumps
+
+###### Rationale
+
+  > A core dump is basically a snapshot of the memory when the program crashed.
+
+  > NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
+
+  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this Handbook)](#dump-a-processs-memory).
+
+  > You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
+
+###### Example
+
+```bash
+worker_rlimit_core    500m;
+worker_rlimit_nofile  65535;
+working_directory     /var/dump/nginx;
+```
+
+###### External resources
+
+- [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
+- [Dump a process's memory (from this Handbook)](#dump-a-processs-memory)
 
 # Performance
 
