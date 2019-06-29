@@ -130,14 +130,14 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 else
 
   # shellcheck disable=SC2034
-  export _pcre_version=$(curl -sL https://ftp.pcre.org/pub/pcre/ |
+  export _pcre_version=$(curl -skL https://ftp.pcre.org/pub/pcre/ |
                          grep -Eo 'pcre\-[0-9.]+[0-9]' | \
                          sort -V | \
                          tail -n 1| \
                          cut -d '-' -f2-)
 
   # shellcheck disable=SC2034
-  export _openssl_version=$(curl -sL https://www.openssl.org/source/ |
+  export _openssl_version=$(curl -skL https://www.openssl.org/source/ |
                          grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
                          sort -V | \
                          tail -n 1| \
