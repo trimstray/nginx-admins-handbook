@@ -102,6 +102,9 @@
     * [Matching location](#matching-location)
     * [rewrite vs return](#rewrite-vs-return)
     * [if, break and set](#if-break-and-set)
+  * [Log files](#log-files)
+    * [Conditional logging](#conditional-logging)
+    * [Manually log rotation](#manually-log-rotation)
   * [Error log severity levels](#error-log-severity-levels)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
@@ -407,6 +410,9 @@ Existing chapters:
   - _Server blocks logic_
     - [x] _rewrite vs return_
     - [x] _if, break and set_
+  - _Log files_
+    - [x] _Conditional logging_
+    - [x] _Manually log rotation_
   - _Configuration syntax_
     - [x] _Comments_
     - [x] _Variables & Strings_
@@ -468,7 +474,6 @@ Existing chapters:
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
-    - [x] _Rotate logs manually_
   - _Other snippets_
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
@@ -1856,6 +1861,61 @@ if ($test = ABC) {
   break;
 }
 ```
+
+#### Log files
+
+Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the `NGX_HTTP_LOG_PHASE`).
+
+By default:
+
+- the access log is located at `logs/access.log`, but I suggest you take it to `/var/log/nginx`
+- data is written in the predefined `combined` format
+
+##### Conditional logging
+
+Sometimes certain entries are there just to fill up the logs or are cluttering them. I sometimes exclude requests - by client IP or whatever else - when I want to debug log files more effective.
+
+So in this example if the `$error_codes` variable’s value is zero - then log nothing (default action), but if 1 (e.g. `404` or `503` from backend) - to save this request to the log:
+
+```bash
+# Define map in the http context:
+http {
+
+  ...
+
+  map $status $error_codes {
+
+    default   1;
+    ~^[23]    0;
+
+  }
+
+  ...
+
+  # Add if condition to access log:
+  access_log /var/log/nginx/example.com-access.log combined if=$error_codes;
+```
+
+##### Manually log rotation
+
+NGINX will re-open its logs in response to the `USR1` signal:
+
+```bash
+cd /var/log/nginx
+
+mv access.log access.log.0
+kill -USR1 $(cat /var/run/nginx.pid) && sleep 1
+
+# >= gzip-1.6:
+gzip -k access.log.0
+# with any version:
+gzip < access.log.0 > access.log.0.gz
+
+# Test integrity and remove if test passed:
+gzip -t access.log.0 && rm -fr access.log.0
+```
+
+  > You can also read about how to [Configure log rotation policy](#beginner-configure-log-rotation-policy).
 
 #### Error log severity levels
 
