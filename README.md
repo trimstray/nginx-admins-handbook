@@ -321,7 +321,16 @@
 
 **Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
-NGINX is a fast, light-weight and powerful web server that can also be used as a fast HTTP reverse proxy, reliable load balancer and high performance caching server. Generally it provides the core of complete web stacks. For me it's a one of the best and the most important service I ever got in my SysAdmin career.
+NGINX is a fast, light-weight and powerful web server that can also be used as a:
+
+- fast HTTP reverse proxy
+- reliable load balancer
+- high performance caching server
+- full-fledged web platform
+
+Generally it provides the core of complete web stacks, and is designed to help build scalable web applications. For me, it is a one of the best and most important service I've used in my SysAdmin career.
+
+----
 
 These essential documents should be the main source of knowledge for you:
 
@@ -335,15 +344,17 @@ In addition, I would like to recommend two great articles focuses on the concept
 
 ## General disclaimer
 
+When I was studying architecture of NGINX server I found many resources about it. I was a little disappointed because I've never found one guide that covers the most important things with simple form. I was interested in everything about NGINX, and around NGINX, showing tips & tricks, hacks and rules without completely boring socks off or treating the subject casually.
+
+Of course, we have also great resources, e.g. [Official Documentation](https://nginx.org/en/docs/) - it's definitely the best place for us. I think, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers.
+
+That's why I created this repository to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable. I still have a lot [to improve and to do](#todo-list).
+
 This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
-
-When I was studying architecture of the NGINX I discovered many resources about it, but I've never found one guide that covers the most important things about NGINX, and around NGINX. Of course, we have [official documentation](https://nginx.org/en/docs/) - it's definitely the best place for us.
-
-I think, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable. I still have a lot [to improve and to do](#todo-list).
 
 Throughout this handbook you will explore the many features of NGINX, and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX, but not only.
 
-If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I hope you enjoy it.
+If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations. I hope you enjoy it.
 
 Before you start remember about the two most important things:
 
@@ -1003,21 +1014,21 @@ inflight requests
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
-Some snippets for test, start, stop, and restart processes:
+Some snippets to test, start, stop, and restart processes:
 
-- for test configuration:
+- test configuration:
 
 ```bash
 nginx -t -q -g 'daemon on; master_process on;'
 ```
 
-- for start daemon:
+- start daemon:
 
 ```bash
 nginx -g 'daemon on; master_process on;'
 ```
 
-- for stop daemon:
+- stop daemon:
 
 ```bash
 nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
@@ -1027,7 +1038,7 @@ nginx -s stop     # fast shutdown (kill connections immediately)
 /sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
 ```
 
-- for reload daemon:
+- reload daemon:
 
 ```bash
 nginx -g 'daemon on; master_process on;' -s reload
@@ -1868,7 +1879,7 @@ Log files are a critical part of the NGINX management. It writes information abo
 
 By default:
 
-- the access log is located at `logs/access.log`, but I suggest you take it to `/var/log/nginx`
+- the access log is located at `logs/access.log`, but I suggest you take it to `/var/log/nginx` directory
 - data is written in the predefined `combined` format
 
 ##### Conditional logging
@@ -2826,15 +2837,15 @@ ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
 
 ##### Dump a process's memory
 
-  > For more information about read core dumps please see [GNU Debugger (gdb) - Core dump backtrace](#core-dump-backtrace).
+  > For more information about analyse core dumps please see [GNU Debugger (gdb) - Core dump backtrace](#core-dump-backtrace).
 
 A core dump is a file containing a process's address space (memory) when the process terminates unexpectedly. In other words is an instantaneous picture of a failing process at the moment it attempts to do something very wrong.
 
-NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
+NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running processes.
 
 I think the best practice for core dumps are a properly collected core files, and associated information, we can often solve, and otherwise extract valuable information about the failing process.
 
-To enable core dumps from NGINX configuration file you should:
+To enable core dumps from NGINX configuration you should:
 
 ```bash
 # In main NGINX configuration file:
@@ -2874,7 +2885,7 @@ To generate a core dump of a running NGINX worker processes:
 for _pid in $(pgrep -f "nginx: worker") ; do gcore -o core.worker $_pid ; done
 ```
 
-or other solution for above (to dump memory regions of running NGINX process):
+Or other solution for above (to dump memory regions of running NGINX process):
 
 ```bash
 # Set pid of NGINX master process:
