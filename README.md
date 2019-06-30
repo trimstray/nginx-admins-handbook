@@ -240,6 +240,7 @@
   * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
+  * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
 - **[Debugging](#debugging-1)**
   * [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior)
   * [Use custom log formats](#beginner-use-custom-log-formats)
@@ -333,11 +334,11 @@ In addition, I would like to recommend two great articles focuses on the concept
 
 This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
 
-I've never found one guide that covers the most important things about NGINX, and around NGINX. Of course, we have [official documentation](https://nginx.org/en/docs/) - it's probably the best place for us.
+When I was studying architecture of the NGINX I discovered many resources about it, but I've never found one guide that covers the most important things about NGINX, and around NGINX. Of course, we have [official documentation](https://nginx.org/en/docs/) - it's definitely the best place for us.
 
 I think, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable. I still have a lot [to improve and to do](#todo-list).
 
-Throughout this handbook you will explore the many features of NGINX, and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX.
+Throughout this handbook you will explore the many features of NGINX, and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX, but not only.
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I hope you enjoy it.
 
@@ -345,7 +346,7 @@ Before you start remember about the two most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-  > **`These guidelines provides recommendations for very restrictive setup.`**
+  > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
 
 ## Contributing & Support
 
@@ -467,6 +468,7 @@ Existing chapters:
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
+    - [x] _Rotate logs manually_
   - _Other snippets_
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
@@ -510,6 +512,7 @@ Existing chapters:
   - [ ] _Never use a hostname in a listen directive_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [ ] _Use "return" directive for URL redirection (301, 302)_
+  - [x] _Configure log rotation policy_
 
 </details>
 
@@ -620,6 +623,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | :---         | :---         | :---:        |
 | [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Keep NGINX up-to-date](#keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1160,6 +1164,8 @@ au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/*,*
 __EOF__
 ```
 
+  > VIM has a substantial database of plugins, one of them may be also interesting for you: [Highlight insecure SSL configuration in Vim](https://github.com/chr4/sslsecure.vim).
+
 ###### Sublime Text
 
 Install `cabal` - system for building and packaging Haskell libraries and programs (on Ubuntu):
@@ -1280,8 +1286,6 @@ Each connection needs:
 - one file handler for the client's connection
 - one file handler for opening file (e.g. static file) or for the proxied connection
 
-  > You can test the hard and soft limits applying to the NGINX process with this: `grep "Max open files" /proc/$(pgrep -f "nginx: master")/limits`.
-
 To change/improve the limitations you should:
 
 ```bash
@@ -1296,14 +1300,18 @@ nginx       hard    nofile    20000
 worker_rlimit_nofile          20000;
 ```
 
-So I think that the correct value of `worker_rlimit_nofile` is:
+  > You can test the hard and soft limits applying to the NGINX process with this: `grep "Max open files" /proc/$(pgrep -f "nginx: master")/limits`.
+
+I think that the correct value of `worker_rlimit_nofile` is:
 
 ```bash
 worker_rlimit_nofile = worker_connections
 
-# So maximum number of open files by the NGINX is equal:
+# So maximum number of open files by the NGINX is:
 worker_processes * worker_rlimit_nofile = max open files
 ```
+
+There is a great article about [Optimizing Nginx for High Traffic Loads](https://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/).
 
 #### Request processing stages
 
@@ -1645,14 +1653,14 @@ And here is the table with the results:
 
 ##### `rewrite` vs `return`
 
-These directives are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
+These directives (they come from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
 
 - `return ...;`
 - `rewrite ... last;`
 
 Anything else may possibly cause unpredictable behaviour, including potential `SIGSEGV`.
 
-Generally there are two ways of implementing redirects in NGINX (from the `ngx_http_rewrite_module`):
+Generally there are two ways of implementing redirects in NGINX:
 
 ###### `rewrite` directive
 
@@ -6346,6 +6354,112 @@ server {
 ###### External resources
 
 - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
+
+#### :beginner: Configure log rotation policy
+
+###### Rationale
+
+  > Log management is an part of any server administrator’s responsibility and is an part of security solutions. Log files gives you feedback about the activity and performance of the server as well as any problems that may be occuring. They are records details about requests and NGINX internals. But also logs use more disk space.
+
+  > Some critical parts of log files:
+  >
+  > - time stamp, source ip, and other attributes of an incoming request
+  > - excessive access attempts to non-existent files
+  > - access to extensions you have not implemented
+  > - access to risky parts of your app that accept user input
+  > - http codes, e.g. error codes like a 4xx, 5xx
+
+  > Log rotation is a process that solves these problems by periodically archiving the current log file and starting a new one. It renames and optionally compresses the current log files, delete old log files, and force the logging system to begin using new log files.
+
+  > For auditing or archival purposes, you may need to decrease or increase the log rotation configuration for one or more logs files.
+
+  > I think the best tool for this is a `logrotate`. I use it everywhere if I want to manage logs automatically, and for a good night's sleep also. It is a simple program to rotate logs, uses crontab to work. It's scheduled work, not a daemon, so no need to reload its configuration.
+
+###### Example
+
+- for manually rotation:
+
+```bash
+# Check manually (all log files):
+logrotate -dv /etc/logrotate.conf
+
+# Check manually with force rotation (specific log file):
+logrotate -dv --force /etc/logrotate.d/nginx
+```
+
+- for automate rotation:
+
+```bash
+cat > /etc/logrotate.d/nginx << __EOF__
+/var/log/nginx/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 nginx nginx
+  sharedscripts
+  prerotate
+    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+      run-parts /etc/logrotate.d/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+
+/var/log/nginx/localhost/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 nginx nginx
+  sharedscripts
+  prerotate
+    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+      run-parts /etc/logrotate.d/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+
+/var/log/nginx/domains/example.com/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 nginx nginx
+  sharedscripts
+  prerotate
+    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+      run-parts /etc/logrotate.d/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+__EOF__
+```
+
+###### External resources
+
+- [Understanding logrotate utility](https://support.rackspace.com/how-to/understanding-logrotate-utility/)
+- [Rotating Linux Log Files - Part 2: Logrotate](http://www.ducea.com/2006/06/06/rotating-linux-log-files-part-2-logrotate/)
+- [Managing Logs with Logrotate](https://serversforhackers.com/c/managing-logs-with-logrotate)
+- [nginx and Logrotate](https://drumcoder.co.uk/blog/2012/feb/03/nginx-and-logrotate/)
+- [nginx log rotation](https://wincent.com/wiki/nginx_log_rotation)
 
 # Debugging
 
