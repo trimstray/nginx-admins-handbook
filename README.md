@@ -321,7 +321,7 @@
 
 **Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
-NGINX is a fast, light-weight and powerful web server that can also be used as a fast HTTP reverse proxy, reliable load balancer and high performance caching server. Generally it provides the core of complete web stacks.
+NGINX is a fast, light-weight and powerful web server that can also be used as a fast HTTP reverse proxy, reliable load balancer and high performance caching server. Generally it provides the core of complete web stacks. For me it's a one of the best and the most important service I ever got in my SysAdmin career.
 
 These essential documents should be the main source of knowledge for you:
 
