@@ -1066,6 +1066,13 @@ Variables in NGINX start with `$`. Some modules introduce variables can be used 
 
   > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
 
+Some interesting things about NGINX variables:
+
+- the assignment operation is only performed in requests that access location
+- the scope of variables spreads out all over configuration
+- each request does have its own version of all those variables' containers (different containers values)
+- requests do not interfere with each other even if they are referencing a variable with the same name
+
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
 
 Variables in quoted strings are expanded normally unless the `$` is escaped.
