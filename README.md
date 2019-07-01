@@ -245,7 +245,7 @@
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
 - **[Debugging](#debugging-1)**
-  * [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior)
+  * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Memory analysis from core dumps](#beginner-memory-analysis-from-core-dumps)
 - **[Performance](#performance)**
@@ -276,7 +276,7 @@
   * [Mitigation of CRIME/BREACH attacks)](#beginner-mitigation-of-crimebreach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
-  * [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)
+  * [Control the behaviour of the Referer header (Referrer-Policy)](#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)
   * [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)
   * [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)
   * [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)
@@ -344,17 +344,21 @@ In addition, I would like to recommend two great articles focuses on the concept
 
 ## General disclaimer
 
-When I was studying architecture of NGINX server I found many resources about it. I was a little disappointed because I've never found one guide that covers the most important things with simple form. I was interested in everything about NGINX, and around NGINX, showing tips & tricks, hacks and rules without completely boring socks off or treating the subject casually.
+When I was studying architecture of NGINX I found a lot of information about it. I was interested in everything about NGINX, and around NGINX, showing tips & tricks, hacks and rules without completely boring socks off or treating the subject casually.
 
-Of course, we have also great resources, e.g. [Official Documentation](https://nginx.org/en/docs/) - it's definitely the best place for us. I think, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers.
+I was a little disappointed because I've never found one guide that covers the most important things in suitable form.
 
-That's why I created this repository to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable. I still have a lot [to improve and to do](#todo-list).
+Of course, we also have great resources like a [Official Documentation](https://nginx.org/en/docs/) - it's definitely the best place for us. For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers.
 
-This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
+That's why I created this repository - to help us to configure high performing NGINX web and proxy servers that are fast, secure and stable. I still have a lot [to improve and to do](#todo-list).
 
-Throughout this handbook you will explore the many features of NGINX, and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance) of NGINX, but not only.
+  > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
 
-If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations. I hope you enjoy it.
+Throughout this handbook you will explore the many features of NGINX, and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance, 3rd party modules) of NGINX, but not only.
+
+If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
+
+I hope you enjoy it.
 
 Before you start remember about the two most important things:
 
@@ -652,8 +656,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use strong Key Exchange](#beginner-use-strong-key-exchange)<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [HTTP Strict Transport Security](#beginner-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defense-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Control the behavior of the Referer header (Referrer-Policy)](#beginner-control-the-behavior-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defence-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Control the behaviour of the Referer header (Referrer-Policy)](#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)<br><sup>Defends against clickjacking attack.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)<br><sup>Prevents to render pages if a potential XSS reflection attack is detected.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -673,7 +677,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterized by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/priorities/low.png) |
@@ -686,7 +690,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
-| [Use debug mode to track down unexpected behavior](#beginner-use-debug-mode-to-track-down-unexpected-behavior) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
 | [Memory analysis from core dumps](#beginner-memory-analysis-from-core-dumps) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
@@ -1089,7 +1093,7 @@ Configuration options are called directives. We have four types of directives in
 
   > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
-Directives are organized into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organized in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
+Directives are organised into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
 
@@ -1949,7 +1953,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks without downtime for example.
 
-Generaly load balancing is a technique used to distribute the workload across multiple computing resources and servers.
+Generally load balancing is a technique used to distribute the workload across multiple computing resources and servers.
 
 I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
@@ -2151,7 +2155,7 @@ server {
 Rate limiting rules are useful for:
 
 - traffic shaping
-- traffic optimizing
+- traffic optimising
 - slow down the rate of incoming requests
 - protect http requests flood
 - protect against slow http attacks
@@ -3539,7 +3543,7 @@ server {
 
 Look at this:
 
-| <b>DESCRITPION</b> | <b>PERMANENT</b> | <b>TEMPORARY</b> |
+| <b>DESCRIPTIONS</b> | <b>PERMANENT</b> | <b>TEMPORARY</b> |
 | :---         | :---         | :---         |
 | allows changing the request method from POST to GET | 301 | 302 |
 | does not allow changing the request method from POST to GET | 308 | 307 |
@@ -3721,10 +3725,10 @@ distinguished_name = dn
 
 [ dn ]
 C=<two-letter ISO abbreviation for your country>
-ST=<state or province where your organization is legally located>
-L=<city where your organization is legally located>
-O=<legal name of your organization>
-OU=<section of the organization>
+ST=<state or province where your organisation is legally located>
+L=<city where your organisation is legally located>
+O=<legal name of your organisation>
+OU=<section of the organisation>
 CN=<fully qualified domain name>
 
 [ req_ext ]
@@ -3922,7 +3926,7 @@ yum install nginx
 
 ##### Debian or Ubuntu
 
-Check available flavors of NGINX before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
+Check available flavours of NGINX before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
 
 ###### From Debian/Ubuntu Repository
 
@@ -4121,7 +4125,7 @@ A short description of the modules that I used (not only) in this step-by-step t
 
 ##### Compiler and linker
 
-Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimize for speed and/or security, you should probably provide a few compiler flags. See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat.
+Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags. See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat.
 
 You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
 
@@ -4366,7 +4370,7 @@ export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
-# For originall LuaJIT:
+# For original LuaJIT:
 #   git clone http://luajit.org/git/luajit-2.0 luajit2
 #   cd "$LUAJIT_SRC"
 
@@ -5685,7 +5689,7 @@ export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
-# For originall LuaJIT:
+# For original LuaJIT:
 #   git clone http://luajit.org/git/luajit-2.0 luajit2
 #   cd "$LUAJIT_SRC"
 
@@ -5987,7 +5991,7 @@ server {
 
   > Work with unreadable configuration files is terrible, if syntax isn’t very readable, it makes your eyes sore, and you suffers from headaches.
 
-  > When your code is formatted, it is significantly easier to maintain, debug, optimize, and can be read and understood in a short amount of time. You should eliminate code style violations from your NGINX configuration files.
+  > When your code is formatted, it is significantly easier to maintain, debug, optimise, and can be read and understood in a short amount of time. You should eliminate code style violations from your NGINX configuration files.
 
   > Choose your formatter style and setup a common config for it. Some rules are universal, but the most important thing is to keep a consistent NGINX code style throughout your code base:
   >
@@ -6348,7 +6352,7 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Manage a large number of redirects with NGINX maps and use them to customize your key-value pairs.
+  > Manage a large number of redirects with NGINX maps and use them to customise your key-value pairs.
 
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
@@ -6430,7 +6434,7 @@ server {
 
 ###### Rationale
 
-  > Log management is an part of any server administrator’s responsibility and is an part of security solutions. Log files gives you feedback about the activity and performance of the server as well as any problems that may be occuring. They are records details about requests and NGINX internals. But also logs use more disk space.
+  > Log management is an part of any server administrator’s responsibility and is an part of security solutions. Log files gives you feedback about the activity and performance of the server as well as any problems that may be occurring. They are records details about requests and NGINX internals. But also logs use more disk space.
 
   > Some critical parts of log files:
   >
@@ -6536,7 +6540,7 @@ __EOF__
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
-#### :beginner: Use debug mode to track down unexpected behavior
+#### :beginner: Use debug mode to track down unexpected behaviour
 
 ###### Rationale
 
@@ -6744,7 +6748,7 @@ worker_processes 3;
 
 ###### Rationale
 
-  > The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimize protocol overhead via efficient compression of HTTP header fields, and add support for request prioritization and server push.
+  > The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimise protocol overhead via efficient compression of HTTP header fields, and add support for request prioritisation and server push.
 
   > HTTP/2 will make our applications faster, simpler, and more robust.
 
@@ -7023,7 +7027,7 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 
   > There is no real difference in security just by changing the process owner name. On the other hand in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
 
-  > This is the default NGINX behavior, but remember to check it.
+  > This is the default NGINX behaviour, but remember to check it.
 
 ###### Example
 
@@ -7043,7 +7047,7 @@ chown -R nginx:nginx /var/www/domain.com
 
 ###### Rationale
 
-  > It is recommended to disable any modules which are not required as this will minimize the risk of any potential attacks by limiting the operations allowed by the web server.
+  > It is recommended to disable any modules which are not required as this will minimise the risk of any potential attacks by limiting the operations allowed by the web server.
 
   > The best way to unload unused modules is use the `configure` option during installation.
 
@@ -7539,7 +7543,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
   > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, `prime256v1` and `secp384r1`). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
 
-  > Use `P-256` to minimize trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
+  > Use `P-256` to minimise trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
 
   > If you use TLS 1.3 you should enable `prime256v1` signature algorithm. Without this SSL Lab reports `TLS_AES_128_GCM_SHA256 (0x1301)` signature as weak.
 
@@ -7662,7 +7666,7 @@ ssl_prefer_server_ciphers on;
 
   > You shouldn't use HTTP compression on private responses when using TLS.
 
-  > I would gonna to prioritize security over performance but compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
+  > I would gonna to prioritise security over performance but compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
 
   > Remember: by default, NGINX doesn't compress image files using its per-request gzip module.
 
@@ -7713,7 +7717,7 @@ location ^~ /assets/ {
 
 ###### Rationale
 
-  > Generaly HSTS is a way for websites to tell browsers that the connection should only ever be encrypted.This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids.
+  > Generally HSTS is a way for websites to tell browsers that the connection should only ever be encrypted.This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids.
 
   > The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
@@ -7764,7 +7768,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
 - [Security HTTP Headers - Content-Security-Policy](https://zinoui.com/blog/security-http-headers#content-security-policy)
 
-#### :beginner: Control the behavior of the Referer header (Referrer-Policy)
+#### :beginner: Control the behaviour of the Referer header (Referrer-Policy)
 
 ###### Rationale
 
@@ -7836,7 +7840,7 @@ add_header X-Content-Type-Options "nosniff" always;
 
 ###### Rationale
 
-  > This header protects your site from third parties using APIs that have security and privacy implications, and also from your own team adding outdated APIs or poorly optimized images.
+  > This header protects your site from third parties using APIs that have security and privacy implications, and also from your own team adding outdated APIs or poorly optimised images.
 
 ###### Example
 
@@ -7878,7 +7882,7 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 
   > This policy should be implemented by the application architect, however, I know from experience that this does not always happen.
 
-  > Don' to cache or persist sensitive data. As browsers have different default behavior for caching HTTPS content, pages containing sensitive information should include a `Cache-Control` header to ensure that the contents are not cached.
+  > Don' to cache or persist sensitive data. As browsers have different default behaviour for caching HTTPS content, pages containing sensitive information should include a `Cache-Control` header to ensure that the contents are not cached.
 
   > One option is to add anticaching headers to relevant HTTP/1.1 and HTTP/2 responses, e.g. `Cache-Control: no-cache, no-store` and `Expires: 0`.
 
@@ -7967,7 +7971,7 @@ Load balancing is a useful mechanism to distribute incoming traffic around sever
 
   > Monitoring for health is important on all types of load balancing mainly for business continuity. Passive checks watches for failed or timed-out connections as they pass through NGINX as requested by a client.
 
-  > This functionality is enabled by default but the parameters mentioned here allow you to tweak their behavior. Default values are: `max_fails=1` and `fail_timeout=10s`.
+  > This functionality is enabled by default but the parameters mentioned here allow you to tweak their behaviour. Default values are: `max_fails=1` and `fail_timeout=10s`.
 
 ###### Example
 
