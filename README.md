@@ -360,7 +360,7 @@ Throughout this handbook you will explore the many features of NGINX, and how to
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
 
-I hope you enjoy it.
+I hope you enjoy it, and fun with it.
 
 Before you start remember about the two most important things:
 
