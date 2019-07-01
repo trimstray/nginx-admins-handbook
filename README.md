@@ -342,6 +342,8 @@ In addition, I would like to recommend two great articles focuses on the concept
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
 - **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
 
+And if you love security (cryptology) keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/).
+
 ## General disclaimer
 
 When I was studying architecture of NGINX I found a lot of information about it. I was interested in everything about NGINX, and around NGINX, showing tips & tricks, hacks and rules without completely boring socks off or treating the subject casually.
@@ -7537,17 +7539,30 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
 ###### Rationale
 
+  > In my opinion your main source of knowledge should be [The SafeCurves web site](https://safecurves.cr.yp.to/). This site reports security assessments of various specific curves.
+
   > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm).
 
-  > `x25519` is a more secure but slightly less compatible option. To maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves.
+  > `x25519` is a more secure (also with SafeCurves requirements) but slightly less compatible option. I think to maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves. Of course there's tons of different opinions about `P-256` and `P-384` curves.
 
   > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, `prime256v1` and `secp384r1`). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
 
-  > Use `P-256` to minimise trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
+  > Bernstein and Lange believe that the NIST curves are not optimal and there are better (more secure) curves that work just as fast, e.g. `x25519`.
+
+  > Keep an eye also on this:
+  >
+  > _Secure implementations of the standard curves are theoretically possible but very hard._
+  >
+  > The SafeCurves say:
+  >   - `NIST P-224`, `NIST P-256` and `NIST P-384` are UNSAFE
+  >
+  > From the curves described here only `x25519` is a curve meets all SafeCurves requirements.
+
+  > I think you can use `P-256` to minimise trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
 
   > If you use TLS 1.3 you should enable `prime256v1` signature algorithm. Without this SSL Lab reports `TLS_AES_128_GCM_SHA256 (0x1301)` signature as weak.
 
-  > If you do not set `ssh_ecdh_curve`, then NGINX will use its default settings, e.g. Chrome will prefer `x25519`, but this is **not recommended** because you can not control default settings (seems to be `P-256`) from the NGINX.
+  > If you do not set `ssh_ecdh_curve`, then NGINX will use its default settings, e.g. Chrome will prefer `x25519`, but it is **not recommended** because you can not control default settings (seems to be `P-256`) from the NGINX.
 
   > Explicitly set `ssh_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;` **decreases the Key Exchange SSL Labs rating**.
 
@@ -7579,8 +7594,10 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
 ###### External resources
 
+- [Elliptic Curves for Security](https://tools.ietf.org/html/rfc7748)
 - [Standards for Efficient Cryptography Group](http://www.secg.org/)
 - [SafeCurves: choosing safe curves for elliptic-curve cryptography](https://safecurves.cr.yp.to/)
+- [A note on high-security general-purpose elliptic curves](https://eprint.iacr.org/2013/647)
 - [P-521 is pretty nice prime](https://blog.cr.yp.to/20140323-ecdsa.html)
 - [Safe ECC curves for HTTPS are coming sooner than you think](https://certsimple.com/blog/safe-curves-and-openssl)
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
