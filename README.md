@@ -1068,17 +1068,17 @@ Variables in NGINX start with `$`. Some modules introduce variables can be used 
 
   > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
 
-To assign values to the variables you should use `set` directive:
+To assign value to the variable you should use `set` directive:
 
 ```bash
 set $var "value";
 ```
 
-  > To learn more about NGINX variables: [`if`, `break` and `set`](#if-break-and-set).
+  > To learn more about NGINX variables see [`if`, `break` and `set`](#if-break-and-set) section.
 
 Some interesting things about NGINX variables:
 
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is Guru, author of OpenResty and some really great tools for them.
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is Guru and author of OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
 
 - the scope of variables spreads out all over configuration
 - variable assignment occurs when requests are actually being served
