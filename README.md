@@ -1052,13 +1052,15 @@ nginx -g 'daemon on; master_process on;' -s reload
 
 #### Configuration syntax
 
+NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX's configuration has a simple and very transparent structure.
+
 ##### Comments
 
 NGINX configuration files don't support comment blocks; they only accept `#` at the beginning of a line for a comment.
 
 ##### End of lines
 
-Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
+Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error. It's a simple structure and very transparent.
 
 ##### Variables & Strings
 
@@ -1114,7 +1116,7 @@ Configuration options are called directives. We have four types of directives in
 
   > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
-Directives are organised into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent, we might say that NGINX configuration file uses a micro programming language.
+Directives are organised into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
 
