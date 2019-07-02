@@ -1060,7 +1060,7 @@ NGINX configuration files don't support comment blocks; they only accept `#` at 
 
 ##### End of lines
 
-Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error. It's a simple structure and very transparent.
+Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
 
 ##### Variables & Strings
 
