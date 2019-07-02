@@ -1324,6 +1324,8 @@ Additionally, you must know that `worker_connections` directive **includes all c
 
 The number of connections is limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. To change the limit of the maximum file descriptors that can be opened by a single worker process (as oppose to the user running NGINX) you can edit the `worker_rlimit_nofile` directive (with this you shouldn't restarting the main process).
 
+  > A file descriptor is an opaque handle that is used in the interface between user and kernel space to identify file/socket resources.
+
 I think that the chance of running out of file descriptors is minimal. However, you should know the following important rules:
 
 - before increasing the number of `worker_processes` or `worker_connections` verify the open file limit, for this, following commands will be useful for you:
@@ -1367,7 +1369,7 @@ Ok, so how many fds are opens by NGINX?
 
 Look also at these diagrams:
 
-- 1 file handler for connection with client and 1 file handler for static files being served by NGINX:
+- 1 file handler for connection with client and 1 file handler for static file being served by NGINX:
 
 ```
                      +-----------------+
@@ -1378,7 +1380,8 @@ Look also at these diagrams:
 +----------+         |        |        |
                      |      2 |        |
                      |        |        |
-                     | +------v------+ |
+                     |        |        |
+                     | +------+------+ |
                      | | STATIC FILE | |
                      | +-------------+ |
                      +-----------------+
@@ -1395,6 +1398,28 @@ Look also at these diagrams:
 +----------+         |                 |         +-----------+
                      +-----------------+
 ```
+
+- 2 file handlers for two simultaneous connections from the same client, 1 file handler for connection with other client, 2 file handlers for static files, and 1 file handler for a open socket to the remote or local host/process (in total it is 6 file descriptors):
+
+```
+                 4
+      +-----------------------+
+      |              +-----------------+
++-----v----+         |        |        |
+|          |    1    |        v        |  6
+|  CLIENT <------+--------> NGINX <---------------+
+|          |     |   |        ^        |    +-----v-----+
++----------+     |   |        |        |    |           |
+               3 |   |      2 | 5      |    |  BACKEND  |
++----------+     |   |        |        |    |           |
+|          |     |   |        |        |    +-----------+
+|  CLIENT  <-----+   | +------+------+ |
+|          |         | | STATIC FILE | |
++----------+         | +-------------+ |
+                     +-----------------+
+```
+
+I the first two examples: we can take that NGINX needs 2 file handlers for full-fledged connection (but still uses 2 worker connections). In the third example NGINX can take still 2 file handlers for every full-fledged connection (also if client uses parallel connections).
 
 I think that the correct value of `worker_rlimit_nofile` per all connections of worker is:
 
