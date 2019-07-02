@@ -356,11 +356,11 @@ That's why I created this repository - to help us to configure high performing N
 
   > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features of NGINX, and how to use them. This guide is fairly comprehensive, and touches a lot of the functions (e.g. security, performance, 3rd party modules) of NGINX, but not only.
+Throughout this handbook you will explore the many features of NGINX, and how to use them. It touches a lot of the functions (e.g. security, performance, 3rd party modules) of NGINX, but not only.
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
 
-I hope you enjoy it, and fun with it.
+I did my best to make this handbook a single and consistent. I hope you enjoy it, and fun with it.
 
 Before you start remember about the two most important things:
 
