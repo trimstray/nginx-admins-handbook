@@ -1066,12 +1066,24 @@ Variables in NGINX start with `$`. Some modules introduce variables can be used 
 
   > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
 
+To assign values to the variables you should use `set` directive:
+
+```bash
+set $var "value";
+```
+
+  > To learn more about NGINX variables: [`if`, `break` and `set`](#if-break-and-set).
+
 Some interesting things about NGINX variables:
 
-- the assignment operation is only performed in requests that access location
 - the scope of variables spreads out all over configuration
+- variable assignment occurs when requests are actually being served
+- variable have exactly the same lifetime as the corresponding request
 - each request does have its own version of all those variables' containers (different containers values)
 - requests do not interfere with each other even if they are referencing a variable with the same name
+- the assignment operation is only performed in requests that access location
+
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is Guru, author of OpenResty and some really great tools for them.
 
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
 
@@ -1102,7 +1114,7 @@ Configuration options are called directives. We have four types of directives in
 
   > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
-Directives are organised into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent.
+Directives are organised into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`. It's a simple structure and very transparent, we might say that NGINX configuration file uses a micro programming language.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
 
@@ -1394,7 +1406,7 @@ So maximum number of open files by the NGINX should be:
 worker_processes * worker_rlimit_nofile + (shared libs, log files, event pool etc.) = max open files
 ```
 
-  > To serve **16384** connections (by all workers), and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers may be **20000**.
+  > To serve **16384** connections (by all workers), and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers in this case may be **20000** (I think it's more than enough).
 
 To change/improve the limitations you should:
 
@@ -1415,6 +1427,8 @@ worker_rlimit_nofile          20000;
 There is a great article about [Optimizing Nginx for High Traffic Loads](https://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/).
 
 #### Request processing stages
+
+There can be altogether 11 phases when NGINX handles a request:
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
   - example modules: [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
@@ -1457,7 +1471,7 @@ Before start reading this chapter you should know what regular expressions are a
 - [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
 - [Regex cookbook — Top 10 Most wanted regex](https://medium.com/factory-mind/regex-cookbook-most-wanted-regex-aa721558c3c1)
 
-Why? Regular expressions can be used in both the `server_name` and `location` directives, and sometimes you must have a great skill of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
+Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skill of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
 It's short example of server block context (two server blocks):
 
