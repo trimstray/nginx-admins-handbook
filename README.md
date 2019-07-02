@@ -437,6 +437,8 @@ Existing chapters:
     - [x] _External files_
     - [x] _Measurement units_
     - [x] _Enable syntax highlighting_
+  - _Connection processing_
+    - [ ] _Keepalive connections_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -541,8 +543,10 @@ Existing chapters:
 <details>
 <summary><b>Debugging</b></summary><br>
 
-  - [ ] _Use mirror module to copy requests to another backend_
+  - [ ] _Disable all workers except one_
   - [x] _Memory analysis from core dumps_
+  - [ ] _Use mirror module to copy requests to another backend_
+  - [ ] _Dynamic debugging with echo module_
 
 </details>
 
@@ -1367,6 +1371,10 @@ Ok, so how many fds are opens by NGINX?
 - one file handler for opening file (e.g. static file)
 - one file handler for the proxied connection (that will open a socket handling these requests to remote or local host/process)
 
+Also important is:
+
+  > NGINX can use up to two file descriptors per full-fledged connection.
+
 Look also at these diagrams:
 
 - 1 file handler for connection with client and 1 file handler for static file being served by NGINX:
@@ -1399,7 +1407,7 @@ Look also at these diagrams:
                      +-----------------+
 ```
 
-- 2 file handlers for two simultaneous connections from the same client, 1 file handler for connection with other client, 2 file handlers for static files, and 1 file handler for a open socket to the remote or local host/process (in total it is 6 file descriptors):
+- 2 file handlers for two simultaneous connections from the same client (1, 4), 1 file handler for connection with other client (3), 2 file handlers for static files (2, 5), and 1 file handler for a open socket to the remote or local host/process (6), so in total it is 6 file descriptors:
 
 ```
                  4
