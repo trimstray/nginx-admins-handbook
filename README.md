@@ -356,7 +356,7 @@ That's why I created this repository - to help us to configure high performing N
 
   > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features of NGINX, and how to use them. It touches a lot of the functions (e.g. security, performance, 3rd party modules) of NGINX, but not only.
+Throughout this handbook you will explore the many features of NGINX, and how to use them. It touches a lot of the functions (e.g. security, performance, 3rd party modules) of NGINX.
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
 
@@ -1076,14 +1076,14 @@ set $var "value";
 
 Some interesting things about NGINX variables:
 
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is Guru, author of OpenResty and some really great tools for them.
+
 - the scope of variables spreads out all over configuration
 - variable assignment occurs when requests are actually being served
 - variable have exactly the same lifetime as the corresponding request
 - each request does have its own version of all those variables' containers (different containers values)
 - requests do not interfere with each other even if they are referencing a variable with the same name
 - the assignment operation is only performed in requests that access location
-
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is Guru, author of OpenResty and some really great tools for them.
 
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
 
