@@ -1258,7 +1258,7 @@ There’s no need to control the worker processes yourself. However, they suppor
 
 #### Connection processing
 
-NGINX supports a variety of connection processing methods which depends on the platform used. For more information please see [connection processing methods](https://nginx.org/en/docs/events.html) explanation.
+NGINX supports a variety of [connection processing methods](https://nginx.org/en/docs/events.html) which depends on the platform used.
 
 In general there are four types of event multiplexing:
 
@@ -1304,49 +1304,46 @@ According to this: if you are running **4** worker processes with **4096** worke
 
 I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. It is a bit confusing and I think is not true because each clients (e.g. browsers) **opens a number of parallel connections** to download various components that compose a web page, for example, images, scripts, and so on.
 
-On the other hand this **includes all connections** (e.g. connections with proxied servers, among others), not only connections with clients.
+Additionally, you must know that `worker_connections` directive **includes all connections** (e.g. connections with proxied servers, among others), not only connections with clients.
 
   > Be aware that every worker connection (in the sleeping state) needs 256 bytes of memory, so you can increase it easily.
 
 The number of connections is limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. To change the limit of the maximum file descriptors that can be opened by a single worker process (as oppose to the user running NGINX) you can edit the `worker_rlimit_nofile` directive (with this you shouldn't restarting the main process).
 
-The following commands will be useful for you:
+I think that the chance of running out of file descriptors is minimal. However, you should know the following important rules:
+
+- before increasing the number of `worker_processes` or `worker_connections` verify the open file limit, for this, following commands will be useful for you:
 
 ```bash
-# List file descriptors in kernel memory
+# List all file descriptors in kernel memory:
 #   <allocated file handles> <unused-but-allocated file handles> <the system-wide maximum number of file handles>
 sysctl fs.file-nr
 
-# Find out or set the system-wide maximum number of file handles:
+# Find out the system-wide maximum number of file handles:
 sysctl fs.file-max
-```
 
-However, you should know these important rules:
-
-  > Before increasing the number of `worker_processes` or `worker_connections` verify the open file limit.
-
-  > If you have SELinux enabled, you will need to run `setsebool -P httpd_setrlimit 1` so that NGINX has permissions to set its rlimit
-
-  > `worker_rlimit_nofile` serves to dynamically change the maximum file descriptors the NGINX process can handle, which is typically defined with the system's soft limit
-
-  > `worker_rlimit_nofile` works only at process level, it's limited to the system's hard limit (`ulimit -Hn`)
-
-So if you don't set this directive manually, then the OS settings will determine how many file descriptors can be used by NGINX.
-
-To show current open file descriptors per NGINX worker process:
-
-```bash
+# Current open file descriptors per NGINX worker process:
 for _pid in $(pgrep -f "nginx: worker") ; do
+
+  echo -en "\n\n##### per worker pid: $_pid #####\n\n"
 
   # List files from proc directory:
   #   - ls -l /proc/${_pid}/fd
   ls /proc/${_pid}/fd | wc -l
 
-  # List all open files (fs, mem):
+  # List all open files (files, memory mapped file):
   lsof -as -p $_pid | awk '{if(NR>1)print}'
 
 done
 ```
+
+- if you have SELinux enabled, you will need to run `setsebool -P httpd_setrlimit 1` so that NGINX has permissions to set its rlimit
+
+- `worker_rlimit_nofile` serves to dynamically change the maximum file descriptors the NGINX worker process can handle, which is typically defined with the system's soft limit
+
+- `worker_rlimit_nofile` works only at the process level, it's limited to the system's hard limit (`ulimit -Hn`)
+
+So if you don't set this directive manually, then the OS settings will determine how many file descriptors can be used by NGINX.
 
 Ok, so how many fds are opens by NGINX?
 
@@ -1356,13 +1353,13 @@ Ok, so how many fds are opens by NGINX?
 
 Look also at these diagrams:
 
-- 2 file handlers for one connection with client (static files being served by NGINX):
+- 1 file handler for connection with client and 1 file handler for static files being served by NGINX:
 
 ```
                      +-----------------+
 +----------+         |                 |
 |          |    1    |                 |
-|  CLIENT<----------------->NGINX      |
+|  CLIENT <---------------> NGINX      |
 |          |         |        ^        |
 +----------+         |        |        |
                      |      2 |        |
@@ -1373,31 +1370,36 @@ Look also at these diagrams:
                      +-----------------+
 ```
 
-- 2 file handlers for one connection with client (open a socket to the remote or local host/process):
+- 1 file handler for connection with client and 1 file handler for a open socket to the remote or local host/process:
 
 ```
                      +-----------------+
 +----------+         |                 |         +-----------+
 |          |    1    |                 |    2    |           |
-|  CLIENT<----------------->NGINX<----------------->BACKEND  |
+|  CLIENT <---------------> NGINX <---------------> BACKEND  |
 |          |         |                 |         |           |
 +----------+         |                 |         +-----------+
                      +-----------------+
 ```
 
-I think that the correct value of `worker_rlimit_nofile` is:
+I think that the correct value of `worker_rlimit_nofile` per all connections of worker is:
 
 ```bash
 worker_rlimit_nofile (per worker) = worker_connections
-
-# So maximum number of open files by the NGINX is:
-max open files = worker_processes * worker_rlimit_nofile
 ```
+
+So maximum number of open files by the NGINX should be:
+
+```bash
+worker_processes * worker_rlimit_nofile + (shared libs, log files, event pool etc.) = max open files
+```
+
+  > To serve **16384** connections (by all workers), and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers may be **20000**.
 
 To change/improve the limitations you should:
 
 ```bash
-# Add to /etc/sysctl.d/99-fs.conf:
+# Add to /etc/sysctl.d/99-fs.conf (system-wide value):
 fs.file-max = 50000
 
 # Add to /etc/security/limits.conf:
