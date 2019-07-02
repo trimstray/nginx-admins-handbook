@@ -1296,8 +1296,9 @@ There are also great resources (and comparisons) about them:
 - [Epoll is fundamentally broken](https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/)
 - [I/O Multiplexing using epoll and kqueue System Calls](https://austingwalters.com/io-multiplexing/)
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
+- [The C10K problem](http://www.kegel.com/c10k.html)
 
-Look also at this benchmark:
+Look also at libevent benchmark (and if you want read about [libevent – an event notification library](http://libevent.org/)):
 
 <p align="center">
   <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
