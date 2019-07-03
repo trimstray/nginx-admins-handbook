@@ -328,7 +328,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - high performance caching server
 - full-fledged web platform
 
-Generally it provides the core of complete web stacks, and is designed to help build scalable web applications. For me, it is a one of the best and most important service that I used in my SysAdmin career.
+Generally it provides the core of complete web stacks and is designed to help build scalable web applications. For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
 ----
 
@@ -342,21 +342,21 @@ In addition, I would like to recommend two great articles focuses on the concept
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
 - **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
 
-If you love security and cryptology keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It explores themes of cipher suites, tls versions, attacks and many other.
+If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols).
 
 ## General disclaimer
 
 When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in suitable form. I was a little disappointed.
 
-I was interested in everything: NGINX internals, functions, security best practice, performance optimisation, nice tips & tricks, hacks and rules, but all documents treated the subject casually.
+I was interested in everything: NGINX internals, functions, security best practice, performance optimisations, tips & tricks, hacks and rules, but all documents treated the subject lightly.
 
-Of course, now I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/) - it's definitely the best place for us.
+Of course, I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/) or [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html). It's out of the question, these are definitely the best assets for us and in the first place you should seek help there.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
-  > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments but not only). Many of these refer to external resources.
+  > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features of NGINX. You'll also learn how to use them properly.
+Throughout this handbook you will explore the many features of NGINX. You will also learn how to use them properly.
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
 
