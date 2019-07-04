@@ -350,13 +350,13 @@ When I was studying architecture of HTTP servers I became interested in NGINX. I
 
 I was interested in everything: NGINX internals, functions, security best practice, performance optimisations, tips & tricks, hacks and rules, but all documents treated the subject lightly.
 
-Of course, I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/) or [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html). It's out of the question, these are definitely the best assets for us and in the first place you should seek help there.
+Of course, I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/) or [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html). On a different note, these are definitely the best assets for us and in the first place you should seek help there.
 
-For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
+For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet (if it's possible) which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
   > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features of NGINX. You will also learn how to use them properly.
+Throughout this handbook you will explore the many features of NGINX. You will also learn how to testing the performance or how to resolve debugging problems. You will discover as several practices related to hardening.
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
 
@@ -415,8 +415,16 @@ Existing chapters:
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
+  - _Benchmarking tools_
+    - [x] _httperf_
+    - [x] _slowloris_
+    - [x] _slowhttptest_
+    - [x] _GoldenEye_
   - _Debugging tools_
+    - [x] _strace_
     - [x] _GDB_
+    - [x] _SystemTap_
+    - [x] _stapxx_
     - [x] _htrace.sh_
 
 </details>
@@ -1026,32 +1034,48 @@ inflight requests
 
 Some snippets to test, start, stop, and restart processes:
 
-- to test configuration:
+- testing configuration:
 
 ```bash
-nginx -t -q -g 'daemon on; master_process on;'
+/usr/sbin/nginx -t -c /etc/nginx/nginx.conf
+/usr/sbin/nginx -t -q -g 'daemon on; master_process on;' # ; echo $?
 ```
 
-- to start daemon:
+- starting daemon:
 
 ```bash
-nginx -g 'daemon on; master_process on;'
+/usr/sbin/nginx -g 'daemon on; master_process on;'
+
+service nginx start
+systemctl start nginx
+
+# You can also start NGINX from start-stop-daemon script:
+/sbin/start-stop-daemon --quiet --start --exec /usr/sbin/nginx --background --retry QUIT/5 --pidfile /run/nginx.pid
 ```
 
-- to stop daemon:
+- stopping daemon:
 
 ```bash
-nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
-nginx -s stop     # fast shutdown (kill connections immediately)
+/usr/sbin/nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
+/usr/sbin/nginx -s stop     # fast shutdown (kill connections immediately)
+
+service nginx stop
+systemctl stop nginx
 
 # You can also stop NGINX from start-stop-daemon script:
 /sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
 ```
 
-- to reload daemon:
+- reloading daemon:
 
 ```bash
-nginx -g 'daemon on; master_process on;' -s reload
+/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
+
+service nginx reload
+systemctl reload nginx
+
+kill -HUP $(cat /var/run/nginx.pid)
+kill -HUP $(pgrep -f "nginx: master")
 ```
 
 #### Configuration syntax
@@ -1060,7 +1084,7 @@ NGINX uses a micro programming language in the configuration files. This languag
 
 ##### Comments
 
-NGINX configuration files don't support comment blocks; they only accept `#` at the beginning of a line for a comment.
+NGINX's configuration files don't support comment blocks, they only accept `#` at the beginning of a line for a comment.
 
 ##### End of lines
 
@@ -1068,7 +1092,7 @@ Lines containing directives must end with a `;` or NGINX will fail to load the c
 
 ##### Variables & Strings
 
-Variables in NGINX start with `$`. Some modules introduce variables can be used when setting directives.
+Variables start with `$`. Some modules introduce variables can be used when setting directives.
 
   > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
 
@@ -1080,9 +1104,9 @@ set $var "value";
 
   > To learn more about NGINX variables see [`if`, `break` and `set`](#if-break-and-set) section.
 
-Some interesting things about NGINX variables:
+Some interesting things about variables in NGINX:
 
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is Guru and author of OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is a Guru and creator of OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
 
 - the scope of variables spreads out all over configuration
 - variable assignment occurs when requests are actually being served
@@ -1126,7 +1150,7 @@ As a general rule, if a directive is valid in multiple nested scopes, a declarat
 
   > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
 
-Contexts can be layered within one another so NGINX provides a level of inheritance. Their structure looks like this:
+Contexts can be layered within one another so NGINX (a level of inheritance). Their structure looks like this:
 
 ```
 Global/Main Context
@@ -1211,7 +1235,7 @@ au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/*,*
 __EOF__
 ```
 
-  > VIM has a substantial database of plugins, one of them may be also interesting for you: [Highlight insecure SSL configuration in Vim](https://github.com/chr4/sslsecure.vim).
+  > [Highlight insecure SSL configuration in Vim](https://github.com/chr4/sslsecure.vim).
 
 ###### Sublime Text
 
@@ -1256,23 +1280,23 @@ The worker processes do the actual processing of requests and get commands from 
 
 The following signals can be sent to the NGINX master process:
 
-| <b>SIGNAL</b> | <b>DESCRIPTION</b> |
-| :---         | :---         |
-| `TERM`, `INT` | quick shutdown |
-| `QUIT` | graceful shutdown |
-| `KILL` | halts a stubborn process |
-| `HUP` | configuration reload, start new workers, gracefully shutdown the old worker processes |
-| `USR1` | reopen the log files |
-| `USR2` | upgrade executable on the fly |
-| `WINCH` | gracefully shutdown the worker processes |
+| <b>SIGNAL</b> | <b>NUM</b> | <b>DESCRIPTION</b> |
+| :---         | :---:        | :---         |
+| `TERM`, `INT` | **15**, **2** | quick shutdown |
+| `QUIT` | **3** | graceful shutdown |
+| `KILL` | **9** | halts a stubborn process |
+| `HUP` | **1** | configuration reload, start new workers, gracefully shutdown the old worker processes |
+| `USR1` | **10** | reopen the log files |
+| `USR2` | **12** | upgrade executable on the fly |
+| `WINCH` | **28** | gracefully shutdown the worker processes |
 
 There’s no need to control the worker processes yourself. However, they support some signals too:
 
-| <b>SIGNAL</b> | <b>DESCRIPTION</b> |
-| :---         | :---         |
-| `TERM`, `INT` | quick shutdown |
-| `QUIT` | graceful shutdown |
-| `USR1` | reopen the log files |
+| <b>SIGNAL</b> | <b>NUM</b> | <b>DESCRIPTION</b> |
+| :---         | :---:        | :---         |
+| `TERM`, `INT` | **15**, **2** | quick shutdown |
+| `QUIT` | **3** | graceful shutdown |
+| `USR1` | **10** | reopen the log files |
 
 #### Connection processing
 
@@ -1285,7 +1309,7 @@ In general there are four types of event multiplexing:
 - `epoll` - recommend if you're using GNU/Linux
 - `kqueue` - recommend if you're using BSD (is technically superior to `epoll`)
 
-There are also great resources (and comparisons) about them:
+There are also great resources (also makes comparisons) about them:
 
 - [poll vs select vs event-based](https://daniel.haxx.se/docs/poll-vs-select.html)
 - [select/poll/epoll: practical difference for system architects](http://www.ulduzsoft.com/2014/01/select-poll-epoll-practical-difference-for-system-architects/)
@@ -1321,13 +1345,13 @@ worker_processes * worker_connections = max connections
 
 According to this: if you are running **4** worker processes with **4096** worker connections per worker, you will be able to serve **16384** connections.
 
-I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. It is a bit confusing and I think is not true because each clients (e.g. browsers) **opens a number of parallel connections** to download various components that compose a web page, for example, images, scripts, and so on.
+I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. In my opinion it is mistake because each clients (e.g. browsers) **opens a number of parallel connections** to download various components that compose a web page, for example, images, scripts, and so on.
 
 Additionally, you must know that `worker_connections` directive **includes all connections** (e.g. connections with proxied servers, among others), not only connections with clients.
 
   > Be aware that every worker connection (in the sleeping state) needs 256 bytes of memory, so you can increase it easily.
 
-The number of connections is limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. To change the limit of the maximum file descriptors that can be opened by a single worker process (as oppose to the user running NGINX) you can edit the `worker_rlimit_nofile` directive (with this you shouldn't restarting the main process).
+The number of connections is limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. To change the limit of the maximum file descriptors that can be opened by a single worker process (as oppose to the user running NGINX) you can edit the `worker_rlimit_nofile` directive (with this there's no need to restarting the main process).
 
   > A file descriptor is an opaque handle that is used in the interface between user and kernel space to identify file/socket resources.
 
@@ -1337,7 +1361,7 @@ I think that the chance of running out of file descriptors is minimal. However, 
 
 ```bash
 # List all file descriptors in kernel memory:
-#   <allocated file handles> <unused-but-allocated file handles> <the system-wide maximum number of file handles>
+#   <allocated file handles> <unused-but-allocated file handles> <the system-wide max number of file handles>
 sysctl fs.file-nr
 
 # Find out the system-wide maximum number of file handles:
@@ -1352,13 +1376,16 @@ for _pid in $(pgrep -f "nginx: worker") ; do
   #   - ls -l /proc/${_pid}/fd
   ls /proc/${_pid}/fd | wc -l
 
-  # List all open files (files, memory mapped file):
+  # List all open files (files, memory mapped files):
   lsof -as -p $_pid | awk '{if(NR>1)print}'
 
 done
 ```
 
 - if you have SELinux enabled, you will need to run `setsebool -P httpd_setrlimit 1` so that NGINX has permissions to set its rlimit
+
+  > You can also use:
+  >   - `sealert -a /var/log/audit/audit.log` - to diagnose SELinux denials and attempts
 
 - `worker_rlimit_nofile` serves to dynamically change the maximum file descriptors the NGINX worker process can handle, which is typically defined with the system's soft limit
 
@@ -1390,7 +1417,7 @@ Look also at these diagrams:
                      |      2 |        |
                      |        |        |
                      |        |        |
-                     | +------+------+ |
+                     | +------v------+ |
                      | | STATIC FILE | |
                      | +-------------+ |
                      +-----------------+
@@ -1422,7 +1449,7 @@ Look also at these diagrams:
                3 |   |      2 | 5      |    |  BACKEND  |
 +----------+     |   |        |        |    |           |
 |          |     |   |        |        |    +-----------+
-|  CLIENT  <-----+   | +------+------+ |
+|  CLIENT  <-----+   | +------v------+ |
 |          |         | | STATIC FILE | |
 +----------+         | +-------------+ |
                      +-----------------+
@@ -1433,7 +1460,7 @@ I the first two examples: we can take that NGINX needs 2 file handlers for full-
 I think that the correct value of `worker_rlimit_nofile` per all connections of worker is:
 
 ```bash
-worker_rlimit_nofile (per worker) = worker_connections
+worker_rlimit_nofile = worker_connections
 ```
 
 So maximum number of open files by the NGINX should be:
@@ -1442,7 +1469,7 @@ So maximum number of open files by the NGINX should be:
 worker_processes * worker_rlimit_nofile + (shared libs, log files, event pool etc.) = max open files
 ```
 
-  > To serve **16384** connections (by all workers), and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers in this case may be **20000** (I think it's more than enough).
+  > To serve **16384** connections by all workers, and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers in this case may be **20000**. I think it's more than enough.
 
 To change/improve the limitations you should:
 
@@ -1500,7 +1527,7 @@ You may feel lost now (me too...) so I let myself put this great preview:
 
 #### Server blocks logic
 
-  > NGINX does have **server blocks** (like a virtual hosts is an Apache) that use `listen` and `server_name` directives to bind to tcp sockets.
+  > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` and `server_name` directives to bind to tcp sockets.
 
 Before start reading this chapter you should know what regular expressions are and how they works. I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
@@ -1811,7 +1838,7 @@ These directives (they come from the `ngx_http_rewrite_module`) are very useful 
 
 Anything else may possibly cause unpredictable behaviour, including potential `SIGSEGV`.
 
-Generally there are two ways of implementing redirects in NGINX:
+Generally there are two ways of implementing redirects in NGINX: with `rewrite` and `return`.
 
 ###### `rewrite` directive
 
@@ -2054,14 +2081,14 @@ kill -USR1 $(cat /var/run/nginx.pid) && sleep 1
 
 # >= gzip-1.6:
 gzip -k access.log.0
-# with any version:
+# With any version:
 gzip < access.log.0 > access.log.0.gz
 
 # Test integrity and remove if test passed:
 gzip -t access.log.0 && rm -fr access.log.0
 ```
 
-  > You can also read about how to [Configure log rotation policy](#beginner-configure-log-rotation-policy).
+  > You can also read about how to [configure log rotation policy](#beginner-configure-log-rotation-policy).
 
 #### Error log severity levels
 
@@ -2405,7 +2432,7 @@ Without `nodelay` option NGINX would wait (no 503 response) and handle excessive
 It is an essential way for testing NGINX configuration:
 
 ```bash
-nginx -t -c /etc/nginx/nginx.conf;
+nginx -t -c /etc/nginx/nginx.conf
 ```
 
 An external tool for analyse NGINX configuration is `gixy`:
@@ -6565,19 +6592,9 @@ server {
 
 ###### Rationale
 
-  > Log management is an part of any server administrator’s responsibility and is an part of security solutions. Log files gives you feedback about the activity and performance of the server as well as any problems that may be occurring. They are records details about requests and NGINX internals. But also logs use more disk space.
+  > Log files gives you feedback about the activity and performance of the server as well as any problems that may be occurring. They are records details about requests and NGINX internals. But also logs use more disk space.
 
-  > Some critical parts of log files:
-  >
-  > - time stamp, source ip, and other attributes of an incoming request
-  > - excessive access attempts to non-existent files
-  > - access to extensions you have not implemented
-  > - access to risky parts of your app that accept user input
-  > - http codes, e.g. error codes like a 4xx, 5xx
-
-  > Log rotation is a process that solves these problems by periodically archiving the current log file and starting a new one. It renames and optionally compresses the current log files, delete old log files, and force the logging system to begin using new log files.
-
-  > For auditing or archival purposes, you may need to decrease or increase the log rotation configuration for one or more logs files.
+  > You should define a process which periodically archiving the current log file and starting a new one, renames and optionally compresses the current log files, delete old log files, and force the logging system to begin using new log files.
 
   > I think the best tool for this is a `logrotate`. I use it everywhere if I want to manage logs automatically, and for a good night's sleep also. It is a simple program to rotate logs, uses crontab to work. It's scheduled work, not a daemon, so no need to reload its configuration.
 
