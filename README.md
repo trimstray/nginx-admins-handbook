@@ -136,6 +136,10 @@
     * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
+    * [Load testing with wrk2](#load-testing-with-wrk2)
+      * [Standard load testing](#standard-load-testing)
+      * [POST call with Lua](#post-call-with-lua)
+      * [Random paths with Lua](#random-paths-with-lua)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -471,6 +475,10 @@ Existing chapters:
     - [x] _Testing SSL connection with SNI support_
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
+    - [x] _Load testing with wrk2_
+      - [x] _Standard load testing_
+      - [x] _POST call with Lua_
+      - [x] _Random paths with Lua_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -2601,6 +2609,139 @@ openssl s_client -tls1_2 -connect <server_name>:<port>
 
 ```bash
 openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
+```
+
+##### Load testing with wrk2
+
+###### Standard load testing
+
+```bash
+wrk -c 24 -t 12 -d 30s -R 2500 --latency https://blkcipher.info/index.php
+```
+
+###### POST call with Lua
+
+  > Based on:
+  >
+  >   - https://github.com/wg/wrk/blob/master/scripts/post.lua
+  >   - https://stackoverflow.com/questions/15261612/post-request-with-wrk
+
+1)
+
+```bash
+cat > lua/post-call.lua << __EOF__
+-- the request function that will run at each request
+request = function()
+
+  -- define input data
+  path                        = "/index.php"
+  wrk.method                  = "POST"
+  wrk.headers["Content-Type"] = "application/json; charset=utf-8"
+  wrk.body                    = "{\"hash\":\"ooJeiveenai6iequ\",\"timestamp\":\"1562585990\",\"data\":[[\"cache\",\"x-cache\",\"true\"]]}"
+
+  -- return the request object
+  return wrk.format(wrk.method, path)
+
+end
+__EOF__
+```
+
+2)
+
+```bash
+cat > lua/post-call.lua << __EOF__
+-- the request function that will run at each request
+request = function()
+
+  -- define input data
+  path                        = "/index.php"
+  wrk.method                  = "POST"
+  wrk.headers["Content-Type"] = "application/json; charset=utf-8"
+  wrk.body                    = [[{
+                                  "hash": "ooJeiveenai6iequ",
+                                  "timestamp": "1562585990",
+                                  "data":
+                                  {
+                                    cache,
+                                    x-cache: "true"
+                                  },
+                                }]]
+
+  -- return the request object
+  return wrk.format(wrk.method, path)
+
+end
+__EOF__
+```
+
+Run:
+
+```bash
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info
+```
+
+###### Random paths
+
+  > Based on:
+  >
+  >   - https://medium.com/@felipedutratine/intelligent-benchmark-with-wrk-163986c1587f
+
+1)
+
+```bash
+cat > lua/random-paths.lua << __EOF__
+-- init random
+math.randomseed(os.time())
+
+-- the request function that will run at each request
+request = function()
+
+    -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
+    url_path = "/search?q=" .. math.random(0,100000)
+
+    -- print(url_path)
+
+    -- return the request object with the current URL path
+    return wrk.format("GET", url_path)
+
+end
+__EOF__
+```
+
+2)
+
+```bash
+cat > lua/random-paths.lua << __EOF__
+-- init random
+math.randomseed(os.time())
+
+function RandomVariable(length)
+  local res = ""
+  for i = 1, length do
+    res = res .. string.char(math.random(97, 122))
+  end
+  return res
+end
+
+-- the request function that will run at each request
+request = function()
+
+    -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
+    url_path = "/search?q=" .. RandomVariable(32)
+
+    -- print(url_path)
+
+    -- return the request object with the current URL path
+    return wrk.format("GET", url_path)
+
+end
+__EOF__
+```
+
+Run:
+
+```bash
+wrk -c 12 -t 12 -d 30s -R 600 -s lua/random-paths.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
 ###### TCP SYN flood Denial of Service attack
@@ -4836,10 +4977,11 @@ Update modules list and include `modules.conf` to your configuration:
 
 ```bash
 _mod_dir="/etc/nginx/modules"
+_mod_conf="/etc/nginx/modules.conf"
 
-:>"${_mod_dir}.conf"
+:>"${_mod_conf}"
 
-for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf" ; done
+for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "$_mod_conf" ; done
 ```
 
 Create `logrotate` configuration:
@@ -8304,7 +8446,7 @@ rsync -avur lib/nginx/ /etc/nginx/
 
 ```bash
 cd /etc/nginx
-find . -not -path '*/\.git*' -depth -name '*192.168.252.2*' -execdir bash -c 'mv -v "$1" "${1//192.168.252.2/xxx.xxx.xxx.xxx}"' _ {} \;
+find . -depth -not -path '*/\.git*' -name '*192.168.252.2*' -execdir bash -c 'mv -v "$1" "${1//192.168.252.2/xxx.xxx.xxx.xxx}"' _ {} \;
 ```
 
 ###### Find and replace 192.168.252.2 string in configuration files
