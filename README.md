@@ -2743,10 +2743,10 @@ wrk -c 24 -t 12 -d 30s -R 2500 --latency https://blkcipher.info/index.php
 
 ###### POST call (with Lua)
 
-  > Based on:
-  >
-  >   - [wkr scripts - post](https://github.com/wg/wrk/blob/master/scripts/post.lua)
-  >   - [POST request with wrk?](https://stackoverflow.com/questions/15261612/post-request-with-wrk)
+Based on:
+
+- [wkr scripts - post](https://github.com/wg/wrk/blob/master/scripts/post.lua)
+- [POST request with wrk?](https://stackoverflow.com/questions/15261612/post-request-with-wrk)
 
 Example 1:
 
@@ -2823,9 +2823,9 @@ wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" h
 
 ###### Random paths (with Lua)
 
-  > Based on:
-  >
-  >   - [Intelligent benchmark with wrk](https://medium.com/@felipedutratine/intelligent-benchmark-with-wrk-163986c1587f)
+Based on:
+
+- [Intelligent benchmark with wrk](https://medium.com/@felipedutratine/intelligent-benchmark-with-wrk-163986c1587f)
 
 Example 1:
 
@@ -2891,7 +2891,9 @@ wrk -c 12 -t 12 -d 15s -R 200 -s lua/random-paths.lua -H "Host: blkcipher.info" 
 
 ###### Random server address to each thread (with Lua)
 
-  > Based on: [addr.lua](https://github.com/wg/wrk/blob/master/scripts/addr.lua)
+Based on:
+
+- [wrk scripts - addr](https://github.com/wg/wrk/blob/master/scripts/addr.lua)
 
 Example 1:
 
@@ -2934,15 +2936,11 @@ wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua -H "Host: blkcipher.info" 
 
 ###### TCP SYN flood Denial of Service attack
 
-  > Only use this for testing the availability, performance and capacity planning of a web application of your environment.
-
 ```bash
 hping3 -V -c 1000000 -d 120 -S -w 64 -p 80 --flood --rand-source <remote_host>
 ```
 
 ###### HTTP Denial of Service attack
-
-  > Only use this for testing the availability, performance and capacity planning of a web application of your environment.
 
 ```bash
 # 1)
