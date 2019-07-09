@@ -138,8 +138,9 @@
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
     * [Load testing with wrk2](#load-testing-with-wrk2)
       * [Standard load testing](#standard-load-testing)
-      * [POST call with Lua](#post-call-with-lua)
-      * [Random paths with Lua](#random-paths-with-lua)
+      * [POST call (with Lua)](#post-call-with-lua)
+      * [Random paths (with Lua)](#random-paths-with-lua)
+      * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua))
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -477,8 +478,9 @@ Existing chapters:
     - [x] _Testing SSL connection with specific cipher_
     - [x] _Load testing with wrk2_
       - [x] _Standard load testing_
-      - [x] _POST call with Lua_
-      - [x] _Random paths with Lua_
+      - [x] _POST call (with Lua)_
+      - [x] _Random paths (with Lua)_
+      - [x] _Random server address to each thread (with Lua)_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -2616,17 +2618,137 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 ###### Standard load testing
 
 ```bash
+# 1)
+wrk -c 1 -t 1 -d 2s -R 5 -H "Host: blkcipher.info" https://blkcipher.info
+Running 2s test @ https://blkcipher.info
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    45.21ms   20.99ms 108.16ms   90.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  10 requests in 2.01s, 61.69KB read
+Requests/sec:      4.99
+Transfer/sec:     30.76KB
+
+# RPS:
+6 09/Jul/2019:08:00:25
+5 09/Jul/2019:08:00:26
+
+# 2)
+wrk -c 1 -t 1 -d 2s -R 25 -H "Host: blkcipher.info" https://blkcipher.info
+Running 2s test @ https://blkcipher.info
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    64.40ms   24.26ms 110.46ms   48.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  50 requests in 2.01s, 308.45KB read
+Requests/sec:     24.93
+Transfer/sec:    153.77KB
+
+# RPS:
+12 09/Jul/2019:08:02:09
+26 09/Jul/2019:08:02:10
+13 09/Jul/2019:08:02:11
+
+# 3)
+wrk -c 5 -t 5 -d 2s -R 25 -H "Host: blkcipher.info" https://blkcipher.info
+Running 2s test @ https://blkcipher.info
+  5 threads and 5 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    47.97ms   25.79ms 136.45ms   90.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  50 requests in 2.01s, 308.45KB read
+Requests/sec:     24.92
+Transfer/sec:    153.75KB
+
+# RPS:
+25 09/Jul/2019:08:03:56
+25 09/Jul/2019:08:03:57
+ 5 09/Jul/2019:08:03:58
+
+# 4)
+wrk -c 5 -t 5 -d 2s -R 50 -H "Host: blkcipher.info" https://blkcipher.info
+Running 2s test @ https://blkcipher.info
+  5 threads and 5 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    45.09ms   18.63ms 130.69ms   91.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  100 requests in 2.01s, 616.89KB read
+Requests/sec:     49.85
+Transfer/sec:    307.50KB
+
+# RPS:
+35 09/Jul/2019:08:05:00
+50 09/Jul/2019:08:05:01
+20 09/Jul/2019:08:05:02
+
+# 5)
+wrk -c 24 -t 12 -d 30s -R 2500 -H "Host: blkcipher.info" https://blkcipher.info
+Running 30s test @ https://blkcipher.info
+  12 threads and 24 connections
+  Thread calibration: mean lat.: 3866.673ms, rate sampling interval: 13615ms
+  Thread calibration: mean lat.: 3880.487ms, rate sampling interval: 13606ms
+  Thread calibration: mean lat.: 3890.279ms, rate sampling interval: 13615ms
+  Thread calibration: mean lat.: 3872.985ms, rate sampling interval: 13606ms
+  Thread calibration: mean lat.: 3876.076ms, rate sampling interval: 13615ms
+  Thread calibration: mean lat.: 3883.463ms, rate sampling interval: 13606ms
+  Thread calibration: mean lat.: 3870.145ms, rate sampling interval: 13623ms
+  Thread calibration: mean lat.: 3873.675ms, rate sampling interval: 13623ms
+  Thread calibration: mean lat.: 3898.842ms, rate sampling interval: 13672ms
+  Thread calibration: mean lat.: 3890.278ms, rate sampling interval: 13615ms
+  Thread calibration: mean lat.: 3882.429ms, rate sampling interval: 13631ms
+  Thread calibration: mean lat.: 3896.333ms, rate sampling interval: 13639ms
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    15.01s     4.32s   22.46s    57.62%
+    Req/Sec    52.00      0.00    52.00    100.00%
+  18836 requests in 30.01s, 113.52MB read
+Requests/sec:    627.59
+Transfer/sec:      3.78MB
+
+# RPS:
+ 98 09/Jul/2019:08:06:13
+627 09/Jul/2019:08:06:14
+624 09/Jul/2019:08:06:15
+640 09/Jul/2019:08:06:16
+629 09/Jul/2019:08:06:17
+627 09/Jul/2019:08:06:18
+648 09/Jul/2019:08:06:19
+624 09/Jul/2019:08:06:20
+624 09/Jul/2019:08:06:21
+631 09/Jul/2019:08:06:22
+641 09/Jul/2019:08:06:23
+627 09/Jul/2019:08:06:24
+633 09/Jul/2019:08:06:25
+636 09/Jul/2019:08:06:26
+648 09/Jul/2019:08:06:27
+626 09/Jul/2019:08:06:28
+617 09/Jul/2019:08:06:29
+636 09/Jul/2019:08:06:30
+640 09/Jul/2019:08:06:31
+627 09/Jul/2019:08:06:32
+635 09/Jul/2019:08:06:33
+639 09/Jul/2019:08:06:34
+633 09/Jul/2019:08:06:35
+598 09/Jul/2019:08:06:36
+644 09/Jul/2019:08:06:37
+632 09/Jul/2019:08:06:38
+635 09/Jul/2019:08:06:39
+624 09/Jul/2019:08:06:40
+643 09/Jul/2019:08:06:41
+635 09/Jul/2019:08:06:42
+431 09/Jul/2019:08:06:43
+
+# Other examples:
 wrk -c 24 -t 12 -d 30s -R 2500 --latency https://blkcipher.info/index.php
 ```
 
-###### POST call with Lua
+###### POST call (with Lua)
 
   > Based on:
   >
-  >   - https://github.com/wg/wrk/blob/master/scripts/post.lua
-  >   - https://stackoverflow.com/questions/15261612/post-request-with-wrk
+  >   - [wkr scripts - post](https://github.com/wg/wrk/blob/master/scripts/post.lua)
+  >   - [POST request with wrk?](https://stackoverflow.com/questions/15261612/post-request-with-wrk)
 
-1)
+Example 1:
 
 ```bash
 cat > lua/post-call.lua << __EOF__
@@ -2634,10 +2756,29 @@ cat > lua/post-call.lua << __EOF__
 request = function()
 
   -- define input data
-  path                        = "/index.php"
-  wrk.method                  = "POST"
+  wrk.method = "POST"
+  wrk.body   = "login=foo&password=bar"
+  wrk.headers["Content-Type"] = "application/x-www-form-urlencoded"
+
+  -- return the request object
+  return wrk.format(wrk.method)
+
+end
+__EOF__
+```
+
+Example 2:
+
+```bash
+cat > lua/post-call.lua << __EOF__
+-- the request function that will run at each request
+request = function()
+
+  -- define input data
+  path = "/index.php"
+  wrk.method = "POST"
+  wrk.body = "{\"hash\":\"ooJeiveenai6iequ\",\"timestamp\":\"1562585990\",\"data\":[[\"cache\",\"x-cache\",\"true\"]]}"
   wrk.headers["Content-Type"] = "application/json; charset=utf-8"
-  wrk.body                    = "{\"hash\":\"ooJeiveenai6iequ\",\"timestamp\":\"1562585990\",\"data\":[[\"cache\",\"x-cache\",\"true\"]]}"
 
   -- return the request object
   return wrk.format(wrk.method, path)
@@ -2646,7 +2787,7 @@ end
 __EOF__
 ```
 
-2)
+Example 3:
 
 ```bash
 cat > lua/post-call.lua << __EOF__
@@ -2654,18 +2795,18 @@ cat > lua/post-call.lua << __EOF__
 request = function()
 
   -- define input data
-  path                        = "/index.php"
-  wrk.method                  = "POST"
+  path = "/index.php"
+  wrk.method = "POST"
+  wrk.body = [[{
+    "hash": "ooJeiveenai6iequ",
+    "timestamp": "1562585990",
+    "data":
+    {
+      cache,
+      x-cache: "true"
+    },
+  }]]
   wrk.headers["Content-Type"] = "application/json; charset=utf-8"
-  wrk.body                    = [[{
-                                  "hash": "ooJeiveenai6iequ",
-                                  "timestamp": "1562585990",
-                                  "data":
-                                  {
-                                    cache,
-                                    x-cache: "true"
-                                  },
-                                }]]
 
   -- return the request object
   return wrk.format(wrk.method, path)
@@ -2674,19 +2815,19 @@ end
 __EOF__
 ```
 
-Run:
+Command:
 
 ```bash
 wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
-###### Random paths
+###### Random paths (with Lua)
 
   > Based on:
   >
-  >   - https://medium.com/@felipedutratine/intelligent-benchmark-with-wrk-163986c1587f
+  >   - [Intelligent benchmark with wrk](https://medium.com/@felipedutratine/intelligent-benchmark-with-wrk-163986c1587f)
 
-1)
+Example 1:
 
 ```bash
 cat > lua/random-paths.lua << __EOF__
@@ -2696,52 +2837,99 @@ math.randomseed(os.time())
 -- the request function that will run at each request
 request = function()
 
-    -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
-    url_path = "/search?q=" .. math.random(0,100000)
+  -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
+  url_path = "/search?q=" .. math.random(0,100000)
 
-    -- print(url_path)
+  -- print(url_path)
 
-    -- return the request object with the current URL path
-    return wrk.format("GET", url_path)
+  -- return the request object with the current URL path
+  return wrk.format("GET", url_path)
 
 end
 __EOF__
 ```
 
-2)
+Example 2:
 
 ```bash
 cat > lua/random-paths.lua << __EOF__
 -- init random
 math.randomseed(os.time())
 
-function RandomVariable(length)
+function ranValue(length)
+
   local res = ""
+
   for i = 1, length do
     res = res .. string.char(math.random(97, 122))
   end
+
   return res
+
 end
 
 -- the request function that will run at each request
 request = function()
 
-    -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
-    url_path = "/search?q=" .. RandomVariable(32)
+  -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
+  url_path = "/search?q=" .. ranValue(32)
 
-    -- print(url_path)
+  -- print(url_path)
 
-    -- return the request object with the current URL path
-    return wrk.format("GET", url_path)
+  -- return the request object with the current URL path
+  return wrk.format("GET", url_path)
 
 end
 __EOF__
 ```
 
-Run:
+Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 600 -s lua/random-paths.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 15s -R 200 -s lua/random-paths.lua -H "Host: blkcipher.info" https://blkcipher.info
+```
+
+###### Random server address to each thread (with Lua)
+
+  > Based on: [addr.lua](https://github.com/wg/wrk/blob/master/scripts/addr.lua)
+
+Example 1:
+
+```bash
+cat > lua/resolve-host.lua << __EOF__
+local addrs = nil
+
+function setup(thread)
+
+  if not addrs then
+    -- addrs = wrk.lookup(wrk.host, "443" or "http")
+    addrs = wrk.lookup(wrk.host, wrk.port or "http")
+
+    for i = #addrs, 1, -1 do
+      if not wrk.connect(addrs[i]) then
+        table.remove(addrs, i)
+      end
+    end
+
+  end
+
+  thread.addr = addrs[math.random(#addrs)]
+
+end
+
+function init(args)
+
+  local msg = "thread remote socket: %s"
+  print(msg:format(wrk.thread.addr))
+
+end
+__EOF__
+```
+
+Command:
+
+```bash
+wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
 ###### TCP SYN flood Denial of Service attack
@@ -3002,7 +3190,7 @@ tail -F access.log | pv -lr >/dev/null
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP_ADDRESS"
-awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
+awk '{print $4}' access.log | uniq -c | sort -nr | tr -d "["
 ```
 
 ##### Calculating requests per second with IP addresses
