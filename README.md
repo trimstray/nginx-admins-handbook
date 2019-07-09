@@ -142,6 +142,7 @@
       * [Random paths (with Lua)](#random-paths-with-lua)
       * [Multiple paths (with Lua)](#multiple-paths-with-lua)
       * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua))
+      * [Multiple json requests (with Lua)](#multiple-json-requests-with-lua)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -483,6 +484,7 @@ Existing chapters:
       - [x] _Random paths (with Lua)_
       - [x] _Multiple paths (with Lua)_
       - [x] _Random server address to each thread (with Lua)_
+      - [x] _Multiple json requests (with Lua)_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -2978,15 +2980,10 @@ function load_url_paths_from_file(file)
 
 end
 
-paths = load_url_paths_from_file("multipaths.list")
+paths = load_url_paths_from_file("paths.list")
 
 if #paths <= 0 then
-  print("No paths found. You have to create a file multipaths.list with one path per line.")
-  -- example of multipaths.list:
-  --  / - it's not recommend, requests are being duplicated
-  --  /foo/bar
-  --  /articles/id=25
-  --  /3a06e672fad4bec2383748cfd82547ee.html
+  print("No paths found. You have to create a file paths.list with one path per line.")
   os.exit()
 end
 
@@ -3005,6 +3002,15 @@ request = function()
   return wrk.format(nil, url_path)
 
 end
+```
+
+- `paths.list`:
+
+```
+/ - it's not recommend, requests are being duplicated
+/foo/bar
+/articles/id=25
+/3a06e672fad4bec2383748cfd82547ee.html
 ```
 
 Command:
@@ -3055,6 +3061,114 @@ Command:
 
 ```bash
 wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua -H "Host: blkcipher.info" https://blkcipher.info
+```
+
+###### Multiple json requests (with Lua)
+
+Based on:
+
+- [multi-request-json](https://github.com/jgsqware/wrk-report/blob/master/scripts/multi-request-json.lua)
+
+```lua
+-- lua/multi-req.lua
+--  apt-get install lua5.1 libluajit-5.1-dev luarocks
+--  yum install lua luajit-devel luarocks
+--  luarocks install lua-cjson
+local cjson = require "cjson"
+local cjson2 = cjson.new()
+local cjson_safe = require "cjson.safe"
+
+math.randomseed(os.time())
+math.random(); math.random(); math.random()
+
+function shuffle(paths)
+
+  local j, k
+  local n = #paths
+
+  for i = 1, n do
+    j, k = math.random(n), math.random(n)
+    paths[j], paths[k] = paths[k], paths[j]
+  end
+
+  return paths
+
+end
+
+function load_request_objects_from_file(file)
+
+  local data = {}
+  local content
+
+  local f=io.open(file,"r")
+  if f~=nil then
+    content = f:read("*all")
+    io.close(f)
+  else
+    return lines
+  end
+
+  data = cjson.decode(content)
+
+  return shuffle(data)
+
+end
+
+requests = load_request_objects_from_file("requests.json")
+
+if #requests <= 0 then
+  print("No requests found. You have to create a file requests.json.")
+  os.exit()
+end
+
+print(" " .. #requests .. " requests")
+
+counter = 1
+
+request = function()
+
+  local request_object = requests[counter]
+
+  counter = counter + 1
+
+  if counter > #requests then
+    counter = 1
+  end
+
+  return wrk.format(request_object.method, request_object.path, request_object.headers, request_object.body)
+
+end
+```
+
+- `requests.json`:
+
+```json
+[
+  {
+    "path": "/id/1",
+    "body": "some content",
+    "method": "GET",
+    "headers": {
+      "X-Custom-Header-1": "test 1",
+      "X-Custom-Header-2": "test 2"
+    }
+  },
+  {
+    "path": "/id/2",
+    "body": "some content",
+    "method": "POST",
+    "headers": {
+      "X-Custom-Header-1": "test 3",
+      "X-Custom-Header-2": "test 4"
+    }
+  }
+]
+```
+
+Command:
+
+```bash
+wrk -c 12 -t 12 -d 30s -R 200 -s lua/multi-req.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
 ###### TCP SYN flood Denial of Service attack
