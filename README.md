@@ -140,6 +140,7 @@
       * [Standard load testing](#standard-load-testing)
       * [POST call (with Lua)](#post-call-with-lua)
       * [Random paths (with Lua)](#random-paths-with-lua)
+      * [Multiple paths (with Lua)](#multiple-paths-with-lua)
       * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua))
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
@@ -480,6 +481,7 @@ Existing chapters:
       - [x] _Standard load testing_
       - [x] _POST call (with Lua)_
       - [x] _Random paths (with Lua)_
+      - [x] _Multiple paths (with Lua)_
       - [x] _Random server address to each thread (with Lua)_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
@@ -955,6 +957,7 @@ _In this ebook you will learn:_
 ##### Development
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.lua.org/pil/contents.html"><b>Programming in Lua (first edition)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Nginx-Lua/"><b>An Introduction To OpenResty (nginx + lua) - Part 1</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-2/"><b>An Introduction To OpenResty - Part 2 - Concepts</b></a><br>
@@ -2752,8 +2755,8 @@ Based on:
 
 Example 1:
 
-```bash
-cat > lua/post-call.lua << __EOF__
+```lua
+# lua/post-call.lua
 request = function()
 
   wrk.method = "POST"
@@ -2763,31 +2766,30 @@ request = function()
   return wrk.format(wrk.method)
 
 end
-__EOF__
 ```
 
 Example 2:
 
-```bash
-cat > lua/post-call.lua << __EOF__
+```lua
+# lua/post-call.lua
 request = function()
 
   path = "/forms/int/d/1FAI"
+
   wrk.method = "POST"
   wrk.body = "{\"hash\":\"ooJeiveenai6iequ\",\"timestamp\":\"1562585990\",\"data\":[[\"cache\",\"x-cache\",\"true\"]]}"
   wrk.headers["Content-Type"] = "application/json; charset=utf-8"
-  wrk.headers["Accept"] = "application/json"}
+  wrk.headers["Accept"] = "application/json"
 
   return wrk.format(wrk.method, path)
 
 end
-__EOF__
 ```
 
 Example 3:
 
-```bash
-cat > lua/post-call.lua << __EOF__
+```lua
+# lua/post-call.lua
 request = function()
 
   path = "/login"
@@ -2807,12 +2809,11 @@ request = function()
   return wrk.format(wrk.method, path)
 
 end
-__EOF__
 ```
 
 Command:
 
-```bash
+```lua
 # Example 1:
 wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info/login
 
@@ -2828,8 +2829,8 @@ Based on:
 
 Example 1:
 
-```bash
-cat > lua/random-paths.lua << __EOF__
+```lua
+# lua/random-paths.lua
 math.randomseed(os.time())
 
 request = function()
@@ -2841,13 +2842,12 @@ request = function()
   return wrk.format("GET", url_path)
 
 end
-__EOF__
 ```
 
 Example 2:
 
-```bash
-cat > lua/random-paths.lua << __EOF__
+```lua
+# lua/random-paths.lua
 math.randomseed(os.time())
 
 function ranValue(length)
@@ -2871,13 +2871,131 @@ request = function()
   return wrk.format("GET", url_path)
 
 end
-__EOF__
+```
+
+Example 3:
+
+```lua
+# lua/random-paths.lua
+math.randomseed(os.time())
+
+counter = 0
+
+function ranValue(length)
+
+  local res = ""
+
+  for i = 1, length do
+    res = res .. string.char(math.random(97, 122))
+  end
+
+  return res
+
+end
+
+request = function()
+
+  path = "/accounts/" .. counter
+
+  rval = ranValue(32)
+
+  wrk.method = "POST"
+  wrk.body   = [[{
+    "user": counter,
+    "action": "insert",
+    "amount": rval
+  }]]
+  wrk.headers["Content-Type"] = "application/json"
+  wrk.headers["Accept"] = "application/json"
+
+  io.write(string.format("id: %4d, path: %14s,\tvalue: %s\n", counter, path, rval))
+
+  counter = counter + 1
+  if counter>500 then
+    counter = 1
+  end
+
+  return wrk.format(wrk.method, path)
+
+end
+```
+
+###### Multiple paths (with Lua)
+
+Example 1:
+
+```lua
+# lua/multi-paths.lua
+math.randomseed(os.time())
+math.random(); math.random(); math.random()
+
+function shuffle(paths)
+
+  local j, k
+  local n = #paths
+
+  for i = 1, n do
+    j, k = math.random(n), math.random(n)
+    paths[j], paths[k] = paths[k], paths[j]
+  end
+
+  return paths
+
+end
+
+function load_url_paths_from_file(file)
+
+  lines = {}
+
+  local f=io.open(file,"r")
+  if f~=nil then
+    io.close(f)
+  else
+    return lines
+  end
+
+  for line in io.lines(file) do
+    if not (line == '') then
+      lines[#lines + 1] = line
+    end
+  end
+
+  return shuffle(lines)
+
+end
+
+paths = load_url_paths_from_file("multipaths.list")
+
+if #paths <= 0 then
+  print("No paths found. You have to create a file multipaths.list with one path per line.")
+  -- path examples:
+  --  /foo/bar
+  --  /articles/id=25
+  --  /3a06e672fad4bec2383748cfd82547ee.html
+  os.exit()
+end
+
+counter = 0
+
+request = function()
+
+  url_path = paths[counter]
+
+  if counter > #paths then
+    counter = 0
+  end
+
+  counter = counter + 1
+
+  return wrk.format(nil, url_path)
+
+end
 ```
 
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 15s -R 200 -s lua/random-paths.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 60s -R 200 -s lua/multi-paths.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
 ###### Random server address to each thread (with Lua)
@@ -2888,8 +3006,8 @@ Based on:
 
 Example 1:
 
-```bash
-cat > lua/resolve-host.lua << __EOF__
+```lua
+# lua/resolve-host.lua
 local addrs = nil
 
 function setup(thread)
@@ -2916,7 +3034,6 @@ function init(args)
   print(msg:format(wrk.thread.addr))
 
 end
-__EOF__
 ```
 
 Command:
