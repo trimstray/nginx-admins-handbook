@@ -2826,6 +2826,7 @@ wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" h
 Based on:
 
 - [Intelligent benchmark with wrk](https://medium.com/@felipedutratine/intelligent-benchmark-with-wrk-163986c1587f)
+- [Confusion about benchmarking Linkerd](https://discourse.linkerd.io/t/confusion-about-benchmarking-linkerd/280)
 
 Example 1:
 
@@ -2850,6 +2851,14 @@ Example 2:
 # lua/random-paths.lua
 math.randomseed(os.time())
 
+local connected = false
+
+local host = "blkcipher.info"
+local path = "/search?q="
+local url  = "https://" .. host .. path
+
+wrk.headers["Host"] = host
+
 function ranValue(length)
 
   local res = ""
@@ -2864,9 +2873,14 @@ end
 
 request = function()
 
-  url_path = "/search?q=" .. ranValue(32)
+  url_path = path .. ranValue(32)
 
   -- print(url_path)
+
+   if not connected then
+      connected = true
+      return wrk.format("CONNECT", host)
+   end
 
   return wrk.format("GET", url_path)
 
@@ -2968,7 +2982,8 @@ paths = load_url_paths_from_file("multipaths.list")
 
 if #paths <= 0 then
   print("No paths found. You have to create a file multipaths.list with one path per line.")
-  -- path examples:
+  -- example of multipaths.list:
+  --  / - it's not recommend, requests are being duplicated
   --  /foo/bar
   --  /articles/id=25
   --  /3a06e672fad4bec2383748cfd82547ee.html
