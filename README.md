@@ -2615,6 +2615,8 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
 ##### Load testing with wrk2
 
+  > To use the Lua API for wrk, see [scripting](https://github.com/wg/wrk/blob/master/SCRIPTING) chapter.
+
 ###### Standard load testing
 
 ```bash
@@ -2745,22 +2747,19 @@ wrk -c 24 -t 12 -d 30s -R 2500 --latency https://blkcipher.info/index.php
 
 Based on:
 
-- [wkr scripts - post](https://github.com/wg/wrk/blob/master/scripts/post.lua)
+- [wrk scripts - post](https://github.com/wg/wrk/blob/master/scripts/post.lua)
 - [POST request with wrk?](https://stackoverflow.com/questions/15261612/post-request-with-wrk)
 
 Example 1:
 
 ```bash
 cat > lua/post-call.lua << __EOF__
--- the request function that will run at each request
 request = function()
 
-  -- define input data
   wrk.method = "POST"
-  wrk.body   = "login=foo&password=bar"
+  wrk.body = "login=foo&password=bar"
   wrk.headers["Content-Type"] = "application/x-www-form-urlencoded"
 
-  -- return the request object
   return wrk.format(wrk.method)
 
 end
@@ -2771,16 +2770,14 @@ Example 2:
 
 ```bash
 cat > lua/post-call.lua << __EOF__
--- the request function that will run at each request
 request = function()
 
-  -- define input data
-  path = "/index.php"
+  path = "/forms/int/d/1FAI"
   wrk.method = "POST"
   wrk.body = "{\"hash\":\"ooJeiveenai6iequ\",\"timestamp\":\"1562585990\",\"data\":[[\"cache\",\"x-cache\",\"true\"]]}"
   wrk.headers["Content-Type"] = "application/json; charset=utf-8"
+  wrk.headers["Accept"] = "application/json"}
 
-  -- return the request object
   return wrk.format(wrk.method, path)
 
 end
@@ -2791,24 +2788,22 @@ Example 3:
 
 ```bash
 cat > lua/post-call.lua << __EOF__
--- the request function that will run at each request
 request = function()
 
-  -- define input data
-  path = "/index.php"
+  path = "/login"
+
   wrk.method = "POST"
   wrk.body = [[{
     "hash": "ooJeiveenai6iequ",
     "timestamp": "1562585990",
     "data":
     {
-      cache,
-      x-cache: "true"
+      login: "foo",
+      password: "bar"
     },
   }]]
   wrk.headers["Content-Type"] = "application/json; charset=utf-8"
 
-  -- return the request object
   return wrk.format(wrk.method, path)
 
 end
@@ -2818,6 +2813,10 @@ __EOF__
 Command:
 
 ```bash
+# Example 1:
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info/login
+
+# Examples 2 and 3:
 wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
@@ -2831,18 +2830,14 @@ Example 1:
 
 ```bash
 cat > lua/random-paths.lua << __EOF__
--- init random
 math.randomseed(os.time())
 
--- the request function that will run at each request
 request = function()
 
-  -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
   url_path = "/search?q=" .. math.random(0,100000)
 
   -- print(url_path)
 
-  -- return the request object with the current URL path
   return wrk.format("GET", url_path)
 
 end
@@ -2853,7 +2848,6 @@ Example 2:
 
 ```bash
 cat > lua/random-paths.lua << __EOF__
--- init random
 math.randomseed(os.time())
 
 function ranValue(length)
@@ -2868,15 +2862,12 @@ function ranValue(length)
 
 end
 
--- the request function that will run at each request
 request = function()
 
-  -- define the path that will search for q=%v 9%v being a random number between 0 and 100000)
   url_path = "/search?q=" .. ranValue(32)
 
   -- print(url_path)
 
-  -- return the request object with the current URL path
   return wrk.format("GET", url_path)
 
 end
