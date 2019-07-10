@@ -3384,7 +3384,7 @@ wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua https://blkcipher.info
 
 ###### Parsing wrk result and generate report
 
-Install:
+Installation of `wrk-report`:
 
 ```bash
 go get -u github.com/jgsqware/wrk-report
