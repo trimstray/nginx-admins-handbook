@@ -2624,7 +2624,7 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
 ##### Load testing with wrk2
 
-  > To use the Lua API for wrk, see [scripting](https://github.com/wg/wrk/blob/master/SCRIPTING) chapter. I also recommend examples of [wrk scripts](https://github.com/wg/wrk/tree/master/scripts).
+  > To use the Lua API for wrk, see [scripting](https://github.com/giltene/wrk2/blob/master/SCRIPTING) chapter. I also recommend examples of [wrk2 scripts](https://github.com/giltene/wrk2/tree/master/scripts).
 
 ###### Standard scenarios
 
@@ -2756,7 +2756,7 @@ wrk -c 24 -t 12 -d 30s -R 2500 --latency https://blkcipher.info/index.php
 
 Based on:
 
-- [wrk scripts - post](https://github.com/wg/wrk/blob/master/scripts/post.lua)
+- [wrk2 scripts - post](https://github.com/giltene/wrk2/blob/master/scripts/post.lua)
 - [POST request with wrk?](https://stackoverflow.com/questions/15261612/post-request-with-wrk)
 
 Example 1:
@@ -3061,7 +3061,7 @@ wrk -c 12 -t 12 -d 60s -R 200 -s lua/multi-paths.lua https://blkcipher.info
 
 Based on:
 
-- [wrk scripts - addr](https://github.com/wg/wrk/blob/master/scripts/addr.lua)
+- [wrk2 scripts - addr](https://github.com/giltene/wrk2/blob/master/scripts/addr.lua)
 
 Example 1:
 
