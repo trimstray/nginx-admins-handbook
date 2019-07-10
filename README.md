@@ -2622,7 +2622,7 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
   > To use the Lua API for wrk, see [scripting](https://github.com/wg/wrk/blob/master/SCRIPTING) chapter.
 
-###### Standard scenarios of load testing
+###### Standard scenarios
 
 ```bash
 # 1)
