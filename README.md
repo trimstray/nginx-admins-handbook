@@ -3397,7 +3397,7 @@ wrk -c 12 -t 12 -d 15s -R 500 --latency -H "Host: blkcipher.info" https://blkcip
 ```
 
 <p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/wrk-report-01.png" alt="wrk-report-01">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/reports/wrk-report-01.png" alt="wrk-report-01">
 </p>
 
 ###### TCP SYN flood Denial of Service attack
