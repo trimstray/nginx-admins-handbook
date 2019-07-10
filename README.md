@@ -143,6 +143,7 @@
       * [Multiple paths (with Lua)](#multiple-paths-with-lua)
       * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua)
       * [Multiple json requests (with Lua)](#multiple-json-requests-with-lua)
+      * [Debug mode (with Lua)](#debug-mode-with-lua)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -485,6 +486,7 @@ Existing chapters:
       - [x] _Multiple paths (with Lua)_
       - [x] _Random server address to each thread (with Lua)_
       - [x] _Multiple json requests (with Lua)_
+      - [x] _Debug mode (with Lua)_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -2774,6 +2776,7 @@ Example 2:
 
 ```lua
 -- lua/post-call.lua
+
 request = function()
 
   path = "/forms/int/d/1FAI"
@@ -2792,6 +2795,7 @@ Example 3:
 
 ```lua
 -- lua/post-call.lua
+
 request = function()
 
   path = "/login"
@@ -2834,6 +2838,7 @@ Example 1:
 
 ```lua
 -- lua/random-paths.lua
+
 math.randomseed(os.time())
 
 request = function()
@@ -2851,6 +2856,7 @@ Example 2:
 
 ```lua
 -- lua/random-paths.lua
+
 math.randomseed(os.time())
 
 local connected = false
@@ -2866,7 +2872,9 @@ function ranValue(length)
   local res = ""
 
   for i = 1, length do
+
     res = res .. string.char(math.random(97, 122))
+
   end
 
   return res
@@ -2880,8 +2888,10 @@ request = function()
   -- print(url_path)
 
    if not connected then
+
       connected = true
       return wrk.format("CONNECT", host)
+
    end
 
   return wrk.format("GET", url_path)
@@ -2893,6 +2903,7 @@ Example 3:
 
 ```lua
 -- lua/random-paths.lua
+
 math.randomseed(os.time())
 
 counter = 0
@@ -2902,7 +2913,9 @@ function ranValue(length)
   local res = ""
 
   for i = 1, length do
+
     res = res .. string.char(math.random(97, 122))
+
   end
 
   return res
@@ -2928,7 +2941,9 @@ request = function()
 
   counter = counter + 1
   if counter>500 then
+
     counter = 1
+
   end
 
   return wrk.format(wrk.method, path)
@@ -2948,6 +2963,7 @@ Example 1:
 
 ```lua
 -- lua/multi-paths.lua
+
 math.randomseed(os.time())
 math.random(); math.random(); math.random()
 
@@ -2957,8 +2973,10 @@ function shuffle(paths)
   local n = #paths
 
   for i = 1, n do
+
     j, k = math.random(n), math.random(n)
     paths[j], paths[k] = paths[k], paths[j]
+
   end
 
   return paths
@@ -2971,26 +2989,36 @@ function load_url_paths_from_file(file)
 
   local f=io.open(file,"r")
   if f~=nil then
+
     io.close(f)
+
   else
+
     return lines
+
   end
 
   for line in io.lines(file) do
+
     if not (line == '') then
+
       lines[#lines + 1] = line
+
     end
+
   end
 
   return shuffle(lines)
 
 end
 
-paths = load_url_paths_from_file("paths.list")
+paths = load_url_paths_from_file("data/paths.list")
 
 if #paths <= 0 then
-  print("No paths found. You have to create a file paths.list with one path per line.")
+
+  print("No paths found. You have to create a file data/paths.list with one path per line.")
   os.exit()
+
 end
 
 counter = 0
@@ -3000,7 +3028,9 @@ request = function()
   url_path = paths[counter]
 
   if counter > #paths then
+
     counter = 0
+
   end
 
   counter = counter + 1
@@ -3010,7 +3040,7 @@ request = function()
 end
 ```
 
-- `paths.list`:
+- `data/paths.list`:
 
 ```
 / - it's not recommend, requests are being duplicated if you add '/'
@@ -3035,18 +3065,23 @@ Example 1:
 
 ```lua
 -- lua/resolve-host.lua
+
 local addrs = nil
 
 function setup(thread)
 
   if not addrs then
+
     -- addrs = wrk.lookup(wrk.host, "443" or "http")
     addrs = wrk.lookup(wrk.host, wrk.port or "http")
 
     for i = #addrs, 1, -1 do
+
       if not wrk.connect(addrs[i]) then
         table.remove(addrs, i)
+
       end
+
     end
 
   end
@@ -3090,6 +3125,7 @@ luarocks install lua-cjson
 
 ```lua
 -- lua/multi-req.lua
+
 local cjson = require "cjson"
 local cjson2 = cjson.new()
 local cjson_safe = require "cjson.safe"
@@ -3103,8 +3139,10 @@ function shuffle(paths)
   local n = #paths
 
   for i = 1, n do
+
     j, k = math.random(n), math.random(n)
     paths[j], paths[k] = paths[k], paths[j]
+
   end
 
   return paths
@@ -3118,10 +3156,14 @@ function load_request_objects_from_file(file)
 
   local f=io.open(file,"r")
   if f~=nil then
+
     content = f:read("*all")
     io.close(f)
+
   else
+
     return lines
+
   end
 
   data = cjson.decode(content)
@@ -3130,11 +3172,13 @@ function load_request_objects_from_file(file)
 
 end
 
-requests = load_request_objects_from_file("requests.json")
+requests = load_request_objects_from_file("data/requests.json")
 
 if #requests <= 0 then
-  print("No requests found. You have to create a file requests.json.")
+
+  print("No requests found. You have to create a file data/requests.json.")
   os.exit()
+
 end
 
 print(" " .. #requests .. " requests")
@@ -3148,7 +3192,9 @@ request = function()
   counter = counter + 1
 
   if counter > #requests then
+
     counter = 1
+
   end
 
   return wrk.format(request_object.method, request_object.path, request_object.headers, request_object.body)
@@ -3156,7 +3202,7 @@ request = function()
 end
 ```
 
-- `requests.json`:
+- `data/requests.json`:
 
 ```json
 [
@@ -3171,9 +3217,10 @@ end
   },
   {
     "path": "/id/2",
-    "body": "Kune4rei9uech8aena",
+    "body": "{\"field\":\"value\"}",
     "method": "POST",
     "headers": {
+      "Content-Type": "application/json",
       "X-Custom-Header-1": "foo",
       "X-Custom-Header-2": "bar"
     }
@@ -3185,6 +3232,163 @@ Command:
 
 ```bash
 wrk -c 12 -t 12 -d 30s -R 200 -s lua/multi-req.lua -H "Host: blkcipher.info" https://blkcipher.info
+```
+
+###### Debug mode (with Lua)
+
+Based on:
+
+- [wrk-debugging-environment](https://github.com/czerasz/wrk-debugging-environment/blob/master/environments/wrk/scripts/debug.lua)
+
+```bash
+-- lua/debug.lua
+
+function typeof(var)
+
+  local _type = type(var);
+  if(_type ~= "table" and _type ~= "userdata") then
+
+    return _type;
+
+  end
+
+  local _meta = getmetatable(var);
+  if(_meta ~= nil and _meta._NAME ~= nil) then
+
+    return _meta._NAME;
+
+  else
+
+    return _type;
+
+  end
+
+end
+
+local function string(o)
+
+  return '"' .. tostring(o) .. '"'
+
+end
+
+local function recurse(o, indent)
+
+  if indent == nil then indent = '' end
+
+  local indent2 = indent .. '  '
+
+  if type(o) == 'table' then
+
+    local s = indent .. '{' .. '\n'
+    local first = true
+
+    for k,v in pairs(o) do
+
+      if first == false then s = s .. ', \n' end
+      if type(k) ~= 'number' then k = string(k) end
+      s = s .. indent2 .. '[' .. k .. '] = ' .. recurse(v, indent2)
+      first = false
+
+    end
+
+    return s .. '\n' .. indent .. '}'
+
+  else
+
+    return string(o)
+
+  end
+
+end
+
+local function var_dump(...)
+
+  local args = {...}
+  if #args > 1 then
+
+    var_dump(args)
+
+  else
+
+    print(recurse(args[1]))
+
+  end
+
+end
+
+max_requests = 0
+counter = 1
+
+function setup(thread)
+
+  thread:set("id", counter)
+  counter = counter + 1
+
+end
+
+init = function(args)
+
+  io.write("[init]\n")
+
+  if not (next(args) == nil) then
+
+    io.write("[init] Arguments\n")
+
+    for index, value in ipairs(args) do
+
+      io.write("[init]  - " .. args[index] .. "\n")
+
+    end
+
+  end
+
+end
+
+response = function (status, headers, body)
+
+  io.write("------------------------------\n")
+  io.write("Response ".. counter .." with status: ".. status .." on thread ".. id .."\n")
+  io.write("------------------------------\n")
+
+  io.write("[response] Headers:\n")
+
+  for key, value in pairs(headers) do
+
+    io.write("[response]  - " .. key  .. ": " .. value .. "\n")
+
+  end
+
+  io.write("[response] Body:\n")
+  io.write(body .. "\n")
+
+  if (max_requests > 0) and (counter > max_requests) then
+
+    wrk.thread:stop()
+
+  end
+
+  counter = counter + 1
+
+end
+
+done = function (summary, latency, requests)
+
+  io.write("------------------------------\n")
+  io.write("Requests\n")
+  io.write("------------------------------\n")
+
+  io.write(typeof(requests))
+
+  var_dump(summary)
+  var_dump(requests)
+
+end
+```
+
+Command:
+
+```bash
+wrk -c 12 -t 12 -d 30s -R 200 -s lua/debug.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
 ###### TCP SYN flood Denial of Service attack
