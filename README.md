@@ -137,11 +137,11 @@
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
     * [Load testing with wrk2](#load-testing-with-wrk2)
-      * [Standard load testing](#standard-load-testing)
+      * [Standard scenarios](#standard-scenarios)
       * [POST call (with Lua)](#post-call-with-lua)
       * [Random paths (with Lua)](#random-paths-with-lua)
       * [Multiple paths (with Lua)](#multiple-paths-with-lua)
-      * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua))
+      * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua)
       * [Multiple json requests (with Lua)](#multiple-json-requests-with-lua)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
@@ -479,7 +479,7 @@ Existing chapters:
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
     - [x] _Load testing with wrk2_
-      - [x] _Standard load testing_
+      - [x] _Standard scenarios_
       - [x] _POST call (with Lua)_
       - [x] _Random paths (with Lua)_
       - [x] _Multiple paths (with Lua)_
@@ -2622,7 +2622,7 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
   > To use the Lua API for wrk, see [scripting](https://github.com/wg/wrk/blob/master/SCRIPTING) chapter.
 
-###### Standard load testing
+###### Standard scenarios of load testing
 
 ```bash
 # 1)
