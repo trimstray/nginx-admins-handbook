@@ -3243,6 +3243,15 @@ Based on:
 ```lua
 -- lua/debug.lua
 
+local file = io.open("data/debug.log", "w")
+
+file:write("\n----------------------------------------\n")
+file:write(os.date("%m/%d/%Y %I:%M %p"))
+file:write("\n----------------------------------------\n")
+file:close()
+
+local file = io.open("data/debug.log", "a")
+
 function typeof(var)
 
   local _type = type(var);
@@ -3318,6 +3327,7 @@ end
 
 max_requests = 0
 counter = 1
+show_body = 0
 
 function setup(thread)
 
@@ -3326,40 +3336,26 @@ function setup(thread)
 
 end
 
-init = function(args)
-
-  io.write("[init]\n")
-
-  if not (next(args) == nil) then
-
-    io.write("[init] Arguments\n")
-
-    for index, value in ipairs(args) do
-
-      io.write("[init]  - " .. args[index] .. "\n")
-
-    end
-
-  end
-
-end
-
 response = function (status, headers, body)
 
-  io.write("------------------------------\n")
-  io.write("Response ".. counter .." with status: ".. status .." on thread ".. id .."\n")
-  io.write("------------------------------\n")
+  file:write("\n----------------------------------------\n")
+  file:write("Response " .. counter .. " with status: " .. status .. " on thread " .. id)
+  file:write("\n----------------------------------------\n")
 
-  io.write("[response] Headers:\n")
+  file:write("[response] Headers:\n")
 
   for key, value in pairs(headers) do
 
-    io.write("[response]  - " .. key  .. ": " .. value .. "\n")
+    file:write("[response]  - " .. key  .. ": " .. value .. "\n")
 
   end
 
-  io.write("[response] Body:\n")
-  io.write(body .. "\n")
+  if (show_body == 1) then
+
+    file:write("[response] Body:\n")
+    file:write(body .. "\n")
+
+  end
 
   if (max_requests > 0) and (counter > max_requests) then
 
@@ -3371,16 +3367,9 @@ response = function (status, headers, body)
 
 end
 
-done = function (summary, latency, requests)
+done = function ()
 
-  io.write("------------------------------\n")
-  io.write("Requests\n")
-  io.write("------------------------------\n")
-
-  io.write(typeof(requests))
-
-  var_dump(summary)
-  var_dump(requests)
+  file:close()
 
 end
 ```
@@ -3388,7 +3377,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 200 -s lua/debug.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
 
 ###### TCP SYN flood Denial of Service attack
