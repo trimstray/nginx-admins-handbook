@@ -144,6 +144,7 @@
       * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua)
       * [Multiple json requests (with Lua)](#multiple-json-requests-with-lua)
       * [Debug mode (with Lua)](#debug-mode-with-lua)
+      * [Parsing wrk result and generate report](#parsing-wrk-result-and-generate-report)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -487,6 +488,7 @@ Existing chapters:
       - [x] _Random server address to each thread (with Lua)_
       - [x] _Multiple json requests (with Lua)_
       - [x] _Debug mode (with Lua)_
+      - [x] _Parsing wrk result and generate report_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -3379,6 +3381,24 @@ Command:
 ```bash
 wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua -H "Host: blkcipher.info" https://blkcipher.info
 ```
+
+###### Parsing wrk result and generate report
+
+Install:
+
+```bash
+go get -u github.com/jgsqware/wrk-report
+```
+
+Command:
+
+```bash
+wrk -c 12 -t 12 -d 15s -R 500 --latency -H "Host: blkcipher.info" https://blkcipher.info | wrk-report > report.html
+```
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/wrk-report-01.png" alt="wrk-report-01">
+</p>
 
 ###### TCP SYN flood Denial of Service attack
 
