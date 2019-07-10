@@ -346,7 +346,7 @@ These essential documents should be the main source of knowledge for you:
 - **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
 
-In addition, I would like to recommend two great articles focuses on the concept of the HTTP protocol:
+In addition, I would like to recommend two great docs focuses on the concept of the HTTP protocol:
 
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
 - **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
@@ -2624,7 +2624,7 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
 ##### Load testing with wrk2
 
-  > To use the Lua API for wrk, see [scripting](https://github.com/giltene/wrk2/blob/master/SCRIPTING) chapter. I also recommend examples of [wrk2 scripts](https://github.com/giltene/wrk2/tree/master/scripts).
+  > See [this](https://github.com/giltene/wrk2/blob/master/SCRIPTING) chapter to use the Lua API for wrk2. Also take a look at [wrk2 scripts](https://github.com/giltene/wrk2/tree/master/scripts).
 
 ###### Standard scenarios
 
