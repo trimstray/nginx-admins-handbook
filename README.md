@@ -2823,10 +2823,10 @@ Command:
 
 ```bash
 # Example 1:
-wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info/login
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://blkcipher.info/login
 
 # Examples 2 and 3:
-wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://blkcipher.info
 ```
 
 ###### Random paths (with Lua)
@@ -2956,7 +2956,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 12000 -s lua/random-paths.lua -H "Host: blkcipher.info" https://blkcipher.info/
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/random-paths.lua https://blkcipher.info/
 ```
 
 ###### Multiple paths (with Lua)
@@ -3054,7 +3054,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 60s -R 200 -s lua/multi-paths.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 60s -R 200 -s lua/multi-paths.lua https://blkcipher.info
 ```
 
 ###### Random server address to each thread (with Lua)
@@ -3103,7 +3103,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua https://blkcipher.info
 ```
 
 ###### Multiple json requests (with Lua)
@@ -3233,7 +3233,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 200 -s lua/multi-req.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 30s -R 200 -s lua/multi-req.lua https://blkcipher.info
 ```
 
 ###### Debug mode (with Lua)
@@ -3379,7 +3379,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua -H "Host: blkcipher.info" https://blkcipher.info
+wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua https://blkcipher.info
 ```
 
 ###### Parsing wrk result and generate report
@@ -3393,7 +3393,7 @@ go get -u github.com/jgsqware/wrk-report
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 15s -R 500 --latency -H "Host: blkcipher.info" https://blkcipher.info | wrk-report > report.html
+wrk -c 12 -t 12 -d 15s -R 500 --latency https://blkcipher.info | wrk-report > report.html
 ```
 
 <p align="center">
