@@ -3240,7 +3240,7 @@ Based on:
 
 - [wrk-debugging-environment](https://github.com/czerasz/wrk-debugging-environment/blob/master/environments/wrk/scripts/debug.lua)
 
-```bash
+```lua
 -- lua/debug.lua
 
 function typeof(var)
