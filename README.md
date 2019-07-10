@@ -2624,7 +2624,7 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
 ##### Load testing with wrk2
 
-  > To use the Lua API for wrk, see [scripting](https://github.com/wg/wrk/blob/master/SCRIPTING) chapter.
+  > To use the Lua API for wrk, see [scripting](https://github.com/wg/wrk/blob/master/SCRIPTING) chapter. I also recommend examples of [wrk scripts](https://github.com/wg/wrk/tree/master/scripts).
 
 ###### Standard scenarios
 
@@ -3080,6 +3080,7 @@ function setup(thread)
     for i = #addrs, 1, -1 do
 
       if not wrk.connect(addrs[i]) then
+
         table.remove(addrs, i)
 
       end
