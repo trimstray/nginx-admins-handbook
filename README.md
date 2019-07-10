@@ -2758,7 +2758,7 @@ Based on:
 Example 1:
 
 ```lua
-# lua/post-call.lua
+-- lua/post-call.lua
 request = function()
 
   wrk.method = "POST"
@@ -2773,7 +2773,7 @@ end
 Example 2:
 
 ```lua
-# lua/post-call.lua
+-- lua/post-call.lua
 request = function()
 
   path = "/forms/int/d/1FAI"
@@ -2791,7 +2791,7 @@ end
 Example 3:
 
 ```lua
-# lua/post-call.lua
+-- lua/post-call.lua
 request = function()
 
   path = "/login"
@@ -2815,7 +2815,7 @@ end
 
 Command:
 
-```lua
+```bash
 # Example 1:
 wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua -H "Host: blkcipher.info" https://blkcipher.info/login
 
@@ -2833,7 +2833,7 @@ Based on:
 Example 1:
 
 ```lua
-# lua/random-paths.lua
+-- lua/random-paths.lua
 math.randomseed(os.time())
 
 request = function()
@@ -2850,7 +2850,7 @@ end
 Example 2:
 
 ```lua
-# lua/random-paths.lua
+-- lua/random-paths.lua
 math.randomseed(os.time())
 
 local connected = false
@@ -2892,7 +2892,7 @@ end
 Example 3:
 
 ```lua
-# lua/random-paths.lua
+-- lua/random-paths.lua
 math.randomseed(os.time())
 
 counter = 0
@@ -2936,12 +2936,18 @@ request = function()
 end
 ```
 
+Command:
+
+```bash
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/random-paths.lua -H "Host: blkcipher.info" https://blkcipher.info/
+```
+
 ###### Multiple paths (with Lua)
 
 Example 1:
 
 ```lua
-# lua/multi-paths.lua
+-- lua/multi-paths.lua
 math.randomseed(os.time())
 math.random(); math.random(); math.random()
 
@@ -3007,7 +3013,7 @@ end
 - `paths.list`:
 
 ```
-/ - it's not recommend, requests are being duplicated
+/ - it's not recommend, requests are being duplicated if you add '/'
 /foo/bar
 /articles/id=25
 /3a06e672fad4bec2383748cfd82547ee.html
@@ -3028,7 +3034,7 @@ Based on:
 Example 1:
 
 ```lua
-# lua/resolve-host.lua
+-- lua/resolve-host.lua
 local addrs = nil
 
 function setup(thread)
@@ -3069,11 +3075,21 @@ Based on:
 
 - [multi-request-json](https://github.com/jgsqware/wrk-report/blob/master/scripts/multi-request-json.lua)
 
+You should install `luarocks`, `lua`, `luajit` and `lua-cjson` before use `multi-req.lua`:
+
+```bash
+# Debian like:
+apt-get install lua5.1 libluajit-5.1-dev luarocks
+
+# RedHat like:
+yum install lua luajit-devel luarocks
+
+# cjson:
+luarocks install lua-cjson
+```
+
 ```lua
 -- lua/multi-req.lua
---  apt-get install lua5.1 libluajit-5.1-dev luarocks
---  yum install lua luajit-devel luarocks
---  luarocks install lua-cjson
 local cjson = require "cjson"
 local cjson2 = cjson.new()
 local cjson_safe = require "cjson.safe"
@@ -3146,20 +3162,20 @@ end
 [
   {
     "path": "/id/1",
-    "body": "some content",
+    "body": "ceR1caesaed2nohJei",
     "method": "GET",
     "headers": {
-      "X-Custom-Header-1": "test 1",
-      "X-Custom-Header-2": "test 2"
+      "X-Custom-Header-1": "foo",
+      "X-Custom-Header-2": "bar"
     }
   },
   {
     "path": "/id/2",
-    "body": "some content",
+    "body": "Kune4rei9uech8aena",
     "method": "POST",
     "headers": {
-      "X-Custom-Header-1": "test 3",
-      "X-Custom-Header-2": "test 4"
+      "X-Custom-Header-1": "foo",
+      "X-Custom-Header-2": "bar"
     }
   }
 ]
