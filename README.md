@@ -144,6 +144,7 @@
       * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua)
       * [Multiple json requests (with Lua)](#multiple-json-requests-with-lua)
       * [Debug mode (with Lua)](#debug-mode-with-lua)
+      * [Analyse data pass to and from the threads](#analyse-data-pass-to-and-from-the-threads)
       * [Parsing wrk result and generate report](#parsing-wrk-result-and-generate-report)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
@@ -488,6 +489,7 @@ Existing chapters:
       - [x] _Random server address to each thread (with Lua)_
       - [x] _Multiple json requests (with Lua)_
       - [x] _Debug mode (with Lua)_
+      - [x] _Analyse data pass to and from the threads_
       - [x] _Parsing wrk result and generate report_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
@@ -3381,6 +3383,76 @@ Command:
 
 ```bash
 wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua https://blkcipher.info
+```
+
+###### Analyse data pass to and from the threads
+
+Based on:
+
+- [wrk2 - setup](https://github.com/giltene/wrk2/blob/master/scripts/setup.lua)
+
+```lua
+-- lua/threads.lua
+
+local counter = 1
+local threads = {}
+
+function setup(thread)
+
+  thread:set("id", counter)
+  table.insert(threads, thread)
+
+  counter = counter + 1
+
+end
+
+function init(args)
+
+  requests  = 0
+  responses = 0
+
+  -- local msg = "thread %d created"
+  -- print(msg:format(id))
+
+end
+
+function request()
+
+  requests = requests + 1
+  return wrk.request()
+
+end
+
+function response(status, headers, body)
+
+  responses = responses + 1
+
+end
+
+function done(summary, latency, requests)
+
+  io.write("\n----------------------------------------\n")
+  io.write(" Summary")
+  io.write("\n----------------------------------------\n")
+
+  for index, thread in ipairs(threads) do
+
+    local id        = thread:get("id")
+    local requests  = thread:get("requests")
+    local responses = thread:get("responses")
+    local msg = "thread %d : %d req , %d res"
+
+    print(msg:format(id, requests, responses))
+
+  end
+
+end
+```
+
+Command:
+
+```bash
+wrk -c 12 -t 12 -d 5s -R 5000 -s lua/threads.lua https://blkcipher.info
 ```
 
 ###### Parsing wrk result and generate report
