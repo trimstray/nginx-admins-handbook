@@ -136,6 +136,9 @@
     * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
+    * [Load testing with ApacheBench (ab)](#load-testing-with-apachebench-ab)
+      * [Standard test](#standard-test)
+      * [Test with KeepAlive header](#test-with-keepalive-header)
     * [Load testing with wrk2](#load-testing-with-wrk2)
       * [Standard scenarios](#standard-scenarios)
       * [POST call (with Lua)](#post-call-with-lua)
@@ -484,6 +487,9 @@ Existing chapters:
     - [x] _Testing SSL connection with SNI support_
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
+    - _Load testing with ApacheBench (ab)_
+      - [x] _Standard test_
+      - [x] _Test with KeepAlive header_
     - _Load testing with wrk2_
       - [x] _Standard scenarios_
       - [x] _POST call (with Lua)_
@@ -2630,6 +2636,36 @@ openssl s_client -tls1_2 -connect <server_name>:<port>
 openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 ```
 
+##### Load testing with ApacheBench (ab)
+
+  > Project documentation: [Apache HTTP server benchmarking tool](https://httpd.apache.org/docs/2.4/programs/ab.html)
+
+Installation:
+
+```bash
+# Debian like:
+apt-get install -y apache2-utils
+
+# RedHat like:
+yum -y install httpd-tools
+```
+
+This is [great explanation](https://stackoverflow.com/a/12732410) about ApacheBench by [Mamsaac](https://stackoverflow.com/users/669111/mamsaac):
+
+  > _The apache benchmark tool is very basic, and while it will give you a solid idea of some performance, it is a bad idea to only depend on it if you plan to have your site exposed to serious stress in production._
+
+###### Standard test
+
+```bash
+ab -n 1000 -c 100 https://blkcipher.info/
+```
+
+###### Test with KeepAlive header
+
+```bash
+ab -n 5000 -c 100 -k -H "Accept-Encoding: gzip, deflate" https://blkcipher.info/index.php
+```
+
 ##### Load testing with wrk2
 
   > Project documentation: [wrk2](https://github.com/giltene/wrk2)
@@ -3514,9 +3550,9 @@ python3 -m pip install locustio
 
 About Locust Swarm (web panel):
 
-- `Number of users to simulate` - the number of users: the number of users testing your application. Each user opens a TCP connection to your application and tests it
+- `Number of users to simulate` - the number of users testing your application. Each user opens a TCP connection to your application and tests it
 
-- `Hatch rate (users spawned/second)` - for each second, how many users will be added to the current users until the total amount of users. Each hatch Locust calls the on_start function if you have
+- `Hatch rate (users spawned/second)` - for each second, how many users will be added to the current users until the total amount of users. Each hatch Locust calls the `on_start` function if you have
 
 For example:
 
@@ -3527,7 +3563,7 @@ Each second 10 users added to current users starting from 0 so in 100 seconds yo
 
 ###### Multiple paths
 
-```bash
+```python
 # python/multi-paths.py
 
 import urllib3
@@ -3584,7 +3620,7 @@ locust --host=https://blkcipher.info -f python/multi-paths.py --print-stats --on
 
 Create a file with user credentials:
 
-```bash
+```python
 # python/credentials.py
 
 USER_CREDENTIALS = [
@@ -3600,7 +3636,7 @@ USER_CREDENTIALS = [
 ]
 ```
 
-```bash
+```python
 # python/diff-users.py
 
 import urllib3, logging, sys
