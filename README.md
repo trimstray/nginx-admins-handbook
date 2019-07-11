@@ -146,6 +146,9 @@
       * [Debug mode (with Lua)](#debug-mode-with-lua)
       * [Analyse data pass to and from the threads](#analyse-data-pass-to-and-from-the-threads)
       * [Parsing wrk result and generate report](#parsing-wrk-result-and-generate-report)
+    * [Load testing with locust](#load-testing-with-locust)
+      * [Multiple paths](#multiple-paths)
+      * [Multiple paths with different user sessions](#multiple-paths-with-different-user-sessions)
     * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
     * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
   * [Debugging](#debugging)
@@ -481,7 +484,7 @@ Existing chapters:
     - [x] _Testing SSL connection with SNI support_
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
-    - [x] _Load testing with wrk2_
+    - _Load testing with wrk2_
       - [x] _Standard scenarios_
       - [x] _POST call (with Lua)_
       - [x] _Random paths (with Lua)_
@@ -491,6 +494,9 @@ Existing chapters:
       - [x] _Debug mode (with Lua)_
       - [x] _Analyse data pass to and from the threads_
       - [x] _Parsing wrk result and generate report_
+    - _Load testing with locust_
+      - [x] _Multiple paths_
+      - [x] _Multiple paths with different user sessions_
     - [x] _TCP SYN flood Denial of Service attack_
     - [x] _HTTP Denial of Service attack_
   - _Debugging_
@@ -511,9 +517,9 @@ Existing chapters:
     - [x] _Capture requests and filter by source ip and destination port_
     - [x] _Dump a process's memory_
     - _GNU Debugger (gdb)_
-      * [x] _Dump configuration from a running process_
-      * [x] _Show debug log in memory_
-      * [x] _Core dump backtrace_
+      - [x] _Dump configuration from a running process_
+      - [x] _Show debug log in memory_
+      - [x] _Core dump backtrace_
     - _SystemTap cheatsheet_
       - [x] _stapxx_
   - _Configuration snippets_
@@ -2626,7 +2632,26 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
 ##### Load testing with wrk2
 
+  > Project documentation: [wrk2](https://github.com/giltene/wrk2)
+
   > See [this](https://github.com/giltene/wrk2/blob/master/SCRIPTING) chapter to use the Lua API for wrk2. Also take a look at [wrk2 scripts](https://github.com/giltene/wrk2/tree/master/scripts).
+
+Installation of `wrk2`:
+
+```bash
+# Debian like:
+apt-get install -y build-essential libssl-dev git zlib1g-dev
+git clone https://github.com/giltene/wrk2 && cd wrk2
+make
+sudo cp wrk /usr/local/bin
+
+# RedHat like:
+yum -y groupinstall 'Development Tools'
+yum -y install openssl-devel git
+git clone https://github.com/giltene/wrk2 && cd wrk2
+make
+sudo cp wrk /usr/local/bin
+```
 
 ###### Standard scenarios
 
@@ -3472,6 +3497,169 @@ wrk -c 12 -t 12 -d 15s -R 500 --latency https://blkcipher.info | wrk-report > re
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/reports/wrk-report-01.png" alt="wrk-report-01">
 </p>
+
+##### Load testing with locust
+
+  > Project documentation: [Locust Documentation](https://docs.locust.io/en/stable/)
+
+Installation of `locust`:
+
+```bash
+# Python 2.x
+python -m pip install locustio
+
+# Python 3.x
+python3 -m pip install locustio
+```
+
+About Locust Swarm (web panel):
+
+- `Number of users to simulate` - the number of users: the number of users testing your application. Each user opens a TCP connection to your application and tests it
+
+- `Hatch rate (users spawned/second)` - for each second, how many users will be added to the current users until the total amount of users. Each hatch Locust calls the on_start function if you have
+
+For example:
+
+- Number of users: 1000
+- Hatch rate: 10
+
+Each second 10 users added to current users starting from 0 so in 100 seconds you will have 1000 users. When it reaches to the number of users, the statistic will be reset.
+
+###### Multiple paths
+
+```bash
+# python/multi-paths.py
+
+import urllib3
+
+from locust import HttpLocust, TaskSet, task
+
+urllib3.disable_warnings()
+
+def on_start(self):
+  self.client.verify = False
+
+class UserBehavior(TaskSet):
+
+  @task
+  class NonLoggedUserBehavior(TaskSet):
+
+    # Home page
+    @task(1)
+    def index(self):
+      self.client.get("/", verify=False)
+
+    # Status
+    @task(1)
+    def status(self):
+      self.client.get("/status", verify=False)
+
+    # Article
+    @task(1)
+    def article(self):
+      self.client.get("/article/1044162375/", verify=False)
+
+    # About
+    @task(2)  # twice as much of requests
+    def about(self):
+      self.client.get("/about", verify=False)
+
+class WebsiteUser(HttpLocust):
+  task_set = UserBehavior
+  min_wait = 100
+  max_wait = 1000
+```
+
+Command:
+
+```bash
+# Without web interface:
+locust --host=https://blkcipher.info -f python/multi-paths.py -c 2000 -r 10 -t 1h 30m --no-web --print-stats --only-summary
+
+# With web interface
+locust --host=https://blkcipher.info -f python/multi-paths.py --print-stats --only-summary
+```
+
+###### Multiple paths with different user sessions
+
+Create a file with user credentials:
+
+```bash
+# python/credentials.py
+
+USER_CREDENTIALS = [
+
+  ("user5", "ShaePhu8aen8"),
+  ("user4", "Cei5ohcha3he"),
+  ("user3", "iedie8booChu"),
+  ("user2", "iCuo4es1ahzu"),
+  ("user1", "eeSh0yi0woo8")
+
+  # ...
+
+]
+```
+
+```bash
+# python/diff-users.py
+
+import urllib3, logging, sys
+
+from locust import HttpLocust, TaskSet, task
+from credentials import USER_CREDENTIALS
+
+urllib3.disable_warnings()
+
+class UserBehavior(TaskSet):
+
+  @task
+  class LoggedUserBehavior(TaskSet):
+
+    username = "default"
+    password = "default"
+
+    def on_start(self):
+      if len(USER_CREDENTIALS) > 0:
+        self.username, self.password = USER_CREDENTIALS.pop()
+
+      self.client.post("/login", {
+        'username': self.username, 'password': self.password
+      })
+      logging.info('username: %s, password: %s', self.username, self.password)
+
+    def on_stop(self):
+      self.client.post("/logout", verify=False)
+
+    # Home page
+    @task(1)
+    def index(self):
+      self.client.get("/", verify=False)
+
+    # Client profile page
+    @task(1)
+    def profile(self):
+      self.client.get("/profile", verify=False)
+
+    # Enter specific url after client login
+    @task(1)
+    def random_gen(self):
+      self.client.get("/random-generator", verify=False)
+
+class WebsiteUser(HttpLocust):
+  task_set = UserBehavior
+  min_wait = 100
+  max_wait = 1000
+```
+
+Command:
+
+```bash
+# Without web interface (for 5 users, see credentials.py):
+locust --host=https://blkcipher.info -f python/diff-users.py -c 5 -r 5 -t 30m --no-web --print-stats --only-summary
+
+# With web interface (for 5 users, see credentials.py)
+locust --host=https://blkcipher.info -f python/diff-users.py --print-stats --only-summary
+```
 
 ###### TCP SYN flood Denial of Service attack
 
