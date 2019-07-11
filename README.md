@@ -2657,13 +2657,13 @@ This is [great explanation](https://stackoverflow.com/a/12732410) about ApacheBe
 ###### Standard test
 
 ```bash
-ab -n 1000 -c 100 https://blkcipher.info/
+ab -n 1000 -c 100 https://example.com/
 ```
 
 ###### Test with KeepAlive header
 
 ```bash
-ab -n 5000 -c 100 -k -H "Accept-Encoding: gzip, deflate" https://blkcipher.info/index.php
+ab -n 5000 -c 100 -k -H "Accept-Encoding: gzip, deflate" https://example.com/index.php
 ```
 
 ##### Load testing with wrk2
@@ -2693,8 +2693,8 @@ sudo cp wrk /usr/local/bin
 
 ```bash
 # 1)
-wrk -c 1 -t 1 -d 2s -R 5 -H "Host: blkcipher.info" https://blkcipher.info
-Running 2s test @ https://blkcipher.info
+wrk -c 1 -t 1 -d 2s -R 5 -H "Host: example.com" https://example.com
+Running 2s test @ https://example.com
   1 threads and 1 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency    45.21ms   20.99ms 108.16ms   90.00%
@@ -2708,8 +2708,8 @@ Transfer/sec:     30.76KB
 5 09/Jul/2019:08:00:26
 
 # 2)
-wrk -c 1 -t 1 -d 2s -R 25 -H "Host: blkcipher.info" https://blkcipher.info
-Running 2s test @ https://blkcipher.info
+wrk -c 1 -t 1 -d 2s -R 25 -H "Host: example.com" https://example.com
+Running 2s test @ https://example.com
   1 threads and 1 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency    64.40ms   24.26ms 110.46ms   48.00%
@@ -2724,8 +2724,8 @@ Transfer/sec:    153.77KB
 13 09/Jul/2019:08:02:11
 
 # 3)
-wrk -c 5 -t 5 -d 2s -R 25 -H "Host: blkcipher.info" https://blkcipher.info
-Running 2s test @ https://blkcipher.info
+wrk -c 5 -t 5 -d 2s -R 25 -H "Host: example.com" https://example.com
+Running 2s test @ https://example.com
   5 threads and 5 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency    47.97ms   25.79ms 136.45ms   90.00%
@@ -2740,8 +2740,8 @@ Transfer/sec:    153.75KB
  5 09/Jul/2019:08:03:58
 
 # 4)
-wrk -c 5 -t 5 -d 2s -R 50 -H "Host: blkcipher.info" https://blkcipher.info
-Running 2s test @ https://blkcipher.info
+wrk -c 5 -t 5 -d 2s -R 50 -H "Host: example.com" https://example.com
+Running 2s test @ https://example.com
   5 threads and 5 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency    45.09ms   18.63ms 130.69ms   91.00%
@@ -2756,8 +2756,8 @@ Transfer/sec:    307.50KB
 20 09/Jul/2019:08:05:02
 
 # 5)
-wrk -c 24 -t 12 -d 30s -R 2500 -H "Host: blkcipher.info" https://blkcipher.info
-Running 30s test @ https://blkcipher.info
+wrk -c 24 -t 12 -d 30s -R 2500 -H "Host: example.com" https://example.com
+Running 30s test @ https://example.com
   12 threads and 24 connections
   Thread calibration: mean lat.: 3866.673ms, rate sampling interval: 13615ms
   Thread calibration: mean lat.: 3880.487ms, rate sampling interval: 13606ms
@@ -2812,7 +2812,7 @@ Transfer/sec:      3.78MB
 431 09/Jul/2019:08:06:43
 
 # Other examples:
-wrk -c 24 -t 12 -d 30s -R 2500 --latency https://blkcipher.info/index.php
+wrk -c 24 -t 12 -d 30s -R 2500 --latency https://example.com/index.php
 ```
 
 ###### POST call (with Lua)
@@ -2886,10 +2886,10 @@ Command:
 
 ```bash
 # Example 1:
-wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://blkcipher.info/login
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://example.com/login
 
 # Examples 2 and 3:
-wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://blkcipher.info
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://example.com
 ```
 
 ###### Random paths (with Lua)
@@ -2926,7 +2926,7 @@ math.randomseed(os.time())
 
 local connected = false
 
-local host = "blkcipher.info"
+local host = "example.com"
 local path = "/search?q="
 local url  = "https://" .. host .. path
 
@@ -3019,7 +3019,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 12000 -s lua/random-paths.lua https://blkcipher.info/
+wrk -c 12 -t 12 -d 30s -R 12000 -s lua/random-paths.lua https://example.com/
 ```
 
 ###### Multiple paths (with Lua)
@@ -3117,7 +3117,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 60s -R 200 -s lua/multi-paths.lua https://blkcipher.info
+wrk -c 12 -t 12 -d 60s -R 200 -s lua/multi-paths.lua https://example.com
 ```
 
 ###### Random server address to each thread (with Lua)
@@ -3167,7 +3167,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua https://blkcipher.info
+wrk -c 12 -t 12 -d 30s -R 600 -s lua/resolve-host.lua https://example.com
 ```
 
 ###### Multiple json requests (with Lua)
@@ -3297,7 +3297,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 30s -R 200 -s lua/multi-req.lua https://blkcipher.info
+wrk -c 12 -t 12 -d 30s -R 200 -s lua/multi-req.lua https://example.com
 ```
 
 ###### Debug mode (with Lua)
@@ -3443,7 +3443,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua https://blkcipher.info
+wrk -c 12 -t 12 -d 15s -R 200 -s lua/debug.lua https://example.com
 ```
 
 ###### Analyse data pass to and from the threads
@@ -3513,7 +3513,7 @@ end
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 5s -R 5000 -s lua/threads.lua https://blkcipher.info
+wrk -c 12 -t 12 -d 5s -R 5000 -s lua/threads.lua https://example.com
 ```
 
 ###### Parsing wrk result and generate report
@@ -3527,7 +3527,7 @@ go get -u github.com/jgsqware/wrk-report
 Command:
 
 ```bash
-wrk -c 12 -t 12 -d 15s -R 500 --latency https://blkcipher.info | wrk-report > report.html
+wrk -c 12 -t 12 -d 15s -R 500 --latency https://example.com | wrk-report > report.html
 ```
 
 <p align="center">
@@ -3548,7 +3548,7 @@ python -m pip install locustio
 python3 -m pip install locustio
 ```
 
-About Locust Swarm (web panel):
+About `locust`:
 
 - `Number of users to simulate` - the number of users testing your application. Each user opens a TCP connection to your application and tests it
 
@@ -3561,6 +3561,10 @@ For example:
 
 Each second 10 users added to current users starting from 0 so in 100 seconds you will have 1000 users. When it reaches to the number of users, the statistic will be reset.
 
+Locust tries to emulate user behavior, it will pause each individual 'User' between `min_wait` and `max_wait` ms, to simulate the time between normal user actions.
+
+  > Each of tasks will be executed in a random order, with a delay of `min_wait` - `max_wait` between the beginning of each task.
+
 ###### Multiple paths
 
 ```python
@@ -3571,6 +3575,14 @@ import urllib3
 from locust import HttpLocust, TaskSet, task
 
 urllib3.disable_warnings()
+
+multiheaders = """{
+"Host": "example.com",
+"User-Agent":"python-locust-test",
+}
+"""
+
+self.client.get("/", headers=h)
 
 def on_start(self):
   self.client.verify = False
@@ -3583,7 +3595,7 @@ class UserBehavior(TaskSet):
     # Home page
     @task(1)
     def index(self):
-      self.client.get("/", verify=False)
+      self.client.get("/", headers=multiheaders, verify=False)
 
     # Status
     @task(1)
@@ -3593,30 +3605,39 @@ class UserBehavior(TaskSet):
     # Article
     @task(1)
     def article(self):
-      self.client.get("/article/1044162375/", verify=False)
+      self.client.get("/article/1044162375/", headers=multiheaders, verify=False)
 
     # About
-    @task(2)  # twice as much of requests
+    # Twice as much of requests:
+    @task(2)
     def about(self):
-      self.client.get("/about", verify=False)
+      with self.client.get("/about", catch_response=True) as response:
+        if response.text.find("author@example.com") > 0:
+          response.success()
+        else:
+          response.failure("author@example.com not found in response")
 
 class WebsiteUser(HttpLocust):
   task_set = UserBehavior
-  min_wait = 100
-  max_wait = 1000
+  min_wait = 1000 # ms, 1s
+  max_wait = 5000 # ms, 5s
 ```
 
 Command:
 
 ```bash
 # Without web interface:
-locust --host=https://blkcipher.info -f python/multi-paths.py -c 2000 -r 10 -t 1h 30m --no-web --print-stats --only-summary
+locust --host=https://example.com -f python/multi-paths.py -c 2000 -r 10 -t 1h 30m --no-web --print-stats --only-summary
 
 # With web interface
-locust --host=https://blkcipher.info -f python/multi-paths.py --print-stats --only-summary
+locust --host=https://example.com -f python/multi-paths.py --print-stats --only-summary
 ```
 
 ###### Multiple paths with different user sessions
+
+Look also:
+
+- [How to Run Locust with Different Users](https://www.blazemeter.com/blog/how-to-run-locust-with-different-users/)
 
 Create a file with user credentials:
 
@@ -3667,34 +3688,45 @@ class UserBehavior(TaskSet):
       self.client.post("/logout", verify=False)
 
     # Home page
-    @task(1)
+    # 10x more often than other
+    @task(10)
     def index(self):
       self.client.get("/", verify=False)
-
-    # Client profile page
-    @task(1)
-    def profile(self):
-      self.client.get("/profile", verify=False)
 
     # Enter specific url after client login
     @task(1)
     def random_gen(self):
       self.client.get("/random-generator", verify=False)
 
+    # Client profile page
+    @task(1)
+    def profile(self):
+      self.client.get("/profile", verify=False)
+
+    # Contact page
+    @task(1)
+    def contact(self):
+      self.client.post("/contact", {
+        "email": "no-reply@example.com",
+        "subject": "GNU/Linux and BSD",
+        "message": "Free software, Yeah!"
+      })
+
 class WebsiteUser(HttpLocust):
+  host = "https://api.example.com"
   task_set = UserBehavior
-  min_wait = 100
-  max_wait = 1000
+  min_wait = 2000   # ms, 2s
+  max_wait = 15000  # ms, 15s
 ```
 
 Command:
 
 ```bash
 # Without web interface (for 5 users, see credentials.py):
-locust --host=https://blkcipher.info -f python/diff-users.py -c 5 -r 5 -t 30m --no-web --print-stats --only-summary
+locust -f python/diff-users.py -c 5 -r 5 -t 30m --no-web --print-stats --only-summary
 
 # With web interface (for 5 users, see credentials.py)
-locust --host=https://blkcipher.info -f python/diff-users.py --print-stats --only-summary
+locust -f python/diff-users.py --print-stats --only-summary
 ```
 
 ###### TCP SYN flood Denial of Service attack
