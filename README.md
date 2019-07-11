@@ -2636,7 +2636,7 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 
   > See [this](https://github.com/giltene/wrk2/blob/master/SCRIPTING) chapter to use the Lua API for wrk2. Also take a look at [wrk2 scripts](https://github.com/giltene/wrk2/tree/master/scripts).
 
-Installation of `wrk2`:
+Installation:
 
 ```bash
 # Debian like:
@@ -3482,7 +3482,7 @@ wrk -c 12 -t 12 -d 5s -R 5000 -s lua/threads.lua https://blkcipher.info
 
 ###### Parsing wrk result and generate report
 
-Installation of `wrk-report`:
+Installation:
 
 ```bash
 go get -u github.com/jgsqware/wrk-report
@@ -3502,7 +3502,7 @@ wrk -c 12 -t 12 -d 15s -R 500 --latency https://blkcipher.info | wrk-report > re
 
   > Project documentation: [Locust Documentation](https://docs.locust.io/en/stable/)
 
-Installation of `locust`:
+Installation:
 
 ```bash
 # Python 2.x
