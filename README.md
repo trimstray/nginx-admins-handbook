@@ -183,7 +183,7 @@
     * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
     * [Which worker processing current request](#which-worker-processing-current-request)
     * [Capture only http packets](#capture-only-http-packets)
-    * [Extract http User Agent from the http packets](#extract-http-user-agent-from-the-http-packets)
+    * [Extract User Agent from the http packets](#extract-user-agent-from-the-http-packets)
     * [Capture only http GET and POST packets](#capture-only-http-get-and-post-packets)
     * [Capture requests and filter by source ip and destination port](#capture-requests-and-filter-by-source-ip-and-destination-port)
     * [Dump a process's memory](#dump-a-processs-memory)
@@ -518,7 +518,7 @@ Existing chapters:
     - [x] _Check that the gzip_static module is working_
     - [x] _Which worker processing current request_
     - [x] _Capture only http packets_
-    - [x] _Extract http User Agent from the http packets_
+    - [x] _Extract User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture requests and filter by source ip and destination port_
     - [x] _Dump a process's memory_
@@ -2882,10 +2882,10 @@ end
 Command:
 
 ```bash
-# Example 1:
+# The first example:
 wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://example.com/login
 
-# Examples 2 and 3:
+# Second and third example:
 wrk -c 12 -t 12 -d 30s -R 12000 -s lua/post-call.lua https://example.com
 ```
 
@@ -3105,7 +3105,7 @@ end
 - `data/paths.list`:
 
 ```
-/ - it's not recommend, requests are being duplicated if you add '/'
+/ - it's not recommend, requests are being duplicated if you add only '/'
 /foo/bar
 /articles/id=25
 /3a06e672fad4bec2383748cfd82547ee.html
@@ -3498,6 +3498,7 @@ function done(summary, latency, requests)
     local id        = thread:get("id")
     local requests  = thread:get("requests")
     local responses = thread:get("responses")
+
     local msg = "thread %d : %d req , %d res"
 
     print(msg:format(id, requests, responses))
@@ -4096,7 +4097,7 @@ pid: 31863, host: example.com
 ngrep -d eth0 -qt 'HTTP' 'tcp'
 ```
 
-##### Extract http User Agent from the http packets
+##### Extract User Agent from the http packets
 
 ```bash
 tcpdump -ei eth0 -nn -A -s1500 -l | grep "User-Agent:"
@@ -4125,7 +4126,7 @@ ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
 
 A core dump is a file containing a process's address space (memory) when the process terminates unexpectedly. In other words is an instantaneous picture of a failing process at the moment it attempts to do something very wrong.
 
-NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running processes.
+NGINX is unbelievably stable but sometimes it can happen that there is a unique termination of the running processes.
 
 I think the best practice for core dumps are a properly collected core files, and associated information, we can often solve, and otherwise extract valuable information about the failing process.
 
@@ -4823,7 +4824,7 @@ server {
 
 Look at this:
 
-| <b>DESCRIPTIONS</b> | <b>PERMANENT</b> | <b>TEMPORARY</b> |
+| <b>DESCRIPTION</b> | <b>PERMANENT</b> | <b>TEMPORARY</b> |
 | :---         | :---         | :---         |
 | allows changing the request method from POST to GET | 301 | 302 |
 | does not allow changing the request method from POST to GET | 308 | 307 |
@@ -7402,12 +7403,14 @@ kill -HUP $(pgrep -f "nginx: master")
 
 ###### Rationale
 
-  > I don't like duplicating the rules, but it's certainly an easy and maintainable way.
+  > If you served HTTP and HTTPS with the exact same config (a single server that handles both HTTP and HTTPS requests) NGINX is intelligent enough to ignore the SSL directives if loaded over port 80.
+
+  > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration.
 
 ###### Example
 
 ```bash
-# For http:
+# For HTTP:
 server {
 
   listen 10.240.20.2:80;
@@ -7416,9 +7419,22 @@ server {
 
 }
 
-# For https:
+# For HTTPS:
 server {
 
+  listen 10.240.20.2:443 ssl;
+
+  ...
+
+}
+```
+
+A single HTTP/HTTPS server:
+
+```bash
+server {
+
+  listen 10.240.20.2:80;
   listen 10.240.20.2:443 ssl;
 
   ...
@@ -7429,6 +7445,7 @@ server {
 ###### External resources
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
+- [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
 
 #### :beginner: Define the `listen` directives explicitly with `address:port` pair
 
@@ -7546,11 +7563,13 @@ server {
 
   > For sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves) because changes will affect only the default server.
 
-  > Remember that regardless of SSL parameters, you are able to use multiple SSL certificates.
+  > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address).
 
-  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration. So you should use only one SSL setup with several names on the same IP address.
+  > Another good idea is to move common server settings into a separate file, i.e. `common/example.com.conf` and then include it in separate `server` blocks.
 
-  > It's also to prevent mistakes and configuration mismatch.
+  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address. It's also to prevent mistakes and configuration mismatch.
+
+  > From NGINX's documentation: _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
 
 ###### Example
 
@@ -7570,9 +7589,10 @@ ssl_ecdh_curve secp521r1:secp384r1;
 # Include this file to the server context (attach domain-a.com for specific listen directive)
 server {
 
-  include /etc/nginx/https.conf;
+  include         /etc/nginx/https.conf;
 
-  server_name domain-a.com;
+  server_name     domain-a.com;
+  ssl_certificate domain-a.com.crt;
 
   ...
 
@@ -7581,9 +7601,10 @@ server {
 # Include this file to the server context (attach domain-b.com for specific listen directive)
 server {
 
-  include /etc/nginx/https.conf;
+  include         /etc/nginx/https.conf;
 
-  server_name domain-b.com;
+  server_name     domain-b.com;
+  ssl_certificate domain-b.com.crt;
 
   ...
 
