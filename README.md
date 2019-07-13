@@ -274,7 +274,7 @@
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
-  * [Keep NGINX up-to-date](#keep-nginx-up-to-date)
+  * [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
   * [Protect sensitive resources](#beginner-protect-sensitive-resources)
@@ -691,7 +691,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
-| [Keep NGINX up-to-date](#keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -7591,10 +7591,12 @@ ssl_ecdh_curve secp521r1:secp384r1;
 # Include this file to the server context (attach domain-a.com for specific listen directive)
 server {
 
-  include         /etc/nginx/https.conf;
+  include             /etc/nginx/https.conf;
 
-  server_name     domain-a.com;
-  ssl_certificate domain-a.com.crt;
+  server_name         domain-a.com;
+
+  ssl_certificate     domain-a.com.crt;
+  ssl_certificate_key domain-a.com.key;
 
   ...
 
@@ -7603,10 +7605,12 @@ server {
 # Include this file to the server context (attach domain-b.com for specific listen directive)
 server {
 
-  include         /etc/nginx/https.conf;
+  include             /etc/nginx/https.conf;
 
-  server_name     domain-b.com;
-  ssl_certificate domain-b.com.crt;
+  server_name         domain-b.com;
+
+  ssl_certificate     domain-b.com.crt;
+  ssl_certificate_key domain-b.com.key;
 
   ...
 
@@ -7622,9 +7626,11 @@ server {
 
 ###### Rationale
 
-  > Use map or geo modules (one of them) to prevent users abusing your servers.
+  > Use map or geo modules (one of them) to prevent users abusing your servers. This allows to create variables with values depending on the client IP address.
 
-  > This allows to create variables with values depending on the client IP address.
+  > Since variables are evaluated only when used, the mere existence of even a large number of declared geo variables does not cause any extra costs for request processing.
+
+  > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`.
 
 ###### Example
 
@@ -7673,7 +7679,11 @@ geo $globals_internal_geo_acl {
 
   > Manage a large number of redirects with NGINX maps and use them to customise your key-value pairs.
 
+  > The map directive maps strings, so it is possible to represent e.g. `10.0.3.0/24` as a regular expression and continue to use the map directive.
+
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
+
+  > You can also use `include` directive for your maps so your config files would look pretty.
 
 ###### Example
 
@@ -7991,6 +8001,13 @@ log_format debug-ssl-level-0
                 '"$http_referer" "$http_user_agent" '
                 '$request_time '
                 '$tls_version $ssl_protocol $ssl_cipher';
+
+# Log format for GEO module (ngx_http_geoip_module):
+log_format geoip-level-0
+                '$remote_addr - $remote_user [$time_local] "$request" '
+                '$status $body_bytes_sent "$http_referer" '
+                '"$http_user_agent" "$http_x_forwarded_for" '
+                '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
 ```
 
 ###### External resources
@@ -8313,7 +8330,7 @@ location /videos {
 
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
-#### :beginner: Keep NGINX up-to-date
+#### :beginner: Always keep NGINX up-to-date
 
 ###### Rationale
 
