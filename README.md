@@ -7571,6 +7571,8 @@ server {
 
   > From NGINX's documentation: _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
 
+  > Look also this: _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, RFC 6066), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+
 ###### Example
 
 ```bash
@@ -7614,6 +7616,7 @@ server {
 ###### External resources
 
 - [Nginx one ip and multiple ssl certificates](https://serverfault.com/questions/766831/nginx-one-ip-and-multiple-ssl-certificates)
+- [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
 
 #### :beginner: Use geo/map modules instead allow/deny
 
