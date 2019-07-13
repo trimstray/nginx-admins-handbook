@@ -372,7 +372,7 @@ For me, however, there hasn't been a truly in-depth and reasonably simple cheats
 
   > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features of NGINX. You will also learn how to testing the performance or how to resolve debugging problems. You will discover as several practices related to hardening.
+Throughout this handbook you will explore the many features of NGINX. You will also learn for example: how to testing the performance or how to resolve debugging problems. You will discover as several practices related to hardening.
 
 If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
 
@@ -673,16 +673,16 @@ I also got the highest note from Mozilla:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules from this handbook.
+  > This checklist contains all rules (53) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
-| <b>PRIORITY</b> | <b>NAME</b> | <b>DESCRIPTION</b> |
-| :---:        | :---         | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
-| ![low](static/img/priorities/low.png) | <i>normal</i> | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
-| ![info](static/img/priorities/info.png) | <i>minor</i> | as an option to implement or use (not required) |
+| <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
+| :---:        | :---         | :---:        | :---         |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 22 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 17 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
+| ![info](static/img/priorities/info.png) | <i>minor</i> | 5 | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
 
@@ -744,7 +744,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 ## Printable high-res hardening cheatsheets
 
-I created printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
+I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
@@ -926,8 +926,8 @@ _In this ebook you will learn:_
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/yandex/gixy"><b>gixy</b></a> - is a tool to analyze Nginx configuration to prevent security misconfiguration and automate flaw detection.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/1connect/nginx-config-formatter"><b>nginx-config-formatter</b></a> - Nginx config file formatter/beautifier written in Python.<br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/vasilevich/nginxbeautifier"><b>nginxbeautifier</b></a> - format and beautify nginx config files.<br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/lovette/nginx-tools/tree/master/nginx-minify-conf"><b>nginx-minify-conf</b></a> - creates a minified version of a nginx configuration.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/vasilevich/nginxbeautifier"><b>nginxbeautifier</b></a> - format and beautify Nginx config files.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/lovette/nginx-tools/tree/master/nginx-minify-conf"><b>nginx-minify-conf</b></a> - creates a minified version of a Nginx configuration.<br>
 </p>
 
 ##### Log analyzers
@@ -941,7 +941,7 @@ _In this ebook you will learn:_
 ##### Performance analyzers
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/lebinh/ngxtop"><b>ngxtop</b></a> - parses your nginx access log and outputs useful, top-like, metrics of your nginx server.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/lebinh/ngxtop"><b>ngxtop</b></a> - parses your Nginx access log and outputs useful, top-like, metrics of your Nginx server.<br>
 </p>
 
 ##### Benchmarking tools
@@ -1044,12 +1044,13 @@ For prebuilt NGINX package paths can be as follows:
   * other locations: `/usr/local/etc/nginx/nginx.conf`, `/usr/local/nginx/conf/nginx.conf`
 - `/usr/share/nginx` - is the default root directory for requests, contains `html` directory and basic static files
 - `/var/log/nginx` - is the default log (access and error log) location for NGINX
+  * other locations: `logs/` in root directory
 - `/var/cache/nginx` - is the default temporary files location for NGINX<br>
   * other locations: `/var/lib/nginx`
 - `/etc/nginx/conf` - contains custom/vhosts configuration files<br>
   * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled`
 - `/var/run/nginx` - contains information about NGINX process(es)<br>
-  * other locations: `/usr/local/nginx/logs`
+  * other locations: `/usr/local/nginx/logs`, `logs/` in root directory
 
 #### Commands
 
@@ -1095,7 +1096,7 @@ systemctl start nginx
 /usr/sbin/nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
 /usr/sbin/nginx -s stop     # fast shutdown (kill connections immediately)
 
-service nginx stop
+service nginx stopmicro
 systemctl stop nginx
 
 # You can also stop NGINX from start-stop-daemon script:
@@ -1186,7 +1187,7 @@ As a general rule, if a directive is valid in multiple nested scopes, a declarat
 
   > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
 
-Contexts can be layered within one another so NGINX (a level of inheritance). Their structure looks like this:
+Contexts can be layered within one another (a level of inheritance). Their structure looks like this:
 
 ```
 Global/Main Context
@@ -1212,7 +1213,7 @@ Global/Main Context
 
 ##### External files
 
-`include` directive may appear inside any contexts to perform conditional inclusion. It attaching another file, or files matching the specified mask.
+`include` directive may appear inside any contexts to perform conditional inclusion. It attaching another file, or files matching the specified mask:
 
 ```bash
 include /etc/nginx/proxy.conf
@@ -1271,7 +1272,7 @@ au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/*,*
 __EOF__
 ```
 
-  > [Highlight insecure SSL configuration in Vim](https://github.com/chr4/sslsecure.vim).
+  > It may be interesting for you: [Highlight insecure SSL configuration in Vim](https://github.com/chr4/sslsecure.vim).
 
 ###### Sublime Text
 
@@ -1316,7 +1317,7 @@ The worker processes do the actual processing of requests and get commands from 
 
 The following signals can be sent to the NGINX master process:
 
-| <b>SIGNAL</b> | <b>NUM</b> | <b>DESCRIPTION</b> |
+| <b>SIGNAL</b> | <b>ID</b> | <b>DESCRIPTION</b> |
 | :---         | :---:        | :---         |
 | `TERM`, `INT` | **15**, **2** | quick shutdown |
 | `QUIT` | **3** | graceful shutdown |
@@ -1328,7 +1329,7 @@ The following signals can be sent to the NGINX master process:
 
 There’s no need to control the worker processes yourself. However, they support some signals too:
 
-| <b>SIGNAL</b> | <b>NUM</b> | <b>DESCRIPTION</b> |
+| <b>SIGNAL</b> | <b>ID</b> | <b>DESCRIPTION</b> |
 | :---         | :---:        | :---         |
 | `TERM`, `INT` | **15**, **2** | quick shutdown |
 | `QUIT` | **3** | graceful shutdown |
@@ -1358,7 +1359,7 @@ There are also great resources (also makes comparisons) about them:
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
 - [The C10K problem](http://www.kegel.com/c10k.html)
 
-Look also at libevent benchmark (and if you want read about [libevent – an event notification library](http://libevent.org/)):
+Look also at libevent benchmark (and if you want to read about [libevent – an event notification library](http://libevent.org/)):
 
 <p align="center">
   <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
@@ -1551,7 +1552,7 @@ There can be altogether 11 phases when NGINX handles a request:
 - `NGX_HTTP_LOG_PHASE` - log processing
   - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
-You may feel lost now (me too...) so I let myself put this great preview:
+You may feel lost now (me too...) so I let myself put this great and simple preview:
 
 <p align="center">
   <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
@@ -1687,7 +1688,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
 8) Finally, NGINX goes to the `location` context
 
-<sup><i>This short list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
+<sup><i>This list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
 
 ##### Matching location
 
@@ -1700,7 +1701,7 @@ Let's short introduction something about this:
 - the regular expression match has the lowest priority; there are two types of prefixes: `~` and `~*`; in the order they are defined in the configuration file
 - if regular expression searching yielded a match, that result is used, otherwise, the match from prefix searching is used
 
-Short example from the [Nginx documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
+Look at this short example from the [Nginx documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
 
 ```bash
 location = / {
@@ -1867,14 +1868,14 @@ And here is the table with the results:
 
 ##### `rewrite` vs `return`
 
+Generally there are two ways of implementing redirects in NGINX: with `rewrite` and `return`.
+
 These directives (they come from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
 
 - `return ...;`
 - `rewrite ... last;`
 
 Anything else may possibly cause unpredictable behaviour, including potential `SIGSEGV`.
-
-Generally there are two ways of implementing redirects in NGINX: with `rewrite` and `return`.
 
 ###### `rewrite` directive
 
@@ -1948,7 +1949,7 @@ For more info please read [Creating NGINX Rewrite Rules](https://www.nginx.com/b
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
 
-I used `return` directive to:
+I use `return` directive to:
 
 - force redirect from http to https:
 
@@ -2029,7 +2030,7 @@ server {
 
 ##### `if`, `break` and `set`
 
-The `ngx_http_rewrite_module` module also provides additional directives:
+The `ngx_http_rewrite_module` also provides additional directives:
 
 - `break` - stops processing, if is specified inside the `location`, further processing of the request continues in this location:
 
@@ -2151,7 +2152,7 @@ Generally load balancing is a technique used to distribute the workload across m
 
 I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
-The configuration is very simple. NGINX includes a `ngx_http_upstream_module` module to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
+The configuration is very simple. NGINX includes a `ngx_http_upstream_module` to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
 
 ##### Backend parameters
 
@@ -2194,8 +2195,6 @@ In Weighted Round Robin load balancing algorithm, each server is allocated with 
 
 This method is similar to the Round Robin in a sense that the manner by which requests are assigned to the nodes is still cyclical, albeit with a twist. The node with the higher specs will be apportioned a greater number of requests.
 
-  > Default weight of the server is 1.
-
 ```bash
 upstream bck_testing_01 {
 
@@ -2236,8 +2235,6 @@ For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8
 ##### Weighted Least Connections
 
 This is, in general, a very fair distribution method, as it uses the ratio of the number of connections and the weight of a server. The server in the cluster with the lowest ratio automatically receives the next request.
-
-  > Default weight of the server is 1.
 
 ```bash
 upstream bck_testing_01 {
@@ -2481,11 +2478,11 @@ gixy /etc/nginx/nginx.conf
 
 ##### GoAccess
 
-  > Paths configuration file:
-  >
-  >   - `/etc/goaccess.conf`
-  >   - `/etc/goaccess/goaccess.conf`
-  >   - `/usr/local/etc/goaccess.conf`
+Standard paths to the configuration file:
+
+- `/etc/goaccess.conf`
+- `/etc/goaccess/goaccess.conf`
+- `/usr/local/etc/goaccess.conf`
 
 Prior to start GoAccess enable these parameters:
 
@@ -2518,7 +2515,7 @@ make -j2 && make install
 ln -s /usr/local/bin/goaccess /usr/bin/goaccess
 ```
 
-  > Default path to configuration file: `/etc/goaccess/goaccess.conf`. You can always copy it from `/usr/local/src/goaccess-<version>/config/goaccess.conf` source tree.
+  > You can always fetch default configuration from `/usr/local/src/goaccess-<version>/config/goaccess.conf` source tree.
 
 ###### Analyse log file and enable all recorded statistics
 
@@ -2650,7 +2647,7 @@ apt-get install -y apache2-utils
 yum -y install httpd-tools
 ```
 
-This is [great explanation](https://stackoverflow.com/a/12732410) about ApacheBench by [Mamsaac](https://stackoverflow.com/users/669111/mamsaac):
+This is a [great explanation](https://stackoverflow.com/a/12732410) about ApacheBench by [Mamsaac](https://stackoverflow.com/users/669111/mamsaac):
 
   > _The apache benchmark tool is very basic, and while it will give you a solid idea of some performance, it is a bad idea to only depend on it if you plan to have your site exposed to serious stress in production._
 
@@ -5356,7 +5353,7 @@ If you download and compile above sources the good point is to install additiona
 | `autoconf` | `autoconf` | for `jemalloc` from sources |
 | `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
 | `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
-| `jq` | `jq` | for http error pages generator |
+| `jq` | `jq` | for [http error pages](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages) generator |
 
 <sup><i>* If you don't use from sources.</i></sup>
 
@@ -5422,9 +5419,9 @@ A short description of the modules that I used (not only) in this step-by-step t
 
 ##### Compiler and linker
 
-Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags. See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat.
+Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags.
 
-You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
+See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat. You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
 
 There are examples:
 
@@ -5495,7 +5492,7 @@ stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 
 ###### stapxx
 
-The author of OpenResty created great and simple macro language extensions to SystemTap: [stapxx](https://github.com/openresty/stapxx).
+The author of OpenResty created great and simple macro language extensions to the SystemTap: [stapxx](https://github.com/openresty/stapxx).
 
 #### Install Nginx on CentOS 7
 
@@ -7299,7 +7296,7 @@ server {
   >   - use meaningful naming conventions
   >   - simple is better than complex but complex is better than complicated
 
-  > Of course, the NGINX configuration code is not a programming language. All files are written in their own language or syntax so we should not overdo it, but I think it's worth sticking to the general rules and make your and other NGINX adminstrators life easier.
+  > Of course, the NGINX configuration code is a micro programming language. Some would say that NGINX's files are written in their own language or syntax so we should not overdo it. I think it's worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
 
 ###### Example
 
