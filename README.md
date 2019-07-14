@@ -1449,9 +1449,9 @@ NGINX uses a custom event loop which was designed specifically for NGINX - all c
 
 Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()` or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
-This [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great information about the internals of NGINX, just in case.
+See this presentation ([Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals)) as a lot of great information about the internals of NGINX.
 
-NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
+NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
 
 Finally and in summary:
 
@@ -8176,7 +8176,7 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 
   Official NGINX documentation say:
 
-  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it)._
+  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it). [...] running one worker process per CPU core – makes the most efficient use of hardware resources._
 
 ###### Example
 
