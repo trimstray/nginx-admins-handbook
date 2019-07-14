@@ -96,6 +96,9 @@
     * [Measurement units](#measurement-units)
     * [Enable syntax highlighting](#enable-syntax-highlighting)
   * [Connection processing](#connection-processing)
+    * [Event-Driven architecture](#event-driven-architecture)
+    * [Multiple processes](#multiple-processes)
+    * [Simultaneous connections](#simultaneous-connections)
   * [Request processing stages](#request-processing-stages)
   * [Server blocks logic](#server-blocks-logic)
     * [Handle incoming connections](#handle-incoming-connections)
@@ -477,6 +480,9 @@ Existing chapters:
     - [x] _Measurement units_
     - [x] _Enable syntax highlighting_
   - _Connection processing_
+    - [x] _Event-Driven architecture_
+    - [x] _Multiple processes_
+    - [x] _Simultaneous connections_
     - [ ] _Keepalive connections_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
@@ -1341,7 +1347,7 @@ The main purposes of the master process is to read and evaluate configuration fi
 
 Master process should be started as root user, because this will allow NGINX to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
-The worker processes do the actual processing of requests and get commands from master process. They runs in an event loop, handle network connections, read and write content to disk, and communicate with upstream servers. These are spawned by the master process, and the user and group will as specified (unprivileged).
+The worker processes do the actual processing of requests and get commands from master process. They runs in an event loop (registering events and responding when one occurs), handle network connections, read and write content to disk, and communicate with upstream servers. These are spawned by the master process, and the user and group will as specified (unprivileged).
 
   > NGINX has also cache loader and cache manager processes but only if you enable caching.
 
@@ -1389,8 +1395,6 @@ There are also great resources (also makes comparisons) about them:
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
 - [The C10K problem](http://www.kegel.com/c10k.html)
 
-This [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great information about the internals of NGINX, just in case.
-
 Look also at libevent benchmark (and if you want to read about [libevent – an event notification library](http://libevent.org/)):
 
 <p align="center">
@@ -1405,6 +1409,53 @@ You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 
 - [FreeBSD NGINX Performance](https://devinteske.com/wp/freebsd-nginx-performance/)
 - [Why did Netflix use NGINX and FreeBSD to build their own CDN?](https://www.youtube.com/watch?v=KP_bKvXkoC4)
+
+##### Event-Driven architecture
+
+  > [Thread Pools in NGINX Boost Performance 9x!](https://www.nginx.com/blog/thread-pools-boost-performance-9x/) - this official article is an amazing explanation about thread pools and generally about handling connections. I also recommend [Inside NGINX: How We Designed for Performance & Scale](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale). Both are really great.
+
+NGINX uses Event-Driven architecture which heavily relies on Non-Blocking IO. Look what the official documentation says about it:
+
+  > _It’s well known that NGINX uses an asynchronous, event‑driven approach to handling connections. This means that instead of creating another dedicated process or thread for each request (like servers with a traditional architecture), it handles multiple connections and requests in one worker process. To achieve this, NGINX works with sockets in a non‑blocking mode and uses efficient methods such as epoll and kqueue._
+
+  > _Because the number of full‑weight processes is small (usually only one per CPU core) and constant, much less memory is consumed and CPU cycles aren’t wasted on task switching. The advantages of such an approach are well‑known through the example of NGINX itself. It successfully handles millions of simultaneous requests and scales very well._
+
+To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded (it can fork several processes to utilize multiple cores) but NGINX is not a single threaded application.
+
+Each of worker processes is single-threaded and can handle thousands of concurrent connections. NGINX does not create a new process/thread for each connection/requests but it starts several worker threads during start. It does this asynchronously with one thread, rather than using multi-threaded programming (it uses an event loop with asynchronous I/O).
+
+For more information take a look at following resources:
+
+- [About High Concurrency, NGINX architecture and internals](http://www.aosabook.org/en/nginx.html)
+- [A little holiday present: 10,000 reqs/sec with Nginx!](https://blog.webfaction.com/2008/12/a-little-holiday-present-10000-reqssec-with-nginx-2/)
+- [Nginx vs Apache: Is it fast, if yes, why?](http://planetunknown.blogspot.com/2011/02/why-nginx-is-faster-than-apache.html)
+- [How is Nginx handling its requests in terms of tasks or threading?](https://softwareengineering.stackexchange.com/questions/256510/how-is-nginx-handling-its-requests-in-terms-of-tasks-or-threading)
+- [Why nginx is faster than Apache, and why you needn’t necessarily care](https://djangodeployment.com/2016/11/15/why-nginx-is-faster-than-apache-and-why-you-neednt-necessarily-care/)
+
+##### Multiple processes
+
+NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of SMP.
+
+From NGINX documentation:
+
+  > _The NGINX configuration recommended in most cases – running one worker process per CPU core – makes the most efficient use of hardware resources._
+
+NGINX uses a custom event loop which was designed specifically for NGINX - all connections are processed in a highly efficient run-loop in a limited number of single-threaded processes called workers.
+
+Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()` or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
+
+This [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great information about the internals of NGINX, just in case.
+
+NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
+
+Finally and in summary:
+
+- uses Non-Blocking "Event-Driven" architecture
+- uses the single-threaded reactor pattern to handle concurrent requests
+- uses highly efficient loop for connection processing
+- is not a single threaded application because it starts multiple worker processes (to handle multiple connections and requests) during start
+
+##### Simultaneous connections
 
 Okay, so how many simultaneous connections can be processed by NGINX?
 
