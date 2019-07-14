@@ -7267,7 +7267,7 @@ These are the basic set of rules to keep NGINX in good condition.
   >   - `_listen` - for all listen directives; also stores SSL configuration
   >   - `_server` - for domains (localhost) configuration; also stores backends definitions
   > - `modules` - for modules which are dynamically loading into NGINX
-  > - `snippets` - for NGINXs aliases, configuration of logrotate and other
+  > - `snippets` - for NGINX's aliases, configuration of logrotate and other
   >
   > I attach some of them, if necessary, to files which has `server` directives.
 
@@ -7306,18 +7306,18 @@ server {
 
   > Choose your formatter style and setup a common config for it. Some rules are universal, but the most important thing is to keep a consistent NGINX code style throughout your code base:
   >
-  >   - use whitespaces and blank lines to arrange and separate code blocks
-  >   - use tabs for indents - they are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
-  >   - use comments to explain why things are done not what is done
-  >   - use meaningful naming conventions
-  >   - simple is better than complex but complex is better than complicated
+  > - use whitespaces and blank lines to arrange and separate code blocks
+  > - use tabs for indents - they are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
+  > - use comments to explain why things are done not what is done
+  > - use meaningful naming conventions
+  > - simple is better than complex but complex is better than complicated
 
   > Of course, the NGINX configuration code is a micro programming language. Some would say that NGINX's files are written in their own language or syntax so we should not overdo it. I think it's worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
 
 ###### Example
 
 ```bash
-# Good NGINX code style:
+# Good code style:
 http {
 
   # Attach global rules:
@@ -7343,7 +7343,7 @@ http {
 
   ...
 
-# Bad NGINX code style:
+# Bad code style:
 http {
   include    nginx/proxy.conf;
   include    /etc/nginx/fastcgi.conf;
@@ -7382,7 +7382,7 @@ http {
 
   > To stop processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
 
-  From NGINX documentation:
+  From NGINX's documentation:
 
   > _In order for NGINX to re-read the configuration file, a HUP signal should be sent to the master process. The master process first checks the syntax validity, then tries to apply new configuration, that is, to open log files and new listen sockets. If this fails, it rolls back changes and continues to work with old configuration. If this succeeds, it starts new worker processes, and sends messages to old worker processes requesting them to shut down gracefully. Old worker processes close listen sockets and continue to service old clients. After all clients are serviced, old worker processes are shut down._
 
@@ -7413,6 +7413,7 @@ kill -HUP $(pgrep -f "nginx: master")
 ###### External resources
 
 - [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
+- [Commands (from this Handbook)](#commands)
 
 #### :beginner: Separate `listen` directives for 80 and 443
 
@@ -7584,9 +7585,13 @@ server {
 
   > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address. It's also to prevent mistakes and configuration mismatch.
 
-  > From NGINX's documentation: _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
+  From NGINX's documentation:
 
-  > Look also this: _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, RFC 6066), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+  > _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
+
+  Look also this:
+
+  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, RFC 6066), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
 
 ###### Example
 
@@ -7692,9 +7697,9 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Manage a large number of redirects with NGINX maps and use them to customise your key-value pairs.
+  > Manage a large number of redirects with maps and use them to customise your key-value pairs.
 
-  > The map directive maps strings, so it is possible to represent e.g. `10.0.3.0/24` as a regular expression and continue to use the map directive.
+  > The map directive maps strings, so it is possible to represent e.g. `192.168.144.0/24` as a regular expression and continue to use the map directive.
 
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
@@ -8470,7 +8475,7 @@ location ~ /\.(?!well-known\/) {
 
   > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
 
-  But the "Official Apache Documentation (Apache Core Features)" say:
+  But the "Official Apache Documentation (Apache Core Features)" (yep, it's not a joke...) say:
 
   > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
 
@@ -8603,11 +8608,11 @@ server {
   >
   >   - the next version of OpenSSL will be 3.0.0
   >   - version 1.1.1 will be supported until 2023-09-11 (LTS)
-  >     - last minor version: 1.1.1b (February 26, 2019)
+  >     - last minor version: 1.1.1c (May 23, 2019)
   >   - version 1.1.0 will be supported until 2019-09-11
-  >     - last minor version: 1.1.0j (November 20, 2018)
+  >     - last minor version: 1.1.0k (May 28, 2018)
   >   - version 1.0.2 will be supported until 2019-12-31 (LTS)
-  >     - last minor version: 1.0.2r (February 26, 2019)
+  >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
 
   > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1).
