@@ -7256,6 +7256,19 @@ These are the basic set of rules to keep NGINX in good condition.
 
   > Use `include` directive to move common server settings into a separate files and to attach your NGINX specific code to global config, contexts and other.
 
+  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main `nginx.conf` file. I prefer following structure:
+  >
+  > - `html` - for default static files, e.g. global 5xx error page
+  > - `master` - for main configuration, e.g. acls, listen directives and domains
+  >   - `_acls` - for access control lists (with geo or map modules)
+  >   - `_basic` - for rate limiting rules, redirect maps or proxy params
+  >   - `_listen` - for all listen directives; also stores SSL configuration
+  >   - `_server` - for domains (localhost) configuration; also stores backends definitions
+  > - `modules` - for modules which are dynamically loading into NGINX
+  > - `snippets` - for NGINXs aliases, configuration of logrotate and other
+  >
+  > I attach some of them, if necessary, to files which has `server` directives.
+
 ###### Example
 
 ```bash
