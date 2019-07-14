@@ -431,7 +431,16 @@ Existing chapters:
     - [x] _Nginx Official Forum_
     - [x] _Nginx Official Mailing List_
   - _Presentations_
-    - [x] _Nginx Internals_
+    - [x] _NGINX: Basics and Best Practices_
+    - [x] _NGINX Installation and Tuning_
+    - [x] _Nginx Internals (by Joshua Zhu)_
+    - [x] _Nginx internals (by Liqiang Xu)_
+    - [x] _How to secure your web applications with NGINX_
+    - [x] _Tuning TCP and NGINX on EC2_
+    - [x] _Extending functionality in nginx, with modules!_
+    - [x] _Nginx - Tips and Tricks._
+    - [x] _Nginx Scripting - Extending Nginx Functionalities with Lua_
+    - [x] _How to handle over 1,200,000 HTTPS Reqs/Min_
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
@@ -915,7 +924,16 @@ _In this ebook you will learn:_
 ##### Presentations
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/joshzhu/nginx-internals"><b>Nginx Internals</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/Nginx/nginx-basics-and-best-practices"><b>NGINX: Basics and Best Practices</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/Nginx/nginx-installation-and-tuning"><b>NGINX Installation and Tuning</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/joshzhu/nginx-internals"><b>Nginx Internals (by Joshua Zhu)</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/feifengxlq/nginx-internals-10514355"><b>Nginx internals (by Liqiang Xu)</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/wallarm/how-to-secure-your-web-applications-with-nginx"><b>How to secure your web applications with NGINX</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/chartbeat/tuning-tcp-and-nginx-on-ec2"><b>Tuning TCP and NGINX on EC2</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/trygvevea/extending-functionality-in-nginx-with-modules"><b>Extending functionality in nginx, with modules!</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/tuxtoti/nginx-tips-and-tricks-13087831"><b>Nginx - Tips and Tricks.</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/TonyFabeen/nginx-scripting-extending-nginx-functionalities-with-lua"><b>Nginx Scripting - Extending Nginx Functionalities with Lua</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/kazeburo/advanced-nginx-in-mercari-how-to-handle-over-1200000-https-reqsmin"><b>How to handle over 1,200,000 HTTPS Reqs/Min</b></a><br>
 </p>
 
 ##### Playgrounds
