@@ -441,6 +441,7 @@ Existing chapters:
     - [x] _Nginx - Tips and Tricks._
     - [x] _Nginx Scripting - Extending Nginx Functionalities with Lua_
     - [x] _How to handle over 1,200,000 HTTPS Reqs/Min_
+    - [x] _Using ngx_lua / lua-nginx-module in pixiv_
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
@@ -934,6 +935,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/tuxtoti/nginx-tips-and-tricks-13087831"><b>Nginx - Tips and Tricks.</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/TonyFabeen/nginx-scripting-extending-nginx-functionalities-with-lua"><b>Nginx Scripting - Extending Nginx Functionalities with Lua</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/kazeburo/advanced-nginx-in-mercari-how-to-handle-over-1200000-https-reqsmin"><b>How to handle over 1,200,000 HTTPS Reqs/Min</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/harukayon/ngx-lua-public"><b>Using ngx_lua / lua-nginx-module in pixiv</b></a><br>
 </p>
 
 ##### Playgrounds
