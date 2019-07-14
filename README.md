@@ -430,6 +430,8 @@ Existing chapters:
   - _Nginx official_
     - [x] _Nginx Official Forum_
     - [x] _Nginx Official Mailing List_
+  - _Presentations_
+    - [x] _Nginx Internals_
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - [x] _Comparison reviews_
@@ -910,6 +912,12 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS</b></a><br>
 </p>
 
+##### Presentations
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/joshzhu/nginx-internals"><b>Nginx Internals</b></a><br>
+</p>
+
 ##### Playgrounds
 
 <p>
@@ -1360,6 +1368,8 @@ There are also great resources (also makes comparisons) about them:
 - [I/O Multiplexing using epoll and kqueue System Calls](https://austingwalters.com/io-multiplexing/)
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
 - [The C10K problem](http://www.kegel.com/c10k.html)
+
+This [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great information about the internals of NGINX, just in case.
 
 Look also at libevent benchmark (and if you want to read about [libevent – an event notification library](http://libevent.org/)):
 
