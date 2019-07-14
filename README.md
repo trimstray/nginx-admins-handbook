@@ -74,6 +74,7 @@
   * [Comparison reviews](#comparison-reviews)
   * [Cheatsheets & References](#cheatsheets--references)
   * [Performance & Hardening](#performance--hardening)
+  * [Presentations](#presentations)
   * [Playgrounds](#playgrounds)
   * [Config generators](#config-generators)
   * [Static analyzers](#static-analyzers)
@@ -1419,6 +1420,10 @@ NGINX uses Event-Driven architecture which heavily relies on Non-Blocking IO. Lo
   > _It’s well known that NGINX uses an asynchronous, event‑driven approach to handling connections. This means that instead of creating another dedicated process or thread for each request (like servers with a traditional architecture), it handles multiple connections and requests in one worker process. To achieve this, NGINX works with sockets in a non‑blocking mode and uses efficient methods such as epoll and kqueue._
 
   > _Because the number of full‑weight processes is small (usually only one per CPU core) and constant, much less memory is consumed and CPU cycles aren’t wasted on task switching. The advantages of such an approach are well‑known through the example of NGINX itself. It successfully handles millions of simultaneous requests and scales very well._
+
+Perhaps it is worth mentioning about Non-Blocking and 3rd party modules:
+
+  > Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs.
 
 To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded (it can fork several processes to utilize multiple cores) but NGINX is not a single threaded application.
 
@@ -5454,6 +5459,8 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed o
 ##### 3rd party modules
 
   > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release.
+
+  > Before installing external modules please read [Event-Driven architecture](#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX's performance.
 
 Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
 
