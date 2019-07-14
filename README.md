@@ -7591,6 +7591,16 @@ server {
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
+  > The server_name `_` is not required in modern versions of NGINX. If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
+
+  > It is a simple procedure for all non defined server names:
+  >
+  > - one `server` block, with...
+  > - `listen` directive, with...
+  > - `default_server` parameter, with...
+  > - only one `server_name` definition, and...
+  > - preventively I add it at the beginning of the configuration.
+
   > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in NGINX.
 
 ###### Example
@@ -7606,7 +7616,8 @@ server {
   #   - invalid domain names
   #   - requests without the "Host" header
   #   - and all others (also due to the above setting)
-  #   - default_server in server_name directive is not required - I add this for a better understanding
+  #   - default_server in server_name directive is not required - I add this for a better understanding and I think it's an unwritten standard
+  # ...but you should know that it's irrelevant, really, you can put in everything there.
   server_name _ "" default_server;
 
   ...
@@ -9537,6 +9548,8 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 # Configuration Examples
 
   > Remember to make a copy of the current configuration and all files/directories.
+
+This chapter is still work in progress.
 
 ## Installation
 
