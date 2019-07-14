@@ -335,7 +335,7 @@
 
   > Before you start playing with NGINX please read an official **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
-**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
+**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler.
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a:
 
@@ -343,6 +343,8 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - reliable load balancer
 - high performance caching server
 - full-fledged web platform
+
+When it comes to performance NGINX can easily handle as much traffic as you can throw at it. Another biggest advantage is flexibility because NGINX allows to do the same thing in different ways.
 
 Generally it provides the core of complete web stacks and is designed to help build scalable web applications. For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -366,7 +368,7 @@ When I was studying architecture of HTTP servers I became interested in NGINX. I
 
 I was interested in everything: NGINX internals, functions, security best practice, performance optimisations, tips & tricks, hacks and rules, but all documents treated the subject lightly.
 
-Of course, I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) or [Nginx Guts](http://www.nginxguts.com/). On a different note, these are definitely the best assets for us and in the first place you should seek help there.
+Of course, I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/) or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). On a different note, these are definitely the best assets for us and in the first place you should seek help there.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet (if it's possible) which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
