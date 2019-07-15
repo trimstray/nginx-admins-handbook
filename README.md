@@ -7747,11 +7747,43 @@ server {
 
 ###### Rationale
 
-  > Use map or geo modules (one of them) to prevent users abusing your servers. This allows to create variables with values depending on the client IP address.
+  > Use `map` or `geo` modules (one of them) to prevent users abusing your servers. This allows to create variables with values depending on the client IP address.
 
-  > Since variables are evaluated only when used, the mere existence of even a large number of declared geo variables does not cause any extra costs for request processing.
+  > Since variables are evaluated only when used, the mere existence of even a large number of declared e.g. geo variables does not cause any extra costs for request processing.
 
   > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`.
+
+  > I use both modules for a large lists. You should've thought about it because this rule requires to use several `if` conditions. I think that `allow/deny` directives are better solution for simple lists, after all. Take a look at the example below:
+
+```bash
+# Allow/deny:
+location /internal {
+
+  include acls/internal.conf;
+  allow   192.168.240.0/24;
+  deny    all;
+
+  ...
+
+# vs geo/map:
+location /internal {
+
+  if ($globals_internal_map_acl) {
+    set $pass 1;
+  }
+
+  if ($pass = 1) {
+    proxy_pass http://localhost:80;
+  }
+
+  if ($pass != 1) {
+    return 403;
+  }
+
+  ...
+
+}
+```
 
 ###### Example
 
