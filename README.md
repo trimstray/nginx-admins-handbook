@@ -105,6 +105,7 @@
     * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
     * [rewrite vs return](#rewrite-vs-return)
+    * [try_files directive](#try-files-directive)
     * [if, break and set](#if-break-and-set)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
@@ -470,6 +471,7 @@ Existing chapters:
 
   - _Server blocks logic_
     - [x] _rewrite vs return_
+    - [x] _try_files directive_
     - [x] _if, break and set_
   - _Log files_
     - [x] _Conditional logging_
@@ -2117,6 +2119,80 @@ server {
 
 }
 ```
+
+- and sometimes for reply with HTTP code without serving a file:
+
+```bash
+server {
+
+  ...
+
+  # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response)
+  return 204 "it's all okay";
+  # Because default Content-Type is application/octet-stream, browser will offer to "save the file". If you want to see reply in browser you should add properly Content-Type:
+  # add_header Content-Type text/plain;
+
+}
+```
+
+##### `try_files` directive
+
+We have one more very interesting and important directive: `try_files` (from `ngx_http_core_module`). This directive tells NGINX to check for the existence of a named set of files or directories (checks files conditionally breaking on success).
+
+I think the best explanation come from official documentation:
+
+  > _`try_files` checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. The path to a file is constructed from the file parameter according to the root and alias directives. It is possible to check directory’s existence by specifying a slash at the end of a name, e.g. `$uri/`. If none of the files were found, an internal redirect to the uri specified in the last parameter is made._
+
+Generally it may check files on disk, redirect to proxies, or internal locations, and return error codes, all in one directive.
+
+Take a look at the following example:
+
+```bash
+server {
+
+  ...
+
+  root /var/www/example.com;
+
+  location / {
+
+    try_files $uri $uri/ /frontend/index.html;
+
+  }
+
+  location ^~ /images {
+
+    root /var/www/static;
+    try_files $uri $uri/ =404;
+
+  }
+
+  ...
+```
+
+- default root directory for all locations is `/var/www/example.com`
+
+- `location /` - matches all locations without more specific locations, e.g. exact names
+
+  - `try_files $uri` - when you receive a URI that's matched by this block try `$uri` first
+
+    > For example: `https://example.com/tools/en.js` - NGINX will try to check if there's a file inside `/tools` called `en.js`, if found it, serve it in the first place.
+
+  - `try_files $uri $uri/` - if you didn't find the first condition `$uri` try the URI as a directory
+
+    > For example: `https://example.com/backend/` - NGINX will try first check if a file called `backend` exists, if can't find it then goes to second check `$uri/` and see if there's a directory called `backend` exists then it will try serving it.
+
+- `location ^~ /images` - handle any query beginning with `/images` and halts searching
+
+  - `try_files $uri` - when you receive a URI that's matched by this block try `$uri` first
+
+    > For example: `https://example.com/images/01.gif` - NGINX will try to check if there's a file inside `/images` called `01.gif`, if found it, serve it in the first place.
+
+  - `try_files $uri $uri/` - if you didn't find the first condition `$uri` try the URI as a directory
+
+    > For example: `https://example.com/images/` - NGINX will try first check if a file called `images` exists, if can't find it then goes to second check `$uri/` and see if there's a directory called `images` exists then it will try serving it.
+
+  - `try_files $uri $uri/ =404` - if a file and directory not found, NGINX sends `HTTP 404` (Not Found)
 
 ##### `if`, `break` and `set`
 
