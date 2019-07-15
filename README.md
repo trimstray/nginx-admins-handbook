@@ -274,6 +274,7 @@
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
+  * [Use try_files directive to ensure a file exists](#beginner-use-try-files-directive-to-ensure-a-file-exists)
   * [Use return directive instead rewrite for redirects](#beginner-use-return-directive-instead-rewrite-for-redirects)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
@@ -597,7 +598,7 @@ Existing chapters:
   - [x] _Format, prettify and indent your Nginx code_
   - [ ] _Never use a hostname in a listen directive_
   - [ ] _Making a rewrite absolute (with scheme)_
-  - [ ] _Use "return" directive for URL redirection (301, 302)_
+  - [ ] _Use return directive for URL redirection (301, 302)_
   - [x] _Configure log rotation policy_
 
 </details>
@@ -615,10 +616,10 @@ Existing chapters:
 <details>
 <summary><b>Performance</b></summary><br>
 
-  - [ ] _Use "index" directive in the http block_
+  - [ ] _Use index directive in the http block_
   - [ ] _Avoid multiple "index" directives_
-  - [ ] _Use "$request_uri" to avoid using regular expressions_
-  - [ ] _Use "try_files" directive to ensure a file exists_
+  - [ ] _Use $request_uri to avoid using regular expressions_
+  - [x] _Use try_files directive to ensure a file exists_
   - [ ] _Don't pass all requests to backends - use "try_files"_
   - [x] _Use return directive instead rewrite for redirects_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
@@ -694,14 +695,14 @@ I also got the highest note from Mozilla:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (53) from this handbook.
+  > This checklist contains all rules (54) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 22 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 17 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 18 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 5 | as an option to implement or use (not required) |
 
@@ -738,6 +739,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)<br><sup>Use it if you need to search for a file, it saving duplication of code also.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use return directive instead rewrite for redirects](#beginner-use-return-directive-instead-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -2031,7 +2033,7 @@ Note:
 
 <sup><i>This explanation is based on the awesome answer by [Pothi Kalimuthu](https://serverfault.com/users/102173/pothi-kalimuthu) to [nginx url rewriting: difference between break and last](https://serverfault.com/a/829148).</i></sup>
 
-For more info please read [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html).
+Official documentation has a great tutorials about [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html).
 
 ###### `return` directive
 
@@ -8170,9 +8172,9 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 
   > The `worker_processes` directive is the sturdy spine of life for NGINX. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s).
 
-  > I think for high load proxy servers (also standalone servers) good value is `ALL_CORES - 1` (please test it before used).
-
   > Rule of thumb: If much time is spent blocked on I/O, worker processes should be increased further.
+
+  > I think for high load proxy servers (also standalone servers) interesting value is `ALL_CORES - 1`.
 
   Official NGINX documentation say:
 
@@ -8295,8 +8297,9 @@ server {
 
 ###### Example
 
+Bad configuration:
+
 ```bash
-# Bad configuration:
 server {
 
   ...
@@ -8314,8 +8317,11 @@ server {
   ...
 
 }
+```
 
-# Good configuration:
+Good configuration:
+
+```bash
 server {
 
     server_name               www.domain.com;
@@ -8340,6 +8346,70 @@ server {
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [if, break and set (from this Handbook)](#if-break-and-set)
+
+#### :beginner: Use `try_files` directive to ensure a file exists
+
+###### Rationale
+
+  > `try_files` is definitely a very useful thing. You can use `try_files` directive to check a file exists in a specified order.
+
+  > You should use `try_files` instead of `if` directive. It's definitely better way than using `if` for this action because `if` directive is extremely inefficient since it is evaluated every time for every request.
+
+  > The advantage of using `try_files` is that the behavior switches immediately with one command. I think the code is more readable also.
+
+  > `try_files` allows you:
+  >
+  > - to check if the file exists from a predefined list
+  > - to check if the file exists from a specified directory
+  > - to use an internal redirect if none of the files are found
+
+###### Example
+
+Bad configuration:
+
+```bash
+
+  ...
+
+  root /var/www/example.com;
+
+  location /images {
+
+    if (-f $request_filename) {
+
+      expires 30d;
+      break;
+
+    }
+
+  ...
+
+}
+```
+
+Good configuration:
+
+```bash
+
+  ...
+
+  root /var/www/example.com;
+
+  location /images {
+
+    try_files $uri =404;
+
+  ...
+
+}
+```
+
+###### External resources
+
+- [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/)
+- [Pitfalls and Common Mistakes](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/)
+- [Serving Static Content](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/)
+- [Serve files with nginx conditionally](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/)
 
 #### :beginner: Use `return` directive instead `rewrite` for redirects
 
