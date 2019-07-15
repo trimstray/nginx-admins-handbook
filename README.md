@@ -105,7 +105,7 @@
     * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
     * [rewrite vs return](#rewrite-vs-return)
-    * [try_files directive](try_files-directive)
+    * [try_files directive](#try_files-directive)
     * [if, break and set](#if-break-and-set)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
