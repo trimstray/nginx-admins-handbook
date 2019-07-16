@@ -380,7 +380,7 @@ For me, however, there hasn't been a truly in-depth and reasonably simple (if it
 
   > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features and capabilities of NGINX. You'll find out for example: how to testing the performance or how to resolve debugging problems. You will discover as several good practices related to hardening and how to handle common issues also.
+Throughout this handbook you will explore the many features and capabilities of NGINX. You'll find out for example: how to testing the performance or how to resolve debugging problems. You will discover as several good practices related to hardening and how to handle common issues.
 
 In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX server. They give us insight into NGINX internals also.
 
@@ -1084,7 +1084,7 @@ _In this ebook you will learn:_
 
   > If you compile NGINX server by default all files and directories are available from `/usr/local/nginx` location.
 
-For prebuilt NGINX package paths can be as follows (it depends on the type of system):
+For upstream NGINX packaging paths can be as follows (it depends on the type of system):
 
 - `/etc/nginx` - is the default configuration root for the NGINX service<br>
   * other locations: `/usr/local/etc/nginx`, `/usr/local/nginx/conf`
@@ -1096,7 +1096,7 @@ For prebuilt NGINX package paths can be as follows (it depends on the type of sy
 - `/var/cache/nginx` - is the default temporary files location for NGINX<br>
   * other locations: `/var/lib/nginx`
 - `/etc/nginx/conf` - contains custom/vhosts configuration files<br>
-  * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled`
+  * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled` (I can't stand this debian-like convention...)
 - `/var/run/nginx` - contains information about NGINX process(es)<br>
   * other locations: `/usr/local/nginx/logs`, `logs/` in root directory
 
@@ -1432,7 +1432,7 @@ You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 
 NGINX uses Event-Driven architecture which heavily relies on Non-Blocking I/O. One advantage of non-blocking/asynchronous operations is that you can maximize the usage of a single CPU as well as memory because is that your thread can continue it's work in parallel.
 
-  > There is a perfectly good [explanation](https://stackoverflow.com/questions/8546273/is-non-blocking-i-o-really-faster-than-multi-threaded-blocking-i-o-how) about non-blocking I/O and multi-threaded blocking I/O by [Werner Henze](https://stackoverflow.com/users/1023911/werner-henze).
+  > There is a perfectly good and brief [summary](https://stackoverflow.com/questions/8546273/is-non-blocking-i-o-really-faster-than-multi-threaded-blocking-i-o-how) about non-blocking I/O and multi-threaded blocking I/O by [Werner Henze](https://stackoverflow.com/users/1023911/werner-henze).
 
 Look what the official documentation says about it:
 
@@ -1450,7 +1450,7 @@ However, NGINX is not a single threaded application. Each of worker processes is
 
 That way, the I/O and network operations are not a very big bottleneck (remember that your CPU would spend a lot of time waiting for your network interfaces, for example). This results from the fact that NGINX only use one thread to service all requests. When requests arrive at the server, they are serviced one at a time. However, when the code serviced needs other thing to do it sends the callback to the other queue and the main thread will continue running (it doesn't wait).
 
-Now you see why NGINX can handle a large amount of requests perfectly well (and without problems).
+Now you see why NGINX can handle a large amount of requests perfectly well (and without any problems).
 
 For more information take a look at following resources:
 
@@ -1473,7 +1473,7 @@ NGINX uses a custom event loop which was designed specifically for NGINX - all c
 
 Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()` or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
-See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great information about the internals of NGINX.
+See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of NGINX.
 
 NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
 
@@ -1510,7 +1510,9 @@ I think that the chance of running out of file descriptors is minimal. However, 
 
 ```bash
 # List all file descriptors in kernel memory:
-#   <allocated file handles> <unused-but-allocated file handles> <the system-wide max number of file handles>
+#   first value:  <allocated file handles>
+#  second value:  <unused-but-allocated file handles>
+#   third value:  <the system-wide max number of file handles>
 sysctl fs.file-nr
 
 # Find out the system-wide maximum number of file handles:
@@ -1587,18 +1589,18 @@ Look also at these diagrams:
 - 2 file handlers for two simultaneous connections from the same client (1, 4), 1 file handler for connection with other client (3), 2 file handlers for static files (2, 5), and 1 file handler for a open socket to the remote or local host/process (6), so in total it is 6 file descriptors:
 
 ```
-                 4
+                  4
       +-----------------------+
-      |              +-----------------+
+      |              +--------|--------+
 +-----v----+         |        |        |
 |          |    1    |        v        |  6
-|  CLIENT <------+--------> NGINX <---------------+
-|          |     |   |        ^        |    +-----v-----+
-+----------+     |   |        |        |    |           |
-               3 |   |      2 | 5      |    |  BACKEND  |
-+----------+     |   |        |        |    |           |
-|          |     |   |        |        |    +-----------+
-|  CLIENT  <-----+   | +------v------+ |
+|  CLIENT <-----+---------> NGINX <---------------+
+|          |    |    |        ^        |    +-----v-----+
++----------+    |    |        |        |    |           |
+              3 |    |      2 | 5      |    |  BACKEND  |
++----------+    |    |        |        |    |           |
+|          |    |    |        |        |    +-----------+
+|  CLIENT  <----+    | +------v------+ |
 |          |         | | STATIC FILE | |
 +----------+         | +-------------+ |
                      +-----------------+
@@ -1640,7 +1642,7 @@ There is a great article about [Optimizing Nginx for High Traffic Loads](https:/
 
 #### Request processing stages
 
-There can be altogether 11 phases when NGINX handles a request:
+There can be altogether 11 phases when NGINX handles (processes) a request:
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
   - example modules: [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
@@ -2149,7 +2151,8 @@ server {
 
   # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response)
   return 204 "it's all okay";
-  # Because default Content-Type is application/octet-stream, browser will offer to "save the file". If you want to see reply in browser you should add properly Content-Type:
+  # Because default Content-Type is application/octet-stream, browser will offer to "save the file".
+  # If you want to see reply in browser you should add properly Content-Type:
   # add_header Content-Type text/plain;
 
 }
@@ -2202,7 +2205,11 @@ server {
 
     > For example: `https://example.com/backend/` - NGINX will try first check if a file called `backend` exists, if can't find it then goes to second check `$uri/` and see if there's a directory called `backend` exists then it will try serving it.
 
+  - `try_files $uri $uri/ /frontend/index.html` - if a file and directory not found, NGINX sends `/frontend/index.html`
+
 - `location ^~ /images` - handle any query beginning with `/images` and halts searching
+
+  - default root directory for this location is `/var/www/static`
 
   - `try_files $uri` - when you receive a URI that's matched by this block try `$uri` first
 
@@ -2260,18 +2267,18 @@ if ($test = ABC) {
 
 #### Log files
 
-Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the `NGX_HTTP_LOG_PHASE`).
+Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the last phase: `NGX_HTTP_LOG_PHASE`).
 
 By default:
 
-- the access log is located at `logs/access.log`, but I suggest you take it to `/var/log/nginx` directory
+- the access log is located in `logs/access.log`, but I suggest you take it to `/var/log/nginx` directory
 - data is written in the predefined `combined` format
 
 ##### Conditional logging
 
 Sometimes certain entries are there just to fill up the logs or are cluttering them. I sometimes exclude requests - by client IP or whatever else - when I want to debug log files more effective.
 
-So in this example if the `$error_codes` variable’s value is zero - then log nothing (default action), but if 1 (e.g. `404` or `503` from backend) - to save this request to the log:
+So in this example if the `$error_codes` variable’s value is 0 - then log nothing (default action), but if 1 (e.g. `404` or `503` from backend) - to save this request to the log:
 
 ```bash
 # Define map in the http context:
@@ -7701,10 +7708,10 @@ server {
   > It is a simple procedure for all non defined server names:
   >
   > - one `server` block, with...
-  > - `listen` directive, with...
+  > - complete `listen` directive, with...
   > - `default_server` parameter, with...
   > - only one `server_name` definition, and...
-  > - preventively I add it at the beginning of the configuration.
+  > - preventively I add it at the beginning of the configuration
 
   > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in NGINX.
 
@@ -7786,7 +7793,7 @@ server {
 
   > _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
 
-  Look also this:
+  Also take a look at this:
 
   > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, RFC 6066), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
 
@@ -8251,7 +8258,7 @@ log_format debug-ssl-level-0
                 '$request_time '
                 '$tls_version $ssl_protocol $ssl_cipher';
 
-# Log format for GEO module (ngx_http_geoip_module):
+# Log format for GeoIP module (ngx_http_geoip_module):
 log_format geoip-level-0
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
@@ -8552,7 +8559,7 @@ server {
 
   ...
 
-  if ($host = www.domain.com) {
+  if ($host = api.domain.com) {
 
     return                    403;
     # or other examples:
