@@ -350,7 +350,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - high performance caching server
 - full-fledged web platform
 
-When it comes to performance NGINX can easily handle as much traffic as you can throw at it. Another biggest advantage is flexibility because NGINX allows to do the same thing in different ways.
+When it comes to performance NGINX can easily handle a large amount of traffic (as much traffic as you can throw at it). Another biggest advantage is flexibility because NGINX allows to do the same thing in different ways.
 
 Generally it provides the core of complete web stacks and is designed to help build scalable web applications. For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -376,15 +376,17 @@ I was interested in everything: NGINX internals, functions, security best practi
 
 Of course, I know that we also have great resources like a [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/) or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). On a different note, these are definitely the best assets for us and in the first place you should seek help there.
 
-For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet (if it's possible) which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
+For me, however, there hasn't been a truly in-depth and reasonably simple (if it's possible) cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
   > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments). Many of these refer to external resources.
 
-Throughout this handbook you will explore the many features of NGINX. You will also learn for example: how to testing the performance or how to resolve debugging problems. You will discover as several practices related to hardening.
+Throughout this handbook you will explore the many features and capabilities of NGINX. You'll find out for example: how to testing the performance or how to resolve debugging problems. You will discover as several good practices related to hardening and how to handle common issues also.
 
-If you do not have the time to read hundreds of articles this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
+In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX server. They give us insight into NGINX internals also.
 
-I did my best to make this handbook a single and consistent. Of course I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
+
+I did my best to make this handbook a single and consistent. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
 Before you start remember about the two most important things:
 
@@ -552,6 +554,8 @@ Existing chapters:
       - [x] _Core dump backtrace_
     - _SystemTap cheatsheet_
       - [x] _stapxx_
+  - _Errors & Issues_
+    - [ ] _Common errors_
   - _Configuration snippets_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
@@ -668,7 +672,9 @@ Many of these recipes have been applied to the configuration of my private websi
 
   > Read about SSL Labs grading [here](https://community.qualys.com/docs/DOC-6321-ssl-labs-grading-2018) (SSL Labs Grading 2018).
 
-  > Short SSL Labs grades explanation: _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old clients)_.
+Short SSL Labs grades explanation:
+
+  > _A+ is clearly the desired grade, both A and B grades are acceptable and result in adequate commercial security. The B grade, in particular, may be applied to configurations designed to support very wide audiences (for old clients)_.
 
 I finally got **A+** grade and following scores:
 
@@ -769,7 +775,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 ## Printable high-res hardening cheatsheets
 
-I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200) based on these recipes:
+I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200) based on recipes from this handbook:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
@@ -1067,6 +1073,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.bbc.co.uk/blogs/internet/entries/17d22fb8-cea2-49d5-be14-86e7a1dcde04"><b>BBC Digital Media Distribution: How we improved throughput by 4x</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.kegel.com/c10k.html"><b>The C10K problem by Dan Kegel</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://highscalability.com/blog/2013/5/13/the-secret-to-10-million-concurrent-connections-the-kernel-i.html"><b>The Secret To 10 Million Concurrent Connections</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://hpbn.co/"><b>High Performance Browser Networking</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
@@ -1077,7 +1084,7 @@ _In this ebook you will learn:_
 
   > If you compile NGINX server by default all files and directories are available from `/usr/local/nginx` location.
 
-For prebuilt NGINX package paths can be as follows:
+For prebuilt NGINX package paths can be as follows (it depends on the type of system):
 
 - `/etc/nginx` - is the default configuration root for the NGINX service<br>
   * other locations: `/usr/local/etc/nginx`, `/usr/local/nginx/conf`
@@ -1110,7 +1117,7 @@ inflight requests
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
-Some snippets to test, start, stop, and restart processes:
+Some useful snippets for process management:
 
 - testing configuration:
 
@@ -1174,13 +1181,13 @@ Variables start with `$`. Some modules introduce variables can be used when sett
 
   > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
 
-To assign value to the variable you should use `set` directive:
+To assign value to the variable you should use a `set` directive:
 
 ```bash
 set $var "value";
 ```
 
-  > To learn more about NGINX variables see [`if`, `break` and `set`](#if-break-and-set) section.
+  > To learn more about variables see [`if`, `break` and `set`](#if-break-and-set) section.
 
 Some interesting things about variables in NGINX:
 
@@ -1201,7 +1208,7 @@ Variables in quoted strings are expanded normally unless the `$` is escaped.
 
   > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
 
-Configuration options are called directives. We have four types of directives in NGINX:
+Configuration options are called directives. We have four types of directives:
 
 - standard directive - one value per context:
   ```bash
@@ -1222,7 +1229,7 @@ Configuration options are called directives. We have four types of directives in
 
   > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
-Directives are organised into groups known as blocks or contexts. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
+Directives are organised into groups known as **blocks** or **contexts**. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
 
@@ -1358,7 +1365,7 @@ The worker processes do the actual processing of requests and get commands from 
 
 The following signals can be sent to the NGINX master process:
 
-| <b>SIGNAL</b> | <b>ID</b> | <b>DESCRIPTION</b> |
+| <b>SIGNAL</b> | <b>NUM</b> | <b>DESCRIPTION</b> |
 | :---         | :---:        | :---         |
 | `TERM`, `INT` | **15**, **2** | quick shutdown |
 | `QUIT` | **3** | graceful shutdown |
@@ -1370,7 +1377,7 @@ The following signals can be sent to the NGINX master process:
 
 There’s no need to control the worker processes yourself. However, they support some signals too:
 
-| <b>SIGNAL</b> | <b>ID</b> | <b>DESCRIPTION</b> |
+| <b>SIGNAL</b> | <b>NUM</b> | <b>DESCRIPTION</b> |
 | :---         | :---:        | :---         |
 | `TERM`, `INT` | **15**, **2** | quick shutdown |
 | `QUIT` | **3** | graceful shutdown |
@@ -1384,11 +1391,15 @@ In general there are four types of event multiplexing:
 
 - `select` - is anachronism and not recommended but installed on all platforms as a fallback
 - `poll` - is anachronism and not recommended
+
+And the most efficient implementations of non-blocking I/O:
+
 - `epoll` - recommend if you're using GNU/Linux
 - `kqueue` - recommend if you're using BSD (is technically superior to `epoll`)
 
 There are also great resources (also makes comparisons) about them:
 
+- [Kqueue: A generic and scalable event notification facility](https://people.freebsd.org/~jlemon/papers/kqueue.pdf)
 - [poll vs select vs event-based](https://daniel.haxx.se/docs/poll-vs-select.html)
 - [select/poll/epoll: practical difference for system architects](http://www.ulduzsoft.com/2014/01/select-poll-epoll-practical-difference-for-system-architects/)
 - [Scalable Event Multiplexing: epoll vs. kqueue](https://people.eecs.berkeley.edu/~sangjin/2012/12/21/epoll-vs-kqueue.html)
@@ -1400,7 +1411,7 @@ There are also great resources (also makes comparisons) about them:
 - [Benchmarking BSD and Linux](http://bulk.fefe.de/scalability/)
 - [The C10K problem](http://www.kegel.com/c10k.html)
 
-Look also at libevent benchmark (and if you want to read about [libevent – an event notification library](http://libevent.org/)):
+Look also at libevent benchmark (read about [libevent – an event notification library](http://libevent.org/)):
 
 <p align="center">
   <a href="https://www.nginx.com/resources/library/infographic-inside-nginx/">
@@ -1419,22 +1430,31 @@ You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 
   > [Thread Pools in NGINX Boost Performance 9x!](https://www.nginx.com/blog/thread-pools-boost-performance-9x/) - this official article is an amazing explanation about thread pools and generally about handling connections. I also recommend [Inside NGINX: How We Designed for Performance & Scale](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale). Both are really great.
 
-NGINX uses Event-Driven architecture which heavily relies on Non-Blocking IO. Look what the official documentation says about it:
+NGINX uses Event-Driven architecture which heavily relies on Non-Blocking I/O. One advantage of non-blocking/asynchronous operations is that you can maximize the usage of a single CPU as well as memory because is that your thread can continue it's work in parallel.
+
+  > There is a perfectly good [explanation](https://stackoverflow.com/questions/8546273/is-non-blocking-i-o-really-faster-than-multi-threaded-blocking-i-o-how) about non-blocking I/O and multi-threaded blocking I/O by [Werner Henze](https://stackoverflow.com/users/1023911/werner-henze).
+
+Look what the official documentation says about it:
 
   > _It’s well known that NGINX uses an asynchronous, event‑driven approach to handling connections. This means that instead of creating another dedicated process or thread for each request (like servers with a traditional architecture), it handles multiple connections and requests in one worker process. To achieve this, NGINX works with sockets in a non‑blocking mode and uses efficient methods such as epoll and kqueue._
 
   > _Because the number of full‑weight processes is small (usually only one per CPU core) and constant, much less memory is consumed and CPU cycles aren’t wasted on task switching. The advantages of such an approach are well‑known through the example of NGINX itself. It successfully handles millions of simultaneous requests and scales very well._
 
-Perhaps it is worth mentioning about Non-Blocking and 3rd party modules:
+I must not forget to mention here about Non-Blocking and 3rd party modules (from official documentation):
 
   > Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs.
 
-To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded (it can fork several processes to utilize multiple cores) but NGINX is not a single threaded application.
+To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded but it can fork several processes to utilize multiple cores.
 
-Each of worker processes is single-threaded and can handle thousands of concurrent connections. NGINX does not create a new process/thread for each connection/requests but it starts several worker threads during start. It does this asynchronously with one thread, rather than using multi-threaded programming (it uses an event loop with asynchronous I/O).
+However, NGINX is not a single threaded application. Each of worker processes is single-threaded and can handle thousands of concurrent connections. NGINX does not create a new process/thread for each connection/requests but it starts several worker threads during start. It does this asynchronously with one thread, rather than using multi-threaded programming (it uses an event loop with asynchronous I/O).
+
+That way, the I/O and network operations are not a very big bottleneck (remember that your CPU would spend a lot of time waiting for your network interfaces, for example). This results from the fact that NGINX only use one thread to service all requests. When requests arrive at the server, they are serviced one at a time. However, when the code serviced needs other thing to do it sends the callback to the other queue and the main thread will continue running (it doesn't wait).
+
+Now you see why NGINX can handle a large amount of requests perfectly well (and without problems).
 
 For more information take a look at following resources:
 
+- [Asynchronous, Non-Blocking I/O](https://medium.com/@entzik/on-asynchronous-non-blocking-i-o-4a2ac0af5c50)
 - [About High Concurrency, NGINX architecture and internals](http://www.aosabook.org/en/nginx.html)
 - [A little holiday present: 10,000 reqs/sec with Nginx!](https://blog.webfaction.com/2008/12/a-little-holiday-present-10000-reqssec-with-nginx-2/)
 - [Nginx vs Apache: Is it fast, if yes, why?](http://planetunknown.blogspot.com/2011/02/why-nginx-is-faster-than-apache.html)
@@ -1443,7 +1463,7 @@ For more information take a look at following resources:
 
 ##### Multiple processes
 
-NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of SMP.
+NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of symmetric multiprocessing (SMP).
 
 From NGINX documentation:
 
@@ -1453,7 +1473,7 @@ NGINX uses a custom event loop which was designed specifically for NGINX - all c
 
 Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()` or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
-See this presentation ([Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals)) as a lot of great information about the internals of NGINX.
+See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great information about the internals of NGINX.
 
 NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
 
@@ -8282,7 +8302,7 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 
   > Rule of thumb: If much time is spent blocked on I/O, worker processes should be increased further.
 
-  > I think for high load proxy servers (also standalone servers) interesting value is `ALL_CORES - 1`.
+  > I think for high load proxy servers (also standalone servers) interesting value is `ALL_CORES - 1` (or more) because if you're running NGINX with other critical services on the same server, you're just going to thrash the CPUs with all the context switching required to manage all of those processes.
 
   Official NGINX documentation say:
 
