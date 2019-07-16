@@ -352,7 +352,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 
 Generally it provides the core of complete web stacks and is designed to help build scalable web applications.
 
-When it comes to performance NGINX can easily handle a large amount of traffic. Another biggest advantage is flexibility because NGINX allows to do the same thing in different ways.
+When it comes to performance NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
