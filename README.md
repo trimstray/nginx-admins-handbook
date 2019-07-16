@@ -1060,7 +1060,10 @@ _In this ebook you will learn:_
 ##### Other stuff
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/CheatSheetSeries/tree/master/cheatsheets"><b>CheatSheetSeries by OWASP</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/"><b>OWASP Cheat Sheet Series</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://infosec.mozilla.org/guidelines/web_security.html"><b>Mozilla Web Security</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://appsecwiki.com/#/"><b>Application Security Wiki</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/ASVS/tree/master/4.0"><b>OWASP ASVS 4.0</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>
