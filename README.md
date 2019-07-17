@@ -350,9 +350,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - high performance caching server
 - full-fledged web platform
 
-Generally it provides the core of complete web stacks and is designed to help build scalable web applications.
-
-When it comes to performance NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
+Generally it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -1093,15 +1091,21 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 
 - `/etc/nginx` - is the default configuration root for the NGINX service<br>
   * other locations: `/usr/local/etc/nginx`, `/usr/local/nginx/conf`
+
 - `/etc/nginx/nginx.conf` - is the default configuration entry point used by the NGINX services, includes the top-level http block and all other configuration contexts and files<br>
   * other locations: `/usr/local/etc/nginx/nginx.conf`, `/usr/local/nginx/conf/nginx.conf`
+
 - `/usr/share/nginx` - is the default root directory for requests, contains `html` directory and basic static files
+
 - `/var/log/nginx` - is the default log (access and error log) location for NGINX
   * other locations: `logs/` in root directory
+
 - `/var/cache/nginx` - is the default temporary files location for NGINX<br>
   * other locations: `/var/lib/nginx`
+
 - `/etc/nginx/conf` - contains custom/vhosts configuration files<br>
   * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled` (I can't stand this debian-like convention...)
+
 - `/var/run/nginx` - contains information about NGINX process(es)<br>
   * other locations: `/usr/local/nginx/logs`, `logs/` in root directory
 
@@ -1538,10 +1542,7 @@ for _pid in $(pgrep -f "nginx: worker") ; do
 done
 ```
 
-- if you have SELinux enabled, you will need to run `setsebool -P httpd_setrlimit 1` so that NGINX has permissions to set its rlimit
-
-  > You can also use:
-  >   - `sealert -a /var/log/audit/audit.log` - to diagnose SELinux denials and attempts
+- if you have SELinux enabled, you will need to run `setsebool -P httpd_setrlimit 1` so that NGINX has permissions to set its rlimit. To diagnose SELinux denials and attempts you can use `sealert -a /var/log/audit/audit.log`.
 
 - `worker_rlimit_nofile` serves to dynamically change the maximum file descriptors the NGINX worker process can handle, which is typically defined with the system's soft limit
 
@@ -1651,23 +1652,33 @@ There can be altogether 11 phases when NGINX handles (processes) a request:
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
   - example modules: [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+
 - `NGX_HTTP_SERVER_REWRITE_PHASE` - implementation of rewrite directives defined in a server block; to change request URI using PCRE regular expressions, return redirects, and conditionally select configurations
   - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+
 - `NGX_HTTP_FIND_CONFIG_PHASE` - replace the location according to URI (location lookup)
+
 - `NGX_HTTP_REWRITE_PHASE` - URI transformation on location level
   - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+
 - `NGX_HTTP_POST_REWRITE_PHASE` - URI transformation post-processing (the request is redirected to a new location)
   - example modules: [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+
 - `NGX_HTTP_PREACCESS_PHASE` - authentication preprocessing request limit, connection limit (access restriction)
   - example modules: [ngx_http_limit_req_module](http://nginx.org/en/docs/http/ngx_http_limit_req_module.html), [ngx_http_limit_conn_module](http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html), [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+
 - `NGX_HTTP_ACCESS_PHASE` - verification of the client (the authentication process, limiting access)
   - example modules: [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
+
 - `NGX_HTTP_POST_ACCESS_PHASE` - access restrictions check post-processing phase, the certification process, processing `satisfy any` directive
   - example modules: [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html), [ngx_http_auth_basic_module](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html)
+
 - `NGX_HTTP_PRECONTENT_PHASE` - generating content
   - example modules: [ngx_http_try_files_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
+
 - `NGX_HTTP_CONTENT_PHASE` - content processing
   - example modules: [ngx_http_index_module](https://nginx.org/en/docs/http/ngx_http_index_module.html), [ngx_http_autoindex_module](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html), [ngx_http_gzip_module](https://nginx.org/en/docs/http/ngx_http_gzip_module.html)
+
 - `NGX_HTTP_LOG_PHASE` - log processing
   - example modules: [ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
@@ -1692,7 +1703,7 @@ Before start reading this chapter you should know what regular expressions are a
 
 Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skill of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
-It's short example of server block context (two server blocks):
+It's a short example of server block context (two server blocks):
 
 ```bash
 http {
@@ -1761,10 +1772,11 @@ NGINX uses the following logic to determining which virtual server (server block
     Look at this short example:
 
       ```bash
-      # From client:
+      # From client side:
       GET / HTTP/1.0
       Host: api.random.com
 
+      # From server side:
       server {
 
         # This block will be processed:
@@ -1813,14 +1825,35 @@ direct to the first server with a `listen` directive that satisfies first step
 
   > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
-Let's short introduction something about this:
+The location syntax looks like:
+
+```bash
+location optional_modifier location_match { ... }
+```
+
+`location_match` in the above defines what NGINX should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
+
+  - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
+
+  - `=`: is an exact match, without any wildcards, prefix matching or regular expressions; forces a literal match between the request URI and the location parameter
+
+  - `~`: if a tilde modifier is present, this location must be used for case sensitive matching (RE match)
+
+  - `~*`: if a tilde and asterisk modifier is used, the location must be used for case insensitive matching (RE match)
+
+  - `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
+
+And now, a short introduction to determines location priority:
 
 - the exact match is the best priority (processed first); ends search if match
+
 - the prefix match is the second priority; there are two types of prefixes: `^~` and `(none)`, if this match used the `^~` prefix, searching stops
+
 - the regular expression match has the lowest priority; there are two types of prefixes: `~` and `~*`; in the order they are defined in the configuration file
+
 - if regular expression searching yielded a match, that result is used, otherwise, the match from prefix searching is used
 
-Look at this short example from the [Nginx documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
+So look at this example, it comes from the [Nginx documentation - ngx_http_core_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
 
 ```bash
 location = / {
@@ -1857,25 +1890,7 @@ To help you understand how does location match works:
 - [Nginx location match tester](https://nginx.viraptor.info/)
 - [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
 
-The location syntax looks like:
-
-```bash
-location optional_modifier location_match { ... }
-```
-
-`location_match` in the above defines what NGINX should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
-
-  - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
-
-  - `=`: is an exact match, without any wildcards, prefix matching or regular expressions; forces a literal match between the request URI and the location parameter
-
-  - `~`: if a tilde modifier is present, this location must be used for case sensitive matching (RE match)
-
-  - `~*`: if a tilde and asterisk modifier is used, the location must be used for case insensitive matching (RE match)
-
-  - `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
-
-The process of choosing NGINX location block is as follows:
+The process of choosing NGINX location block is as follows (a detailed explanation):
 
 1) Prefix-based NGINX location matches (no regular expression). Each location will be checked against the request URI
 
@@ -1899,7 +1914,19 @@ In order to better understand how this process work please see this short cheats
 
   > I recommend to use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
 
-Ok, so we have following more complicated configuration:
+In conclusion, location picking order is as follows:
+
+1. `= (exactly)`, e.g. `location = /path`
+
+2. `^~ (forward match)`, e.g. `location ^~ /path`
+
+3. `~ (regular expression case sensitive)`, e.g. `location ~ /path/`
+
+4. `~* (regular expression case insensitive)`, e.g. `location ~* .(jpg|png|svg)`
+
+5. `/`, e.g. `location /path`
+
+Ok, so here's a more complicated configuration:
 
 ```bash
 server {
@@ -1960,7 +1987,7 @@ server {
 }
 ```
 
-And here is the table with the results:
+And here's the table with the results:
 
 | <b>URL</b> | <b>LOCATIONS FOUND</b> | <b>FINAL MATCH</b> |
 | :---         | :---         | :---         |
@@ -2359,13 +2386,19 @@ Before we start talking about the load balancing techniques you should know some
 This directive accepts the following options:
 
 - `weight=<num>` - sets the weight of the origin server, e.g. `weight=10`
+
 - `max_conns=<num>` - limits the maximum number of simultaneous active connections from the NGINX proxy server to an upstream server (default value: `0` = no limit), e.g. `max_conns=8`
   - if you set `max_conns=4` the 5th will be rejected
   - if the server group does not reside in the shared memory (`zone` directive), the limitation works per each worker process
+
 - `max_fails=<num>` - the number of unsuccessful attempts to communicate with the backend (default value: `1`, `0` disables the accounting of attempts), e.g. `max_fails=3;`
+
 - `fail_timeout=<time>` - the time during which the specified number of unsuccessful attempts to communicate with the server should happen to consider the server unavailable (default value: `10 seconds`), e.g. `fail_timeout=30s;`
+
 - `zone <name> <size>` - defines shared memory zone that keeps the group’s configuration and run-time state that are shared between worker processes, e.g. `zone backend 32k;`
+
 - `backup` - if server is marked as a backup server it does not receive requests unless both of the other servers are unavailable
+
 - `down` - marks the server as permanently unavailable
 
 ##### Round Robin
@@ -3814,6 +3847,7 @@ class UserBehavior(TaskSet):
           response.failure("author@example.com not found in response")
 
 class WebsiteUser(HttpLocust):
+
   task_set = UserBehavior
   min_wait = 1000 # ms, 1s
   max_wait = 5000 # ms, 5s
@@ -3909,6 +3943,7 @@ class UserBehavior(TaskSet):
       })
 
 class WebsiteUser(HttpLocust):
+
   host = "https://api.example.com"
   task_set = UserBehavior
   min_wait = 2000   # ms, 2s
@@ -5474,11 +5509,13 @@ Look also on this short note about the system locations. That can be useful too:
   - `/bin` - user programs
   - `/sbin` - system programs
   - `/lib` - shared libraries
+
 - Full running environment: `/usr`
   - `/usr/bin` - user programs
   - `/usr/sbin` - system programs
   - `/usr/lib` - shared libraries
   - `/usr/share` - manual pages, data
+
 - Added packages: `/usr/local`
   - `/usr/local/bin` - user programs
   - `/usr/local/sbin` - system programs
@@ -5585,34 +5622,63 @@ You can download external modules from:
 A short description of the modules that I used (not only) in this step-by-step tutorial:
 
 - [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit)** - adds additional generic tools that module developers can use in their own modules
+
 - [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into NGINX
+
 - [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX's rewrite module
+
 - [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX's config file
+
 - [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) - set, add, and clear arbitrary output headers
+
 - [`replace-filter-nginx-module`](https://github.com/openresty/replace-filter-nginx-module) - streaming regular expression replacement in response bodies
+
 - [`array-var-nginx-module`](https://github.com/openresty/array-var-nginx-module) - add supports for array-typed variables to NGINX config files
+
 - [`encrypted-session-nginx-module`](https://github.com/openresty/encrypted-session-nginx-module) - encrypt and decrypt NGINX variable values
+
 - [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
+
 - [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
+
 - [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - can do both regular expression and fixed string substitutions
+
 - [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src) - module to add a sticky cookie to be always forwarded to the same
+
 - [`nginx-module-vts`](https://github.com/vozlt/nginx-module-vts) - Nginx virtual host traffic status module
+
 - [`ngx_brotli`](https://github.com/google/ngx_brotli) - module for Brotli compression
+
 - [`ngx_http_naxsi_module`](https://github.com/nbs-system/naxsi) - is an open-source, high performance, low rules maintenance WAF for NGINX
+
 - [`ngx_http_delay_module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
+
 - [`nginx-backtrace`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
+
 - [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for NGINX memory pool
+
 - [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for NGINX
+
 - [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for NGINX
+
 - [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request upstream server
+
 - [`memc-nginx-module`](https://github.com/agentzh/memc-nginx-module) - extended version of the standard Memcached module
+
 - [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - NGINX-based Media Streaming Server
+
 - [`ngx-fancyindex`](https://github.com/aperezdc/ngx-fancyindex) - generates of file listings, like the built-in autoindex module does, but adding a touch of style
+
 - [`ngx_log_if`](https://github.com/cfsego/ngx_log_if) - allows you to control when not to write down access log
+
 - [`nginx-http-user-agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
+
 - [`ngx_http_auth_pam_module`](https://github.com/sto/ngx_http_auth_pam_module) - module to use PAM for simple http authentication
+
 - [`ngx_http_google_filter_module`](https://github.com/cuber/ngx_http_google_filter_module) - is a filter module which makes google mirror much easier to deploy
+
 - [`nginx-push-stream-module`](https://github.com/wandenberg/nginx-push-stream-module) - a pure stream http push technology for your Nginx setup
+
 - [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
 
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
@@ -5629,15 +5695,15 @@ There are examples:
 ```bash
 # Example of use compiler options:
 # 1)
-#   --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+--with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 # 2)
-#   --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O3 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+--with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O3 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
 
 # Example of use linker options:
 # 1)
-#   --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
+--with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
 # 2)
-#   --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+--with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
 ```
 
 ###### Debugging Symbols
@@ -5663,7 +5729,7 @@ You should also recompile libraries with `-g` compiler option and optional with 
 
 ##### SystemTap
 
-  > SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
+SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
 
   > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
 
@@ -5687,9 +5753,10 @@ stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'
 stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
 ```
 
-  > For installation SystemTap on Ubuntu/Debian:
-  >   - [Ubuntu Wiki - Systemtap](https://wiki.ubuntu.com/Kernel/Systemtap)
-  >   - [Install SystemTap in Ubuntu 14.04](https://blog.jeffli.me/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/)
+For installation SystemTap on Ubuntu/Debian:
+
+- [Ubuntu Wiki - Systemtap](https://wiki.ubuntu.com/Kernel/Systemtap)
+- [Install SystemTap in Ubuntu 14.04](https://blog.jeffli.me/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/)
 
 ###### stapxx
 
@@ -5699,7 +5766,7 @@ The author of OpenResty created great and simple macro language extensions to th
 
 ###### Pre installation tasks
 
-Set NGINX version (I use stable and newest release):
+Set NGINX version (I use stable release):
 
 ```bash
 export ngx_version="1.17.0"
