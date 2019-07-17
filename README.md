@@ -276,7 +276,7 @@
   * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
   * [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)
-  * [Use return directive instead rewrite for redirects](#beginner-use-return-directive-instead-rewrite-for-redirects)
+  * [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
@@ -465,6 +465,11 @@ Existing chapters:
     - [x] _SystemTap_
     - [x] _stapxx_
     - [x] _htrace.sh_
+  - _Other stuff_
+    - [x] _OWASP Cheat Sheet Series_
+    - [x] _Mozilla Web Security_
+    - [x] _Application Security Wiki_
+    - [x] _OWASP ASVS 4.0_
 
 </details>
 
@@ -623,11 +628,11 @@ Existing chapters:
 <summary><b>Performance</b></summary><br>
 
   - [ ] _Use index directive in the http block_
-  - [ ] _Avoid multiple "index" directives_
+  - [ ] _Avoid multiple index directives_
   - [ ] _Use $request_uri to avoid using regular expressions_
   - [x] _Use try_files directive to ensure a file exists_
-  - [ ] _Don't pass all requests to backends - use "try_files"_
-  - [x] _Use return directive instead rewrite for redirects_
+  - [ ] _Don't pass all requests to backends - use try_files_
+  - [x] _Use return directive instead of rewrite for redirects_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
 
@@ -748,7 +753,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)<br><sup>Use it if you need to search for a file, it saving duplication of code also.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
-| [Use return directive instead rewrite for redirects](#beginner-use-return-directive-instead-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -843,7 +848,7 @@ Authors: **Rahul Sharma**
 _Optimize NGINX for high-performance, scalable web applications._
 
 - _Configure Nginx for best performance, with configuration examples and explanations_
-- _Step–by-step tutorials for performance testing using open source software_
+- _Step-by-step tutorials for performance testing using open source software_
 - _Tune the TCP stack to make the most of the available infrastructure_
 
 <sup><i>This short review comes from this book or the store.</i></sup>
@@ -1753,74 +1758,74 @@ NGINX uses the following logic to determining which virtual server (server block
 
 1. Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
 
-  > NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
+    > NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
 
-  The `listen` directive can be set to:
+    The `listen` directive can be set to:
 
-  - an IP address/port combination (`127.0.0.1:80;`)
+      - an IP address/port combination (`127.0.0.1:80;`)
 
-  - a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
+      - a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
 
-  - a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
+      - a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
 
-  - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
+      - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
 
-  If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
+    If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
 
-  The next steps are as follows:
+    The next steps are as follows:
 
-    - NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
+      - NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
 
-    - NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
+      - NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
 
-    - If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
+      - If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
 
-    - If there is only one most specific match, that server block will be used to serve the request
+      - If there is only one most specific match, that server block will be used to serve the request
 
-    - If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
+      - If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
 
-  Look at this short example:
+    Look at this short example:
 
-  ```bash
-  # From client side:
-  GET / HTTP/1.0
-  Host: api.random.com
+    ```bash
+    # From client side:
+    GET / HTTP/1.0
+    Host: api.random.com
 
-  # From server side:
-  server {
+    # From server side:
+    server {
 
-    # This block will be processed:
-    listen 192.168.252.10;  # --> 192.168.252.10:80
+      # This block will be processed:
+      listen 192.168.252.10;  # --> 192.168.252.10:80
 
-    ...
+      ...
 
-  }
+    }
 
-  server {
+    server {
 
-    listen 80;  # --> *:80 --> 0.0.0.0:80
-    server_name api.random.com;
+      listen 80;  # --> *:80 --> 0.0.0.0:80
+      server_name api.random.com;
 
-    ...
+      ...
 
-  }
-  ```
+    }
+    ```
 
 2. Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
 
 3. Match the `Host` header field against the `server_name` directive with a
 wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
 
-  > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+    > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
 
 4. Match the `Host` header field against the `server_name` directive with a
 wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
 
-  > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+    > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
 
 5. Match the `Host` header field against the `server_name` directive as a regular expression
 
-  > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
+    > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
 
 6. If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server`
 
@@ -1908,9 +1913,9 @@ The process of choosing NGINX location block is as follows (a detailed explanati
 
 3. If no exact (meaning no `=` modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
 
-  - In case the longest matching prefix location has the `^~` modifier, NGINX will stop its search right away and choose this location.
+    - In case the longest matching prefix location has the `^~` modifier, NGINX will stop its search right away and choose this location.
 
-  - Assuming the longest matching prefix location doesn’t use the `^~` modifier, the match is temporarily stored and the process continues.
+    - Assuming the longest matching prefix location doesn’t use the `^~` modifier, the match is temporarily stored and the process continues.
 
 4. As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
 
