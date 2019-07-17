@@ -1220,18 +1220,25 @@ Variables in quoted strings are expanded normally unless the `$` is escaped.
 Configuration options are called directives. We have four types of directives:
 
 - standard directive - one value per context:
+
   ```bash
   worker_connections 512;
   ```
+
 - array directive - multiple values per context:
+
   ```bash
   error_log /var/log/nginx/localhost/localhost-error.log warn;
   ```
+
 - action directive - something which does not just configure:
+
   ```bash
   rewrite ^(.*)$ /msie/$1 break;
   ```
- - `try_files` directive:
+
+- `try_files` directive:
+
   ```bash
   try_files $uri $uri/ /test/index.html;
   ```
@@ -1517,30 +1524,30 @@ I think that the chance of running out of file descriptors is minimal. However, 
 
 - before increasing the number of `worker_processes` or `worker_connections` verify the open file limit, for this, following commands will be useful for you:
 
-```bash
-# List all file descriptors in kernel memory:
-#   first value:  <allocated file handles>
-#  second value:  <unused-but-allocated file handles>
-#   third value:  <the system-wide max number of file handles>
-sysctl fs.file-nr
+  ```bash
+  # List all file descriptors in kernel memory:
+  #   first value:  <allocated file handles>
+  #  second value:  <unused-but-allocated file handles>
+  #   third value:  <the system-wide max number of file handles>
+  sysctl fs.file-nr
 
-# Find out the system-wide maximum number of file handles:
-sysctl fs.file-max
+  # Find out the system-wide maximum number of file handles:
+  sysctl fs.file-max
 
-# Current open file descriptors per NGINX worker process:
-for _pid in $(pgrep -f "nginx: worker") ; do
+  # Current open file descriptors per NGINX worker process:
+  for _pid in $(pgrep -f "nginx: worker") ; do
 
-  echo -en "\n\n##### per worker pid: $_pid #####\n\n"
+    echo -en "\n\n##### per worker pid: $_pid #####\n\n"
 
-  # List files from proc directory:
-  #   - ls -l /proc/${_pid}/fd
-  ls /proc/${_pid}/fd | wc -l
+    # List files from proc directory:
+    #   - ls -l /proc/${_pid}/fd
+    ls /proc/${_pid}/fd | wc -l
 
-  # List all open files (files, memory mapped files):
-  lsof -as -p $_pid | awk '{if(NR>1)print}'
+    # List all open files (files, memory mapped files):
+    lsof -as -p $_pid | awk '{if(NR>1)print}'
 
-done
-```
+  done
+  ```
 
 - if you have SELinux enabled, you will need to run `setsebool -P httpd_setrlimit 1` so that NGINX has permissions to set its rlimit. To diagnose SELinux denials and attempts you can use `sealert -a /var/log/audit/audit.log`.
 
@@ -1564,53 +1571,53 @@ Look also at these diagrams:
 
 - 1 file handler for connection with client and 1 file handler for static file being served by NGINX:
 
-```
-                     +-----------------+
-+----------+         |                 |
-|          |    1    |                 |
-|  CLIENT <---------------> NGINX      |
-|          |         |        ^        |
-+----------+         |        |        |
-                     |      2 |        |
-                     |        |        |
-                     |        |        |
-                     | +------v------+ |
-                     | | STATIC FILE | |
-                     | +-------------+ |
-                     +-----------------+
-```
+  ```
+                       +-----------------+
+  +----------+         |                 |
+  |          |    1    |                 |
+  |  CLIENT <---------------> NGINX      |
+  |          |         |        ^        |
+  +----------+         |        |        |
+                       |      2 |        |
+                       |        |        |
+                       |        |        |
+                       | +------v------+ |
+                       | | STATIC FILE | |
+                       | +-------------+ |
+                       +-----------------+
+  ```
 
 - 1 file handler for connection with client and 1 file handler for a open socket to the remote or local host/process:
 
-```
-                     +-----------------+
-+----------+         |                 |         +-----------+
-|          |    1    |                 |    2    |           |
-|  CLIENT <---------------> NGINX <---------------> BACKEND  |
-|          |         |                 |         |           |
-+----------+         |                 |         +-----------+
-                     +-----------------+
-```
+  ```
+                       +-----------------+
+  +----------+         |                 |         +-----------+
+  |          |    1    |                 |    2    |           |
+  |  CLIENT <---------------> NGINX <---------------> BACKEND  |
+  |          |         |                 |         |           |
+  +----------+         |                 |         +-----------+
+                       +-----------------+
+  ```
 
 - 2 file handlers for two simultaneous connections from the same client (1, 4), 1 file handler for connection with other client (3), 2 file handlers for static files (2, 5), and 1 file handler for a open socket to the remote or local host/process (6), so in total it is 6 file descriptors:
 
-```
-                  4
-      +-----------------------+
-      |              +--------|--------+
-+-----v----+         |        |        |
-|          |    1    |        v        |  6
-|  CLIENT <-----+---------> NGINX <---------------+
-|          |    |    |        ^        |    +-----v-----+
-+----------+    |    |        |        |    |           |
-              3 |    |      2 | 5      |    |  BACKEND  |
-+----------+    |    |        |        |    |           |
-|          |    |    |        |        |    +-----------+
-|  CLIENT  <----+    | +------v------+ |
-|          |         | | STATIC FILE | |
-+----------+         | +-------------+ |
-                     +-----------------+
-```
+  ```
+                    4
+        +-----------------------+
+        |              +--------|--------+
+  +-----v----+         |        |        |
+  |          |    1    |        v        |  6
+  |  CLIENT <-----+---------> NGINX <---------------+
+  |          |    |    |        ^        |    +-----v-----+
+  +----------+    |    |        |        |    |           |
+                3 |    |      2 | 5      |    |  BACKEND  |
+  +----------+    |    |        |        |    |           |
+  |          |    |    |        |        |    +-----------+
+  |  CLIENT  <----+    | +------v------+ |
+  |          |         | | STATIC FILE | |
+  +----------+         | +-------------+ |
+                       +-----------------+
+  ```
 
 I the first two examples: we can take that NGINX needs 2 file handlers for full-fledged connection (but still uses 2 worker connections). In the third example NGINX can take still 2 file handlers for every full-fledged connection (also if client uses parallel connections).
 
@@ -1744,80 +1751,83 @@ http {
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
-1) Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
+1. Match the `address:port` pair to the `listen` directive - that can be multiple server blocks with `listen` directives of the same specificity that can handle the request
 
-    > NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
+  > NGINX use the `address:port` combination for handle incoming connections. This pair is assigned to the `listen` directive.
 
-    The `listen` directive can be set to:
+  The `listen` directive can be set to:
 
-    - an IP address/port combination (`127.0.0.1:80;`)
-    - a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
-    - a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
-    - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
+  - an IP address/port combination (`127.0.0.1:80;`)
 
-    If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
+  - a lone IP address, if only address is given, the port `80` is used (`127.0.0.1;`) - becomes `127.0.0.1:80;`
 
-    The next steps are as follows:
+  - a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
 
-      - NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
+  - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
 
-      - NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
+  If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
 
-      - If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
+  The next steps are as follows:
 
-      - If there is only one most specific match, that server block will be used to serve the request
+    - NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
 
-      - If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
+    - NGINX attempts to collect a list of the server blocks that match the request most specifically based on the `address:port`
 
-    Look at this short example:
+    - If any block that is functionally using `0.0.0.0`, will not be selected if there are matching blocks that list a specific IP
 
-      ```bash
-      # From client side:
-      GET / HTTP/1.0
-      Host: api.random.com
+    - If there is only one most specific match, that server block will be used to serve the request
 
-      # From server side:
-      server {
+    - If there are multiple server blocks with the same level of matching, NGINX then begins to evaluate the `server_name` directive of each server block
 
-        # This block will be processed:
-        listen 192.168.252.10;  # --> 192.168.252.10:80
+  Look at this short example:
 
-        ...
+  ```bash
+  # From client side:
+  GET / HTTP/1.0
+  Host: api.random.com
 
-      }
+  # From server side:
+  server {
 
-      server {
+    # This block will be processed:
+    listen 192.168.252.10;  # --> 192.168.252.10:80
 
-        listen 80;  # --> *:80 --> 0.0.0.0:80
-        server_name api.random.com;
+    ...
 
-        ...
+  }
 
-      }
-      ```
+  server {
 
-2) Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
+    listen 80;  # --> *:80 --> 0.0.0.0:80
+    server_name api.random.com;
 
-3) Match the `Host` header field against the `server_name` directive with a
+    ...
+
+  }
+  ```
+
+2. Match the `Host` header field against the `server_name` directive as a string (the exact names hash table)
+
+3. Match the `Host` header field against the `server_name` directive with a
 wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
 
-    > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+  > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
 
-4) Match the `Host` header field against the `server_name` directive with a
+4. Match the `Host` header field against the `server_name` directive with a
 wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
 
-    > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+  > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
 
-5) Match the `Host` header field against the `server_name` directive as a regular expression
+5. Match the `Host` header field against the `server_name` directive as a regular expression
 
-    > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
+  > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
 
-6) If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server`
+6. If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server`
 
-7) If all the `Host` headers doesn't match and there is no `default_server`,
+7. If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
 
-8) Finally, NGINX goes to the `location` context
+8. Finally, NGINX goes to the `location` context
 
 <sup><i>This list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
 
@@ -1833,15 +1843,15 @@ location optional_modifier location_match { ... }
 
 `location_match` in the above defines what NGINX should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
 
-  - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
+- `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
 
-  - `=`: is an exact match, without any wildcards, prefix matching or regular expressions; forces a literal match between the request URI and the location parameter
+- `=`: is an exact match, without any wildcards, prefix matching or regular expressions; forces a literal match between the request URI and the location parameter
 
-  - `~`: if a tilde modifier is present, this location must be used for case sensitive matching (RE match)
+- `~`: if a tilde modifier is present, this location must be used for case sensitive matching (RE match)
 
-  - `~*`: if a tilde and asterisk modifier is used, the location must be used for case insensitive matching (RE match)
+- `~*`: if a tilde and asterisk modifier is used, the location must be used for case insensitive matching (RE match)
 
-  - `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
+- `^~`: assuming this block is the best non-RE match, a carat followed by a tilde modifier means that RE matching will not take place
 
 And now, a short introduction to determines location priority:
 
@@ -1892,19 +1902,19 @@ To help you understand how does location match works:
 
 The process of choosing NGINX location block is as follows (a detailed explanation):
 
-1) Prefix-based NGINX location matches (no regular expression). Each location will be checked against the request URI
+1. Prefix-based NGINX location matches (no regular expression). Each location will be checked against the request URI
 
-2) NGINX searches for an exact match. If a "=" modifier exactly matches the request URI, this specific location block is chosen right away
+2. NGINX searches for an exact match. If a `=` modifier exactly matches the request URI, this specific location block is chosen right away
 
-3) If no exact (meaning no "=" modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
+3. If no exact (meaning no `=` modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
 
-    - In case the longest matching prefix location has the "^~" modifier, NGINX will stop its search right away and choose this location
+  - In case the longest matching prefix location has the `^~` modifier, NGINX will stop its search right away and choose this location.
 
-    - Assuming the longest matching prefix location doesn’t use the "^~"modifier, the match is temporarily stored and the process continues
+  - Assuming the longest matching prefix location doesn’t use the `^~` modifier, the match is temporarily stored and the process continues.
 
-4) As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
+4. As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
 
-5) If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
+5. If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
 
 In order to better understand how this process work please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
 
@@ -1916,13 +1926,13 @@ In order to better understand how this process work please see this short cheats
 
 In conclusion, location picking order is as follows:
 
-1. `= (exactly)`, e.g. `location = /path`
+1. `=` - exactly, e.g. `location = /path`
 
-2. `^~ (forward match)`, e.g. `location ^~ /path`
+2. `^~` - forward match, e.g. `location ^~ /path`
 
-3. `~ (regular expression case sensitive)`, e.g. `location ~ /path/`
+3. `~` - regular expression case sensitive, e.g. `location ~ /path/`
 
-4. `~* (regular expression case insensitive)`, e.g. `location ~* .(jpg|png|svg)`
+4. `~*` - regular expression case insensitive, e.g. `location ~* .(jpg|png|svg)`
 
 5. `/`, e.g. `location /path`
 
@@ -2084,8 +2094,8 @@ location / {
 
 Note:
 
-  > - that outside location blocks, `last` and `break` are effectively the same
-  > - processing of rewrite directives at server level may be stopped via `break`, but the location lookup will follow anyway
+- that outside location blocks, `last` and `break` are effectively the same
+- processing of rewrite directives at server level may be stopped via `break`, but the location lookup will follow anyway
 
 <sup><i>This explanation is based on the awesome answer by [Pothi Kalimuthu](https://serverfault.com/users/102173/pothi-kalimuthu) to [nginx url rewriting: difference between break and last](https://serverfault.com/a/829148).</i></sup>
 
@@ -2099,96 +2109,96 @@ I use `return` directive to:
 
 - force redirect from http to https:
 
-```bash
-server {
+  ```bash
+  server {
 
-  ...
+    ...
 
-  return  301 https://example.com$request_uri;
+    return  301 https://example.com$request_uri;
 
-}
-```
+  }
+  ```
 
 - redirect from www to non-www and vice versa:
 
-```bash
-server {
+  ```bash
+  server {
 
-  ...
+    ...
 
-  if ($host = www.domain.com) {
+    if ($host = www.domain.com) {
 
-    return  301 https://domain.com$request_uri;
+      return  301 https://domain.com$request_uri;
+
+    }
 
   }
-
-}
-```
+  ```
 
 - close the connection and log it internally:
 
-```bash
-server {
+  ```bash
+  server {
 
-  ...
+    ...
 
-  return 444;
+    return 444;
 
-}
-```
+  }
+  ```
 
 - send 4xx HTTP response for a client without any other actions:
 
-```bash
-server {
+  ```bash
+  server {
 
-  ...
+    ...
 
-  if ($request_method = POST) {
+    if ($request_method = POST) {
 
-    return 405;
+      return 405;
+
+    }
+
+    # or:
+    if ($invalid_referer) {
+
+      return 403;
+
+    }
+
+    # or:
+    if ($request_uri ~ "^/app/(.+)$") {
+
+      return 403;
+
+    }
+
+    # or:
+    location ~ ^/(data|storage) {
+
+      return 403;
+
+    }
 
   }
-
-  # or:
-  if ($invalid_referer) {
-
-    return 403;
-
-  }
-
-  # or:
-  if ($request_uri ~ "^/app/(.+)$") {
-
-    return 403;
-
-  }
-
-  # or:
-  location ~ ^/(data|storage) {
-
-    return 403;
-
-  }
-
-}
-```
+  ```
 
 - and sometimes for reply with HTTP code without serving a file:
 
-```bash
-server {
+  ```bash
+  server {
 
-  ...
+    ...
 
-  # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response)
-  return 204 "it's all okay";
-  # Because default Content-Type is application/octet-stream, browser will offer to "save the file".
-  # If you want to see reply in browser you should add properly Content-Type:
-  # add_header Content-Type text/plain;
+    # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response)
+    return 204 "it's all okay";
+    # Because default Content-Type is application/octet-stream, browser will offer to "save the file".
+    # If you want to see reply in browser you should add properly Content-Type:
+    # add_header Content-Type text/plain;
 
-}
-```
+  }
+  ```
 
 ##### `try_files` directive
 
@@ -2329,6 +2339,8 @@ http {
 
   # Add if condition to access log:
   access_log /var/log/nginx/example.com-access.log combined if=$error_codes;
+
+}
 ```
 
 ##### Manually log rotation
@@ -2388,6 +2400,7 @@ This directive accepts the following options:
 - `weight=<num>` - sets the weight of the origin server, e.g. `weight=10`
 
 - `max_conns=<num>` - limits the maximum number of simultaneous active connections from the NGINX proxy server to an upstream server (default value: `0` = no limit), e.g. `max_conns=8`
+
   - if you set `max_conns=4` the 5th will be rejected
   - if the server group does not reside in the shared memory (`zone` directive), the limitation works per each worker process
 
@@ -2627,8 +2640,10 @@ limit_req_status 429;
 # Set your own error page for 429 http code:
 error_page 429 /rate_limit.html;
 location = /rate_limit.html {
+
   root /usr/share/www/http-error-pages/sites/other;
   internal;
+
 }
 
 # And create this file:
@@ -2657,26 +2672,31 @@ Example:
 The range of zones is as follows:
 
 - **http context**
-```bash
-http {
 
-  ... zone=<name>;
+  ```bash
+  http {
 
-```
+    ... zone=<name>;
+
+  ```
+
 - **server context**
-```bash
-server {
 
-  ... zone=<name>;
+  ```bash
+  server {
 
-```
+    ... zone=<name>;
+
+  ```
+
 - **location directive**
-```bash
-location /api {
 
-  ... zone=<name>;
+  ```bash
+  location /api {
 
-```
+    ... zone=<name>;
+
+  ```
 
 `limit_req_zone` key lets you set `rate` parameter (optional) - it defines the rate limited URL(s).
 
@@ -3335,12 +3355,12 @@ end
 
 - `data/paths.list`:
 
-```
-/ - it's not recommend, requests are being duplicated if you add only '/'
-/foo/bar
-/articles/id=25
-/3a06e672fad4bec2383748cfd82547ee.html
-```
+  ```
+  / - it's not recommend, requests are being duplicated if you add only '/'
+  /foo/bar
+  /articles/id=25
+  /3a06e672fad4bec2383748cfd82547ee.html
+  ```
 
 Command:
 
@@ -3498,29 +3518,29 @@ end
 
 - `data/requests.json`:
 
-```json
-[
-  {
-    "path": "/id/1",
-    "body": "ceR1caesaed2nohJei",
-    "method": "GET",
-    "headers": {
-      "X-Custom-Header-1": "foo",
-      "X-Custom-Header-2": "bar"
+  ```json
+  [
+    {
+      "path": "/id/1",
+      "body": "ceR1caesaed2nohJei",
+      "method": "GET",
+      "headers": {
+        "X-Custom-Header-1": "foo",
+        "X-Custom-Header-2": "bar"
+      }
+    },
+    {
+      "path": "/id/2",
+      "body": "{\"field\":\"value\"}",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Custom-Header-1": "foo",
+        "X-Custom-Header-2": "bar"
+      }
     }
-  },
-  {
-    "path": "/id/2",
-    "body": "{\"field\":\"value\"}",
-    "method": "POST",
-    "headers": {
-      "Content-Type": "application/json",
-      "X-Custom-Header-1": "foo",
-      "X-Custom-Header-2": "bar"
-    }
-  }
-]
-```
+  ]
+  ```
 
 Command:
 
@@ -4866,6 +4886,8 @@ Example of use:
 location ~ /stats {
 
   limit_req zone=req_for_remote_addr burst=5;
+
+  ...
 ```
 
 - set maximum requests as `rate` * `burst` in `burst` seconds
@@ -4929,6 +4951,8 @@ Example of use:
 location ~ /stats {
 
   limit_req zone=req_for_remote_addr burst=5 nodelay;
+
+  ...
 ```
 
 - set maximum requests as `rate` * `burst` in `burst` seconds
@@ -4992,6 +5016,8 @@ Example of use:
 location ~ /stats {
 
   limit_conn conn_for_remote_addr 1;
+
+  ...
 ```
 
 - limit a single IP address to make no more than `1` connection from IP at the same time
@@ -5619,7 +5645,7 @@ You can download external modules from:
 - [OpenResty Components](https://openresty.org/en/components.html)
 - [Tengine Modules](https://github.com/alibaba/tengine/tree/master/modules)
 
-A short description of the modules that I used (not only) in this step-by-step tutorial:
+A short description of the modules that I used in this step-by-step tutorial:
 
 - [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit)** - adds additional generic tools that module developers can use in their own modules
 
@@ -8101,79 +8127,79 @@ server {
 
 - for manually rotation:
 
-```bash
-# Check manually (all log files):
-logrotate -dv /etc/logrotate.conf
+  ```bash
+  # Check manually (all log files):
+  logrotate -dv /etc/logrotate.conf
 
-# Check manually with force rotation (specific log file):
-logrotate -dv --force /etc/logrotate.d/nginx
-```
+  # Check manually with force rotation (specific log file):
+  logrotate -dv --force /etc/logrotate.d/nginx
+  ```
 
 - for automate rotation:
 
-```bash
-cat > /etc/logrotate.d/nginx << __EOF__
-/var/log/nginx/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 nginx nginx
-  sharedscripts
-  prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
+  ```bash
+  cat > /etc/logrotate.d/nginx << __EOF__
+  /var/log/nginx/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 nginx nginx
+    sharedscripts
+    prerotate
+      if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+        run-parts /etc/logrotate.d/httpd-prerotate; \
+      fi \
+    endscript
+    postrotate
+      # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
+      invoke-rc.d nginx reload >/dev/null 2>&1
+    endscript
+  }
 
-/var/log/nginx/localhost/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 nginx nginx
-  sharedscripts
-  prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
+  /var/log/nginx/localhost/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 nginx nginx
+    sharedscripts
+    prerotate
+      if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+        run-parts /etc/logrotate.d/httpd-prerotate; \
+      fi \
+    endscript
+    postrotate
+      # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
+      invoke-rc.d nginx reload >/dev/null 2>&1
+    endscript
+  }
 
-/var/log/nginx/domains/example.com/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 nginx nginx
-  sharedscripts
-  prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
-__EOF__
-```
+  /var/log/nginx/domains/example.com/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 nginx nginx
+    sharedscripts
+    prerotate
+      if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+        run-parts /etc/logrotate.d/httpd-prerotate; \
+      fi \
+    endscript
+    postrotate
+      # test ! -f /var/run/nginx.pid || kill -USR1 `cat /var/run/nginx.pid`
+      invoke-rc.d nginx reload >/dev/null 2>&1
+    endscript
+  }
+  __EOF__
+  ```
 
 ###### External resources
 
@@ -8220,45 +8246,45 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - Debugging log to memory:
 
-```bash
-error_log memory:32m debug;
-```
+  ```bash
+  error_log memory:32m debug;
+  ```
 
   > How to analyse error log in memory you can read [Show debug log in memory](#show-debug-log-in-memory) chapter.
 
 - Debugging log for a IP address/range:
 
-```bash
-events {
+  ```bash
+  events {
 
-  debug_connection    192.168.252.15/32;
-  debug_connection    10.10.10.0/24;
+    debug_connection    192.168.252.15/32;
+    debug_connection    10.10.10.0/24;
 
-}
-```
+  }
+  ```
 
 - Debugging log for a each server:
 
-```bash
-error_log /var/log/nginx/debug.log debug;
+  ```bash
+  error_log /var/log/nginx/debug.log debug;
 
-...
+  ...
 
-http {
+  http {
 
-  server {
+    server {
 
-    # To enable debugging:
-    error_log /var/log/nginx/domain.com/domain.com-debug.log debug;
-    # To disable debugging:
-    error_log /var/log/nginx/domain.com/domain.com-debug.log;
+      # To enable debugging:
+      error_log /var/log/nginx/domain.com/domain.com-debug.log debug;
+      # To disable debugging:
+      error_log /var/log/nginx/domain.com/domain.com-debug.log;
 
-    ...
+      ...
+
+    }
 
   }
-
-}
-```
+  ```
 
 ###### External resources
 
@@ -8924,47 +8950,47 @@ proxy_hide_header X-Drupal-Cache;
 
 - force all traffic to use TLS:
 
-```bash
-server {
+  ```bash
+  server {
 
-  listen 10.240.20.2:80;
+    listen 10.240.20.2:80;
 
-  server_name domain.com;
+    server_name domain.com;
 
-  return 301 https://$host$request_uri;
-
-}
-
-server {
-
-  listen 10.240.20.2:443 ssl;
-
-  server_name domain.com;
-
-  ...
-
-}
-```
-
-- force e.g. login page to use TLS:
-
-```bash
-server {
-
-  listen 10.240.20.2:80;
-
-  server_name domain.com;
-
-  ...
-
-  location ^~ /login {
-
-    return 301 https://domain.com$request_uri;
+    return 301 https://$host$request_uri;
 
   }
 
-}
-```
+  server {
+
+    listen 10.240.20.2:443 ssl;
+
+    server_name domain.com;
+
+    ...
+
+  }
+  ```
+
+- force e.g. login page to use TLS:
+
+  ```bash
+  server {
+
+    listen 10.240.20.2:80;
+
+    server_name domain.com;
+
+    ...
+
+    location ^~ /login {
+
+      return 301 https://domain.com$request_uri;
+
+    }
+
+  }
+  ```
 
 ###### External resources
 
@@ -9837,11 +9863,11 @@ This chapter is still work in progress.
 
 ## Installation
 
-I used step-by-step tutorial from [Installation from source](#installation-from-source).
+I used step-by-step tutorial from this handbook [Installation from source](#installation-from-source).
 
 ## Configuration
 
-Configuration of Google Cloud instance:
+I used Google Cloud instance with following parameters:
 
 | <b>ITEM</b> | <b>VALUE</b> | <b>COMMENT</b> |
 | :---         | :---         | :---         |
@@ -9855,7 +9881,7 @@ Configuration of Google Cloud instance:
 
 This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
 
-  > Configuration of my Reverse Proxy server is based on [installation from source](#installation-from-source) chapter. If you go through the installation process step by step you can use the following configuration (minor adjustments may be required).
+  > Configuration is based on the [installation from source](#installation-from-source) chapter. If you go through the installation process step by step you can use the following configuration (minor adjustments may be required).
 
 #### Import configuration
 
@@ -9869,7 +9895,7 @@ tar czvfp ~/nginx.etc.tgz /etc/nginx && mv /etc/nginx /etc/nginx.old
 rsync -avur lib/nginx/ /etc/nginx/
 ```
 
-  > If you compiled NGINX you should also update/refresh modules. All compiled modules are stored in `/usr/local/src/nginx-${ngx_version}/master/objs` and installed in accordance with the value of the `--modules-path` variable.
+  > If you compiled NGINX from source you should also update/refresh modules. All compiled modules are stored in `/usr/local/src/nginx-${ngx_version}/master/objs` and installed in accordance with the value of the `--modules-path` variable.
 
 #### Set bind IP address
 
