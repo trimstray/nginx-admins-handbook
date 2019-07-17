@@ -1929,18 +1929,6 @@ In order to better understand how this process work please see this short cheats
 
   > I recommend to use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
 
-In conclusion, location picking order is as follows:
-
-1. `=` - exactly, e.g. `location = /path`
-
-2. `^~` - forward match, e.g. `location ^~ /path`
-
-3. `~` - regular expression case sensitive, e.g. `location ~ /path/`
-
-4. `~*` - regular expression case insensitive, e.g. `location ~* .(jpg|png|svg)`
-
-5. `/`, e.g. `location /path`
-
 Ok, so here's a more complicated configuration:
 
 ```bash
