@@ -716,14 +716,14 @@ I also got the highest note from Mozilla:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (54) from this handbook.
+  > This checklist contains all rules (55) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 22 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 18 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 19 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 5 | as an option to implement or use (not required) |
 
