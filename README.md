@@ -91,7 +91,7 @@
   * [Processes](#processes)
   * [Configuration syntax](#configuration-syntax)
     * [Comments](#comments)
-    * [Variables & Strings](#variables--strings)
+    * [Variables, Strings, and Quotes](#variables-strings-and-quotes)
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
     * [External files](#external-files)
     * [Measurement units](#measurement-units)
@@ -141,6 +141,7 @@
     * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
+    * [Verify 0-RTT](#verify-0-rtt)
     * [Load testing with ApacheBench (ab)](#load-testing-with-apachebench-ab)
       * [Standard test](#standard-test)
       * [Test with KeepAlive header](#test-with-keepalive-header)
@@ -350,7 +351,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - high performance caching server
 - full-fledged web platform
 
-Generally it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
+Generally it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -372,23 +373,25 @@ If you love security keep your eye on this one: [Cryptology ePrint Archive](http
 
 When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in suitable form. I was a little disappointed.
 
-I was interested in everything: NGINX's internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but all documents treated the subject lightly.
+I was interested in everything: NGINX's internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
 
-Of course, I know that we also have great resources like [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/) or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). These are definitely the best assets for us and in the first place you should seek help there.
+Of course, I know that we also have great resources like [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/), or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). These are definitely the best assets for us and in the first place you should seek help there.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
-  > This handbook is a collection of rules, helpers, notes and papers, best practices and recommendations collected and used by me (also in production environments). Many of these refer to external resources.
+  > This handbook is a collection of rules, helpers, notes, papers, best practices, and recommendations gathered and used by me (also in production environments). Many of them refer to external resources.
+
+There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
 Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them.
 
 In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX server. They give us insight into NGINX's internals also.
 
-If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and WebOps. I think it can also be a good complement to official documentations.
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentations.
 
 I did my best to make this handbook a single and consistent. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
-Before you start remember about the two most important things:
+Before you start, remember about the two most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
@@ -452,7 +455,9 @@ Existing chapters:
     - [x] _Using ngx_lua / lua-nginx-module in pixiv_
   - _Static analyzers_
     - [x] _nginx-minify-conf_
-  - [x] _Comparison reviews_
+  - _Comparison reviews_
+    - [x] _NGINX vs. Apache (Pro/Con Review, Uses, & Hosting for Each)_
+    - [x] _Web cache server performance benchmark: nuster vs nginx vs varnish vs squid_
   - _Benchmarking tools_
     - [x] _wrk2_
     - [x] _httperf_
@@ -485,7 +490,7 @@ Existing chapters:
     - [x] _Manually log rotation_
   - _Configuration syntax_
     - [x] _Comments_
-    - [x] _Variables & Strings_
+    - [x] _Variables, Strings, and Quotes_
     - [x] _Directives, Blocks, and Contexts_
     - [x] _External files_
     - [x] _Measurement units_
@@ -518,6 +523,7 @@ Existing chapters:
     - [x] _Testing SSL connection with SNI support_
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
+    - [x] _Verify 0-RTT_
     - _Load testing with ApacheBench (ab)_
       - [x] _Standard test_
       - [x] _Test with KeepAlive header_
@@ -631,7 +637,7 @@ Existing chapters:
   - [ ] _Avoid multiple index directives_
   - [ ] _Use $request_uri to avoid using regular expressions_
   - [x] _Use try_files directive to ensure a file exists_
-  - [ ] _Don't pass all requests to backends - use try_files_
+  - [ ] _Don't pass all requests to the backend - use try_files_
   - [x] _Use return directive instead of rewrite for redirects_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
@@ -665,7 +671,7 @@ Existing chapters:
 
 Other stuff:
 
-  - [x] _Add static error pages generator to NGINX snippets directory_
+  - [x] _Add static error pages generator to the NGINX snippets directory_
 
 ## Reports: blkcipher.info
 
@@ -780,13 +786,13 @@ Remember, these are only guidelines. My point of view may be different from your
 
 ## Printable high-res hardening cheatsheets
 
-I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200) based on recipes from this handbook:
+I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200). They are based on recipes from this handbook:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
 - **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
 
-  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2 and also modern strict TLS cipher suites (non 128-bits).
+  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2, and also modern strict TLS cipher suites (non 128-bits).
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="92%" height="92%">
@@ -794,7 +800,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
-  > It provides less restrictive setup with 2048-bit private key, TLS 1.3 and 1.2 and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
+  > It provides less restrictive setup with 2048-bit private key, TLS 1.3 and 1.2, and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
@@ -1071,12 +1077,12 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/ASVS/tree/master/4.0"><b>OWASP ASVS 4.0</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/TLS-Redirection#technical-details"><b>TLS Redirection (and Virtual Host Confusion)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers"><b>Guidelines for Setting Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://medium.freecodecamp.org/secure-your-web-application-with-these-http-headers-fd66e0367628"><b>Secure your web application with these HTTP headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://zinoui.com/blog/security-http-headers"><b>Security HTTP Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/weird_proxies/wiki"><b>Analysis of various reverse proxies, cache proxies, load balancers, etc.</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/TLS-Redirection#technical-details"><b>TLS Redirection (and Virtual Host Confusion)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regular-expressions.info/"><b>Regular-Expressions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nickcraver.com/blog/2017/05/22/https-on-stack-overflow/#the-beginning"><b>HTTPS on Stack Overflow: The End of a Long Road</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
@@ -1095,24 +1101,25 @@ _In this ebook you will learn:_
 
 For upstream NGINX packaging paths can be as follows (it depends on the type of system):
 
-- `/etc/nginx` - is the default configuration root for the NGINX service<br>
+- `/etc/nginx` - is the default configuration root for the NGINX service
   * other locations: `/usr/local/etc/nginx`, `/usr/local/nginx/conf`
 
-- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the NGINX services, includes the top-level http block and all other configuration contexts and files<br>
+- `/etc/nginx/nginx.conf` - is the default configuration entry point used by the NGINX services, includes the top-level http block and all other configuration contexts and files
   * other locations: `/usr/local/etc/nginx/nginx.conf`, `/usr/local/nginx/conf/nginx.conf`
 
 - `/usr/share/nginx` - is the default root directory for requests, contains `html` directory and basic static files
+  * other locations: `html/` in root directory
 
 - `/var/log/nginx` - is the default log (access and error log) location for NGINX
   * other locations: `logs/` in root directory
 
-- `/var/cache/nginx` - is the default temporary files location for NGINX<br>
+- `/var/cache/nginx` - is the default temporary files location for NGINX
   * other locations: `/var/lib/nginx`
 
-- `/etc/nginx/conf` - contains custom/vhosts configuration files<br>
+- `/etc/nginx/conf` - contains custom/vhosts configuration files
   * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled` (I can't stand this debian-like convention...)
 
-- `/var/run/nginx` - contains information about NGINX process(es)<br>
+- `/var/run/nginx` - contains information about NGINX process(es)
   * other locations: `/usr/local/nginx/logs`, `logs/` in root directory
 
 #### Commands
@@ -1132,51 +1139,51 @@ inflight requests
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
-Some useful snippets for process management:
+Some useful snippets for the NGINX process management:
 
 - testing configuration:
 
-```bash
-/usr/sbin/nginx -t -c /etc/nginx/nginx.conf
-/usr/sbin/nginx -t -q -g 'daemon on; master_process on;' # ; echo $?
-```
+  ```bash
+  /usr/sbin/nginx -t -c /etc/nginx/nginx.conf
+  /usr/sbin/nginx -t -q -g 'daemon on; master_process on;' # ; echo $?
+  ```
 
 - starting daemon:
 
-```bash
-/usr/sbin/nginx -g 'daemon on; master_process on;'
+  ```bash
+  /usr/sbin/nginx -g 'daemon on; master_process on;'
 
-service nginx start
-systemctl start nginx
+  service nginx start
+  systemctl start nginx
 
-# You can also start NGINX from start-stop-daemon script:
-/sbin/start-stop-daemon --quiet --start --exec /usr/sbin/nginx --background --retry QUIT/5 --pidfile /run/nginx.pid
-```
+  # You can also start NGINX from start-stop-daemon script:
+  /sbin/start-stop-daemon --quiet --start --exec /usr/sbin/nginx --background --retry QUIT/5 --pidfile /run/nginx.pid
+  ```
 
 - stopping daemon:
 
-```bash
-/usr/sbin/nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
-/usr/sbin/nginx -s stop     # fast shutdown (kill connections immediately)
+  ```bash
+  /usr/sbin/nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
+  /usr/sbin/nginx -s stop     # fast shutdown (kill connections immediately)
 
-service nginx stopmicro
-systemctl stop nginx
+  service nginx stopmicro
+  systemctl stop nginx
 
-# You can also stop NGINX from start-stop-daemon script:
-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
-```
+  # You can also stop NGINX from start-stop-daemon script:
+  /sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
+  ```
 
 - reloading daemon:
 
-```bash
-/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
+  ```bash
+  /usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
 
-service nginx reload
-systemctl reload nginx
+  service nginx reload
+  systemctl reload nginx
 
-kill -HUP $(cat /var/run/nginx.pid)
-kill -HUP $(pgrep -f "nginx: master")
-```
+  kill -HUP $(cat /var/run/nginx.pid)
+  kill -HUP $(pgrep -f "nginx: master")
+  ```
 
 #### Configuration syntax
 
@@ -1190,7 +1197,7 @@ NGINX's configuration files don't support comment blocks, they only accept `#` a
 
 Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
 
-##### Variables & Strings
+##### Variables, Strings, and Quotes
 
 Variables start with `$`. Some modules introduce variables can be used when setting directives.
 
@@ -1202,7 +1209,7 @@ To assign value to the variable you should use a `set` directive:
 set $var "value";
 ```
 
-  > To learn more about variables see [`if`, `break` and `set`](#if-break-and-set) section.
+  > See [`if`, `break` and `set`](#if-break-and-set) section to learn more about variables.
 
 Some interesting things about variables in NGINX:
 
@@ -1216,6 +1223,16 @@ Some interesting things about variables in NGINX:
 - the assignment operation is only performed in requests that access location
 
 Strings may be inputted without quotes unless they include blank spaces, semicolons or curly braces, then they need to be escaped with backslashes or enclosed in single/double quotes.
+
+Quotes are required for values which are containing space(s) and/or some other special characters, otherwise NGINX will not recognize them. You can either quote or `\`-escape some special characters like `" "` or `";"` in strings (characters that would make the meaning of a statement ambiguous). So the following instructions are the same:
+
+```bash
+# 1)
+add_header X-Header "nginx web server;";
+
+# 2)
+add_header X-Header nginx\ web\ server\;;
+```
 
 Variables in quoted strings are expanded normally unless the `$` is escaped.
 
@@ -1286,7 +1303,7 @@ Global/Main Context
 `include` directive may appear inside any contexts to perform conditional inclusion. It attaching another file, or files matching the specified mask:
 
 ```bash
-include /etc/nginx/proxy.conf
+include /etc/nginx/proxy.conf;
 ```
 
 ##### Measurement units
@@ -1354,7 +1371,7 @@ apt-get update
 
 apt-get install -y cabal-install-1.22 ghc-7.10.2
 
-# Add this to your shell main configuration file:
+# Add this to the main configuration file of your shell:
 export PATH=$HOME/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:$PATH
 source $HOME/.<shellrc>
 
@@ -2881,6 +2898,21 @@ openssl s_client -tls1_2 -connect <server_name>:<port>
 
 ```bash
 openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
+```
+
+###### Verify 0-RTT
+
+```bash
+_host="example.com"
+
+cat > req.in << __EOF__
+HEAD / HTTP/1.1
+Host: $_host
+Connection: close
+__EOF__
+
+openssl s_client -connect ${_host}:443 -tls1_3 -sess_out session.pem -ign_eof < req.in
+openssl s_client -connect ${_host}:443 -tls1_3 -sess_in session.pem -early_data req.in
 ```
 
 ##### Load testing with ApacheBench (ab)
@@ -9125,7 +9157,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.0 and TLS 1.1 must not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)) and were superceded by TLS 1.2, which has now itself been superceded by TLS 1.3. They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST SP 80052r2) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS1].
 
-  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
+  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: DSA, RC4, SHA1, MD5, CBC MAC-then-Encrypt ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
 
@@ -9134,6 +9166,8 @@ certbot certonly -d domain.com -d www.domain.com
   > I think the best way to deploy secure configuration is: enable TLS 1.2 without any CBC Ciphers (is safe enough) only TLS 1.3 is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
+
+  > For TLS 1.3, think about using [`ssl_early_data`](#) to allow TLS 1.3 0-RTT handshakes.
 
   **My recommendation:**
 
@@ -9182,6 +9216,8 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [Differences between TLS 1.2 and TLS 1.3](https://www.wolfssl.com/differences-between-tls-1-2-and-tls-1-3/)
 - [TLS 1.3 is here to stay](https://www.ssl.com/article/tls-1-3-is-here-to-stay/)
 - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
+- [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454)
+- [Deploying TLS 1.3: the great, the good and the bad](https://media.ccc.de/v/33c3-8348-deploying_tls_1_3_the_great_the_good_and_the_bad)
 - [Downgrade Attack on TLS 1.3 and Vulnerabilities in Major TLS Libraries](https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2019/february/downgrade-attack-on-tls-1.3-and-vulnerabilities-in-major-tls-libraries/)
 - [Phase two of our TLS 1.0 and 1.1 deprecation plan](https://www.fastly.com/blog/phase-two-our-tls-10-and-11-deprecation-plan)
 - [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
@@ -9500,7 +9536,7 @@ location ^~ /assets/ {
 
 ###### Rationale
 
-  > Generally HSTS is a way for websites to tell browsers that the connection should only ever be encrypted.This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids.
+  > Generally HSTS is a way for websites to tell browsers that the connection should only ever be encrypted. This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids.
 
   > The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
