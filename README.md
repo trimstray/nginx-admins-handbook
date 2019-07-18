@@ -295,6 +295,7 @@
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
+  * [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
   * [Mitigation of CRIME/BREACH attacks)](#beginner-mitigation-of-crimebreach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
@@ -649,6 +650,7 @@ Existing chapters:
 
   - [x] _Keep NGINX up-to-date_
   - [x] _Use only the latest supported OpenSSL version_
+  - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
   - [x] _Prevent caching of sensitive data_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
@@ -764,6 +766,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -9442,6 +9445,57 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 - [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
+
+#### :beginner: Prevent Replay Attacks on Zero Round-Trip Time
+
+###### Rationale
+
+  > This rules is only important for TLS 1.3. By default enabling TLS 1.3 will not enable 0-RTT support. You need to opt in.
+
+  > In order to send "early-data", client and server [must support PSK exchange mode](https://tools.ietf.org/html/rfc8446#section-2.3) (session cookies).
+
+  > TLS 1.3 has a faster handshake that completes in 1-RTT. Additionally, it has a particular session resumption mode where, under certain conditions, it is possible to send data to the server on the first flight (0-RTT).
+
+  > You can enable 0-RTT with `ssl_early_data on;` in the configuration. You’ll also need to add `proxy_set_header Early-Data $ssl_early_data;` to your proxy directives to ensure that the `Early-Data` header is passed to your application.
+
+  > However, as part of the upgrade, you should disable 0-RTT until you can audit your application for this class of vulnerability.
+
+  > For example, Cloudflare only supports 0-RTT for [GET requests with no query parameters](https://new.blog.cloudflare.com/introducing-0-rtt/) in an attempt to limit the attack surface.
+
+  > In addition, I would like to recommend [this](https://news.ycombinator.com/item?id=16667036) great discussion about TLS 1.3 and 0-RTT.
+
+  > If you want to test 0-RTT with OpenSSL, see: [Verify 0-RTT](#verify-0-rtt).
+
+###### Example
+
+```bash
+server {
+
+  ...
+
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_early_data on; # to enable 0-RTT (TLS 1.3)
+
+  location / {
+
+    proxy_pass       http://backend_x20;
+    # It protect against such attacks at the application layer:
+    proxy_set_header Early-Data $ssl_early_data;
+
+  }
+
+  ...
+
+}
+```
+
+###### External resources
+
+- [Security Review of TLS1.3 0-RTT](https://github.com/tlswg/tls13-spec/issues/1001)
+- [Introducing Zero Round Trip Time Resumption (0-RTT)](https://new.blog.cloudflare.com/introducing-0-rtt/)
+- [Replay Attacks on Zero Round-Trip Time: The Case of the TLS 1.3 Handshake Candidates](https://eprint.iacr.org/2017/082.pdf)
+- [0-RTT and Anti-Replay](https://tools.ietf.org/html/rfc8446#section-8)
+- [Using Early Data in HTTP](https://tools.ietf.org/html/draft-ietf-httpbis-replay-04)
 
 #### :beginner: Defend against the BEAST attack
 
