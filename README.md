@@ -575,6 +575,7 @@ Existing chapters:
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
+    - [ ] _Location matching examples_
   - _Other snippets_
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
@@ -652,6 +653,7 @@ Existing chapters:
   - [x] _Keep NGINX up-to-date_
   - [x] _Use only the latest supported OpenSSL version_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
+  - [ ] _Enable OCSP Stapling_
   - [x] _Prevent caching of sensitive data_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
