@@ -440,8 +440,9 @@ Existing chapters:
 <summary><b>External Resources</b></summary><br>
 
   - _Nginx official_
-    - [x] _Nginx Official Forum_
-    - [x] _Nginx Official Mailing List_
+    - [x] _Nginx Forum_
+    - [x] _Nginx Mailing List_
+    - [x] _NGINX-Demos_
   - _Presentations_
     - [x] _NGINX: Basics and Best Practices_
     - [x] _NGINX Installation and Tuning_
@@ -904,6 +905,8 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://forum.nginx.org/"><b>Nginx Forum</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mailman.nginx.org/mailman/listinfo/nginx"><b>Nginx Mailing List</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos"><b>NGINX-Demos
+</b></a><br>
 </p>
 
 ##### Nginx distributions
@@ -1066,6 +1069,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://regex101.com/"><b>Online regex tester and debugger: PHP, PCRE, Python, Golang and JavaScript</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://regexr.com/"><b>Online tool to learn, build, & test Regular Expressions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regextester.com/"><b>Online Regex Tester & Debugger</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos/tree/master/nginx-regex-tester"><b>nginx-regex-tester</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gchq.github.io/CyberChef/"><b>A web app for encryption, encoding, compression and data analysis</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.viraptor.info/"><b>Nginx location match tester</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://detailyang.github.io/nginx-location-match-visible/"><b>Nginx location match visible</b></a><br>
@@ -1736,12 +1740,14 @@ Before start reading this chapter you should know what regular expressions are a
 
 Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skill of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
+You can also use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
+
 If you're good at it, check these very nice and brainstorming regex challenges:
 
 - [RegexGolf](https://alf.nu/RegexGolf)
 - [Regex Crossword](https://regexcrossword.com/)
 
-It's a short example of server block context (two server blocks):
+It's a short example of two server block contexts with several regular expressions:
 
 ```bash
 http {
@@ -1758,6 +1764,14 @@ http {
 
     root /var/www/example.com/public;
 
+    location ~ ^/(static|media)/ { ... }
+
+    location ~* /[0-9][0-9](-.*)(\.html)$ { ... }
+
+    location ~* \.(jpe?g|png|gif|ico)$ { ... }
+
+    location ~* (?<begin>.*app)/(?<end>.+\.php)$ { ... }
+
     ...
 
   }
@@ -1769,7 +1783,9 @@ http {
 
     access_log logs/example.access.log main;
 
-    proxy_pass http://localhost:8080;
+    location ~ ^(/[^/]+)/api(.*)$ { ... }
+
+    location ~ ^/backend/id/([a-z]\.[a-z]*) { ... }
 
     ...
 
