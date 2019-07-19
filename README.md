@@ -8001,6 +8001,7 @@ server {
 ###### External resources
 
 - [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
+- [Define the listen directives explicitly with address:port pair (from this Handbook)](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
 
 #### :beginner: Use only one SSL config for the listen directive
 
