@@ -261,8 +261,9 @@
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
+  * [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
-  * [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny)
+  * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
@@ -616,7 +617,7 @@ Existing chapters:
 <summary><b>Base Rules</b></summary><br>
 
   - [x] _Format, prettify and indent your Nginx code_
-  - [ ] _Never use a hostname in a listen directive_
+  - [x] _Never use a hostname in a listen or upstream directives_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [ ] _Use return directive for URL redirection (301, 302)_
   - [x] _Configure log rotation policy_
@@ -736,6 +737,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | :---         | :---         | :---:        |
 | [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)<br><sup>While this may work, it will come with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -777,7 +779,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive) | Base Rules | ![low](static/img/priorities/low.png) |
-| [Use geo/map modules instead allow/deny](#beginner-use-geomap-modules-instead-allowdeny) | Base Rules | ![low](static/img/priorities/low.png) |
+| [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | ![low](static/img/priorities/low.png) |
 | [Adjust worker processes](#beginner-adjust-worker-processes) | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process) | Performance | ![low](static/img/priorities/low.png) |
@@ -1224,6 +1226,7 @@ Some interesting things about variables in NGINX:
 
   > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is a Guru and creator of OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
 
+- the most variables in NGINX only exist at runtime, not during configuration time
 - the scope of variables spreads out all over configuration
 - variable assignment occurs when requests are actually being served
 - variable have exactly the same lifetime as the corresponding request
@@ -6019,7 +6022,7 @@ __EOF__
 LuaJIT:
 
 ```bash
-# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
 cd "${ngx_src}"
 
 export LUAJIT_SRC="${ngx_src}/luajit2"
@@ -6512,7 +6515,7 @@ make install
 Zlib:
 
 ```bash
-# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
+# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead of an original Zlib (zlib.net), but both installation methods are similar:
 cd "${ngx_src}"
 
 export ZLIB_SRC="${ngx_src}/zlib"
@@ -7339,7 +7342,7 @@ __EOF__
 LuaJIT:
 
 ```bash
-# I recommend to use OpenResty's branch (openresty/luajit2) instead LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
 cd "${ngx_src}"
 
 export LUAJIT_SRC="${ngx_src}/luajit2"
@@ -7943,6 +7946,62 @@ server {
 - [How processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
+#### :beginner: Never use a hostname in a listen or upstream directives
+
+###### Rationale
+
+  > Generaly, uses of hostnames in the listen or upstream directives is a bad practice.
+
+  > In the worst case NGINX won't be able to bind to the desired TCP socket which will prevent NGINX from starting at all.
+
+  > The best and safer way is to know the IP address that needs to be bound to and use that address instead of the hostname. This also prevents NGINX from needing to look up the address and removes dependencies on external and internal resolvers.
+
+  > Uses of `$hostname` (the machine’s hostname) variable in the `server_name` directive is also example of bad practice (it's similar to use hostname label).
+
+  > I believe it is also necessary to set IP address and port number pair to prevents soft mistakes which may be difficult to debug.
+
+###### Example
+
+Bad configuration:
+
+```bash
+upstream {
+
+  server http://x-9s-web01-prod:8080;
+
+}
+
+server {
+
+  listen rev-proxy-prod:80;
+
+  ...
+
+}
+```
+
+Good configuration:
+
+```bash
+upstream {
+
+  server http://192.168.252.200:8080;
+
+}
+
+server {
+
+  listen 10.10.100.20:80;
+
+  ...
+
+}
+```
+
+###### External resources
+
+- [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
+
 #### :beginner: Use only one SSL config for the listen directive
 
 ###### Rationale
@@ -8012,7 +8071,7 @@ server {
 - [Nginx one ip and multiple ssl certificates](https://serverfault.com/questions/766831/nginx-one-ip-and-multiple-ssl-certificates)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
 
-#### :beginner: Use geo/map modules instead allow/deny
+#### :beginner: Use geo/map modules instead of allow/deny
 
 ###### Rationale
 
@@ -8712,7 +8771,7 @@ Good configuration:
 - [Serving Static Content](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/)
 - [Serve files with nginx conditionally](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/)
 
-#### :beginner: Use `return` directive instead `rewrite` for redirects
+#### :beginner: Use `return` directive instead of `rewrite` for redirects
 
 ###### Rationale
 
@@ -9121,7 +9180,7 @@ proxy_hide_header X-Drupal-Cache;
 
   **My recommendation:**
 
-  > Use 2048-bit key instead 4096-bit at this moment.
+  > Use 2048-bit key instead of 4096-bit at this moment.
 
 ###### Example
 
