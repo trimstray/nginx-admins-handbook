@@ -257,7 +257,7 @@
 - **[Base Rules](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
-  * [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly)
+  * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
@@ -720,13 +720,13 @@ I also got the highest note from Mozilla:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (55) from this handbook.
+  > This checklist contains all rules (56) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 22 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 23 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 19 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 5 | as an option to implement or use (not required) |
@@ -760,7 +760,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration) | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
-| [Use reload method to change configurations on the fly](#beginner-use-reload-method-to-change-configurations-on-the-fly) | Base Rules | ![medium](static/img/priorities/medium.png) |
+| [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly) | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
@@ -7618,36 +7618,40 @@ These are the basic set of rules to keep NGINX in good condition.
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to move common server settings into a separate files and to attach your NGINX specific code to global config, contexts and other.
+  > Use `include` directive to move common server settings into a separate files and to attach your specific code to global config, contexts and other.
 
-  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main `nginx.conf` file. I prefer following structure:
+  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file. I prefer following structure:
   >
   > - `html` - for default static files, e.g. global 5xx error page
-  > - `master` - for main configuration, e.g. acls, listen directives and domains
-  >   - `_acls` - for access control lists (with geo or map modules)
-  >   - `_basic` - for rate limiting rules, redirect maps or proxy params
+  > - `master` - for main configuration, e.g. acls, listen directives, and domains
+  >   - `_acls` - for access control lists, e.g. geo or map modules
+  >   - `_basic` - for rate limiting rules, redirect maps, or proxy params
   >   - `_listen` - for all listen directives; also stores SSL configuration
-  >   - `_server` - for domains (localhost) configuration; also stores backends definitions
+  >   - `_server` - for domains (localhost) configuration; also stores all backends definitions
   > - `modules` - for modules which are dynamically loading into NGINX
-  > - `snippets` - for NGINX's aliases, configuration of logrotate and other
+  > - `snippets` - for NGINX's aliases, configuration templates, e.g. logrotate
   >
   > I attach some of them, if necessary, to files which has `server` directives.
 
 ###### Example
 
 ```bash
-# Store this configuration in e.g. https-ssl-common.conf
+# Store this configuration in https.conf for example:
 listen 10.240.20.2:443 ssl;
 
-root /etc/nginx/error-pages/other;
+ssl_certificate /etc/nginx/master/_server/example.com/certs/nginx_example.com_bundle.crt;
+ssl_certificate_key /etc/nginx/master/_server/example.com/certs/example.com.key;
 
-ssl_certificate /etc/nginx/domain.com/certs/nginx_domain.com_bundle.crt;
-ssl_certificate_key /etc/nginx/domain.com/certs/domain.com.key;
-
-# And include this file in server section:
+# Include this file to the server section:
 server {
 
-  include /etc/nginx/domain.com/commons/https-ssl-common.conf;
+  include /etc/nginx/master/_listen/10.240.20.2/https.conf;
+
+  # And other:
+  include /etc/nginx/master/_static/errors.conf;
+  include /etc/nginx/master/_server/_helpers/global.conf;
+
+  ...
 
   server_name domain.com www.domain.com;
 
@@ -7674,11 +7678,28 @@ server {
   > - use meaningful naming conventions
   > - simple is better than complex but complex is better than complicated
 
-  > Of course, the NGINX configuration code is a micro programming language. Some would say that NGINX's files are written in their own language or syntax so we should not overdo it. I think it's worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
+  > Some would say that NGINX's files are written in their own language or syntax so we should not overdo it with above rules. I think it's worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
 
 ###### Example
 
 ```bash
+# Bad code style:
+http {
+  include    nginx/proxy.conf;
+  include    /etc/nginx/fastcgi.conf;
+  index    index.html index.htm index.php;
+
+  default_type application/octet-stream;
+  log_format   main '$remote_addr - $remote_user [$time_local]  $status '
+    '"$request" $body_bytes_sent "$http_referer" '
+    '"$http_user_agent" "$http_x_forwarded_for"';
+  access_log   logs/access.log    main;
+  sendfile on;
+  tcp_nopush   on;
+  server_names_hash_bucket_size 128; # this seems to be required for some vhosts
+
+  ...
+
 # Good code style:
 http {
 
@@ -7704,23 +7725,6 @@ http {
   server_names_hash_bucket_size 128;
 
   ...
-
-# Bad code style:
-http {
-  include    nginx/proxy.conf;
-  include    /etc/nginx/fastcgi.conf;
-  index    index.html index.htm index.php;
-
-  default_type application/octet-stream;
-  log_format   main '$remote_addr - $remote_user [$time_local]  $status '
-    '"$request" $body_bytes_sent "$http_referer" '
-    '"$http_user_agent" "$http_x_forwarded_for"';
-  access_log   logs/access.log    main;
-  sendfile on;
-  tcp_nopush   on;
-  server_names_hash_bucket_size 128; # this seems to be required for some vhosts
-
-  ...
 ```
 
 ###### External resources
@@ -7730,17 +7734,17 @@ http {
 - [nginx-config-formatter](https://github.com/1connect/nginx-config-formatter)
 - [Format and beautify nginx config files](https://github.com/vasilevich/nginxbeautifier)
 
-#### :beginner: Use `reload` method to change configurations on the fly
+#### :beginner: Use `reload` option to change configurations on the fly
 
 ###### Rationale
 
-  > Use the `reload` method of NGINX to achieve a graceful reload of the configuration without stopping the server and dropping any packets. This function of the master process allows to rolls back the changes and continues to work with stable and old working configuration.
+  > Use the `reload` option to achieve a graceful reload of the configuration without stopping the server and dropping any packets. This function of the master process allows to rolls back the changes and continues to work with stable and old working configuration.
 
-  > This ability of NGINX is very critical in a high-uptime, dynamic environments for keeping the load balancer or standalone server online.
+  > This ability of NGINX is very critical in a high-uptime and dynamic environments for keeping the load balancer or standalone server online.
 
   > Master process checks the syntax validity of the new configuration and tries to apply all changes. If this procedure has been accomplished, the master process create new worker processes and sends shutdown messages to old. Old workers stops accepting new connections after received a shut down signal but current requests are still processing. After that, the old workers exit.
 
-  > When you restart NGINX you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
+  > When you restart the NGINX service you might encounter situation in which NGINX will stop, and won't start back again, because of syntax error. Reload method is safer than restarting because before old process will be terminated, new configuration file is parsed and whole process is aborted if there are any problems with it.
 
   > To stop processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
 
@@ -7785,6 +7789,8 @@ kill -HUP $(pgrep -f "nginx: master")
 
   > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration.
 
+  > It's useful if you pin multiple domains to one IP address. This allows you to attach one listen directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
+
 ###### Example
 
 ```bash
@@ -7807,19 +7813,6 @@ server {
 }
 ```
 
-A single HTTP/HTTPS server:
-
-```bash
-server {
-
-  listen 10.240.20.2:80;
-  listen 10.240.20.2:443 ssl;
-
-  ...
-
-}
-```
-
 ###### External resources
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
@@ -7831,7 +7824,7 @@ server {
 
   > NGINX translates all incomplete `listen` directives by substituting missing values with their default values.
 
-  > NGINX will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the listen directive.
+  > And what's more, will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the listen directive.
 
   > Set IP address and port number to prevents soft mistakes which may be difficult to debug.
 
@@ -7866,13 +7859,13 @@ server {
 
 ###### Rationale
 
-  > NGINX should prevent processing requests with undefined server names (also on IP address). It also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
+  > NGINX should prevent processing requests with undefined server names (also on IP address). It's also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
 
-  > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that NGINX always has a default server).
+  > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
-  > The server_name `_` is not required in modern versions of NGINX. If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
+  > The server name `_` is not required in modern versions of NGINX. If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
 
   > It is a simple procedure for all non defined server names:
   >
@@ -7887,10 +7880,10 @@ server {
 ###### Example
 
 ```bash
-# Place it at the beginning of the configuration file to prevent mistakes.
+# Place it at the beginning of the configuration file to prevent mistakes:
 server {
 
-  # Add default_server to your listen directive in the server that you want to act as the default.
+  # Add default_server to your listen directive in the server that you want to act as the default:
   listen 10.240.20.2:443 default_server ssl;
 
   # We catch:
@@ -8026,7 +8019,7 @@ server {
 ###### Example
 
 ```bash
-# Store this configuration in e.g. https.conf
+# Store this configuration in e.g. https.conf:
 listen 192.168.252.10:443 default_server ssl http2;
 
 ssl_protocols TLSv1.2;
@@ -8038,7 +8031,7 @@ ssl_ecdh_curve secp521r1:secp384r1;
 
 ...
 
-# Include this file to the server context (attach domain-a.com for specific listen directive)
+# Include this file to the server context (attach domain-a.com for specific listen directive):
 server {
 
   include             /etc/nginx/https.conf;
@@ -8052,7 +8045,7 @@ server {
 
 }
 
-# Include this file to the server context (attach domain-b.com for specific listen directive)
+# Include this file to the server context (attach domain-b.com for specific listen directive):
 server {
 
   include             /etc/nginx/https.conf;
@@ -8153,7 +8146,7 @@ geo $globals_internal_geo_acl {
 ###### External resources
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
-- [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
+- [Blocking/allowing IP addresses (from this Handbook)](#blockingallowing-ip-addresses)
 
 #### :beginner: Map all the things...
 
@@ -8245,7 +8238,7 @@ server {
 
 ###### Rationale
 
-  > Log files gives you feedback about the activity and performance of the server as well as any problems that may be occurring. They are records details about requests and NGINX internals. But also logs use more disk space.
+  > Log files gives you feedback about the activity and performance of the server as well as any problems that may be occurring. They are records details about requests and NGINX internals. Unfortunately, logs use more disk space.
 
   > You should define a process which periodically archiving the current log file and starting a new one, renames and optionally compresses the current log files, delete old log files, and force the logging system to begin using new log files.
 
@@ -8353,9 +8346,10 @@ NGINX has many methods for troubleshooting configuration problems. In this chapt
 
   > The alternative method of storing the debug log is keep it in the memory (to a cyclic memory buffer). The memory buffer on the debug level does not have significant impact on performance even under high load.
 
-  > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in `http`, `server` or a `location` contexts.
+  > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in a `http`, `server`, or `location` contexts.
 
   > Words of caution:
+  >
   >   - never leave debug logging to a file on in production
   >   - don't forget to revert debug-level for `error_log` on a very high traffic sites
   >   - absolutely use log rotation policy
@@ -8378,7 +8372,7 @@ error_log /var/log/nginx/error-debug.log debug;
   error_log memory:32m debug;
   ```
 
-  > How to analyse error log in memory you can read [Show debug log in memory](#show-debug-log-in-memory) chapter.
+  > You can read more about that in the [Show debug log in memory](#show-debug-log-in-memory) chapter.
 
 - Debugging log for a IP address/range:
 
@@ -8391,7 +8385,7 @@ error_log /var/log/nginx/error-debug.log debug;
   }
   ```
 
-- Debugging log for a each server:
+- Debugging log for each server:
 
   ```bash
   error_log /var/log/nginx/debug.log debug;
@@ -8430,7 +8424,7 @@ error_log /var/log/nginx/error-debug.log debug;
 ###### Example
 
 ```bash
-# Default main log format from NGINX repository:
+# Default main log format from the NGINX repository:
 log_format main
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
@@ -8556,20 +8550,17 @@ worker_processes 3;
 
 ###### Rationale
 
-  > The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimise protocol overhead via efficient compression of HTTP header fields, and add support for request prioritisation and server push.
-
-  > HTTP/2 will make our applications faster, simpler, and more robust.
+  > HTTP/2 will make our applications faster, simpler, and more robust. The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimise protocol overhead via efficient compression of HTTP header fields, and add support for request prioritisation and server push.
 
   > HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before because if the client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
 
-  > Also include the `ssl` parameter, required because browsers do not support HTTP/2 without encryption.
+  > You should also include the `ssl` parameter, required because browsers do not support HTTP/2 without encryption.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
 ###### Example
 
 ```bash
-# For https:
 server {
 
   listen 10.240.20.2:443 ssl http2;
@@ -8591,7 +8582,7 @@ server {
 
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
-  > Set SSL Session Timeout to `5` minutes for prevent abused by advertisers like Google and Facebook.
+  > Set `ssl_session_timeout` to 5 minutes for prevent abused by advertisers like Google and Facebook.
 
 ###### Example
 
@@ -8631,7 +8622,7 @@ server {
 
 }
 
-# than to use the simplified form:
+# Than to use the simplified form:
 server {
 
     listen       80;
@@ -8686,9 +8677,13 @@ Good configuration:
 server {
 
     server_name               www.domain.com;
+
     return                    301 $scheme://domain.com$request_uri;
+
     # If you force your web traffic to use HTTPS:
     #                         301 https://domain.com$request_uri;
+
+    ,,,
 
 }
 
@@ -8780,6 +8775,8 @@ Good configuration:
 
 ###### Example
 
+Bad configuration:
+
 ```bash
 server {
 
@@ -8787,10 +8784,27 @@ server {
 
   if ($host = api.domain.com) {
 
-    return                    403;
+    rewrite     ^/(.*)$ http://example.com/$1 permanent;
+
+  }
+
+  ...
+```
+
+Good configuration:
+
+```bash
+server {
+
+  ...
+
+  if ($host = api.domain.com) {
+
+    return      403;
+
     # or other examples:
-    # return                  301 https://domain.com$request_uri;
-    # return                  301 $scheme://$host$request_uri;
+    # return    301 https://domain.com$request_uri;
+    # return    301 $scheme://$host$request_uri;
 
   }
 
