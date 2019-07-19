@@ -282,7 +282,7 @@
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
-  * [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)
+  * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
   * [Protect sensitive resources](#beginner-protect-sensitive-resources)
@@ -8939,9 +8939,11 @@ chown -R nginx:nginx /var/www/domain.com
 
   > It is recommended to disable any modules which are not required as this will minimise the risk of any potential attacks by limiting the operations allowed by the web server.
 
-  > The best way to unload unused modules is use the `configure` option during installation.
+  > The best way to unload unused modules is use the `configure` option during installation. If you have static linking a shared module you should re-compile NGINX.
 
-  > If you have static linking a shared module you should re-compile NGINX.
+  > Use only high quality modules and remember about that:
+  >
+  > _Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs._
 
 ###### Example
 
