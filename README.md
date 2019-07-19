@@ -391,7 +391,7 @@ In this handbook I added set of guidelines and examples has also been produced t
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentations.
 
-I did my best to make this handbook a single and consistent. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
+I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
 Before you start, remember about the two most important things:
 
