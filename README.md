@@ -1280,7 +1280,7 @@ Configuration options are called directives. We have four types of directives:
 
   > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
-Directives are organised into groups known as **blocks** or **contexts**. Generally context is a block directive can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
+Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
 
