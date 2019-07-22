@@ -1555,11 +1555,11 @@ Additionally, you must know that the `worker_connections` directive **includes a
 
 The number of connections is limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. This only affects the limits for the current process. The limits of the current process are bequeathed to children processes too, but each process has a separate count.
 
-To change the limit of the maximum file descriptors (that can be opened by a single worker process) you can edit the `worker_rlimit_nofile` directive. The advantage is there's no need to restarting the master process.
+To change the limit of the maximum file descriptors (that can be opened by a single worker process) you can edit the `worker_rlimit_nofile` directive. With this, there is no need to restarting the master process.
 
-  > The number of file descriptors is not the only one limitation of the number of connections - remember also about the kernel network (tcp stack) parameters and the maximum number of processes.
+  > The number of file descriptors is not the only one limitation of the number of connections - remember also about the kernel network (TCP/IP stack) parameters and the maximum number of processes.
 
-I don't like this piece of the NGINX's documentation because it says the `worker_rlimit_nofile` is a limit on the maximum number of open files (`RLIMIT_NOFILE`) for worker processes. I believe it is associated to a single worker process.
+I don't like this piece of the NGINX documentation. It says the `worker_rlimit_nofile` is a limit on the maximum number of open files for worker processes. I believe it is associated to a single worker process.
 
 If you set `RLIMIT_NOFILE` to 25000 and `worker_rlimit_nofile` to 12000 NGINX sets the maximum open files limit as a `worker_rlimit_nofile`. Default value of this directive is `none` so by default NGINX sets the initial value of maximum open files from system limits. In my opinion, relying on the `RLIMIT_NOFILE` value is more understandable and predictable.
 
@@ -1571,13 +1571,13 @@ I think that the chance of running out of file descriptors is minimal. However, 
 
   - `fs.file-max` - is the maximum, total, global number of file descriptors the kernel will allocate before choking. I think you should change this only for a very very high traffic:
 
-    - find out the system-wide maximum number of file handles
+    - find out the system-wide maximum number of file handles:
 
       ```bash
       sysctl fs.file-max
       ```
 
-    - shows the current number of all file descriptors in kernel memory
+    - shows the current number of all file descriptors in kernel memory:
 
       ```bash
       #   first value:  <allocated file handles>
@@ -1588,7 +1588,7 @@ I think that the chance of running out of file descriptors is minimal. However, 
 
   - `RLIMIT_NOFILE` - is a system-wide value one greater than the maximum file descriptor number that can be opened by process (if you set this, it is probably how many files can be opened by each worker). You can change the resource limits with the following options:
 
-    - `LimitNOFILE` (systemd) - is for systemd systems, you can change it in:
+    - `LimitNOFILE` - for systemd systems, you can change it in:
 
       - `/etc/systemd/system.conf` - global config (default values for all units)
       - `/etc/systemd/user.conf` - this specifies further per-user restrictions
@@ -1707,7 +1707,7 @@ Look also at these diagrams:
                        +-----------------+
   ```
 
-I the first two examples: we can take that NGINX needs 2 file handlers for full-fledged connection (but still uses 2 worker connections). In the third example NGINX can take still 2 file handlers for every full-fledged connection (also if client uses parallel connections).
+In the first two examples: we can take that NGINX needs 2 file handlers for full-fledged connection (but still uses 2 worker connections). In the third example NGINX can take still 2 file handlers for every full-fledged connection (also if client uses parallel connections).
 
 So, to conclude, I think that the correct value of `worker_rlimit_nofile` per all connections of worker should be:
 
