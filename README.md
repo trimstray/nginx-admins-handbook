@@ -1543,7 +1543,7 @@ Okay, so how many simultaneous connections can be processed by NGINX?
 worker_processes * worker_connections = max connections
 ```
 
-According to this: if you are running **4** worker processes with **4,096** worker connections per worker, you will be able to serve **16,384** connections. Of course, these are the NGINX settings. Please note that these are limited by the kernel (number of connections, number of open files, or number of processes).
+According to this: if you are running **4** worker processes with **4,096** worker connections per worker, you will be able to serve **16,384** connections. Of course, these are the NGINX settings limited by the kernel (number of connections, number of open files, or number of processes).
 
   > At this point, I would like to mention about [Understanding socket and port in TCP](https://medium.com/fantageek/understanding-socket-and-port-in-tcp-2213dc2e9b0c). It is a great and short explanation. I also recommend to read [Theoretical maximum number of open TCP connections that a modern Linux box can have](https://stackoverflow.com/questions/2332741/what-is-the-theoretical-maximum-number-of-open-tcp-connections-that-a-modern-lin).
 
@@ -1563,7 +1563,24 @@ I don't like this piece of the NGINX documentation. It says the `worker_rlimit_n
 
 If you set `RLIMIT_NOFILE` to 25,000 and `worker_rlimit_nofile` to 12,000, NGINX sets (only for workers) the maximum open files limit as a `worker_rlimit_nofile`. But the master process will have a set value of `RLIMIT_NOFILE`. Default value of `worker_rlimit_nofile` directive is `none` so by default NGINX sets the initial value of maximum open files from the system limits.
 
-This is controlled by the OS because the worker is not the only process running on the machine. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible. In my opinion, relying on the `RLIMIT_NOFILE` than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set.
+```bash
+grep "LimitNOFILE" /lib/systemd/system/nginx.service
+LimitNOFILE=5000
+
+grep "worker_rlimit_nofile" /etc/nginx/nginx.conf
+worker_rlimit_nofile 256;
+
+   PID       SOFT HARD
+ 24430       5000 5000
+ 24431        256 256
+ 24432        256 256
+ 24433        256 256
+ 24434        256 256
+```
+
+This is also controlled by the OS because the worker is not the only process running on the machine. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible.
+
+In my opinion, relying on the `RLIMIT_NOFILE` than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set but you should keep a constant eye on the priority of the limits.
 
   > If you don't set the `worker_rlimit_nofile` directive manually, then the OS settings will determine how many file descriptors can be used by NGINX.
 
@@ -1685,6 +1702,7 @@ Given the above to change/improve the limitations you should:
 
   # Set it permanently:
   echo "fs.file-max = 150000" > /etc/sysctl.d/99-fs.conf
+
   # And load new values of kernel parameters:
   sysctl -p       # for /etc/sysctl.conf
   sysctl --system # for /etc/sysctl.conf and all of the system configuration files
