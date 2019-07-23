@@ -1580,7 +1580,7 @@ worker_rlimit_nofile 256;
 
 This is also controlled by the OS because the worker is not the only process running on the machine. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible.
 
-In my opinion, relying on the `RLIMIT_NOFILE` than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set but you should keep a constant eye on the priority of the limits.
+In my opinion, relying on the `RLIMIT_NOFILE` than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set, but you should keep a constant eye on the priority of the limits.
 
   > If you don't set the `worker_rlimit_nofile` directive manually, then the OS settings will determine how many file descriptors can be used by NGINX.
 
@@ -1678,7 +1678,7 @@ However, after a deeper reflection they are rational because they allow one work
 So, moving on, the maximum number of open files by the NGINX should be:
 
 ```bash
-(worker_processes * worker_connections * 2) + (shared libs, log files, event pool etc.) = max open files
+(worker_processes * worker_connections * 2) + (shared libs, log files, event pool) = max open files
 ```
 
   > To serve **16,384** connections by all workers (4,096 connections for each worker), and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers in this case may be **35,000**. I think it's more than enough.
@@ -1687,64 +1687,64 @@ Given the above to change/improve the limitations you should:
 
 1. Edit the maximum, total, global number of file descriptors the kernel will allocate before choking (this step is optional, I think you should change this only for a very very high traffic):
 
-  ```bash
-  # Find out the system-wide maximum number of file handles:
-  sysctl fs.file-max
+    ```bash
+    # Find out the system-wide maximum number of file handles:
+    sysctl fs.file-max
 
-  # Shows the current number of all file descriptors in kernel memory:
-  #   first value:  <allocated file handles>
-  #  second value:  <unused-but-allocated file handles>
-  #   third value:  <the system-wide maximum number of file handles> # fs.file-max
-  sysctl fs.file-nr
+    # Shows the current number of all file descriptors in kernel memory:
+    #   first value:  <allocated file handles>
+    #  second value:  <unused-but-allocated file handles>
+    #   third value:  <the system-wide maximum number of file handles> # fs.file-max
+    sysctl fs.file-nr
 
-  # Set it manually and temporarily:
-  sysctl -w fs.file-max=150000
+    # Set it manually and temporarily:
+    sysctl -w fs.file-max=150000
 
-  # Set it permanently:
-  echo "fs.file-max = 150000" > /etc/sysctl.d/99-fs.conf
+    # Set it permanently:
+    echo "fs.file-max = 150000" > /etc/sysctl.d/99-fs.conf
 
-  # And load new values of kernel parameters:
-  sysctl -p       # for /etc/sysctl.conf
-  sysctl --system # for /etc/sysctl.conf and all of the system configuration files
-  ```
+    # And load new values of kernel parameters:
+    sysctl -p       # for /etc/sysctl.conf
+    sysctl --system # for /etc/sysctl.conf and all of the system configuration files
+    ```
 
 2. Edit the system-wide value of the maximum file descriptor number that can be opened by single process:
 
-  - for non-systemd systems:
+    - for non-systemd systems:
 
-    ```bash
-    # Set the maximum number of file descriptors for the users logged in via PAM:
-    #   /etc/security/limits.conf
-    nginx       soft    nofile    35000
-    nginx       hard    nofile    35000
-    ```
+      ```bash
+      # Set the maximum number of file descriptors for the users logged in via PAM:
+      #   /etc/security/limits.conf
+      nginx       soft    nofile    35000
+      nginx       hard    nofile    35000
+      ```
 
-  - for systemd systems:
+    - for systemd systems:
 
-    ```bash
-    # Set the maximum number (hard limit) of file descriptors for the services started via systemd:
-    #   /etc/systemd/system.conf          - global config (default values for all units)
-    #   /etc/systemd/user.conf            - this specifies further per-user restrictions
-    #   /lib/systemd/system/nginx.service - default unit for the NGINX service
-    #   /etc/systemd/system/nginx.service - for your own instance of the NGINX service
-    [Service]
-    # ...
-    LimitNOFILE=35000
+      ```bash
+      # Set the maximum number (hard limit) of file descriptors for the services started via systemd:
+      #   /etc/systemd/system.conf          - global config (default values for all units)
+      #   /etc/systemd/user.conf            - this specifies further per-user restrictions
+      #   /lib/systemd/system/nginx.service - default unit for the NGINX service
+      #   /etc/systemd/system/nginx.service - for your own instance of the NGINX service
+      [Service]
+      # ...
+      LimitNOFILE=35000
 
-    # Reload a unit file and restart the NGINX service:
-    systemctl daemon-reload && systemct restart nginx
-    ```
+      # Reload a unit file and restart the NGINX service:
+      systemctl daemon-reload && systemct restart nginx
+      ```
 
 3.  Adjusts the system limit on number of open files in NGINX worker:
 
-  ```bash
-  # Set the limit for file descriptors for a single worker process (change it as needed):
-  #   nginx.conf within the main context
-  worker_rlimit_nofile          10000;
+    ```bash
+    # Set the limit for file descriptors for a single worker process (change it as needed):
+    #   nginx.conf within the main context
+    worker_rlimit_nofile          10000;
 
-  # You need to reload the NGINX service:
-  nginx -s reload
-  ```
+    # You need to reload the NGINX service:
+    nginx -s reload
+    ```
 
 To show the current hard and soft limits applying to the NGINX processes (with `nofile`, `LimitNOFILE`, or `worker_rlimit_nofile`):
 
