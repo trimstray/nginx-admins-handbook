@@ -275,7 +275,7 @@
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
-  * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible)
+  * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
   * [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)
   * [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
@@ -353,7 +353,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - high performance caching server
 - full-fledged web platform
 
-Generally it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
+Generally, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -387,9 +387,9 @@ There are a lot of things you can do to improve NGINX server and this guide will
 
 Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them.
 
-In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX server. They give us insight into NGINX's internals also.
+In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX's internals also.
 
-If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentations.
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
 I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
@@ -710,7 +710,7 @@ I finally got **A+** grade and following scores:
 
   > Read about Mozilla Observatory [here](https://observatory.mozilla.org/faq/).
 
-I also got the highest note from Mozilla:
+I also got the highest note on the Observatory:
 
 <p align="center">
   <a href="https://observatory.mozilla.org/analyze/blkcipher.info?third-party=false">
@@ -736,7 +736,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
 | :---         | :---         | :---:        |
 | [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
-| [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors e.g. don't pass traffic to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors, e.g. traffic forwarding to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)<br><sup>While this may work, it will come with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -758,31 +758,31 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Organising Nginx configuration](#beginner-organising-nginx-configuration) | Base Rules | ![medium](static/img/priorities/medium.png) |
+| [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
-| [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly) | Base Rules | ![medium](static/img/priorities/medium.png) |
+| [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br></sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
-| [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server-name-directive-where-possible) | Performance | ![medium](static/img/priorities/medium.png) |
-| [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>Decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>It decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)<br><sup>Use it if you need to search for a file, it saving duplication of code also.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)<br><sup>0-RTT is disabled by default but you should know that enabling this option creates a significant security risks.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
-| [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443) | Base Rules | ![low](static/img/priorities/low.png) |
-| [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive) | Base Rules | ![low](static/img/priorities/low.png) |
-| [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny) | Base Rules | ![low](static/img/priorities/low.png) |
+| [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
+| [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
+| [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)<br><sup>Provides the perfect way to block invalid visitors.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | ![low](static/img/priorities/low.png) |
-| [Adjust worker processes](#beginner-adjust-worker-processes) | Performance | ![low](static/img/priorities/low.png) |
-| [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process) | Performance | ![low](static/img/priorities/low.png) |
+| [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
+| [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/priorities/low.png) |
@@ -7973,7 +7973,7 @@ server {
 
 ###### Rationale
 
-  > NGINX should prevent processing requests with undefined server names (also on IP address). It's also protects against configuration errors and don't pass traffic to incorrect backends. The problem is easily solved by creating a default catch all server config.
+  > NGINX should prevent processing requests with undefined server names (also on IP address). It protects against configuration errors, e.g. traffic forwarding to incorrect backends. The problem is easily solved by creating a default catch all server config.
 
   > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
 
@@ -9387,7 +9387,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
-  > For TLS 1.3, think about using [`ssl_early_data`](#) to allow TLS 1.3 0-RTT handshakes.
+  > For TLS 1.3, think about using [`ssl_early_data`](#beginner-prevent-replay-attacks-on-zero-round-trip-time) to allow TLS 1.3 0-RTT handshakes.
 
   **My recommendation:**
 
@@ -9434,6 +9434,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [An Overview of TLS 1.3 - Faster and More Secure](https://kinsta.com/blog/tls-1-3/)
 - [A Detailed Look at RFC 8446 (a.k.a. TLS 1.3)](https://blog.cloudflare.com/rfc-8446-aka-tls-1-3/)
 - [Differences between TLS 1.2 and TLS 1.3](https://www.wolfssl.com/differences-between-tls-1-2-and-tls-1-3/)
+- [TLS 1.3 in a nutshell](https://assured.se/2018/08/29/tls-1-3-in-a-nut-shell/)
 - [TLS 1.3 is here to stay](https://www.ssl.com/article/tls-1-3-is-here-to-stay/)
 - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454)
@@ -9462,7 +9463,9 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > If you want to get **A+ with 100%s on SSL Lab** (for Cipher Strength) you should definitely disable `128-bit` ciphers. That's the main reason why you should not use them.
 
-  > In my opinion `128-bit` symmetric encryption doesn’t less secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications). It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLSv1.3 cipher suites so at this moment it's always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+  > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
+
+  > It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLS 1.3 cipher suites. NGINX isn't able to influence that so at this moment it's always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
@@ -9667,31 +9670,61 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 
 ###### Rationale
 
-  > This rules is only important for TLS 1.3. By default enabling TLS 1.3 will not enable 0-RTT support. You need to opt in.
+  > This rules is only important for TLS 1.3. By default enabling TLS 1.3 will not enable 0-RTT support. After all, you should be fully aware of all the potential exposure factors and related risks with the use of this option.
 
-  > In order to send "early-data", client and server [must support PSK exchange mode](https://tools.ietf.org/html/rfc8446#section-2.3) (session cookies).
+  > 0-RTT Handshakes is part of the replacement of TLS Session Resumption and was inspired by the QUIC Protocol.
 
-  > TLS 1.3 has a faster handshake that completes in 1-RTT. Additionally, it has a particular session resumption mode where, under certain conditions, it is possible to send data to the server on the first flight (0-RTT).
+  > 0-RTT creates a significant security risk. With 0-RTT, a threat actor can intercept an encrypted client message and resend it to the server, tricking the server into improperly extending trust to the threat actor and thus potentially granting the threat actor access to sensitive data.
 
-  > You can enable 0-RTT with `ssl_early_data on;` in the configuration. You’ll also need to add `proxy_set_header Early-Data $ssl_early_data;` to your proxy directives to ensure that the `Early-Data` header is passed to your application.
+  > On the other hand, including 0-RTT (Zero Round Trip Time Resumption) results in a significant increase in efficiency and connection times. TLS 1.3 has a faster handshake that completes in 1-RTT. Additionally, it has a particular session resumption mode where, under certain conditions, it is possible to send data to the server on the first flight (0-RTT).
+
+  > For example, Cloudflare only supports 0-RTT for [GET requests with no query parameters](https://new.blog.cloudflare.com/introducing-0-rtt/) in an attempt to limit the attack surface. Moreover, in order to improve identify connection resumption attempts, they relay this information to the origin by adding an extra header to 0-RTT requests. This header uniquely identifies the request, so if one gets repeated, the origin will know it's a replay attack (the application needs to track values received from that and reject duplicates on non-idempotent endpoints).
+
+  > To protect against such attacks at the application layer, the `$ssl_early_data` variable should be used. You'll also need to ensure that the `Early-Data` header is passed to your application. `$ssl_early_data` returns 1 if TLS 1.3 early data is used and the handshake is not complete.
 
   > However, as part of the upgrade, you should disable 0-RTT until you can audit your application for this class of vulnerability.
 
-  > For example, Cloudflare only supports 0-RTT for [GET requests with no query parameters](https://new.blog.cloudflare.com/introducing-0-rtt/) in an attempt to limit the attack surface.
+  > In order to send early-data, client and server [must support PSK exchange mode](https://tools.ietf.org/html/rfc8446#section-2.3) (session cookies).
 
   > In addition, I would like to recommend [this](https://news.ycombinator.com/item?id=16667036) great discussion about TLS 1.3 and 0-RTT.
 
-  > If you want to test 0-RTT with OpenSSL, see: [Verify 0-RTT](#verify-0-rtt).
+  If you are unsure to enable 0-RTT, look what Cloudflare say about it:
+
+  > _Generally speaking, 0-RTT is safe for most web sites and applications. If your web application does strange things and you’re concerned about its replay safety, consider not using 0-RTT until you can be certain that there are no negative effects. [...] TLS 1.3 is a big step forward for web performance and security. By combining TLS 1.3 with 0-RTT, the performance gains are even more dramatic._
 
 ###### Example
+
+Test 0-RTT with OpenSSL:
+
+```bash
+# 1)
+_host="example.com"
+
+cat > req.in << __EOF__
+HEAD / HTTP/1.1
+Host: $_host
+Connection: close
+__EOF__
+# or:
+# echo -e "GET / HTTP/1.1\r\nHost: $_host\r\nConnection: close\r\n\r\n" > req.in
+
+openssl s_client -connect ${_host}:443 -tls1_3 -sess_out session.pem -ign_eof < req.in
+openssl s_client -connect ${_host}:443 -tls1_3 -sess_in session.pem -early_data req.in
+
+# 2)
+python -m sslyze --early_data "$_host"
+```
+
+Enable 0-RTT with `$ssl_early_data` variable:
 
 ```bash
 server {
 
   ...
 
-  ssl_protocols TLSv1.2 TLSv1.3;
-  ssl_early_data on; # to enable 0-RTT (TLS 1.3)
+  ssl_protocols   TLSv1.2 TLSv1.3;
+  # To enable 0-RTT (TLS 1.3):
+  ssl_early_data  on;
 
   location / {
 
@@ -9710,9 +9743,12 @@ server {
 
 - [Security Review of TLS1.3 0-RTT](https://github.com/tlswg/tls13-spec/issues/1001)
 - [Introducing Zero Round Trip Time Resumption (0-RTT)](https://new.blog.cloudflare.com/introducing-0-rtt/)
+- [What Application Developers Need To Know About TLS Early Data (0RTT)](https://blog.trailofbits.com/2019/03/25/what-application-developers-need-to-know-about-tls-early-data-0rtt/)
 - [Replay Attacks on Zero Round-Trip Time: The Case of the TLS 1.3 Handshake Candidates](https://eprint.iacr.org/2017/082.pdf)
 - [0-RTT and Anti-Replay](https://tools.ietf.org/html/rfc8446#section-8)
-- [Using Early Data in HTTP](https://tools.ietf.org/html/draft-ietf-httpbis-replay-04)
+- [Using Early Data in HTTP (2017)](https://tools.ietf.org/id/draft-thomson-http-replay-00.html_)
+- [Using Early Data in HTTP (2018)](https://tools.ietf.org/html/draft-ietf-httpbis-replay-04)
+- [0-RTT Handshakes](https://ldapwiki.com/wiki/0-RTT%20Handshakes)
 
 #### :beginner: Defend against the BEAST attack
 
