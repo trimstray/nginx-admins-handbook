@@ -375,9 +375,9 @@ If you love security keep your eye on this one: [Cryptology ePrint Archive](http
 
 When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in suitable form. I was a little disappointed.
 
-I was interested in everything: NGINX's internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
+I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
 
-Of course, I know that we also have great resources like [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/), or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). These are definitely the best assets for us and in the first place you should seek help there.
+Of course, I know that we also have great resources like [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/), [Nginx discovery journey](http://www.nginx-discovery.com/) or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). These are definitely the best assets for us and in the first place you should seek help there.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
@@ -387,7 +387,7 @@ There are a lot of things you can do to improve NGINX server and this guide will
 
 Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them.
 
-In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX's internals also.
+In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
@@ -931,6 +931,8 @@ _In this ebook you will learn:_
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://openresty.org/download/agentzh-nginx-tutorials-en.html"><b>agentzh's Nginx Tutorials</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://agentzh.org/misc/slides/nginx-conf-scripting/nginx-conf-scripting.html#1"><b>Introduction to nginx.conf scripting</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://www.nginx-discovery.com/"><b>Nginx discovery journey</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.nginxguts.com/"><b>Nginx Guts</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gist.github.com/carlessanagustin/9509d0d31414804da03b"><b>Nginx Cheatsheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.scalescale.com/tips/nginx/"><b>Nginx Tutorials, Linux Sysadmin Configuration & Optimizing Tips and Tricks</b></a><br>
@@ -960,7 +962,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS</b></a><br>
 </p>
 
-##### Presentations
+##### Presentations & Videos
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/Nginx/nginx-basics-and-best-practices"><b>NGINX: Basics and Best Practices</b></a><br>
@@ -974,6 +976,12 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/TonyFabeen/nginx-scripting-extending-nginx-functionalities-with-lua"><b>Nginx Scripting - Extending Nginx Functionalities with Lua</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/kazeburo/advanced-nginx-in-mercari-how-to-handle-over-1200000-https-reqsmin"><b>How to handle over 1,200,000 HTTPS Reqs/Min</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/harukayon/ngx-lua-public"><b>Using ngx_lua / lua-nginx-module in pixiv</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXewvc6tjIGGFZ6DBKHEld3k"><b>NGINX Conf 2014</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXdED9BR6GQ61A6d3fBzjpbn"><b>NGINX Conf 2015</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXcOsB_dT26iu0BvbSxWYG1g"><b>NGINX Conf 2016</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXeT-z_rcZ9yF0kV5SENZ-yt"><b>NGINX Conf 2017</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXeHhKRX6ZS7vmFKN12iYOw9"><b>NGINX Conf 2018 | Deep Dive Track</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXe_Vc708VKvr5KJ4gnf1WxS"><b>NGINX Conf 2018 | Keynotes and Sessions</b></a><br>
 </p>
 
 ##### Playgrounds
@@ -1046,11 +1054,16 @@ _In this ebook you will learn:_
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.lua.org/pil/contents.html"><b>Programming in Lua (first edition)</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://www.londonlua.org/scripting_nginx_with_lua/"><b>Scripting Nginx with Lua</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://www.evanmiller.org/nginx-modules-guide-advanced.html"><b>Emiller’s Advanced Topics In Nginx Module Development</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.airpair.com/nginx/extending-nginx-tutorial"><b>NGINX Tutorial: Developing Modules</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Nginx-Lua/"><b>An Introduction To OpenResty (nginx + lua) - Part 1</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-2/"><b>An Introduction To OpenResty - Part 2 - Concepts</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-3/"><b>An Introduction To OpenResty - Part 3
-</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-3/"><b>An Introduction To OpenResty - Part 3</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://blog.dutchcoders.io/openresty-with-dynamic-generated-certificates/"><b>OpenResty (Nginx) with dynamically generated certificates</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/programming-openresty"><b>Programming OpenResty</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.lua.org/pil/contents.html"><b>Programming in Lua (first edition)</b></a><br>
 </p>
 
 ##### Online tools
@@ -1198,11 +1211,11 @@ Some useful snippets for the NGINX process management:
 
 #### Configuration syntax
 
-NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX's configuration has a simple and very transparent structure.
+NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX configuration has a simple and very transparent structure.
 
 ##### Comments
 
-NGINX's configuration files don't support comment blocks, they only accept `#` at the beginning of a line for a comment.
+NGINX configuration files don't support comment blocks, they only accept `#` at the beginning of a line for a comment.
 
 ##### End of lines
 
@@ -1516,7 +1529,7 @@ For more information take a look at following resources:
 
 NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of symmetric multiprocessing (SMP).
 
-From NGINX documentation:
+From NGINX's documentation:
 
   > _The NGINX configuration recommended in most cases – running one worker process per CPU core – makes the most efficient use of hardware resources._
 
@@ -5818,7 +5831,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed o
 
   > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release.
 
-  > Before installing external modules please read [Event-Driven architecture](#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX's performance.
+  > Before installing external modules please read [Event-Driven architecture](#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
 
 Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
 
@@ -5836,9 +5849,9 @@ A short description of the modules that I used in this step-by-step tutorial:
 
 - [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into NGINX
 
-- [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX's rewrite module
+- [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX rewrite module
 
-- [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX's config file
+- [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX config file
 
 - [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) - set, add, and clear arbitrary output headers
 
@@ -7743,7 +7756,7 @@ These are the basic set of rules to keep NGINX in good condition.
   >   - `_listen` - for all listen directives; also stores SSL configuration
   >   - `_server` - for domains (localhost) configuration; also stores all backends definitions
   > - `modules` - for modules which are dynamically loading into NGINX
-  > - `snippets` - for NGINX's aliases, configuration templates, e.g. logrotate
+  > - `snippets` - for NGINX aliases, configuration templates, e.g. logrotate
   >
   > I attach some of them, if necessary, to files which has `server` directives.
 
