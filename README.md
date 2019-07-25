@@ -377,7 +377,15 @@ When I was studying architecture of HTTP servers I became interested in NGINX. I
 
 I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
 
-Of course, I know that we also have great resources like [Official Documentation](https://nginx.org/en/docs/), [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html), [Nginx Guts](http://www.nginxguts.com/), [Nginx discovery journey](http://www.nginx-discovery.com/) or [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html). These are definitely the best assets for us and in the first place you should seek help there.
+Of course, I know that we also have great resources like:
+
+- [Official Documentation](https://nginx.org/en/docs/)
+- [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html)
+- [Nginx Guts](http://www.nginxguts.com/)
+- [Nginx discovery journey](http://www.nginx-discovery.com/)
+- [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html)
+
+These are definitely the best assets for us and in the first place you should seek help there.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
 
