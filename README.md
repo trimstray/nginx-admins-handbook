@@ -110,7 +110,7 @@
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
-  * [Error log severity levels](#error-log-severity-levels)
+    * [Error log severity levels](#error-log-severity-levels)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
@@ -2547,7 +2547,7 @@ gzip -t access.log.0 && rm -fr access.log.0
 
   > You can also read about how to [configure log rotation policy](#beginner-configure-log-rotation-policy).
 
-#### Error log severity levels
+##### Error log severity levels
 
 The following is a list of all severity levels:
 
