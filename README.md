@@ -74,7 +74,7 @@
   * [Comparison reviews](#comparison-reviews)
   * [Cheatsheets & References](#cheatsheets--references)
   * [Performance & Hardening](#performance--hardening)
-  * [Presentations](#presentations)
+  * [Presentations & Videos](#presentations--videos)
   * [Playgrounds](#playgrounds)
   * [Config generators](#config-generators)
   * [Static analyzers](#static-analyzers)
@@ -452,7 +452,7 @@ Existing chapters:
     - [x] _Nginx Forum_
     - [x] _Nginx Mailing List_
     - [x] _NGINX-Demos_
-  - _Presentations_
+  - _Presentations & Videos_
     - [x] _NGINX: Basics and Best Practices_
     - [x] _NGINX Installation and Tuning_
     - [x] _Nginx Internals (by Joshua Zhu)_
@@ -2760,7 +2760,14 @@ server {
 
 #### Rate limiting
 
-  > All rate limiting rules (definitions) should be added to the NGINX `http` context.
+NGINX has a default module to setup rate limiting. For me, it's one of the most useful protect feature but really hard to understand.
+
+I think, in case of doubt, you should read up on the following documents:
+
+- [Rate Limiting with NGINX and NGINX Plus](https://www.nginx.com/blog/rate-limiting-nginx/)
+- [NGINX rate-limiting in a nutshell](https://www.freecodecamp.org/news/nginx-rate-limiting-in-a-nutshell-128fe9e0126c/)
+- [NGINX Rate Limiting](https://dzone.com/articles/nginx-rate-limiting)
+- [How to protect your web site from HTTP request flood, DoS and brute-force attacks](https://www.ryadel.com/en/nginx-request-rate-limit-protect-web-site-http-request-flood-dos-brute-force/)
 
 Rate limiting rules are useful for:
 
@@ -2773,7 +2780,7 @@ Rate limiting rules are useful for:
 - mitigating ddos attacks
 - protect brute-force attacks
 
-NGINX has following variables (unique keys) that can be used in a rate limiting rules:
+NGINX has following variables (unique keys) that can be used in a rate limiting rules. For example:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
@@ -2872,6 +2879,8 @@ The range of zones is as follows:
     ... zone=<name>;
 
   ```
+
+  > All rate limiting rules (definitions) should be added to the NGINX `http` context.
 
 `limit_req_zone` key lets you set `rate` parameter (optional) - it defines the rate limited URL(s).
 
