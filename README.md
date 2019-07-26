@@ -2454,9 +2454,9 @@ The `ngx_http_rewrite_module` also provides additional directives:
   }
   ```
 
-- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired (see [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/))
+- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired (see [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)). The NGINX docs say also:
 
-  > The NGINX docs say also: _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
+  > _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
 
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
@@ -2465,19 +2465,27 @@ Example of usage `if` and `set` directives:
 ```bash
 # It comes from: https://gist.github.com/jrom/1760790:
 if ($request_uri = /) {
+
   set $test  A;
+
 }
 
 if ($host ~* example.com) {
+
   set $test  "${test}B";
+
 }
 
 if ($http_cookie !~* "auth_token") {
+
   set $test  "${test}C";
+
 }
 
 if ($test = ABC) {
+
   proxy_pass http://cms.example.com;
+
   break;
 }
 ```
