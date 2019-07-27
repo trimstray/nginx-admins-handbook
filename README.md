@@ -271,7 +271,7 @@
 - **[Debugging](#debugging-1)**
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Use custom log formats](#beginner-use-custom-log-formats)
-  * [Memory analysis from core dumps](#beginner-memory-analysis-from-core-dumps)
+  * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
@@ -637,7 +637,7 @@ Existing chapters:
 <summary><b>Debugging</b></summary><br>
 
   - [ ] _Disable all workers except one_
-  - [x] _Memory analysis from core dumps_
+  - [x] _Use core dumps to figure out why NGINX keep crashing_
   - [ ] _Use mirror module to copy requests to another backend_
   - [ ] _Dynamic debugging with echo module_
 
@@ -799,7 +799,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
-| [Memory analysis from core dumps](#beginner-memory-analysis-from-core-dumps) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
 ## Printable high-res hardening cheatsheets
@@ -8683,7 +8683,7 @@ log_format geoip-level-0
 - [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
 - [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
 
-#### :beginner: Memory analysis from core dumps
+#### :beginner: Use core dumps to figure out why NGINX keep crashing
 
 ###### Rationale
 
