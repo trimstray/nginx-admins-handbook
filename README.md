@@ -266,6 +266,7 @@
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
+  * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
 - **[Debugging](#debugging-1)**
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
@@ -627,7 +628,7 @@ Existing chapters:
   - [x] _Format, prettify and indent your Nginx code_
   - [x] _Never use a hostname in a listen or upstream directives_
   - [ ] _Making a rewrite absolute (with scheme)_
-  - [ ] _Use return directive for URL redirection (301, 302)_
+  - [x] _Use return directive for URL redirection (301, 302)_
   - [x] _Configure log rotation policy_
 
 </details>
@@ -728,14 +729,14 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (56) from this handbook.
+  > This checklist contains all rules (57) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 23 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 19 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 20 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 5 | as an option to implement or use (not required) |
 
@@ -769,6 +770,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
+| [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)<br><sup>The by far simplest and fastest because there is no regexp that has to be evaluated.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
@@ -7940,7 +7942,7 @@ kill -HUP $(pgrep -f "nginx: master")
 ###### External resources
 
 - [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
-- [Commands (from this Handbook)](#commands)
+- [Commands (from this handbook)](#commands)
 
 #### :beginner: Separate `listen` directives for 80 and 443
 
@@ -8155,7 +8157,7 @@ server {
 ###### External resources
 
 - [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
-- [Define the listen directives explicitly with address:port pair (from this Handbook)](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
+- [Define the listen directives explicitly with address:port pair (from this handbook)](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
 
 #### :beginner: Use only one SSL config for the listen directive
 
@@ -8307,7 +8309,7 @@ geo $globals_internal_geo_acl {
 ###### External resources
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
-- [Blocking/allowing IP addresses (from this Handbook)](#blockingallowing-ip-addresses)
+- [Blocking/allowing IP addresses (from this handbook)](#blockingallowing-ip-addresses)
 
 #### :beginner: Map all the things...
 
@@ -8394,6 +8396,34 @@ server {
 ###### External resources
 
 - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
+
+#### :beginner: Use return directive for URL redirection (301, 302)
+
+###### Rationale
+
+  > It's a simple rule. You should use server blocks and `return` statements as they're way faster than evaluating RegEx.
+
+  > It is simpler and faster because NGINX stops processing the request (and doesn't have to process a regular expressions).
+
+###### Example
+
+```bash
+server {
+
+  server_name www.example.com;
+
+  # return    301 https://$host$request_uri;
+  return      301 $scheme://www.example.com$request_uri;
+
+}
+```
+
+###### External resources
+
+- [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/)
+- [How to do an Nginx redirect](https://bjornjohansen.no/nginx-redirect)
+- [Adding and removing the www prefix (from this handbook)](#adding-and-removing-the-www-prefix)
+- [Avoid checks server_name with if directive (from this handbook)](#beginner-avoid-checks-server_name-with-if-directive)
 
 #### :beginner: Configure log rotation policy
 
@@ -8661,7 +8691,7 @@ log_format geoip-level-0
 
   > NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
 
-  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this Handbook)](#dump-a-processs-memory).
+  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this handbook)](#dump-a-processs-memory).
 
   > You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
 
@@ -8676,7 +8706,7 @@ working_directory     /var/dump/nginx;
 ###### External resources
 
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
-- [Dump a process's memory (from this Handbook)](#dump-a-processs-memory)
+- [Dump a process's memory (from this handbook)](#dump-a-processs-memory)
 
 # Performance
 
@@ -8871,7 +8901,7 @@ server {
 ###### External resources
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
-- [if, break and set (from this Handbook)](#if-break-and-set)
+- [if, break and set (from this handbook)](#if-break-and-set)
 
 #### :beginner: Use `try_files` directive to ensure a file exists
 
@@ -8985,7 +9015,7 @@ server {
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [NGINX - rewrite vs redirect](http://think-devops.com/blogs/nginx-rewrite-redirect.html)
-- [rewrite vs return (from this Handbook)](#rewrite-vs-return)
+- [rewrite vs return (from this handbook)](#rewrite-vs-return)
 
 #### :beginner: Make an exact location match to speed up the selection process
 
@@ -9078,8 +9108,8 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 
 ###### External resources
 
-- [Installation from prebuilt packages (from this Handbook)](#installation-from-prebuilt-packages)
-- [Installation from source (from this Handbook)](#installation-from-source)
+- [Installation from prebuilt packages (from this handbook)](#installation-from-prebuilt-packages)
+- [Installation from source (from this handbook)](#installation-from-source)
 
 #### :beginner: Run as an unprivileged user
 
