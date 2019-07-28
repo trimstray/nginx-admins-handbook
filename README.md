@@ -8633,6 +8633,7 @@ log_format debug-level-0
 - [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 - [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
 - [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
+- [Custom log formats (from this handbook)](#custom-log-formats)
 
 #### :beginner: Use debug mode to track down unexpected behaviour
 
