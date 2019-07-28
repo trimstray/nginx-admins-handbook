@@ -272,6 +272,7 @@
 - **[Debugging](#debugging-1)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
+  * [Disable daemon, master and all workers except one](#beginner-disable-daemon-master-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
@@ -301,7 +302,7 @@
   * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
   * [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
-  * [Mitigation of CRIME/BREACH attacks)](#beginner-mitigation-of-crimebreach-attacks)
+  * [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)
   * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behaviour of the Referer header (Referrer-Policy)](#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)
@@ -741,8 +742,8 @@ Generally, I think that each of these principles is important and should be cons
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 23 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 20 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 25 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 19 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
