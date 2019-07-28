@@ -281,6 +281,7 @@
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
   * [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)
   * [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
+  * [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
@@ -654,7 +655,7 @@ Existing chapters:
   - [x] _Use try_files directive to ensure a file exists_
   - [ ] _Don't pass all requests to the backend - use try_files_
   - [x] _Use return directive instead of rewrite for redirects_
-  - [ ] _Enable PCRE JIT to speed up processing of regular expressions_
+  - [x] _Enable PCRE JIT to speed up processing of regular expressions_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
 
@@ -751,6 +752,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors, e.g. traffic forwarding to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)<br><sup>While this may work, it will come with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
+| [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)<br><sup>NGINX with PCRE JIT is much faster than without it.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -774,7 +777,6 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)<br><sup>The by far simplest and fastest because there is no regexp that has to be evaluated.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
-| [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>It decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
@@ -1543,7 +1545,7 @@ For more information take a look at following resources:
 
 NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of symmetric multiprocessing (SMP).
 
-From NGINX's documentation:
+From NGINX documentation:
 
   > _The NGINX configuration recommended in most cases – running one worker process per CPU core – makes the most efficient use of hardware resources._
 
@@ -7982,7 +7984,7 @@ http {
 
   > To stop processes with waiting for the worker processes to finish serving current requests use `nginx -s quit` command. It's better than `nginx -s stop` for fast shutdown.
 
-  From NGINX's documentation:
+  From NGINX documentation:
 
   > _In order for NGINX to re-read the configuration file, a HUP signal should be sent to the master process. The master process first checks the syntax validity, then tries to apply new configuration, that is, to open log files and new listen sockets. If this fails, it rolls back changes and continues to work with old configuration. If this succeeds, it starts new worker processes, and sends messages to old worker processes requesting them to shut down gracefully. Old worker processes close listen sockets and continue to service old clients. After all clients are serviced, old worker processes are shut down._
 
@@ -8242,7 +8244,7 @@ server {
 
   > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address. It's also to prevent mistakes and configuration mismatch.
 
-  From NGINX's documentation:
+  From NGINX documentation:
 
   > _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
 
@@ -9081,6 +9083,35 @@ server {
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [NGINX - rewrite vs redirect](http://think-devops.com/blogs/nginx-rewrite-redirect.html)
 - [rewrite vs return (from this handbook)](#rewrite-vs-return)
+
+#### :beginner: Enable PCRE JIT to speed up processing of regular expressions
+
+###### Rationale
+
+  > Enables the use of JIT for regular expressions to speed-up their processing.
+
+  > By compiling NGINX with the PCRE library, you can perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives.
+
+  > PCRE JIT can speed up processing of regular expressions significantly. NGINX with `pcre_jit` is magnitudes faster than without it.
+
+  > If you’ll try to use `pcre_jit on;` without JIT available, or if NGINX was compiled with JIT available, but currently loaded PCRE library does not support JIT, will warn you during configuration parsing.
+
+  > The `--with-pcre-jit` is only needed when you compile PCRE library using NGNIX configure (`./configure --with-pcre=`). When using a system PCRE library whether or not JIT is supported depends on how the library was compiled.
+
+  From NGINX documentation:
+
+  > _The JIT is available in PCRE libraries starting from version 8.20 built with the `--enable-jit` configuration parameter. When the PCRE library is built with nginx (`--with-pcre=`), the JIT support is enabled via the `--with-pcre-jit` configuration parameter._
+
+###### Example
+
+```bash
+# In global context:
+pcre_jit on;
+```
+
+###### External resources
+
+- [Core functionality - pcre jit](https://nginx.org/en/docs/ngx_core_module.html#pcre_jit)
 
 #### :beginner: Make an exact location match to speed up the selection process
 
