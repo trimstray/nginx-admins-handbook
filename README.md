@@ -654,6 +654,7 @@ Existing chapters:
   - [x] _Use try_files directive to ensure a file exists_
   - [ ] _Don't pass all requests to the backend - use try_files_
   - [x] _Use return directive instead of rewrite for redirects_
+  - [ ] _Enable PCRE JIT to speed up processing of regular expressions_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
 
@@ -731,7 +732,7 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (57) from this handbook.
+  > This checklist contains all rules (58) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
@@ -740,7 +741,7 @@ Generally, I think that each of these principles is important and should be cons
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 23 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 20 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
-| ![info](static/img/priorities/info.png) | <i>minor</i> | 5 | as an option to implement or use (not required) |
+| ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
 
@@ -6008,6 +6009,8 @@ A short description of the modules that I used in this step-by-step tutorial:
 - [`nginx-push-stream-module`](https://github.com/wandenberg/nginx-push-stream-module) - a pure stream http push technology for your Nginx setup
 
 - [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
+
+- [`ngx_http_custom_counters_module`](https://github.com/lyokha/nginx-custom-counters-module) - customizable counters shared by all worker processes and virtual servers
 
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
