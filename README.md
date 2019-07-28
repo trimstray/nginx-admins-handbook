@@ -409,7 +409,9 @@ Before you start, remember about the following most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-  > **`There are no settings that are perfect for everyone. The only correct approach is to understand your exposure, measure and tune.`**
+  > **`There are no settings that are perfect for everyone.`**
+
+  > **`The only correct approach is to understand your exposure, measure and tune.`**
 
   > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
 
