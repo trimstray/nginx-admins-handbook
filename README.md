@@ -199,6 +199,7 @@
       * [Core dump backtrace](#core-dump-backtrace)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
+    * [Custom log formats](#custom-log-formats)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
@@ -269,8 +270,8 @@
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
 - **[Debugging](#debugging-1)**
-  * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Use custom log formats](#beginner-use-custom-log-formats)
+  * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
 - **[Performance](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
@@ -580,6 +581,7 @@ Existing chapters:
   - _Errors & Issues_
     - [ ] _Common errors_
   - _Configuration snippets_
+    - [x] _Custom log formats_
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
     - [x] _Redirect POST request with payload to external endpoint_
@@ -797,8 +799,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt) | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
-| [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
+| [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
@@ -4789,6 +4791,71 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 
 #### Configuration snippets
 
+##### Custom log formats
+
+```bash
+# Default main log format from the NGINX repository:
+log_format main
+                '$remote_addr - $remote_user [$time_local] "$request" '
+                '$status $body_bytes_sent "$http_referer" '
+                '"$http_user_agent" "$http_x_forwarded_for"';
+
+# Extended main log format:
+log_format main-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '$request_time';
+
+# Debug log formats:
+log_format debug-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" '
+                '$request_completion';
+
+log_format debug-level-1
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" $request_length '
+                '$request_completion $connection $connection_requests '
+                '"$http_user_agent"';
+
+log_format debug-level-2
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" $request_length '
+                '$request_completion $connection $connection_requests '
+                '$remote_addr $remote_port $server_addr $server_port '
+                '$http_x_forwarded_for "$http_referer" "$http_user_agent"';
+
+# Debug log format for SSL:
+log_format debug-ssl-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '$request_time '
+                '$tls_version $ssl_protocol $ssl_cipher';
+
+# Log format for GeoIP module (ngx_http_geoip_module):
+log_format geoip-level-0
+                '$remote_addr - $remote_user [$time_local] "$request" '
+                '$status $body_bytes_sent "$http_referer" '
+                '"$http_user_agent" "$http_x_forwarded_for" '
+                '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
+```
+
 ##### Restricting access with basic authentication
 
 ```bash
@@ -8525,6 +8592,48 @@ server {
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
+#### :beginner: Use custom log formats
+
+###### Rationale
+
+  > Anything you can access as a variable in NGINX config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
+
+  > This is extremely helpful for debugging specific `location` directives.
+
+###### Example
+
+```bash
+# Default main log format from the NGINX repository:
+log_format main
+                '$remote_addr - $remote_user [$time_local] "$request" '
+                '$status $body_bytes_sent "$http_referer" '
+                '"$http_user_agent" "$http_x_forwarded_for"';
+
+# Extended main log format:
+log_format main-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '$request_time';
+
+# Debug log formats:
+log_format debug-level-0
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '$request_id $pid $msec $request_time '
+                '$upstream_connect_time $upstream_header_time '
+                '$upstream_response_time "$request_filename" '
+                '$request_completion';
+```
+
+###### External resources
+
+- [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
+- [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
+- [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
+
 #### :beginner: Use debug mode to track down unexpected behaviour
 
 ###### Rationale
@@ -8603,85 +8712,6 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 - [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
-
-#### :beginner: Use custom log formats
-
-###### Rationale
-
-  > Anything you can access as a variable in NGINX config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
-
-  > This is extremely helpful for debugging specific `location` directives.
-
-###### Example
-
-```bash
-# Default main log format from the NGINX repository:
-log_format main
-                '$remote_addr - $remote_user [$time_local] "$request" '
-                '$status $body_bytes_sent "$http_referer" '
-                '"$http_user_agent" "$http_x_forwarded_for"';
-
-# Extended main log format:
-log_format main-level-0
-                '$remote_addr - $remote_user [$time_local] '
-                '"$request_method $scheme://$host$request_uri '
-                '$server_protocol" $status $body_bytes_sent '
-                '"$http_referer" "$http_user_agent" '
-                '$request_time';
-
-# Debug log formats:
-log_format debug-level-0
-                '$remote_addr - $remote_user [$time_local] '
-                '"$request_method $scheme://$host$request_uri '
-                '$server_protocol" $status $body_bytes_sent '
-                '$request_id $pid $msec $request_time '
-                '$upstream_connect_time $upstream_header_time '
-                '$upstream_response_time "$request_filename" '
-                '$request_completion';
-
-log_format debug-level-1
-                '$remote_addr - $remote_user [$time_local] '
-                '"$request_method $scheme://$host$request_uri '
-                '$server_protocol" $status $body_bytes_sent '
-                '$request_id $pid $msec $request_time '
-                '$upstream_connect_time $upstream_header_time '
-                '$upstream_response_time "$request_filename" $request_length '
-                '$request_completion $connection $connection_requests '
-                '"$http_user_agent"';
-
-log_format debug-level-2
-                '$remote_addr - $remote_user [$time_local] '
-                '"$request_method $scheme://$host$request_uri '
-                '$server_protocol" $status $body_bytes_sent '
-                '$request_id $pid $msec $request_time '
-                '$upstream_connect_time $upstream_header_time '
-                '$upstream_response_time "$request_filename" $request_length '
-                '$request_completion $connection $connection_requests '
-                '$remote_addr $remote_port $server_addr $server_port '
-                '$http_x_forwarded_for "$http_referer" "$http_user_agent"';
-
-# Debug log format for SSL:
-log_format debug-ssl-level-0
-                '$remote_addr - $remote_user [$time_local] '
-                '"$request_method $scheme://$host$request_uri '
-                '$server_protocol" $status $body_bytes_sent '
-                '"$http_referer" "$http_user_agent" '
-                '$request_time '
-                '$tls_version $ssl_protocol $ssl_cipher';
-
-# Log format for GeoIP module (ngx_http_geoip_module):
-log_format geoip-level-0
-                '$remote_addr - $remote_user [$time_local] "$request" '
-                '$status $body_bytes_sent "$http_referer" '
-                '"$http_user_agent" "$http_x_forwarded_for" '
-                '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
-```
-
-###### External resources
-
-- [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
-- [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
-- [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
 
 #### :beginner: Use core dumps to figure out why NGINX keep crashing
 
