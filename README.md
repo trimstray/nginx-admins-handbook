@@ -638,7 +638,7 @@ Existing chapters:
 <details>
 <summary><b>Debugging</b></summary><br>
 
-  - [ ] _Disable all workers except one_
+  - [x] _Disable daemon, master and all workers except one_
   - [x] _Use core dumps to figure out why NGINX keep crashing_
   - [ ] _Use mirror module to copy requests to another backend_
   - [ ] _Dynamic debugging with echo module_
@@ -801,6 +801,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Map all the things...](#beginner-map-all-the-things) | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats) | Debugging | ![info](static/img/priorities/info.png) |
 | [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour) | Debugging | ![info](static/img/priorities/info.png) |
+| [Disable daemon, master and all workers except one](#beginner-disable-daemon-master-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing) | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
@@ -8713,6 +8714,36 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 - [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
+
+#### :beginner: Disable daemon, master and all workers except one
+
+###### Rationale
+
+  > These directives with following values are mainly used during development and debugging, e.g. while testing a bug/feature.
+
+  > `daemon off;` and `master_process off;` lets me test configurations rapidly.
+
+  > For normal production the NGINX server will start in the background (`daemon on;`). In this way NGINX and other services are running and talking to each other. One server runs many services.
+
+  > In a development or debugging environment (you should never run NGINX in production with this), using `master_process off;`, I usually run NGINX in the foreground without the master process and press `^C` (`SIGINT`) to terminated it simply.
+
+  > `worker_processes 1;` is also very useful because can reduce number of worker processes and the data they generate, so that is pretty comfortable for us to debug.
+
+###### Example
+
+```bash
+# From configuration file (global context):
+daemon            off
+master_process    off;
+worker_processes  1;
+
+# From shell (oneliner):
+/usr/sbin/nginx -t -g 'daemon off; master_process off; worker_processes 1;'
+```
+
+###### External resources
+
+- [Core functionality](https://nginx.org/en/docs/ngx_core_module.html)
 
 #### :beginner: Use core dumps to figure out why NGINX keep crashing
 
