@@ -1902,16 +1902,23 @@ NGINX provides the two layers to enable Keep-Alive:
   keepalive_requests  256;
   ```
 
-- server will close connection after this time. A higher number may be required when there is a larger amount of traffic to ensure there is no frequent TCP connection re-initiated. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. If you set it lower, you are not utilizing keep-alives on most of your requests slowing down client:
+- server will close connection after this time. A higher number may be required when there is a larger amount of traffic to ensure there is no frequent TCP connection re-initiated. If you set it lower, you are not utilizing keep-alives on most of your requests slowing down client:
 
   ```bash
   # Default: 75s
   keepalive_timeout   10s;
   ```
 
-  > This directiv llow the keepalive connection to stay open longer, resulting in faster subsequent requests. I think this should be as close to your average response time as possible.
+  > Increase this to allow the keepalive connection to stay open longer, resulting in faster subsequent requests. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible.
 
 ###### Upstream layer
+
+- the number of idle keepalive connections that remain open for each worker process. The connections parameter sets the maximum number of idle keepalive connections to upstream servers that are preserved in the cache of each worker process (when this number is exceeded, the least recently used connections are closed):
+
+  ```bash
+  # Default: disable
+  keepalive         32;
+  ```
 
 NGINX, by default, only talks HTTP/1.0 to the upstream servers. To keep TCP connection alive both upstream section and origin server should be configured to not finalise the connection.
 
@@ -1922,13 +1929,6 @@ Upstream section keepalive default value means no keepalive, hence connection wo
 With HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves performance and it reduces the possibility that the NGINX runs out of ephemeral ports.
 
   > _The connections parameter should be set to a number small enough to let upstream servers process new incoming connections as well._
-
-- the number of idle keepalive connections that remain open for each worker process. The connections parameter sets the maximum number of idle keepalive connections to upstream servers that are preserved in the cache of each worker process (when this number is exceeded, the least recently used connections are closed):
-
-  ```bash
-  # Default: disable
-  keepalive         32;
-  ```
 
 Update your upstream configuration:
 
