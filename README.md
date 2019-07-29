@@ -270,6 +270,7 @@
   * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
+  * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
 - **[Debugging](#debugging-1)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
@@ -639,6 +640,7 @@ Existing chapters:
   - [ ] _Making a rewrite absolute (with scheme)_
   - [x] _Use return directive for URL redirection (301, 302)_
   - [x] _Configure log rotation policy_
+  - [x] _Don't duplicate index directive, use it only in the http block_
 
 </details>
 
@@ -655,7 +657,6 @@ Existing chapters:
 <details>
 <summary><b>Performance</b></summary><br>
 
-  - [ ] _Use index directive in the http block_
   - [ ] _Avoid multiple index directives_
   - [ ] _Use $request_uri to avoid using regular expressions_
   - [x] _Use try_files directive to ensure a file exists_
@@ -739,7 +740,7 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (59) from this handbook.
+  > This checklist contains all rules (60) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
@@ -747,7 +748,7 @@ Generally, I think that each of these principles is important and should be cons
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 25 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 19 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
-| ![low](static/img/priorities/low.png) | <i>normal</i> | 9 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
+| ![low](static/img/priorities/low.png) | <i>normal</i> | 10 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
@@ -802,6 +803,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)<br><sup>Provides the perfect way to block invalid visitors.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | ![low](static/img/priorities/low.png) |
+| [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)<br><sup>Watch out for duplicating the same rules.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
@@ -1928,7 +1930,7 @@ Upstream section keepalive default value means no keepalive, hence connection wo
 
 With HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves performance and it reduces the possibility that the NGINX runs out of ephemeral ports.
 
-  > _The connections parameter should be set to a number small enough to let upstream servers process new incoming connections as well._
+  > The connections parameter should be set to a number small enough to let upstream servers process new incoming connections as well.
 
 Update your upstream configuration:
 
@@ -8731,6 +8733,110 @@ server {
 - [Managing Logs with Logrotate](https://serversforhackers.com/c/managing-logs-with-logrotate)
 - [nginx and Logrotate](https://drumcoder.co.uk/blog/2012/feb/03/nginx-and-logrotate/)
 - [nginx log rotation](https://wincent.com/wiki/nginx_log_rotation)
+
+#### :beginner: Don't duplicate index directive, use it only in the http block
+
+###### Rationale
+
+  > Use the index directive one time. It only needs to occur in your `http` context and it will be inherited below.
+
+  > I think we should be careful about duplicating the same rules.
+
+###### Example
+
+Bad configuration:
+
+```bash
+http {
+
+  ...
+
+  index index.php index.htm index.html;
+
+  server {
+
+    server_name www.example.com;
+
+    location / {
+
+      index index.php index.html index.$geo.html;
+
+      ...
+
+    }
+
+  }
+
+  server {
+
+    server_name www.example.com;
+
+    location / {
+
+      index index.php index.htm index.html;
+
+      ...
+
+    }
+
+    location /data {
+
+      index index.php;
+
+      ...
+
+    }
+
+    ...
+
+}
+```
+
+Good configuration:
+
+```bash
+http {
+
+  ...
+
+  index index.php index.htm index.html index.$geo.html;
+
+  server {
+
+    server_name www.example.com;
+
+    location / {
+
+      ...
+
+    }
+
+  }
+
+  server {
+
+    server_name www.example.com;
+
+    location / {
+
+      ...
+
+    }
+
+    location /data {
+
+      ...
+
+    }
+
+    ...
+
+}
+```
+
+###### External resources
+
+- [Pitfalls and Common Mistakes - Multiple Index Directives](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#multiple-index-directives)
 
 # Debugging
 
