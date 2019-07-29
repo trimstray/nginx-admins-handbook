@@ -9235,8 +9235,8 @@ server {
 
   > This rule is addressing passing the URL unchanged to a new host, sure return is more efficient just passing through the existing URI.
 
-  > I think the best explanation comes from the official documentation:
-  >
+  I think the best explanation comes from the official documentation:
+
   > _Don’t feel bad here, it’s easy to get confused with regular expressions. In fact, it’s so easy to do that we should make an effort to keep them neat and clean._
 
 ###### Example
