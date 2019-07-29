@@ -100,6 +100,7 @@
     * [Event-Driven architecture](#event-driven-architecture)
     * [Multiple processes](#multiple-processes)
     * [Simultaneous connections](#simultaneous-connections)
+    * [HTTP Keep-Alive connections](#http-keep-alive-connections)
   * [Request processing stages](#request-processing-stages)
   * [Server blocks logic](#server-blocks-logic)
     * [Handle incoming connections](#handle-incoming-connections)
@@ -144,7 +145,7 @@
     * [Verify 0-RTT](#verify-0-rtt)
     * [Load testing with ApacheBench (ab)](#load-testing-with-apachebench-ab)
       * [Standard test](#standard-test)
-      * [Test with KeepAlive header](#test-with-keepalive-header)
+      * [Test with Keep-Alive header](#test-with-keep-alive-header)
     * [Load testing with wrk2](#load-testing-with-wrk2)
       * [Standard scenarios](#standard-scenarios)
       * [POST call (with Lua)](#post-call-with-lua)
@@ -518,7 +519,7 @@ Existing chapters:
     - [x] _Event-Driven architecture_
     - [x] _Multiple processes_
     - [x] _Simultaneous connections_
-    - [ ] _Keepalive connections_
+    - [x] _HTTP Keep-Alive connections_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -545,7 +546,7 @@ Existing chapters:
     - [x] _Verify 0-RTT_
     - _Load testing with ApacheBench (ab)_
       - [x] _Standard test_
-      - [x] _Test with KeepAlive header_
+      - [x] _Test with Keep-Alive header_
     - _Load testing with wrk2_
       - [x] _Standard scenarios_
       - [x] _POST call (with Lua)_
@@ -1836,6 +1837,136 @@ nginx: master process         = LimitNOFILE (35,000)
 ```
 
 There is a great article about [Optimizing Nginx for High Traffic Loads](https://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/).
+
+##### HTTP Keep-Alive connections
+
+Before starting this section I recommend to read the following articles:
+
+- [HTTP Keepalive Connections and Web Performance](https://www.nginx.com/blog/http-keepalives-and-web-performance/)
+- [Optimizing HTTP: Keep-alive and Pipelining](https://www.igvita.com/2011/10/04/optimizing-http-keep-alive-and-pipelining/)
+- [Evolution of HTTP — HTTP/0.9, HTTP/1.0, HTTP/1.1, Keep-Alive, Upgrade, and HTTPS](https://medium.com/platform-engineer/evolution-of-http-69cfe6531ba0)
+
+The original model of HTTP, and the default one in HTTP/1.0, is short-lived connections. Each HTTP request is completed on its own connection; this means a TCP handshake happens before each HTTP request, and these are serialized. The client creates a new TCP connection for each transaction (and the connection is torn down after the transaction completes).
+
+HTTP Keep-Alive connection or persistent connection is the idea of using a single TCP connection to send and receive multiple HTTP requests/responses (Keep Alive's work between requests), as opposed to opening a new connection for every single request/response pair.
+
+This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because Nginx needs to close connections from time to time, even if you configure nginx to allow infinite keep-alive-timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/closed_vs_keepalive.png" alt="closed_vs_keepalive">
+</p>
+
+Persistent connection model keeps connections opened between successive requests, reducing the time needed to open new connections. The HTTP pipelining model goes one step further, by sending several successive requests without even waiting for an answer, reducing much of the latency in the network.
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http_connections.png" alt="http_connections">
+</p>
+
+<sup><i>This infographic comes from [Mozilla MDN - Connection management in HTTP/1.x](https://developer.mozilla.org/en-US/docs/Web/HTTP/Connection_management_in_HTTP_1.x).</i></sup>
+
+Look also at this example that shows how a Keep-Alive header could be used:
+
+```
+ Client                        Proxy                         Server
+   |                             |                              |
+   +- Keep-Alive: timeout=600 -->|                              |
+   |  Connection: Keep-Alive     |                              |
+   |                             +- Keep-Alive: timeout=1200 -->|
+   |                             |  Connection: Keep-Alive      |
+   |                             |                              |
+   |                             |<-- Keep-Alive: timeout=300 --+
+   |                             |    Connection: Keep-Alive    |
+   |<- Keep-Alive: timeout=5000 -+                              |
+   |    Connection: Keep-Alive   |                              |
+   |                             |                              |
+```
+
+NGINX official documentation say:
+
+  > _All connections are independently negotiated. The client indicates a timeout of 600 seconds (10 minutes), but the proxy is only prepared to retain the connection for at least 120 seconds (2 minutes). On the link between proxy and server, the proxy requests a timeout of 1200 seconds and the server reduces this to 300 seconds. As this example shows, the timeout policies maintained by the proxy are different for each connection. Each connection hop is independent._
+
+Keepalive connections reduce overhead, especially when SSL/TLS is in use but they also have drawbacks; even when idling they consume server resources, and under heavy load, DoS attacks can be conducted. In such cases, using non-persistent connections, which are closed as soon as they are idle, can provide better performance.
+
+  > Nginx closes keepalive connections when the `worker_connections` limit is reached.
+
+To better understand how Keep-Alive works, I recommend a great [explanation](https://stackoverflow.com/a/38190172) by [Barry Pollard](https://stackoverflow.com/users/2144578/barry-pollard).
+
+NGINX provides the two layers to enable Keep-Alive:
+
+###### Client layer
+
+- the maximum number of keepalive requests a client can make over a given connection, which means a client can make e.g 512 successfull requests inside one keepalive connection:
+
+  ```bash
+  # Default: 100
+  keepalive_requests  256;
+  ```
+
+- server will close connection after this time. A higher number may be required when there is a larger amount of traffic to ensure there is no frequent TCP connection re-initiated. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. If you set it lower, you are not utilizing keep-alives on most of your requests slowing down client:
+
+  ```bash
+  # Default: 75s
+  keepalive_timeout   10s;
+  ```
+
+  > This directiv llow the keepalive connection to stay open longer, resulting in faster subsequent requests. I think this should be as close to your average response time as possible.
+
+###### Upstream layer
+
+NGINX, by default, only talks HTTP/1.0 to the upstream servers. To keep TCP connection alive both upstream section and origin server should be configured to not finalise the connection.
+
+  > Please keep in mind that keepalive is a feature of HTTP 1.1, NGINX uses HTTP 1.0 per default for upstreams.
+
+Upstream section keepalive default value means no keepalive, hence connection won't be reused, each time you can see TCP stream number increases per every request to origin server, opposite to what happens with keepalive.
+
+With HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves performance and it reduces the possibility that the NGINX runs out of ephemeral ports.
+
+  > _The connections parameter should be set to a number small enough to let upstream servers process new incoming connections as well._
+
+- the number of idle keepalive connections that remain open for each worker process. The connections parameter sets the maximum number of idle keepalive connections to upstream servers that are preserved in the cache of each worker process (when this number is exceeded, the least recently used connections are closed):
+
+  ```bash
+  # Default: disable
+  keepalive         32;
+  ```
+
+Update your upstream configuration:
+
+```bash
+upstream bk_x8080 {
+
+  ...
+
+  keepalive         16;
+
+}
+```
+
+And enable the HTTP/1.1 protocol in all upstream requests:
+
+```bash
+server {
+
+  ...
+
+  location / {
+
+    # Default is HTTP/1, keepalive is only enabled in HTTP/1.1:
+    proxy_http_version  1.1;
+    # Remove the Connection header if the client sends it,
+    # it could be "close" to close a keepalive connection:
+    proxy_set_header    Connection "";
+
+    proxy_pass          http://bk_x8080;
+
+  }
+
+}
+
+...
+
+}
+```
 
 #### Request processing stages
 
@@ -3138,7 +3269,7 @@ This is a [great explanation](https://stackoverflow.com/a/12732410) about Apache
 ab -n 1000 -c 100 https://example.com/
 ```
 
-###### Test with KeepAlive header
+###### Test with Keep-Alive header
 
 ```bash
 ab -n 5000 -c 100 -k -H "Accept-Encoding: gzip, deflate" https://example.com/index.php
