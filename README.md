@@ -2508,8 +2508,8 @@ if ($http_cookie !~* "auth_token") {
 if ($test = ABC) {
 
   proxy_pass http://cms.example.com;
-
   break;
+
 }
 ```
 
@@ -2526,7 +2526,7 @@ By default:
 
 Sometimes certain entries are there just to fill up the logs or are cluttering them. I sometimes exclude requests - by client IP or whatever else - when I want to debug log files more effective.
 
-So in this example if the `$error_codes` variable’s value is 0 - then log nothing (default action), but if 1 (e.g. `404` or `503` from backend) - to save this request to the log:
+So, in this example, if the `$error_codes` variable’s value is 0 - then log nothing (default action), but if 1 (e.g. `404` or `503` from backend) - to save this request to the log:
 
 ```bash
 # Define map in the http context:
@@ -2924,7 +2924,7 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
   > `nodelay` parameters are only useful when you also set a `burst`.
 
-Without `nodelay` option NGINX would wait (no 503 response) and handle excessive requests with some delay.
+Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
 
 #### Analyse configuration
 
@@ -3304,6 +3304,7 @@ Example 1:
 
 ```lua
 -- lua/post-call.lua
+
 request = function()
 
   wrk.method = "POST"
@@ -4029,9 +4030,9 @@ python3 -m pip install locustio
 
 About `locust`:
 
-- `Number of users to simulate` - the number of users testing your application. Each user opens a TCP connection to your application and tests it
+- `Number of users to simulate` - the number of users testing your application. Each user opens a TCP connection to your application and tests it.
 
-- `Hatch rate (users spawned/second)` - for each second, how many users will be added to the current users until the total amount of users. Each hatch Locust calls the `on_start` function if you have
+- `Hatch rate (users spawned/second)` - for each second, how many users will be added to the current users until the total amount of users. Each hatch Locust calls the `on_start` function if you have.
 
 For example:
 
@@ -4230,7 +4231,7 @@ slowloris <server_name>
 
 # 3)
 git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
-./goldeneye.py  <scheme>://<server_name> -w 150 -s 75 -m GET
+./goldeneye.py <scheme>://<server_name> -w 150 -s 75 -m GET
 ```
 
 #### Debugging
@@ -4616,7 +4617,7 @@ I think the best practice for core dumps are a properly collected core files, an
 To enable core dumps from NGINX configuration you should:
 
 ```bash
-# In main NGINX configuration file:
+# In the main NGINX configuration file:
 #   - specify the maximum possible size of the core dump for worker processes
 #   - specify the maximum number of open files for worker processes
 #   - specify a working directory in which a core dump file will be saved
@@ -4732,7 +4733,7 @@ less nginx.conf.running
 
 ###### Show debug log in memory
 
-First of all a buffer for debug logging should be included:
+First of all a buffer for debug logging should be enabled:
 
 ```bash
 error_log   memory:64m debug;
