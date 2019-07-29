@@ -658,7 +658,7 @@ Existing chapters:
 <summary><b>Performance</b></summary><br>
 
   - [ ] _Avoid multiple index directives_
-  - [ ] _Use $request_uri to avoid using regular expressions_
+  - [x] _Use $request_uri to avoid using regular expressions_
   - [x] _Use try_files directive to ensure a file exists_
   - [ ] _Don't pass all requests to the backend - use try_files_
   - [x] _Use return directive instead of rewrite for redirects_
@@ -740,14 +740,14 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (60) from this handbook.
+  > This checklist contains all rules (61) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 25 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 19 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 20 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 10 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
@@ -787,6 +787,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)<br><sup>It decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use $request_uri to avoid using regular expressions](#beginner-use-$request_uri-to-avoid-using-regular-expressions)<br><sup>By default, the regex is costly and will slow down the performance.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)<br><sup>Use it if you need to search for a file, it saving duplication of code also.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -8740,7 +8741,7 @@ server {
 
   > Use the index directive one time. It only needs to occur in your `http` context and it will be inherited below.
 
-  > I think we should be careful about duplicating the same rules.
+  > I think we should be careful about duplicating the same rules. But, of course, rules duplication is sometimes okay or not necessarily a great evil.
 
 ###### Example
 
@@ -9222,6 +9223,40 @@ server {
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [if, break and set (from this handbook)](#if-break-and-set)
+
+#### :beginner: Use `$request_uri` to avoid using regular expressions
+
+###### Rationale
+
+  > With built-in variable `$request_uri` we can effectively avoid doing any capturing or matching at all. By default, the regex is costly and will slow down the performance.
+
+  > This rule is addressing passing the URL unchanged to a new host, sure return is more efficient just passing through the existing URI.
+
+  > I think the best explanation comes from the official documentation:
+  >
+  > _Don’t feel bad here, it’s easy to get confused with regular expressions. In fact, it’s so easy to do that we should make an effort to keep them neat and clean._
+
+###### Example
+
+Bad configuration:
+
+```bash
+# 1)
+rewrite ^/(.*)$ https://example.com/$1 permanent;
+
+# 2)
+rewrite ^ https://example.com$request_uri? permanent;
+```
+
+Good configuration:
+
+```bash
+return 301 https://example.com$request_uri;
+```
+
+###### External resources
+
+- [Pitfalls and Common Mistakes - Taxing Rewrites](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites)
 
 #### :beginner: Use `try_files` directive to ensure a file exists
 
