@@ -2970,7 +2970,7 @@ and directives:
 | <b>DIRECTIVE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |
 | `limit_req` | sets the shared memory zone and the maximum burst size of requests |
-| `limit_conn` | sets the shared memory zone and the maximum allowed number of connections to the server per a client IP |
+| `limit_conn` | sets the shared memory zone and the maximum allowed number of (simultaneous) connections to the server per a client IP |
 
 Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all NGINX worker processes.
 
