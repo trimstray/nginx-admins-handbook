@@ -91,6 +91,7 @@
   * [Processes](#processes)
   * [Configuration syntax](#configuration-syntax)
     * [Comments](#comments)
+    * [End of lines](#end-of-lines)
     * [Variables, Strings, and Quotes](#variables-strings-and-quotes)
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
     * [External files](#external-files)
@@ -402,7 +403,7 @@ There are a lot of things you can do to improve NGINX server and this guide will
 
 Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them.
 
-In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
+In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also. Explained here are few best tips to avoid pitfails and mistakes.
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
@@ -512,6 +513,7 @@ Existing chapters:
     - [x] _Manually log rotation_
   - _Configuration syntax_
     - [x] _Comments_
+    - [x] _End of lines_
     - [x] _Variables, Strings, and Quotes_
     - [x] _Directives, Blocks, and Contexts_
     - [x] _External files_
@@ -1318,13 +1320,15 @@ Configuration options are called directives. We have four types of directives:
   try_files $uri $uri/ /test/index.html;
   ```
 
-  > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
-
 Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
 
-As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values.
+As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values. The children contexts can override these values at will.
 
   > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
+
+Directives can only be used in the contexts that they were designed for. Nginx will error out on reading a configuration file with directives that are declared in the wrong context.
+
+  > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
 Contexts can be layered within one another (a level of inheritance). Their structure looks like this:
 
@@ -1349,6 +1353,8 @@ Global/Main Context
         |
         +-----» Mail Context
 ```
+
+NGINX lookup starts from the http block, then through one or more server blocks, followed by the location block(s).
 
 ##### External files
 
@@ -2167,7 +2173,7 @@ wildcard at the end of the string (the hash table with wildcard names ending wit
 
     > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
 
-6. If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server`
+6. If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server` (makes the server block answer all the requests that doesn’t match any server block)
 
 7. If all the `Host` headers doesn't match and there is no `default_server`,
 direct to the first server with a `listen` directive that satisfies first step
@@ -2180,13 +2186,13 @@ direct to the first server with a `listen` directive that satisfies first step
 
   > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
-The location syntax looks like:
+The location block enables you to handle several types of URIs/routes, within a server block. Syntax looks like:
 
 ```bash
 location optional_modifier location_match { ... }
 ```
 
-`location_match` in the above defines what NGINX should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows:
+`location_match` in the above defines what NGINX should check the request URI against. The `optional_modifier` below will cause the associated location block to be interpreted as follows (the order doesn't matter at this moment):
 
 - `(none)`: if no modifiers are present, the location is interpreted as a prefix match. To determine a match, the location will now be matched against the beginning of the URI
 
@@ -2247,19 +2253,17 @@ To help you understand how does location match works:
 
 The process of choosing NGINX location block is as follows (a detailed explanation):
 
-1. Prefix-based NGINX location matches (no regular expression). Each location will be checked against the request URI
+1. NGINX searches for an exact match. If a `=` modifier exactly matches the request URI, this specific location block is chosen right away
 
-2. NGINX searches for an exact match. If a `=` modifier exactly matches the request URI, this specific location block is chosen right away
-
-3. If no exact (meaning no `=` modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
+2. Prefix-based NGINX location matches (no regular expression). Each location will be checked against the request URI. If no exact (meaning no `=` modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
 
     - In case the longest matching prefix location has the `^~` modifier, NGINX will stop its search right away and choose this location.
 
     - Assuming the longest matching prefix location doesn’t use the `^~` modifier, the match is temporarily stored and the process continues.
 
-4. As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
+3. As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive and insensitive regular expression locations. The first regular expression location that fits the URI is selected right away to process the request
 
-5. If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
+4. If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
 
 In order to better understand how this process work please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
 
@@ -2413,7 +2417,7 @@ location / {
     - internal engine **starts to look** for another location match based on the result of the rewrite result
     - no more parsing of rewrite conditions, even on the next location match
 
-    _Inside a location block, with last, NGINX stops processing anymore rewrite conditions and then **starts to look** for a new matching of location block! NGINX also ignores any rewrites in the new location block!_
+    _Inside a location block, with last, NGINX stops processing anymore rewrite conditions and then **starts to look** for a new matching of location block. NGINX also ignores any rewrites in the new location block._
 
   - if you use `last` flag outside `location` block:
 
@@ -2526,6 +2530,7 @@ I use `return` directive to:
 
     # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response)
     return 204 "it's all okay";
+
     # Because default Content-Type is application/octet-stream, browser will offer to "save the file".
     # If you want to see reply in browser you should add properly Content-Type:
     # add_header Content-Type text/plain;
