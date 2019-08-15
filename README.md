@@ -401,9 +401,9 @@ For me, however, there hasn't been a truly in-depth and reasonably simple cheats
 
 There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
-Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them.
+Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here are few best tips to avoid pitfails and configuration mistakes.
 
-In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also. Explained here are few best tips to avoid pitfails and mistakes.
+In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
@@ -1326,7 +1326,7 @@ As a general rule, if a directive is valid in multiple nested scopes, a declarat
 
   > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
 
-Directives can only be used in the contexts that they were designed for. Nginx will error out on reading a configuration file with directives that are declared in the wrong context.
+Directives can only be used in the contexts that they were designed for. NGINX will error out on reading a configuration file with directives that are declared in the wrong context.
 
   > If you want to review all directives see [alphabetical index of directives](https://nginx.org/en/docs/dirindex.html).
 
@@ -1860,7 +1860,7 @@ The original model of HTTP, and the default one in HTTP/1.0, is short-lived conn
 
 HTTP Keep-Alive connection or persistent connection is the idea of using a single TCP connection to send and receive multiple HTTP requests/responses (Keep Alive's work between requests), as opposed to opening a new connection for every single request/response pair.
 
-This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because Nginx needs to close connections from time to time, even if you configure nginx to allow infinite keep-alive-timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
+This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because NGINX needs to close connections from time to time, even if you configure NGINX to allow infinite keep-alive-timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/closed_vs_keepalive.png" alt="closed_vs_keepalive">
@@ -1897,7 +1897,7 @@ NGINX official documentation say:
 
 Keepalive connections reduce overhead, especially when SSL/TLS is in use but they also have drawbacks; even when idling they consume server resources, and under heavy load, DoS attacks can be conducted. In such cases, using non-persistent connections, which are closed as soon as they are idle, can provide better performance.
 
-  > Nginx closes keepalive connections when the `worker_connections` limit is reached.
+  > NGINX closes keepalive connections when the `worker_connections` limit is reached.
 
 To better understand how Keep-Alive works, I recommend a great [explanation](https://stackoverflow.com/a/38190172) by [Barry Pollard](https://stackoverflow.com/users/2144578/barry-pollard).
 
