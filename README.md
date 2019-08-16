@@ -381,7 +381,7 @@ If you love security keep your eye on this one: [Cryptology ePrint Archive](http
 
 ## General disclaimer
 
-When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in suitable form. I was a little disappointed.
+When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
 
 I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
 
@@ -796,7 +796,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Disable unnecessary modules](#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)<br><sup>Stay protected from SSL security threats and don't miss out new features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)<br><sup>0-RTT is disabled by default but you should know that enabling this option creates a significant security risks.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -1192,7 +1192,7 @@ inflight requests
   - `reopen` - instructs NGINX to reopen log files
 - `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
-Some useful snippets for the NGINX process management:
+Some useful snippets for management of the NGINX daemon:
 
 - testing configuration:
 
@@ -1219,7 +1219,7 @@ Some useful snippets for the NGINX process management:
   /usr/sbin/nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
   /usr/sbin/nginx -s stop     # fast shutdown (kill connections immediately)
 
-  service nginx stopmicro
+  service nginx stop
   systemctl stop nginx
 
   # You can also stop NGINX from start-stop-daemon script:
@@ -1266,7 +1266,7 @@ set $var "value";
 
 Some interesting things about variables in NGINX:
 
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. That guy is a Guru and creator of OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
 
 - the most variables in NGINX only exist at runtime, not during configuration time
 - the scope of variables spreads out all over configuration
