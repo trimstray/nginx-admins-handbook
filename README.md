@@ -1264,7 +1264,7 @@ set $var "value";
 
   > See [`if`, `break` and `set`](#if-break-and-set) section to learn more about variables.
 
-Some interesting things about variables in NGINX:
+Some interesting things about variables:
 
   > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
 
@@ -1332,27 +1332,9 @@ Directives can only be used in the contexts that they were designed for. NGINX w
 
 Contexts can be layered within one another (a level of inheritance). Their structure looks like this:
 
-```
-Global/Main Context
-        |
-        |
-        +-----» Events Context
-        |
-        |
-        +-----» HTTP Context
-        |          |
-        |          |
-        |          +-----» Server Context
-        |          |          |
-        |          |          |
-        |          |          +-----» Location Context
-        |          |
-        |          |
-        |          +-----» Upstream Context
-        |
-        |
-        +-----» Mail Context
-```
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_contexts.png" alt="nginx-contexts">
+</p>
 
 NGINX lookup starts from the http block, then through one or more server blocks, followed by the location block(s).
 
