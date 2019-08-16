@@ -1332,6 +1332,30 @@ Directives can only be used in the contexts that they were designed for. NGINX w
 
 Contexts can be layered within one another (a level of inheritance). Their structure looks like this:
 
+```
+Global/Main Context
+        |
+        |
+        +-----» Events Context
+        |
+        |
+        +-----» HTTP Context
+        |          |
+        |          |
+        |          +-----» Server Context
+        |          |          |
+        |          |          |
+        |          |          +-----» Location Context
+        |          |
+        |          |
+        |          +-----» Upstream Context
+        |
+        |
+        +-----» Mail Context
+```
+
+Also look at the graphic below. It presents the most important contexts with reference to the configuration:
+
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_contexts.png" alt="nginx-contexts">
 </p>
