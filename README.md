@@ -2735,11 +2735,9 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Load balancing algorithms
 
-Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course load balancing is not the only reason - think also about maintenance tasks without downtime for example.
+Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course, load balancing is not the only reason - think also about maintenance tasks without downtime.
 
-Generally load balancing is a technique used to distribute the workload across multiple computing resources and servers.
-
-I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
+Generally load balancing is a technique used to distribute the workload across multiple computing resources and servers. I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
 The configuration is very simple. NGINX includes a `ngx_http_upstream_module` to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
 
@@ -2937,7 +2935,7 @@ server {
 
 #### Rate limiting
 
-NGINX has a default module to setup rate limiting. For me, it's one of the most useful protect feature but really hard to understand.
+NGINX has a default module to setup rate limiting. For me, it's one of the most useful protect feature but sometimes really hard to understand.
 
 I think, in case of doubt, you should read up on the following documents:
 
@@ -3080,7 +3078,7 @@ It is an essential way for testing NGINX configuration:
 nginx -t -c /etc/nginx/nginx.conf
 ```
 
-An external tool for analyse NGINX configuration is `gixy`:
+An external tool for analyse NGINX configuration is `gixy`. The main goal of this tool is to prevent security misconfiguration and automate flaw detection:
 
 ```bash
 gixy /etc/nginx/nginx.conf
@@ -4189,7 +4187,7 @@ Each second 10 users added to current users starting from 0 so in 100 seconds yo
 
 Locust tries to emulate user behavior, it will pause each individual 'User' between `min_wait` and `max_wait` ms, to simulate the time between normal user actions.
 
-  > Each of tasks will be executed in a random order, with a delay of `min_wait` - `max_wait` between the beginning of each task.
+  > Each of tasks will be executed in a random order, with a delay of `min_wait` and `max_wait` between the beginning of each task.
 
 ###### Multiple paths
 
