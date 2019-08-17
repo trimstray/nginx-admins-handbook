@@ -108,7 +108,7 @@
     * [Matching location](#matching-location)
     * [rewrite vs return](#rewrite-vs-return)
     * [try_files directive](#try_files-directive)
-    * [if, break and set](#if-break-and-set)
+    * [if, break, and set](#if-break-and-set)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -1179,18 +1179,18 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 
 - `nginx -h` - shows the help
 - `nginx -v` - shows the NGINX version
-- `nginx -V` - shows the extended information about NGINX: version, build parameters and configuration arguments
+- `nginx -V` - shows the extended information about NGINX: version, build parameters, and configuration arguments
 - `nginx -t` - tests the NGINX configuration
 - `nginx -c` - sets configuration file (default: `/etc/nginx/nginx.conf`)
 - `nginx -p` - sets prefix path (default: `/etc/nginx/`)
 - `nginx -T` - tests the NGINX configuration and prints the validated configuration on the screen
-- `nginx -s` - sends a signal to the NGINX master process:
+- `nginx -s <signal>` - sends a signal to the NGINX master process:
   - `stop` - discontinues the NGINX process immediately
   - `quit` - stops the NGINX process after it finishes processing
 inflight requests
   - `reload` - reloads the configuration without stopping processes
   - `reopen` - instructs NGINX to reopen log files
-- `nginx -g` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
+- `nginx -g <directive>` - sets [global directives](https://nginx.org/en/docs/ngx_core_module.html) out of configuration file
 
 Some useful snippets for management of the NGINX daemon:
 
@@ -1262,7 +1262,7 @@ To assign value to the variable you should use a `set` directive:
 set $var "value";
 ```
 
-  > See [`if`, `break` and `set`](#if-break-and-set) section to learn more about variables.
+  > See [`if`, `break`, and `set`](#if-break-and-set) section to learn more about variables.
 
 Some interesting things about variables:
 
@@ -1760,7 +1760,7 @@ Given the above to change/improve the limitations you should:
     sysctl --system # for /etc/sysctl.conf and all of the system configuration files
     ```
 
-2. Edit the system-wide value of the maximum file descriptor number that can be opened by single process:
+2. Edit the system-wide value of the maximum file descriptor number that can be opened by a single process:
 
     - for non-systemd systems:
 
@@ -1787,7 +1787,7 @@ Given the above to change/improve the limitations you should:
       systemctl daemon-reload && systemct restart nginx
       ```
 
-3.  Adjusts the system limit on number of open files in NGINX worker:
+3.  Adjusts the system limit on number of open files for the NGINX worker. The maximum value can not be greater than LimitNOFILE (in this example: 35,000). You can change it at any time:
 
     ```bash
     # Set the limit for file descriptors for a single worker process (change it as needed):
@@ -1911,7 +1911,7 @@ NGINX provides the two layers to enable Keep-Alive:
 
 ###### Client layer
 
-- the maximum number of keepalive requests a client can make over a given connection, which means a client can make e.g 512 successfull requests inside one keepalive connection:
+- the maximum number of keepalive requests a client can make over a given connection, which means a client can make e.g. 256 successfull requests inside one keepalive connection:
 
   ```bash
   # Default: 100
@@ -1940,13 +1940,13 @@ NGINX, by default, only talks HTTP/1.0 to the upstream servers. To keep TCP conn
 
   > Please keep in mind that keepalive is a feature of HTTP 1.1, NGINX uses HTTP 1.0 per default for upstreams.
 
-Upstream section keepalive default value means no keepalive, hence connection won't be reused, each time you can see TCP stream number increases per every request to origin server, opposite to what happens with keepalive.
+Connection won't be reused by default because keepalive in the upstream section means no keepalive (each time you can see TCP stream number increases per every request to origin server).
 
-With HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves performance and it reduces the possibility that the NGINX runs out of ephemeral ports.
+HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves performance and it reduces the possibility that the NGINX runs out of ephemeral ports.
 
   > The connections parameter should be set to a number small enough to let upstream servers process new incoming connections as well.
 
-Update your upstream configuration:
+Update your upstream configuration to use keepalive:
 
 ```bash
 upstream bk_x8080 {
@@ -2032,16 +2032,16 @@ You may feel lost now (me too...) so I let myself put this great and simple prev
 
 #### Server blocks logic
 
-  > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` and `server_name` directives to bind to tcp sockets.
+  > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` and `server_name` directives to bind to TCP sockets.
 
 Before start reading this chapter you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
 - [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
 - [Regex cookbook — Top 10 Most wanted regex](https://medium.com/factory-mind/regex-cookbook-most-wanted-regex-aa721558c3c1)
 
-Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skill of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
+Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skills of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
-NGINX uses the [PCRE](https://www.pcre.org/) library. With this library you can perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives.
+NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives. Below is something interesting:
 
 - [Learn PCRE in Y minutes](https://learnxinyminutes.com/docs/pcre/)
 - [PCRE Regex Cheatsheet](https://www.debuggex.com/cheatsheet/regex/pcre)
@@ -2120,11 +2120,11 @@ NGINX uses the following logic to determining which virtual server (server block
 
       - a lone port which will listen to every interface on that port (`80;` or `*:80;`) - becomes `0.0.0.0:80;`
 
-      - the path to a UNIX-domain socket (`unix:/var/run/nginx.sock;`)
+      - the path to a UNIX domain socket (`unix:/var/run/nginx.sock;`)
 
     If the `listen` directive is not present then either `*:80` is used (runs with the superuser privileges), or `*:8000` otherwise.
 
-    The next steps are as follows:
+    To play with `listen` directive NGINX must follow the following steps:
 
       - NGINX translates all incomplete `listen` directives by substituting missing values with their default values (see above)
 
@@ -2448,7 +2448,7 @@ Official documentation has a great tutorials about [Creating NGINX Rewrite Rules
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
 
-I use `return` directive to:
+I use `return` directive in the following cases:
 
 - force redirect from http to https:
 
@@ -2546,13 +2546,13 @@ I use `return` directive to:
 
 ##### `try_files` directive
 
-We have one more very interesting and important directive: `try_files` (from `ngx_http_core_module`). This directive tells NGINX to check for the existence of a named set of files or directories (checks files conditionally breaking on success).
+We have one more very interesting and important directive: `try_files` (from the `ngx_http_core_module`). This directive tells NGINX to check for the existence of a named set of files or directories (checks files conditionally breaking on success).
 
 I think the best explanation come from official documentation:
 
   > _`try_files` checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. The path to a file is constructed from the file parameter according to the root and alias directives. It is possible to check directory’s existence by specifying a slash at the end of a name, e.g. `$uri/`. If none of the files were found, an internal redirect to the uri specified in the last parameter is made._
 
-Generally it may check files on disk, redirect to proxies, or internal locations, and return error codes, all in one directive.
+Generally it may check files on disk, redirect to proxies or internal locations, and return error codes, all in one directive.
 
 Take a look at the following example:
 
@@ -2587,7 +2587,7 @@ server {
 
     > For example: `https://example.com/tools/en.js` - NGINX will try to check if there's a file inside `/tools` called `en.js`, if found it, serve it in the first place.
 
-  - `try_files $uri $uri/` - if you didn't find the first condition `$uri` try the URI as a directory
+  - `try_files $uri $uri/` - if you didn't find the first condition try the URI as a directory
 
     > For example: `https://example.com/backend/` - NGINX will try first check if a file called `backend` exists, if can't find it then goes to second check `$uri/` and see if there's a directory called `backend` exists then it will try serving it.
 
@@ -2601,7 +2601,7 @@ server {
 
     > For example: `https://example.com/images/01.gif` - NGINX will try to check if there's a file inside `/images` called `01.gif`, if found it, serve it in the first place.
 
-  - `try_files $uri $uri/` - if you didn't find the first condition `$uri` try the URI as a directory
+  - `try_files $uri $uri/` - if you didn't find the first condition try the URI as a directory
 
     > For example: `https://example.com/images/` - NGINX will try first check if a file called `images` exists, if can't find it then goes to second check `$uri/` and see if there's a directory called `images` exists then it will try serving it.
 
@@ -9236,7 +9236,7 @@ server {
 ###### External resources
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
-- [if, break and set (from this handbook)](#if-break-and-set)
+- [if, break, and set (from this handbook)](#if-break-and-set)
 
 #### :beginner: Use `$request_uri` to avoid using regular expressions
 
