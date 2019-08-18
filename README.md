@@ -322,7 +322,7 @@
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy](#reverse-proxy)**
-  * [Use only pass directive compatible with backend layer protocols](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocols)
+  * [Use only pass directive compatible with backend layer protocol](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocol)
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
@@ -529,8 +529,8 @@ Existing chapters:
     - [x] _Simultaneous connections_
     - [x] _HTTP Keep-Alive connections_
   - _Reverse proxy_
-    - _Passing requests_
-    - _Passing headers_
+    - [x] _Passing requests_
+    - [x] _Passing headers_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -606,6 +606,14 @@ Existing chapters:
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
     - [ ] _Location matching examples_
+    - [ ] _Passing requests to the backend_
+      - [ ] _The HTTP backend server_
+      - [ ] _The uWSGI backend server_
+      - [ ] _The FastCGI backend server_
+      - [ ] _The memcached backend server_
+      - [ ] _The Redis backend server_
+    - [ ] _Lua snippets_
+    - [ ] _nginscripts snippets_
   - _Other snippets_
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
@@ -694,8 +702,11 @@ Existing chapters:
 <details>
 <summary><b>Reverse Proxy</b></summary><br>
 
-  - [x] _Use only pass directive compatible with backend layer protocols_
+  - [x] _Use only pass directive compatible with backend layer protocol_
+  - [ ] _Be careful with trailing slashes in proxy_pass directive_
   - [ ] _Always pass X-Forwarded headers to the backend_
+  - [ ] _Set properly proxy buffers and timeouts_
+  - [ ] _Set properly Host header with host and port number_
 
 </details>
 
@@ -791,7 +802,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Use only pass directive compatible with backend layer protocols](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocols)<br><sup>Set pass directive only to working with compatible backend layer protocols.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Use only pass directive compatible with backend layer protocol](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocols.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -2762,12 +2773,16 @@ This allow you to have NGINX reverse proxy requests to unicorns, mongrels, webri
 
 Reverse proxy gives you number of advanced features such as:
 
-- load balancing and failover
+- load balancing, failover, and transparent maintenance of the backend servers
 - increased security (e.g. SSL termination, hide upstream configuration)
 - increased performance (e.g. caching, load balancing)
-- transparent maintenance of the backend servers (e.g. load balancing)
 - simplifies the access control responsibilities (single point of access and maintenance)
 - centralised logging and auditing (single point of maintenance)
+
+In my opinion, the two most important things related to the reverse proxy are:
+
+- the way of requests forwarded to the backend
+- the type of headers forwarded to the backend
 
 ##### Passing requests
 
@@ -2815,9 +2830,9 @@ It is possible to proxy requests to:
   }
   ```
 
-- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive (as a fallback) or directives such as:
+- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive (as a fallback) or directives specially designed for this:
 
-  - `fastcgi_pass` which passes a request to a FastCGI server (see: [PHP FastCGI Example](https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/))
+  - `fastcgi_pass` which passes a request to a FastCGI server (see: [PHP FastCGI Example](https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/)):
 
     ```bash
     server {
@@ -2836,7 +2851,7 @@ It is possible to proxy requests to:
     }
     ```
 
-  - `uwsgi_pass` which passes a request to a uWSGI server (see: [Nginx support uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html))
+  - `uwsgi_pass` which passes a request to a uWSGI server (see: [Nginx support uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html)):
 
     ```bash
     server {
@@ -2855,7 +2870,7 @@ It is possible to proxy requests to:
     }
     ```
 
-  - `scgi_pass` which passes a request to an SCGI server
+  - `scgi_pass` which passes a request to an SCGI server:
 
     ```bash
     server {
@@ -2872,7 +2887,7 @@ It is possible to proxy requests to:
     }
     ```
 
-  - `memcached_pass` which passes a request to a memcached server
+  - `memcached_pass` which passes a request to a memcached server:
 
     ```bash
     server {
@@ -2881,11 +2896,12 @@ It is possible to proxy requests to:
 
         set            $memcached_key "$uri?$args";
         memcached_pass host:4004;
-        error_page     404 502 504 = @fallback;
+
+        error_page     404 502 504 = @memc_fallback;
 
       }
 
-      location @fallback {
+      location @memc_fallback {
 
         proxy_pass     http://backend;
 
