@@ -321,7 +321,7 @@
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy](#reverse-proxy)**
+- **[Reverse Proxy](#reverse-proxy-1)**
   * [Use only pass directive compatible with backend layer protocol](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocol)
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
@@ -10778,7 +10778,7 @@ send_timeout 10s;
 
 One of the frequent uses of the NGINX is setting it up as a proxy server.
 
-#### :beginner: Use proxy directives only with specific backend layer protocols
+#### :beginner: Use only pass directive compatible with backend layer protocol
 
 ###### Rationale
 
