@@ -113,6 +113,9 @@
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
     * [Error log severity levels](#error-log-severity-levels)
+  * [Reverse proxy](#reverse-proxy)
+    * [Passing requests to a proxied server](#passing-requests-to-a-proxied-server)
+    * [Passing headers to a proxied server](#passing-headers-to-a-proxied-server)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
@@ -433,7 +436,7 @@ If this project is useful and important for you, you can bring **positive energy
 
 New chapters:
 
-- [ ] **Reverse Proxy**
+- [x] **Reverse Proxy**
 - [ ] **Caching**
 - [ ] **3rd party modules**
 - [ ] **Web Application Firewall**
@@ -524,6 +527,9 @@ Existing chapters:
     - [x] _Multiple processes_
     - [x] _Simultaneous connections_
     - [x] _HTTP Keep-Alive connections_
+  - _Reverse proxy_
+    - _Passing requests to a proxied server_
+    - _Passing headers to a proxied server_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -687,7 +693,9 @@ Existing chapters:
 <details>
 <summary><b>Reverse Proxy</b></summary><br>
 
-  - [ ] _Setting up FastCGI proxying_
+  - [ ] _Use proxy_pass only for HTTP backend servers_
+  - [ ] _Use specific *_pass directive instead of proxy_pass for you app (non-HTTP talking)_
+  - [ ] _Always pass X-Forwarded headers to the backend_
 
 </details>
 
@@ -2732,6 +2740,132 @@ The following is a list of all severity levels:
 | `emerg` | the system is in an unusable state and requires immediate attention |
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
+
+#### Reverse proxy
+
+This is one of the greatest features of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
+
+Official documentation say:
+
+  > _Proxying is typically used to distribute the load among several servers, seamlessly show content from different websites, or pass requests for processing to application servers over protocols other than HTTP._
+
+A reverse proxy can off load much of the infrastructure concerns of a high-volume distributed web application.
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/reverse-proxy/reverse-proxy_preview.png" alt="reverse-proxy_preview">
+</p>
+
+<sup><i>This infographic comes from [Jenkins with NGINX - Reverse proxy with https](https://medium.com/@sportans300/nginx-reverse-proxy-with-https-466daa4da4fc).</i></sup>
+
+This allow you to have NGINX reverse proxy requests to unicorns, mongrels, webricks, thins, or whatever you really want to have run your servers.
+
+Reverse proxy gives you number of advanced features such as:
+
+- load balancing and failover
+- increased security (e.g. SSL termination, hide upstream configuration)
+- better performance (e.g. caching, load balancing)
+- transparent maintenance of the backend servers (e.g. load balancing)
+- simplifies the access control responsibilities (single point of access and maintenance)
+- centralised logging and auditing (single point of maintenance)
+
+##### Passing requests to a proxied server
+
+When NGINX proxies a request, it sends the request to a specified proxied server, fetches the response, and sends it back to the client.
+
+It is possible to proxy requests to:
+
+- an HTTP servers (e.g. NGINX, Apache, or other) with `proxy_pass` directive:
+
+  ```bash
+  server {
+
+    listen 192.168.20.10:80;
+
+    location / {
+
+      proxy_pass http://bk_front;
+
+    }
+
+    location /api {
+
+      proxy_pass http://192.168.21.20:8080;
+
+    }
+
+    location /info {
+
+      proxy_pass http://localhost:3000/;
+
+    }
+
+    location /ra-client {
+
+      proxy_pass http://10.0.11.12:8080/guacamole/;
+
+    }
+
+    location /foo/bar/ {
+
+      proxy_pass http://www.example.com/url/;
+
+    }
+
+    ...
+
+  }
+  ```
+
+- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive or specific directives such as:
+
+  - `fastcgi_pass` which passes a request to a FastCGI server
+
+    ```bash
+    location ~ ^/.+\.php(/|$) {
+
+      fastcgi_pass 127.0.0.1:9000;
+
+    }
+    ```
+
+  - `uwsgi_pass` which passes a request to a uWSGI server
+  - `scgi_pass` which passes a request to an SCGI server
+  - `memcached_pass` which passes a request to a memcached server
+
+The `proxy_pass` and other `*_pass` directives specifies that all requests which match the location block should be forwarded to the specific socket, where the backend app is running.
+
+However, more complex apps may need additional directives:
+
+  - for `proxy_pass`, see [`ngx_http_proxy_module`](http://nginx.org/en/docs/http/ngx_http_proxy_module.html) directives explanation
+  - for `fastcgi_pass`, see [`ngx_http_fastcgi_module`](http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html) directives explanation
+  - for `uwsgi_pass`, see [`ngx_http_uwsgi_module`](http://nginx.org/en/docs/http/ngx_http_uwsgi_module.html) directives explanation
+  - for `scgi_pass`, see [`ngx_http_scgi_module`](http://nginx.org/en/docs/http/ngx_http_scgi_module.html) directives explanation
+  - for `memcached_pass`, see [`ngx_http_memcached_module`](http://nginx.org/en/docs/http/ngx_http_memcached_module.html) directives explanation
+
+Look also at this example:
+
+```bash
+location /foo/bar/ {
+
+  proxy_pass http://www.example.com/url/;
+
+}
+```
+
+If the URI is specified along with the address (look at `location /foo/bar/ {`), it replaces the part of the request URI that matches the location parameter. For example, here the request with the `/foo/bar/page.html` URI will be proxied to `http://www.example.com/url/page.html`.
+
+If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
+
+##### Passing headers to a proxied server
+
+By default, NGINX redefines two header fields in proxied requests and eliminates the header fields whose values are empty strings:
+
+- `Host` is set to the `$proxy_host` variable
+- `Connection` is set to close.
+
+NGINX use the `proxy_set_header` directive to sets headers that NGINX sends to the backend servers.
+
+  > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server. It's also important to distinguish between "Request Headers" and "Response Headers". Request headers are for traffic inbound to the webserver (or backend app at 127.0.0.1:8069). Response headers are going the other way (in the HTTP response you get back using client, e.g. curl).
 
 #### Load balancing algorithms
 
