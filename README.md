@@ -114,8 +114,8 @@
     * [Manually log rotation](#manually-log-rotation)
     * [Error log severity levels](#error-log-severity-levels)
   * [Reverse proxy](#reverse-proxy)
-    * [Passing requests to a proxied server](#passing-requests-to-a-proxied-server)
-    * [Passing headers to a proxied server](#passing-headers-to-a-proxied-server)
+    * [Passing requests](#passing-requests)
+    * [Passing headers](#passing-headers)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
@@ -528,8 +528,8 @@ Existing chapters:
     - [x] _Simultaneous connections_
     - [x] _HTTP Keep-Alive connections_
   - _Reverse proxy_
-    - _Passing requests to a proxied server_
-    - _Passing headers to a proxied server_
+    - _Passing requests_
+    - _Passing headers_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -2768,7 +2768,7 @@ Reverse proxy gives you number of advanced features such as:
 - simplifies the access control responsibilities (single point of access and maintenance)
 - centralised logging and auditing (single point of maintenance)
 
-##### Passing requests to a proxied server
+##### Passing requests
 
 When NGINX proxies a request, it sends the request to a specified proxied server, fetches the response, and sends it back to the client.
 
@@ -2856,7 +2856,7 @@ If the URI is specified along with the address (look at `location /foo/bar/ {`),
 
 If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
 
-##### Passing headers to a proxied server
+##### Passing headers
 
 By default, NGINX redefines two header fields in proxied requests and eliminates the header fields whose values are empty strings:
 
