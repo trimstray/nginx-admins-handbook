@@ -2852,7 +2852,7 @@ location /foo/bar/ {
 }
 ```
 
-If the URI is specified along with the address (look at `location /foo/bar/ {`), it replaces the part of the request URI that matches the location parameter. For example, here the request with the `/foo/bar/page.html` URI will be proxied to `http://www.example.com/url/page.html`.
+If the URI is specified along with the address, it replaces the part of the request URI that matches the location parameter. For example, here the request with the `/foo/bar/page.html` URI will be proxied to `http://www.example.com/url/page.html`.
 
 If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
 
@@ -2867,7 +2867,7 @@ NGINX use the `proxy_set_header` directive to sets headers that NGINX sends to t
 
   > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
 
-It's also important to distinguish between "Request Headers" and "Response Headers". Request headers are for traffic inbound to the webserver (or backend app at 127.0.0.1:8069). Response headers are going the other way (in the HTTP response you get back using client, e.g. curl).
+It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
 
 #### Load balancing algorithms
 
