@@ -322,6 +322,7 @@
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy](#reverse-proxy)**
+  * [Use only pass directive compatible with backend layer protocols](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocols)
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
@@ -693,8 +694,7 @@ Existing chapters:
 <details>
 <summary><b>Reverse Proxy</b></summary><br>
 
-  - [ ] _Use proxy_pass only for HTTP backend servers_
-  - [ ] _Use specific *_pass directive instead of proxy_pass for you app (non-HTTP talking)_
+  - [x] _Use only pass directive compatible with backend layer protocols_
   - [ ] _Always pass X-Forwarded headers to the backend_
 
 </details>
@@ -751,13 +751,13 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (61) from this handbook.
+  > This checklist contains all rules (62) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 25 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 26 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 20 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 10 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
@@ -791,6 +791,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Use only pass directive compatible with backend layer protocols](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocols)<br><sup>Set pass directive only to working with compatible backend layer protocols.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -2763,7 +2764,7 @@ Reverse proxy gives you number of advanced features such as:
 
 - load balancing and failover
 - increased security (e.g. SSL termination, hide upstream configuration)
-- better performance (e.g. caching, load balancing)
+- increased performance (e.g. caching, load balancing)
 - transparent maintenance of the backend servers (e.g. load balancing)
 - simplifies the access control responsibilities (single point of access and maintenance)
 - centralised logging and auditing (single point of maintenance)
@@ -2779,35 +2780,33 @@ It is possible to proxy requests to:
   ```bash
   server {
 
-    listen 192.168.20.10:80;
-
     location / {
 
-      proxy_pass http://bk_front;
+      proxy_pass    http://bk_front;
 
     }
 
     location /api {
 
-      proxy_pass http://192.168.21.20:8080;
+      proxy_pass    http://192.168.21.20:8080;
 
     }
 
     location /info {
 
-      proxy_pass http://localhost:3000/;
+      proxy_pass    http://localhost:3000;
 
     }
 
     location /ra-client {
 
-      proxy_pass http://10.0.11.12:8080/guacamole/;
+      proxy_pass    http://10.0.11.12:8080/guacamole/;
 
     }
 
     location /foo/bar/ {
 
-      proxy_pass http://www.example.com/url/;
+      proxy_pass    http://www.example.com/url/;
 
     }
 
@@ -2816,21 +2815,86 @@ It is possible to proxy requests to:
   }
   ```
 
-- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive (as a fallback) or specific directives such as:
+- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive (as a fallback) or directives such as:
 
-  - `fastcgi_pass` which passes a request to a FastCGI server
+  - `fastcgi_pass` which passes a request to a FastCGI server (see: [PHP FastCGI Example](https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/))
 
     ```bash
-    location ~ ^/.+\.php(/|$) {
+    server {
 
-      fastcgi_pass 127.0.0.1:9000;
+      ...
+
+      location ~ ^/.+\.php(/|$) {
+
+        fastcgi_pass    127.0.0.1:9000;
+        include         /etc/nginx/fcgi_params;
+
+      }
+
+      ...
 
     }
     ```
 
-  - `uwsgi_pass` which passes a request to a uWSGI server
+  - `uwsgi_pass` which passes a request to a uWSGI server (see: [Nginx support uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html))
+
+    ```bash
+    server {
+
+      location / {
+
+        root            html;
+        uwsgi_pass      django_cluster;
+        uwsgi_param     UWSGI_SCRIPT testapp;
+        include         /etc/nginx/uwsgi_params;
+
+      }
+
+      ...
+
+    }
+    ```
+
   - `scgi_pass` which passes a request to an SCGI server
+
+    ```bash
+    server {
+
+      location / {
+
+        scgi_pass       127.0.0.1:4000;
+        include         /etc/nginx/scgi_params;
+
+      }
+
+      ...
+
+    }
+    ```
+
   - `memcached_pass` which passes a request to a memcached server
+
+    ```bash
+    server {
+
+      location / {
+
+        set            $memcached_key "$uri?$args";
+        memcached_pass host:4004;
+        error_page     404 502 504 = @fallback;
+
+      }
+
+      location @fallback {
+
+        proxy_pass     http://backend;
+
+      }
+
+      ...
+
+    }
+    ```
 
 The `proxy_pass` and other `*_pass` directives specifies that all requests which match the location block should be forwarded to the specific socket, where the backend app is running.
 
@@ -2847,7 +2911,7 @@ Look also at this example:
 ```bash
 location /foo/bar/ {
 
-  proxy_pass http://www.example.com/url/;
+  proxy_pass    http://www.example.com/url/;
 
 }
 ```
@@ -2860,10 +2924,10 @@ If the address is specified without a URI, or it is not possible to determine th
 
 By default, NGINX redefines two header fields in proxied requests and eliminates the header fields whose values are empty strings:
 
-- `Host` is set to the `$proxy_host` variable
-- `Connection` is set to close.
+- `Host` - is set to the `$proxy_host` variable
+- `Connection` - is set to close
 
-NGINX use the `proxy_set_header` directive to sets headers that NGINX sends to the backend servers.
+NGINX use the `proxy_set_header` directive to sets headers that sends to the backend servers.
 
   > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
 
@@ -2876,6 +2940,8 @@ Load Balancing is in principle a wonderful thing really. You can find out about 
 Generally load balancing is a technique used to distribute the workload across multiple computing resources and servers. I think you should always use this technique also if you have a simple app or whatever else what you're sharing with other.
 
 The configuration is very simple. NGINX includes a `ngx_http_upstream_module` to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
+
+  > `upstream` only provide a list of servers, some kind of weight, and other parameters related to the backend layer.
 
 ##### Backend parameters
 
@@ -10694,9 +10760,69 @@ send_timeout 10s;
 
 # Reverse Proxy
 
-One of the frequent uses of NGINX is setting it up as a proxy server.
+One of the frequent uses of the NGINX is setting it up as a proxy server.
 
-To be completed.
+#### :beginner: Use proxy directives only with specific backend layer protocols
+
+###### Rationale
+
+  > All `proxy_*` directives are related to the backends that use the specific backend protocol.
+
+  > You should use `proxy_pass` only for HTTP servers working on the backend layer (set also the `http://` protocol before referencing the HTTP backend) and other `*_pass` directives only for non-HTTP backend servers (like a uWSGI or FastCGI).
+
+  > Directives such as `uwsgi_pass`, `fastcgi_pass`, or `scgi_pass` are designed specifically for non-HTTP apps and you should use them instead of the `proxy_pass` (non-HTTP talking).
+
+  > For example: `uwsgi_pass` uses an uwsgi protocol. `proxy_pass` uses normal HTTP to talking with uWSGI server. uWSGI docs claims that uwsgi protocol is better, faster and can benefit from all of uWSGI special features. You can send to uWSGI information what type of data you are sending and what uWSGI plugin should be invoked to generate response. With http (`proxy_pass`) you won't get that.
+
+###### Example
+
+Bad configuration:
+
+```bash
+server {
+
+  location /app/ {
+
+    # For this, you should use uwsgi_pass directive.
+    proxy_pass      192.168.154.102:4000;         # backend layer: uWSGI Python app.
+
+  }
+
+  ...
+
+}
+
+Good configuration:
+
+```bash
+server {
+
+  location /app/ {
+
+    proxy_pass      http://192.168.154.102:80;    # backend layer: OpenResty as a front for app.
+
+  }
+
+  location /app/v3 {
+
+    uwsgi_pass      192.168.154.102:8080;         # backend layer: uWSGI Python app.
+
+  }
+
+  location /app/v4 {
+
+    fastcgi_pass    192.168.154.102:8081;         # backend layer: php-fpm app.
+
+  }
+  ...
+
+}
+```
+
+###### External resources
+
+- [Passing a Request to a Proxied Server](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server)
+- [Reverse proxy (from this handbook)](https://github.com/trimstray/nginx-admins-handbook#reverse-proxy)
 
 # Load Balancing
 
