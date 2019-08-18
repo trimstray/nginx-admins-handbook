@@ -2816,7 +2816,7 @@ It is possible to proxy requests to:
   }
   ```
 
-- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive or specific directives such as:
+- a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive (as a fallback) or specific directives such as:
 
   - `fastcgi_pass` which passes a request to a FastCGI server
 
@@ -2836,11 +2836,11 @@ The `proxy_pass` and other `*_pass` directives specifies that all requests which
 
 However, more complex apps may need additional directives:
 
-  - for `proxy_pass`, see [`ngx_http_proxy_module`](http://nginx.org/en/docs/http/ngx_http_proxy_module.html) directives explanation
-  - for `fastcgi_pass`, see [`ngx_http_fastcgi_module`](http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html) directives explanation
-  - for `uwsgi_pass`, see [`ngx_http_uwsgi_module`](http://nginx.org/en/docs/http/ngx_http_uwsgi_module.html) directives explanation
-  - for `scgi_pass`, see [`ngx_http_scgi_module`](http://nginx.org/en/docs/http/ngx_http_scgi_module.html) directives explanation
-  - for `memcached_pass`, see [`ngx_http_memcached_module`](http://nginx.org/en/docs/http/ngx_http_memcached_module.html) directives explanation
+  - `proxy_pass` - see [`ngx_http_proxy_module`](http://nginx.org/en/docs/http/ngx_http_proxy_module.html) directives explanation
+  - `fastcgi_pass` - see [`ngx_http_fastcgi_module`](http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html) directives explanation
+  - `uwsgi_pass` - see [`ngx_http_uwsgi_module`](http://nginx.org/en/docs/http/ngx_http_uwsgi_module.html) directives explanation
+  - `scgi_pass` - see [`ngx_http_scgi_module`](http://nginx.org/en/docs/http/ngx_http_scgi_module.html) directives explanation
+  - `memcached_pass` - see [`ngx_http_memcached_module`](http://nginx.org/en/docs/http/ngx_http_memcached_module.html) directives explanation
 
 Look also at this example:
 
@@ -2865,7 +2865,9 @@ By default, NGINX redefines two header fields in proxied requests and eliminates
 
 NGINX use the `proxy_set_header` directive to sets headers that NGINX sends to the backend servers.
 
-  > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server. It's also important to distinguish between "Request Headers" and "Response Headers". Request headers are for traffic inbound to the webserver (or backend app at 127.0.0.1:8069). Response headers are going the other way (in the HTTP response you get back using client, e.g. curl).
+  > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
+
+It's also important to distinguish between "Request Headers" and "Response Headers". Request headers are for traffic inbound to the webserver (or backend app at 127.0.0.1:8069). Response headers are going the other way (in the HTTP response you get back using client, e.g. curl).
 
 #### Load balancing algorithms
 
