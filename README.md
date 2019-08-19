@@ -115,6 +115,7 @@
     * [Error log severity levels](#error-log-severity-levels)
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
+    * [Processing headers](#processing-headers)
     * [Passing headers](#passing-headers)
       * [X-Forwarded-Proto](#x-forwarded-proto)
       * [X-Forwarded-For](#x-forwarded-for)
@@ -328,6 +329,7 @@
   * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+  * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
@@ -535,7 +537,11 @@ Existing chapters:
     - [x] _HTTP Keep-Alive connections_
   - _Reverse proxy_
     - [x] _Passing requests_
+    - [x] _Processing headers_
     - [x] _Passing headers_
+      - [x] _X-Forwarded-Proto_
+      - [x] _X-Forwarded-For_
+      - [x] _Forwarded_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -712,6 +718,7 @@ Existing chapters:
   - [ ] _Use Host header with host and port number_
   - [x] _Set properly values of the X-Forwarded-For header_
   - [x] _Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend_
+  - [x] _Use custom headers without X- prefix_
   - [ ] _Set proxy buffers and timeouts_
 
 </details>
@@ -839,6 +846,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
+| [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)<br><sup>The use of custom headers with X- prefix is discouraged.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)<br><sup>Helps make things easier for companies and security researchers.</sup> | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things)<br><sup>Map module provides a more elegant solution for clearly parsing a big list of regexes.</sup> | Base Rules | ![info](static/img/priorities/info.png) |
@@ -2949,12 +2957,23 @@ If the address is specified without a URI, or it is not possible to determine th
 
 By default, NGINX redefines two header fields in proxied requests and eliminates the header fields whose values are empty strings:
 
-- `Host` - is set to the `$proxy_host` variable
-- `Connection` - is set to close
+- the `Host` header is re-written to the value defined by the `$proxy_host` variable. This will be the IP address or name and port number of the upstream, directly as defined by the `proxy_pass` directive
+
+- the `Connection` header is changed to `close`. This header is used to signal information about the particular connection established between two parties. In this instance, NGINX sets this to `close` to indicate to the upstream server that this connection will be closed once the original request is responded to. The upstream should not expect this connection to be persistent
+
+When NGINX proxies a request, it automatically makes some adjustments to the request headers it receives from the client:
+
+- NGINX drop empty headers. There is no point of passing along empty values to another server; it would only serve to bloat the request
+
+- NGINX, by default, will consider any header that contains underscores as invalid. It will remove these from the proxied request. If you wish to have NGINX interpret these as valid, you can set the `underscores_in_headers` directive to `on`, otherwise your headers will never make it to the backend server
+
+It is important to pass more than just the URI if you expect the upstream server handle the request properly. The request coming from NGINX on behalf of a client will look different than a request coming directly from a client.
+
+  > Please read [Managing request headers](https://www.nginx.com/resources/wiki/start/topics/examples/headers_management/) from the official wiki.
 
 NGINX use the `proxy_set_header` directive to sets headers that sends to the backend servers.
 
-  > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
+  > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
 
 It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
 
@@ -11131,6 +11150,37 @@ location / {
 - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
 - [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
 - [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
+
+#### :beginner: Use custom headers without X- prefix
+
+###### Rationale
+
+  > Internet Engineering Task Force released a new RFC ([RFC-6648](https://tools.ietf.org/html/rfc6648)), recommending deprecation of `X-` prefix.
+
+  > The `X-` in front of a header name customarily has denoted it as experimental/non-standard/vendor-specific. Once it's a standard part of HTTP, it'll lose the prefix.
+
+  > If it’s possible for new custom header to be standardized, use a non-used and meaningful header name.
+
+  > The use of custom headers with `X-` prefix is not forbidden but discouraged. In other words, you can keep using `X-` prefixed headers, but it's not recommended and you may not document them as if they are public standard.
+
+###### Example
+
+Not recommended configuration:
+
+```bash
+add_header X-Backend-Server $hostname;
+```
+
+Recommended configuration:
+
+```bash
+add_header Backend-Server $hostname;
+```
+
+###### External resources
+
+- [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00)
+- [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
 
 # Load Balancing
 
