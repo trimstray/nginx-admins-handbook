@@ -264,7 +264,7 @@
       * [Post installation tasks](#post-installation-tasks)
     * [Install OpenResty on CentOS 7](#install-openresty-on-centos-7)
     * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
-- **[Base Rules](#base-rules)**
+- **[Base Rules (14)](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -279,12 +279,12 @@
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
   * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
-- **[Debugging](#debugging-1)**
+- **[Debugging (4)](#debugging-1)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
-- **[Performance](#performance)**
+- **[Performance (11)](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
@@ -296,7 +296,7 @@
   * [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
-- **[Hardening](#hardening)**
+- **[Hardening (28)](#hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -325,15 +325,15 @@
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy](#reverse-proxy-1)**
+- **[Reverse Proxy (4)](#reverse-proxy-1)**
   * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
-- **[Load Balancing](#load-balancing)**
+- **[Load Balancing (2)](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
-- **[Others](#others)**
+- **[Others (2)](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
 - **[Configuration Examples](#configuration-examples)**
@@ -847,7 +847,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
 | [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)<br><sup>The use of custom headers with X- prefix is discouraged.</sup> | Performance | ![low](static/img/priorities/low.png) |
-| [Tweak passive health checks](#beginner-tweak-passive-health-checks) | Load Balancing | ![low](static/img/priorities/low.png) |
+| [Tweak passive health checks](#beginner-tweak-passive-health-checks)<br><sup>Improve behaviour of the passive health checks.</sup> | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)<br><sup>Helps make things easier for companies and security researchers.</sup> | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things)<br><sup>Map module provides a more elegant solution for clearly parsing a big list of regexes.</sup> | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats)<br><sup>This is extremely helpful for debugging specific location directives.</sup> | Debugging | ![info](static/img/priorities/info.png) |
@@ -2771,9 +2771,9 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Reverse proxy
 
-This is one of the greatest features of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
+This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 
-Official documentation say:
+Official NGINX documentation say:
 
   > _Proxying is typically used to distribute the load among several servers, seamlessly show content from different websites, or pass requests for processing to application servers over protocols other than HTTP._
 
@@ -2810,6 +2810,13 @@ It is possible to proxy requests to:
 - an HTTP servers (e.g. NGINX, Apache, or other) with `proxy_pass` directive:
 
   ```bash
+  upstream bk_front {
+
+    server 192.168.252.20:8080  weight=5;
+    server 192.168.252.21:8080
+
+  }
+
   server {
 
     location / {
@@ -2849,7 +2856,7 @@ It is possible to proxy requests to:
 
 - a non-HTTP servers (e.g. PHP, Node.js, Python, Java, or other) with `proxy_pass` directive (as a fallback) or directives specially designed for this:
 
-  - `fastcgi_pass` which passes a request to a FastCGI server (see: [PHP FastCGI Example](https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/)):
+  - `fastcgi_pass` which passes a request to a FastCGI server ([PHP FastCGI Example](https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/)):
 
     ```bash
     server {
@@ -2868,7 +2875,7 @@ It is possible to proxy requests to:
     }
     ```
 
-  - `uwsgi_pass` which passes a request to a uWSGI server (see: [Nginx support uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html)):
+  - `uwsgi_pass` which passes a request to a uWSGI server ([Nginx support uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html)):
 
     ```bash
     server {
@@ -2904,7 +2911,7 @@ It is possible to proxy requests to:
     }
     ```
 
-  - `memcached_pass` which passes a request to a memcached server:
+  - `memcached_pass` which passes a request to a Memcached server:
 
     ```bash
     server {
@@ -2912,13 +2919,39 @@ It is possible to proxy requests to:
       location / {
 
         set            $memcached_key "$uri?$args";
-        memcached_pass host:4004;
+        memcached_pass memc_instance:4004;
 
         error_page     404 502 504 = @memc_fallback;
 
       }
 
       location @memc_fallback {
+
+        proxy_pass     http://backend;
+
+      }
+
+      ...
+
+    }
+    ```
+
+  - `redis_pass` which passes a request to a Redis server ([HTTP Redis](https://www.nginx.com/resources/wiki/modules/redis/)):
+
+    ```bash
+    server {
+
+      location / {
+
+        set            $redis_key $uri;
+
+        redis_pass     redis_instance:6379;
+        default_type   text/html;
+        error_page     404 = /fallback;
+
+      }
+
+      location @fallback {
 
         proxy_pass     http://backend;
 
@@ -9969,10 +10002,10 @@ chown -R nginx:nginx /var/www/domain.com
 ###### Example
 
 ```bash
-# During installation:
+# 1) During installation:
 ./configure --without-http_autoindex_module
 
-# Comment modules in the configuration file e.g. modules.conf:
+# 2) Comment modules in the configuration file e.g. modules.conf:
 # load_module                 /usr/share/nginx/modules/ndk_http_module.so;
 # load_module                 /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
 # load_module                 /usr/share/nginx/modules/ngx_http_cache_purge_module.so;
