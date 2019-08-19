@@ -116,6 +116,9 @@
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
     * [Passing headers](#passing-headers)
+      * [X-Forwarded-Proto](#x-forwarded-proto)
+      * [X-Forwarded-For](#x-forwarded-for)
+      * [Forwarded](#forwarded)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
@@ -322,7 +325,9 @@
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy](#reverse-proxy-1)**
-  * [Use only pass directive compatible with backend layer protocol](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocol)
+  * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
+  * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+  * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
 - **[Load Balancing](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
@@ -399,7 +404,7 @@ Of course, [Official Documentation](https://nginx.org/en/docs/) is the best plac
 
 These are definitely the best assets for us and in the first place you should seek help there.
 
-For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. That's why I created this repository.
+For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
   > This handbook is a collection of rules, helpers, notes, papers, best practices, and recommendations gathered and used by me (also in production environments). Many of them refer to external resources.
 
@@ -702,11 +707,12 @@ Existing chapters:
 <details>
 <summary><b>Reverse Proxy</b></summary><br>
 
-  - [x] _Use only pass directive compatible with backend layer protocol_
+  - [x] _Use pass directive compatible with backend layer protocol_
   - [ ] _Be careful with trailing slashes in proxy_pass directive_
-  - [ ] _Always pass X-Forwarded headers to the backend_
-  - [ ] _Set properly proxy buffers and timeouts_
-  - [ ] _Set properly Host header with host and port number_
+  - [ ] _Use Host header with host and port number_
+  - [x] _Set properly values of the X-Forwarded-For header_
+  - [x] _Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend_
+  - [ ] _Set proxy buffers and timeouts_
 
 </details>
 
@@ -762,14 +768,14 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (62) from this handbook.
+  > This checklist contains all rules (64) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 26 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 20 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 27 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 21 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 10 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
@@ -802,7 +808,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Use only pass directive compatible with backend layer protocol](#beginner-use-only-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocols.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -822,6 +829,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
@@ -2778,6 +2786,7 @@ Reverse proxy gives you number of advanced features such as:
 - increased performance (e.g. caching, load balancing)
 - simplifies the access control responsibilities (single point of access and maintenance)
 - centralised logging and auditing (single point of maintenance)
+- add/remove/modify HTTP headers
 
 In my opinion, the two most important things related to the reverse proxy are:
 
@@ -2948,6 +2957,185 @@ NGINX use the `proxy_set_header` directive to sets headers that sends to the bac
   > `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
 
 It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
+
+Ok, so look at following short explanation about proxy directives (for more information about valid header values please see [this](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend) rule):
+
+- `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1
+
+  ```bash
+  proxy_http_version  1.1;
+  ```
+
+- `proxy_cache_bypass` - sets conditions under which the response will not be taken from a cache
+
+  ```bash
+  proxy_cache_bypass  $http_upgrade;
+  ```
+
+- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (overrides the error page on the backend side)
+
+  ```bash
+  proxy_intercept_errors on;
+  error_page 500 503 504 @debug;  # go to the @debug location
+  ```
+
+- `proxy_set_header` - allows redefining or appending fields to the request header passed to the proxied server
+
+  - `Upgrade` and `Connection` - these header fields are required if your application is using Websockets
+
+  ```bash
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+  ```
+
+  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request
+
+  ```bash
+  proxy_set_header Host $host;
+  ```
+
+  - `X-Real-IP` - forwards the real visitor remote IP address to the proxied server
+
+  ```bash
+  proxy_set_header X-Real-IP $remote_addr;
+  ```
+
+  - `X-Forwarded-For` - is the conventional way of identifying the originating IP address of the user connecting to the web server coming from either a HTTP proxy, load balancer
+
+  ```bash
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  ```
+
+  - `X-Forwarded-Proto` - identifies the protocol (HTTP or HTTPS) that a client used to connect to your proxy or load balancer
+
+  ```bash
+  proxy_set_header X-Forwarded-Proto $scheme;
+  ```
+
+  - `X-Forwarded-Host` - defines the original host requested by the client
+
+  ```bash
+  proxy_set_header X-Forwarded-Host $host;
+  ```
+
+  - `X-Forwarded-Port` - defines the original port requested by the client
+
+  ```bash
+  proxy_set_header X-Forwarded-Port $server_port;
+  ```
+
+
+###### `X-Forwarded-Proto`
+
+This header is very important because it prevent a redirect loop. When used inside HTTPS server block each HTTP response from the proxied server will be rewritten to HTTPS. Look at the following example:
+
+1. Client sends the HTTP request to the Proxy
+2. Proxy sends the HTTP request to the Server
+3. Server sees that the URL is `http://`
+4. Server sends back 3xx redirect response telling the Client to connect to `https://`
+5. Client sends an HTTPS request to the Proxy
+6. Proxy decrypts the HTTPS traffic and sets the `X-Forwarded-Proto: https`
+7. Proxy sends the HTTP request to the Server
+8. Server sees that the URL is `http://` but also sees that `X-Forwarded-Proto` is https and trusts that the request is HTTPS
+9. Server sends back the requested web page or data
+
+<sup><i>This explanation comes from [Purpose of the X-Forwarded-Proto HTTP Header](https://community.pivotal.io/s/article/Purpose-of-the-X-Forwarded-Proto-HTTP-Header).</i></sup>
+
+In step 6 above, the Proxy is setting the HTTP header `X-Forwarded-Proto: https` to specify that the traffic it received is HTTPS. In step 8, the Server then uses the `X-Forwarded-Proto` to determine if the request was HTTP or HTTPS.
+
+###### `X-Forwarded-For`
+
+I think, we should just maybe stop for a second. `X-Forwarded-For` is a one of the most important header that has the security implications.
+
+Where a connection passes through a chain of proxy servers, `X-Forwarded-For` can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user).
+
+`X-Forwarded-For` should not be used for any Access Control List (ACL) checks because it can be spoofed by attackers. Use the real IP address for this type of restrictions. HTTP request headers such as `X-Forwarded-For`, `True-Client-IP`, and `X-Real-IP` are not a robust foundation on which to build any security measures, such as access controls.
+
+See [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header) for more detailed information on how to set properly values of the `X-Forwarded-For` header.
+
+But that's not all. Behind a reverse proxy, the user IP we get is often the reverse proxy IP itself. If you use other HTTP server working between proxy and app server you should also set the correct mechanism for interpreting values of this header.
+
+I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-ip-header-and-x-forwarded-for-seems-wrong/414166#414166) amazing explanation by [Nick M](https://serverfault.com/users/130923/nick-m).
+
+1) Pass headers from proxy to the backend layer
+
+    - [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+    - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+
+2) NGINX - modify the `set_real_ip_from` and `real_ip_header` directives:
+
+    > For this, the `http_realip_module` must be installed (`--with-http_realip_module`).
+
+    First of all, you should add the following lines to the configuration:
+
+    ```bash
+    # Add these to the set_real_ip.conf, there are the real IPs where your traffic is coming from (front proxy/lb):
+    set_real_ip_from    192.168.20.10; # IP address of master
+    set_real_ip_from    192.168.20.11; # IP address of slave
+
+    # You can also add an entire subnet:
+    set_real_ip_from    192.168.40.0/24;
+
+    # Defines a request header field used to send the address for a replacement, in this case We use X-Forwarded-For:
+    real_ip_header      X-Forwarded-For;
+
+    # The real IP from your client address that matches one of the trusted addresses is replaced by the last non-trusted address sent in the request header field:
+    real_ip_recursive   on;
+
+    # Include it to the appropriate context:
+    server {
+
+      include /etc/nginx/set_real_ip.conf;
+
+      ...
+
+    }
+    ```
+
+3) NGINX - add/modify and set log format:
+
+    ```bash
+    log_format combined-1 '$remote_addr forwarded for $http_x_real_ip - $remote_user [$time_local]  '
+                          '"$request" $status $body_bytes_sent '
+                          '"$http_referer" "$http_user_agent"';
+
+    # or:
+    log_format combined-2 '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/example.com/access.log combined-1;
+    ```
+
+    This way, e.g. the `$_SERVER['REMOTE_ADDR']` will be correctly filled up in PHP fastcgi. You can test it with the following script:
+
+    ```bash
+    # tls_check.php
+    <?php
+
+    echo '<pre>';
+    print_r($_SERVER);
+    echo '</pre>';
+    exit;
+
+    ?>
+    ```
+
+    And send request to it:
+
+    ```bash
+    curl -H Cache-Control: no-cache -ks https://example.com/tls-check.php?${RANDOM} | grep "HTTP_X_FORWARDED_FOR\|HTTP_X_REAL_IP\|SERVER_ADDR\|REMOTE_ADDR"
+    [HTTP_X_FORWARDED_FOR] => 172.217.20.206
+    [HTTP_X_REAL_IP] => 172.217.20.206
+    [SERVER_ADDR] => 192.168.10.100
+    [REMOTE_ADDR] => 192.168.10.10
+    ```
+
+###### `Forwarded`
+
+Since 2014, the IETF has approved a standard header definition for proxy, called `Forwarded`, documented [here](https://tools.ietf.org/html/rfc7239) and [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded) that should be use instead of `X-Forwarded` headers. This is the one you should use reliably to get originating IP in case your request is handled by a proxy. Official NGINX documentation also gives you how to [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/).
+
+In general, the proxy headers (Forwarded or X-Forwarded-For) are the right way to get your client IP only when you are sure they come to you via a proxy. If there is no proxy header or no usable value in, you should default to the `REMOTE_ADDR` server variable.
 
 #### Load balancing algorithms
 
@@ -10778,7 +10966,7 @@ send_timeout 10s;
 
 One of the frequent uses of the NGINX is setting it up as a proxy server.
 
-#### :beginner: Use only pass directive compatible with backend layer protocol
+#### :beginner: Use pass directive compatible with backend layer protocol
 
 ###### Rationale
 
@@ -10838,7 +11026,111 @@ server {
 ###### External resources
 
 - [Passing a Request to a Proxied Server](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server)
-- [Reverse proxy (from this handbook)](https://github.com/trimstray/nginx-admins-handbook#reverse-proxy)
+- [Reverse proxy (from this handbook)](#reverse-proxy)
+
+#### :beginner: Set properly values of the X-Forwarded-For header
+
+###### Rationale
+
+  > In the light of the latest httpoxy vulnerabilities, there is really a need for a full example, how to use `HTTP_X_FORWARDED_FOR` properly. In short, the load balancer sets the 'most recent' part of the header. In my opinion, for security reasons, the proxy servers must be specified by the administrator manually.
+
+  > `X-Forwarded-For` is the custom HTTP header that carries along the original IP address of a client so the app at the other end knows what it is. Otherwise it would only see the proxy IP address, and that makes some apps angry.
+
+  > The `X-Forwarded-For` depends on the proxy server, which should actually pass the IP address of the client connecting to it. Where a connection passes through a chain of proxy servers, X-Forwarded-For can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user). Because of this, servers behind proxy servers need to know which of them are trustworthy.
+
+  > The proxy used can set this header to anything it wants to, and therefore you can't trust its value. Most proxies do set the correct value though. This header is mostly used by caching proxies, and in those cases you're in control of the proxy and can thus verify that is gives you the correct information. In all other cases its value should be considered untrustworthy.
+
+  > Some systems also use `X-Forwarded-For` to enforce access control. A good number of applications rely on knowing the actual IP address of a client to help prevent fraud and enable access.
+
+  > Value of the `X-Forwarded-For` header field can be set at the client's side - this can also be termed as X-Forwarded-For spoofing. However, when the web request is made via a proxy server, the proxy server modifies the `X-Forwarded-For` field by appending the IP address of the client (user). This will result in 2 comma separated IP addresses in the `X-Forwarded-For` field.
+
+  > A reverse proxy is not source IP address transparent. This is a pain when you need the client source IP address to be correct in the logs of the backend servers. I think the best solution of this problem is configure the load balancer to add/modify an `X-Forwarded-For` header with the source IP of the client and forward it to the backend in the correct form.
+
+  > Unfortunately, on the proxy side we are not able to solve this problem (all solutions can be spoofable), it is important that this header is correctly interpreted by application servers. Doing so ensures that the apps or downstream services have accurate information on which to make their decisions, including those regarding access and authorization.
+
+  There is also an interesing idea what to do in this situation:
+
+  > _To prevent this we must distrust that header by default and follow the IP address breadcrumbs backwards from our server. First we need to make sure the `REMOTE_ADDR` is someone we trust to have appended a proper value to the end of `X-Forwarded-For`. If so then we need to make sure we trust the `X-Forwarded-For` IP to have appended the proper IP before it, so on and so forth. Until, finally we get to an IP we don’t trust and at that point we have to assume that’s the IP of our user._ - it comes from [Proxies & IP Spoofing](https://xyu.io/2013/07/04/proxies-ip-spoofing/) by [Xiao Yu](https://github.com/xyu).
+
+###### Example
+
+```bash
+# The whole purpose that it exists is to do the appending behavior:
+proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+# Above is equivalent for this:
+proxy_set_header    X-Forwarded-For    $http_x_forwarded_for,$remote_addr;
+# The following is also equivalent for above but in this example we use http_realip_module:
+proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_addr";
+```
+
+###### External resources
+
+- [Prevent X-Forwarded-For Spoofing or Manipulation](https://totaluptime.com/kb/prevent-x-forwarded-for-spoofing-or-manipulation/)
+- [Bypass IP blocks with the X-Forwarded-For header](https://www.sjoerdlangkemper.nl/2017/03/01/bypass-ip-block-with-x-forwarded-for-header/)
+- [Forwarded header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded)
+
+#### :beginner: Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend
+
+###### Rationale
+
+  > When using NGINX as a reverse proxy you may want to pass through some information of the remote client to your backend web server. I think it's good practices because gives you more control of forwarded headers.
+
+  > It's very important for servers behind proxy because it allow to interpret the client correctly. Proxies are the "eyes" of such servers, they should not allow a curved perception of reality. If not all requests are passed through a proxy, as a result, requests received directly from clients may contain e.g. inaccurate IP addresses in headers.
+
+  > X-Forwarded headers are also important for statistics or filtering. Other example could be access control rules on your app, because without these headers filtering mechanism may not working properly.
+
+  > If you use a front-end service like Apache or whatever else as the front-end to your APIs, you will need these headers to understand what IP or hostname was used to connect to the API.
+
+  > Forwarding these headers is also important if you use the https protocol (it has become a standard nowadays).
+
+  > However, I would not rely on either the presence of all X-Forwarded headers, or the validity of their data.
+
+###### Example
+
+```bash
+location / {
+
+  proxy_pass          http://bk_upstream_01;
+
+  # The following headers also should pass to the backend:
+  #   - Host - host name from the request line, or host name from the Host request header field, or the server name matching a request
+  proxy_set_header    Host               $host;
+
+  #   - X-Real-IP - forwards the real visitor remote IP address to the proxied server
+  proxy_set_header    X-Real-IP          $remote_addr;
+
+  # X-Forwarded headers stack:
+  #   - X-Forwarded-For - mark origin IP of client connecting to server through proxy
+  # proxy_set_header  X-Forwarded-For    $remote_addr;
+  # proxy_set_header  X-Forwarded-For    $http_x_forwarded_for,$remote_addr;
+  # proxy_set_header  X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_addr";
+  proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+
+  #   - X-Forwarded-Host - mark origin host of client connecting to server through proxy
+  # proxy_set_header  X-Forwarded-Host   $host:443;
+  proxy_set_header    X-Forwarded-Host   $host:$server_port;
+
+  #   - X-Forwarded-Server - the hostname of the proxy server
+  proxy_set_header    X-Forwarded-Server $host;
+
+  #   - X-Forwarded-Port - defines the original port requested by the client
+  # proxy_set_header  X-Forwarded-Port   443;
+  proxy_set_header    X-Forwarded-Port   $server_port;
+
+  #   - X-Forwarded-Proto - mark protocol of client connecting to server through proxy
+  # proxy_set_header  X-Forwarded-Proto  https;
+  # proxy_set_header  X-Forwarded-Proto  $proxy_x_forwarded_proto;
+  proxy_set_header    X-Forwarded-Proto  $scheme;
+
+}
+```
+
+###### External resources
+
+- [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
+- [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+- [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
+- [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
 
 # Load Balancing
 
