@@ -115,11 +115,12 @@
     * [Error log severity levels](#error-log-severity-levels)
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
+    * [Trailing slashes](#trailing-slashes)
     * [Processing headers](#processing-headers)
     * [Passing headers](#passing-headers)
-      * [X-Forwarded-Proto](#x-forwarded-proto)
-      * [X-Forwarded-For](#x-forwarded-for)
-      * [Forwarded](#forwarded)
+      * [Prevent redirects with X-Forwarded-Proto](#prevent-redirects-with-x-forwarded-proto)
+      * [A warning about the X-Forwarded-For](#a-warning-about-the-x-forwarded-for)
+      * [Improve extensibility with Forwarded header](#improve-extensibility-with-forwarded-header)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
@@ -537,11 +538,12 @@ Existing chapters:
     - [x] _HTTP Keep-Alive connections_
   - _Reverse proxy_
     - [x] _Passing requests_
+    - [x] _Trailing slashes_
     - [x] _Processing headers_
     - [x] _Passing headers_
-      - [x] _X-Forwarded-Proto_
-      - [x] _X-Forwarded-For_
-      - [x] _Forwarded_
+      - [x] _Prevent redirects with X-Forwarded-Proto_
+      - [x] _A warning about the X-Forwarded-For_
+      - [x] _Improve extensibility with Forwarded header_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -2971,8 +2973,11 @@ However, more complex apps may need additional directives:
   - `uwsgi_pass` - see [`ngx_http_uwsgi_module`](http://nginx.org/en/docs/http/ngx_http_uwsgi_module.html) directives explanation
   - `scgi_pass` - see [`ngx_http_scgi_module`](http://nginx.org/en/docs/http/ngx_http_scgi_module.html) directives explanation
   - `memcached_pass` - see [`ngx_http_memcached_module`](http://nginx.org/en/docs/http/ngx_http_memcached_module.html) directives explanation
+  - `redis_pass` - see [`ngx_http_redis_module`](https://www.nginx.com/resources/wiki/modules/redis/) directives explanation
 
-Look also at this example:
+##### Trailing slashes
+
+Look at this example:
 
 ```bash
 location /foo/bar/ {
@@ -2988,7 +2993,7 @@ If the address is specified without a URI, or it is not possible to determine th
 
 ##### Passing headers
 
-By default, NGINX redefines two header fields in proxied requests and eliminates the header fields whose values are empty strings:
+By default, NGINX redefines two header fields in proxied requests:
 
 - the `Host` header is re-written to the value defined by the `$proxy_host` variable. This will be the IP address or name and port number of the upstream, directly as defined by the `proxy_pass` directive
 
@@ -3035,49 +3040,48 @@ Ok, so look at following short explanation about proxy directives (for more info
 
   - `Upgrade` and `Connection` - these header fields are required if your application is using Websockets
 
-  ```bash
-  proxy_set_header Upgrade $http_upgrade;
-  proxy_set_header Connection "upgrade";
-  ```
+    ```bash
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    ```
 
   - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request
 
-  ```bash
-  proxy_set_header Host $host;
-  ```
+    ```bash
+    proxy_set_header Host $host;
+    ```
 
   - `X-Real-IP` - forwards the real visitor remote IP address to the proxied server
 
-  ```bash
-  proxy_set_header X-Real-IP $remote_addr;
-  ```
+    ```bash
+    proxy_set_header X-Real-IP $remote_addr;
+    ```
 
   - `X-Forwarded-For` - is the conventional way of identifying the originating IP address of the user connecting to the web server coming from either a HTTP proxy, load balancer
 
-  ```bash
-  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  ```
+    ```bash
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    ```
 
   - `X-Forwarded-Proto` - identifies the protocol (HTTP or HTTPS) that a client used to connect to your proxy or load balancer
 
-  ```bash
-  proxy_set_header X-Forwarded-Proto $scheme;
-  ```
+    ```bash
+    proxy_set_header X-Forwarded-Proto $scheme;
+    ```
 
   - `X-Forwarded-Host` - defines the original host requested by the client
 
-  ```bash
-  proxy_set_header X-Forwarded-Host $host;
-  ```
+    ```bash
+    proxy_set_header X-Forwarded-Host $host;
+    ```
 
   - `X-Forwarded-Port` - defines the original port requested by the client
 
-  ```bash
-  proxy_set_header X-Forwarded-Port $server_port;
-  ```
+    ```bash
+    proxy_set_header X-Forwarded-Port $server_port;
+    ```
 
-
-###### `X-Forwarded-Proto`
+###### Prevent redirects with `X-Forwarded-Proto`
 
 This header is very important because it prevent a redirect loop. When used inside HTTPS server block each HTTP response from the proxied server will be rewritten to HTTPS. Look at the following example:
 
@@ -3095,7 +3099,7 @@ This header is very important because it prevent a redirect loop. When used insi
 
 In step 6 above, the Proxy is setting the HTTP header `X-Forwarded-Proto: https` to specify that the traffic it received is HTTPS. In step 8, the Server then uses the `X-Forwarded-Proto` to determine if the request was HTTP or HTTPS.
 
-###### `X-Forwarded-For`
+###### A warning about the `X-Forwarded-For`
 
 I think, we should just maybe stop for a second. `X-Forwarded-For` is a one of the most important header that has the security implications.
 
@@ -3103,7 +3107,7 @@ Where a connection passes through a chain of proxy servers, `X-Forwarded-For` ca
 
 `X-Forwarded-For` should not be used for any Access Control List (ACL) checks because it can be spoofed by attackers. Use the real IP address for this type of restrictions. HTTP request headers such as `X-Forwarded-For`, `True-Client-IP`, and `X-Real-IP` are not a robust foundation on which to build any security measures, such as access controls.
 
-See [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header) for more detailed information on how to set properly values of the `X-Forwarded-For` header.
+[Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header) - see this for more detailed information on how to set properly values of the `X-Forwarded-For` header.
 
 But that's not all. Behind a reverse proxy, the user IP we get is often the reverse proxy IP itself. If you use other HTTP server working between proxy and app server you should also set the correct mechanism for interpreting values of this header.
 
@@ -3183,7 +3187,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
     [REMOTE_ADDR] => 192.168.10.10
     ```
 
-###### `Forwarded`
+###### Improve extensibility with `Forwarded` header
 
 Since 2014, the IETF has approved a standard header definition for proxy, called `Forwarded`, documented [here](https://tools.ietf.org/html/rfc7239) and [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded) that should be use instead of `X-Forwarded` headers. This is the one you should use reliably to get originating IP in case your request is handled by a proxy. Official NGINX documentation also gives you how to [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/).
 
