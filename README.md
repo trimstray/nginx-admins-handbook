@@ -326,7 +326,7 @@
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy (4)](#reverse-proxy-1)**
+- **[Reverse Proxy (5)](#reverse-proxy-1)**
   * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
@@ -778,7 +778,7 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (65) from this handbook.
+  > This checklist contains all rules (66) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
@@ -819,7 +819,6 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
-| [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -841,6 +840,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
+| [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
