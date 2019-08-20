@@ -328,6 +328,7 @@
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy (4)](#reverse-proxy-1)**
   * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
+  * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
@@ -717,7 +718,7 @@ Existing chapters:
 
   - [x] _Use pass directive compatible with backend layer protocol_
   - [ ] _Be careful with trailing slashes in proxy_pass directive_
-  - [ ] _Use Host header with host and port number_
+  - [x] _Set and pass Host header only with $host variable_
   - [x] _Set properly values of the X-Forwarded-For header_
   - [x] _Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend_
   - [x] _Use custom headers without X- prefix_
@@ -818,6 +819,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -1219,8 +1221,8 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 - `nginx -v` - shows the NGINX version
 - `nginx -V` - shows the extended information about NGINX: version, build parameters, and configuration arguments
 - `nginx -t` - tests the NGINX configuration
-- `nginx -c` - sets configuration file (default: `/etc/nginx/nginx.conf`)
-- `nginx -p` - sets prefix path (default: `/etc/nginx/`)
+- `nginx -c <filename>` - sets configuration file (default: `/etc/nginx/nginx.conf`)
+- `nginx -p <directory>` - sets prefix path (default: `/etc/nginx/`)
 - `nginx -T` - tests the NGINX configuration and prints the validated configuration on the screen
 - `nginx -s <signal>` - sends a signal to the NGINX master process:
   - `stop` - discontinues the NGINX process immediately
@@ -3045,7 +3047,7 @@ Ok, so look at following short explanation about proxy directives (for more info
     proxy_set_header Connection "upgrade";
     ```
 
-  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request
+  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request. `$host` equals `$http_host`, lowercase and without the port number (if present), except when HTTP_HOST is absent or is an empty value. In that case, `$host` equals the value of the `server_name` directive of the server which processed the request
 
     ```bash
     proxy_set_header Host $host;
@@ -11084,6 +11086,38 @@ server {
 - [Passing a Request to a Proxied Server](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server)
 - [Reverse proxy (from this handbook)](#reverse-proxy)
 
+#### :beginner: Set and pass Host header only with $host variable
+
+###### Rationale
+
+  > You should almost always use `$host` as a incoming host variable, because it's the only one guaranteed to have something sensible regardless of how the user-agent behaves, unless you specifically need the semantics of one of the other variables.
+
+  > `$host` is simply `$http_host` with some processing (stripping port number and lowercasing) and a default value (of the server_name), so there's no less "exposure" to the `Host` header sent by the client when using `$http_host`. There's no danger in this though.
+
+  > The difference is explained in the NGINX documentation:
+  >
+  >   - `$host` contains "in this order of precedence: host name from the request line, or host name from the 'Host' request header field, or the server name matching a request"
+  >   - `$http_host` contains the content of the HTTP `Host` header field, if it was present in the request (equals always the HTTP_HOST request header)
+  >   - `$server_name` contains the `server_name` of the virtual host which processed the request, as it was defined in the NGINX configuration. If a server contains multiple server names, only the first one will be present in this variable
+
+  > `http_host`, moreover, is better than `$host:$server_port` because it uses the port as present in the URL, unlike `$server_port` which uses the port that NGINX listens on.
+
+###### Example
+
+```bash
+proxy_set_header    Host               $host;
+```
+
+###### External resources
+
+- [RFC2616 - 5.2 The Resource Identified by a Request](http://tools.ietf.org/html/rfc2616#section-5.2)
+- [RFC2616 - 14.23 Host](http://tools.ietf.org/html/rfc2616#section-14.23)
+- [Nginx proxy_set_header - Host header](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header)
+- [What is the difference between Nginx variables $host, $http_host, and $server_name?](https://serverfault.com/questions/706438/what-is-the-difference-between-nginx-variables-host-http-host-and-server-na/706439#706439)
+- [HTTP_HOST and SERVER_NAME Security Issues](https://expressionengine.com/blog/http-host-and-server-name-security-issues)
+- [Reasons to use '$http_host' instead of '$host' with 'proxy_set_header Host' in template?](https://github.com/jwilder/nginx-proxy/issues/763#issuecomment-286481168)
+- [Tip: keep the Host header via nginx proxy_pass](https://www.simplicidade.org/notes/2011/02/15/tip-keep-the-host-header-via-nginx-proxy_pass/)
+
 #### :beginner: Set properly values of the X-Forwarded-For header
 
 ###### Rationale
@@ -11150,6 +11184,8 @@ location / {
 
   # The following headers also should pass to the backend:
   #   - Host - host name from the request line, or host name from the Host request header field, or the server name matching a request
+  # proxy_set_header  Host               $host:$server_port;
+  # proxy_set_header  Host               $http_host;
   proxy_set_header    Host               $host;
 
   #   - X-Real-IP - forwards the real visitor remote IP address to the proxied server
