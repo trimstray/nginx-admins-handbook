@@ -118,9 +118,10 @@
     * [Trailing slashes](#trailing-slashes)
     * [Processing headers](#processing-headers)
     * [Passing headers](#passing-headers)
-      * [Prevent redirects with X-Forwarded-Proto](#prevent-redirects-with-x-forwarded-proto)
+      * [Importancy of the Host header](#importancy-of-the-host-header)
+      * [Redirects and X-Forwarded-Proto](#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](#a-warning-about-the-x-forwarded-for)
-      * [Improve extensibility with Forwarded header](#improve-extensibility-with-forwarded-header)
+      * [Improve extensibility with Forwarded](#improve-extensibility-with-forwarded)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Round Robin](#round-robin)
@@ -542,9 +543,10 @@ Existing chapters:
     - [x] _Trailing slashes_
     - [x] _Processing headers_
     - [x] _Passing headers_
-      - [x] _Prevent redirects with X-Forwarded-Proto_
+      - [x] _Importancy of the Host header_
+      - [x] _Redirects and X-Forwarded-Proto_
       - [x] _A warning about the X-Forwarded-For_
-      - [x] _Improve extensibility with Forwarded header_
+      - [x] _Improve extensibility with Forwarded_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Round Robin_
@@ -839,8 +841,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
+| [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
@@ -850,7 +852,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
-| [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)<br><sup>The use of custom headers with X- prefix is discouraged.</sup> | Performance | ![low](static/img/priorities/low.png) |
+| [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)<br><sup>The use of custom headers with X- prefix is discouraged.</sup> | Reverse Proxy | ![low](static/img/priorities/low.png) |
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks)<br><sup>Improve behaviour of the passive health checks.</sup> | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)<br><sup>Helps make things easier for companies and security researchers.</sup> | Others | ![low](static/img/priorities/low.png) |
 | [Map all the things...](#beginner-map-all-the-things)<br><sup>Map module provides a more elegant solution for clearly parsing a big list of regexes.</sup> | Base Rules | ![info](static/img/priorities/info.png) |
@@ -3047,7 +3049,7 @@ Ok, so look at following short explanation about proxy directives (for more info
     proxy_set_header Connection "upgrade";
     ```
 
-  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request. `$host` equals `$http_host`, lowercase and without the port number (if present), except when HTTP_HOST is absent or is an empty value. In that case, `$host` equals the value of the `server_name` directive of the server which processed the request
+  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request
 
     ```bash
     proxy_set_header Host $host;
@@ -3083,7 +3085,15 @@ Ok, so look at following short explanation about proxy directives (for more info
     proxy_set_header X-Forwarded-Port $server_port;
     ```
 
-###### Prevent redirects with `X-Forwarded-Proto`
+###### Importancy of the `Host` header
+
+The host Header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
+
+In NGINX, `$host` equals `$http_host`, lowercase and without the port number (if present), except when `HTTP_HOST` is absent or is an empty value. In that case, `$host` equals the value of the `server_name` directive of the server which processed the request
+
+For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be "MASTER:8080" as it just reflects the whole header).
+
+###### Redirects and `X-Forwarded-Proto`
 
 This header is very important because it prevent a redirect loop. When used inside HTTPS server block each HTTP response from the proxied server will be rewritten to HTTPS. Look at the following example:
 
@@ -3189,7 +3199,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
     [REMOTE_ADDR] => 192.168.10.10
     ```
 
-###### Improve extensibility with `Forwarded` header
+###### Improve extensibility with `Forwarded`
 
 Since 2014, the IETF has approved a standard header definition for proxy, called `Forwarded`, documented [here](https://tools.ietf.org/html/rfc7239) and [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded) that should be use instead of `X-Forwarded` headers. This is the one you should use reliably to get originating IP in case your request is handled by a proxy. Official NGINX documentation also gives you how to [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/).
 
@@ -11092,7 +11102,7 @@ server {
 
   > You should almost always use `$host` as a incoming host variable, because it's the only one guaranteed to have something sensible regardless of how the user-agent behaves, unless you specifically need the semantics of one of the other variables.
 
-  > `$host` is simply `$http_host` with some processing (stripping port number and lowercasing) and a default value (of the server_name), so there's no less "exposure" to the `Host` header sent by the client when using `$http_host`. There's no danger in this though.
+  > `$host` is simply `$http_host` with some processing (stripping port number and lowercasing) and a default value (of the `server_name`), so there's no less "exposure" to the `Host` header sent by the client when using `$http_host`. There's no danger in this though.
 
   > The difference is explained in the NGINX documentation:
   >
@@ -11247,7 +11257,7 @@ add_header X-Backend-Server $hostname;
 Recommended configuration:
 
 ```bash
-add_header Backend-Server $hostname;
+add_header Backend-Server   $hostname;
 ```
 
 ###### External resources
