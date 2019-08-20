@@ -8720,7 +8720,7 @@ server {
 
 ###### Rationale
 
-  > NGINX should prevent processing requests with undefined server names (also on IP address). It protects against configuration errors, e.g. traffic forwarding to incorrect backends. The problem is easily solved by creating a default catch all server config.
+  > NGINX should prevent processing requests with undefined server names (also on IP address). It protects against configuration errors, e.g. traffic forwarding to incorrect backends. The problem is easily solved by creating a default dummy vhost that catches all requests with unrecognized Host headers.
 
   > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
 
@@ -11127,6 +11127,8 @@ proxy_set_header    Host               $host;
 - [HTTP_HOST and SERVER_NAME Security Issues](https://expressionengine.com/blog/http-host-and-server-name-security-issues)
 - [Reasons to use '$http_host' instead of '$host' with 'proxy_set_header Host' in template?](https://github.com/jwilder/nginx-proxy/issues/763#issuecomment-286481168)
 - [Tip: keep the Host header via nginx proxy_pass](https://www.simplicidade.org/notes/2011/02/15/tip-keep-the-host-header-via-nginx-proxy_pass/)
+- [What is a Host Header Attack?](https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/)
+- [Practical HTTP Host header attacks](https://www.skeletonscribe.net/2013/05/practical-http-host-header-attacks.html)
 
 #### :beginner: Set properly values of the X-Forwarded-For header
 
