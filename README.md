@@ -327,8 +327,9 @@
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy (5)](#reverse-proxy-1)**
+- **[Reverse Proxy (6)](#reverse-proxy-1)**
   * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
+  * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
@@ -719,7 +720,7 @@ Existing chapters:
 <summary><b>Reverse Proxy</b></summary><br>
 
   - [x] _Use pass directive compatible with backend layer protocol_
-  - [ ] _Be careful with trailing slashes in proxy_pass directive_
+  - [x] _Be careful with trailing slashes in proxy_pass directive_
   - [x] _Set and pass Host header only with $host variable_
   - [x] _Set properly values of the X-Forwarded-For header_
   - [x] _Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend_
@@ -780,7 +781,7 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (66) from this handbook.
+  > This checklist contains all rules (67) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
@@ -788,7 +789,7 @@ Generally, I think that each of these principles is important and should be cons
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 27 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 21 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
-| ![low](static/img/priorities/low.png) | <i>normal</i> | 11 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
+| ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
@@ -852,6 +853,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
+| [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)<br><sup>Incorrect setting could end up with some strange url.</sup> | Reverse Proxy | ![low](static/img/priorities/low.png) |
 | [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)<br><sup>The use of custom headers with X- prefix is discouraged.</sup> | Reverse Proxy | ![low](static/img/priorities/low.png) |
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks)<br><sup>Improve behaviour of the passive health checks.</sup> | Load Balancing | ![low](static/img/priorities/low.png) |
 | [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)<br><sup>Helps make things easier for companies and security researchers.</sup> | Others | ![low](static/img/priorities/low.png) |
@@ -2994,6 +2996,20 @@ location /foo/bar/ {
 If the URI is specified along with the address, it replaces the part of the request URI that matches the location parameter. For example, here the request with the `/foo/bar/page.html` URI will be proxied to `http://www.example.com/url/page.html`.
 
 If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
+
+Look also at this:
+
+Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`.
+
+```bash
+location /foo/ {
+
+  proxy_pass  http://127.0.0.1:8080/bar;
+
+}
+```
+
+If one go to address `http://yourserver.com/foo/path/id?param=1` NGINX will proxy request to `http://127.0.0.1/barpath/id?param=1`. See how `bar` and `path` concatenates.
 
 ##### Passing headers
 
@@ -11096,6 +11112,40 @@ server {
 - [Passing a Request to a Proxied Server](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server)
 - [Reverse proxy (from this handbook)](#reverse-proxy)
 
+#### :beginner: Be careful with trailing slashes in proxy_pass directive
+
+###### Rationale
+
+  > Be careful with trailing slashes because NGINX replaces part literally and you could end up with some strange url.
+
+  > If `proxy_pass` used without URI (i.e. without path after `server:port`) NGINX will put URI from original request exactly as it was with all double slashes, `../` and so on.
+
+  > URI in `proxy_pass` acts like alias directive, means NGINX will replace part that matches location prefix with URI in `proxy_pass` directive (which I intentionally made the same as location prefix) so URI will be the same as requested but normalized (without doule slashes and all that staff).
+
+###### Example
+
+```bash
+location = /a {
+
+  proxy_pass http://127.0.0.1:8080/a;
+
+  ...
+
+}
+
+location ^~ /a/ {
+
+  proxy_pass http://127.0.0.1:8080/a/;
+
+  ...
+
+}
+```
+
+###### External resources
+
+- [ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+
 #### :beginner: Set and pass Host header only with $host variable
 
 ###### Rationale
@@ -11107,7 +11157,7 @@ server {
   > The difference is explained in the NGINX documentation:
   >
   >   - `$host` contains "in this order of precedence: host name from the request line, or host name from the 'Host' request header field, or the server name matching a request"
-  >   - `$http_host` contains the content of the HTTP `Host` header field, if it was present in the request (equals always the HTTP_HOST request header)
+  >   - `$http_host` contains the content of the HTTP `Host` header field, if it was present in the request (equals always the `HTTP_HOST` request header)
   >   - `$server_name` contains the `server_name` of the virtual host which processed the request, as it was defined in the NGINX configuration. If a server contains multiple server names, only the first one will be present in this variable
 
   > `http_host`, moreover, is better than `$host:$server_port` because it uses the port as present in the URL, unlike `$server_port` which uses the port that NGINX listens on.
@@ -11115,7 +11165,7 @@ server {
 ###### Example
 
 ```bash
-proxy_set_header    Host               $host;
+proxy_set_header    Host    $host;
 ```
 
 ###### External resources
@@ -11138,13 +11188,13 @@ proxy_set_header    Host               $host;
 
   > `X-Forwarded-For` is the custom HTTP header that carries along the original IP address of a client so the app at the other end knows what it is. Otherwise it would only see the proxy IP address, and that makes some apps angry.
 
-  > The `X-Forwarded-For` depends on the proxy server, which should actually pass the IP address of the client connecting to it. Where a connection passes through a chain of proxy servers, X-Forwarded-For can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user). Because of this, servers behind proxy servers need to know which of them are trustworthy.
+  > The `X-Forwarded-For` depends on the proxy server, which should actually pass the IP address of the client connecting to it. Where a connection passes through a chain of proxy servers, `X-Forwarded-For` can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user). Because of this, servers behind proxy servers need to know which of them are trustworthy.
 
   > The proxy used can set this header to anything it wants to, and therefore you can't trust its value. Most proxies do set the correct value though. This header is mostly used by caching proxies, and in those cases you're in control of the proxy and can thus verify that is gives you the correct information. In all other cases its value should be considered untrustworthy.
 
   > Some systems also use `X-Forwarded-For` to enforce access control. A good number of applications rely on knowing the actual IP address of a client to help prevent fraud and enable access.
 
-  > Value of the `X-Forwarded-For` header field can be set at the client's side - this can also be termed as X-Forwarded-For spoofing. However, when the web request is made via a proxy server, the proxy server modifies the `X-Forwarded-For` field by appending the IP address of the client (user). This will result in 2 comma separated IP addresses in the `X-Forwarded-For` field.
+  > Value of the `X-Forwarded-For` header field can be set at the client's side - this can also be termed as `X-Forwarded-For` spoofing. However, when the web request is made via a proxy server, the proxy server modifies the `X-Forwarded-For` field by appending the IP address of the client (user). This will result in 2 comma separated IP addresses in the `X-Forwarded-For` field.
 
   > A reverse proxy is not source IP address transparent. This is a pain when you need the client source IP address to be correct in the logs of the backend servers. I think the best solution of this problem is configure the load balancer to add/modify an `X-Forwarded-For` header with the source IP of the client and forward it to the backend in the correct form.
 
