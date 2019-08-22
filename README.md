@@ -221,6 +221,7 @@
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
+    * [Set correct scheme passed in X-Forwarded-Proto](#set-correct-scheme-passed-in-x-forwarded-proto)
   * [Other snippets](#other-snippets)
     * [Create a temporary static backend](#create-a-temporary-static-backend)
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
@@ -327,11 +328,12 @@
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy (6)](#reverse-proxy-1)**
+- **[Reverse Proxy (7)](#reverse-proxy-1)**
   * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+  * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-orwarded-proto-with-scheme-behind-reverse-proxy)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
 - **[Load Balancing (2)](#load-balancing)**
@@ -421,6 +423,8 @@ Throughout this handbook you will explore the many features and capabilities of 
 In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
+
+Mostly, I apply the rules presented here on the NGINX working as a reverse proxy. However, does not to prevent them being implemented for NGINX as a standalone server.
 
 I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
@@ -621,6 +625,7 @@ Existing chapters:
     - [x] _Adding and removing the www prefix_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Allow multiple cross-domains using the CORS headers_
+    - [x] _Set correct scheme passed in X-Forwarded-Proto_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
     - [ ] _Location matching examples_
     - [ ] _Passing requests to the backend_
@@ -723,6 +728,7 @@ Existing chapters:
   - [x] _Be careful with trailing slashes in proxy_pass directive_
   - [x] _Set and pass Host header only with $host variable_
   - [x] _Set properly values of the X-Forwarded-For header_
+  - [x] _Don't use X-Forwarded-Proto with $scheme behind reverse proxy_
   - [x] _Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend_
   - [x] _Use custom headers without X- prefix_
   - [ ] _Set proxy buffers and timeouts_
@@ -781,13 +787,13 @@ I also got the highest note on the Observatory:
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (67) from this handbook.
+  > This checklist contains all rules (68) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 27 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 28 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 21 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
@@ -823,6 +829,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-orwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -1310,7 +1317,7 @@ set $var "value";
 
 Some interesting things about variables:
 
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail.
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail. I also recommend [nginx built-in variables](http://siwei.me/blog/posts/nginx-built-in-variables).
 
 - the most variables in NGINX only exist at runtime, not during configuration time
 - the scope of variables spreads out all over configuration
@@ -2779,6 +2786,8 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Reverse proxy
 
+  > After reading this chapter, please see on the [Rules: Reverse Proxy)](#reverse-proxy-1).
+
 This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 
 Official NGINX documentation say:
@@ -3126,6 +3135,8 @@ This header is very important because it prevent a redirect loop. When used insi
 <sup><i>This explanation comes from [Purpose of the X-Forwarded-Proto HTTP Header](https://community.pivotal.io/s/article/Purpose-of-the-X-Forwarded-Proto-HTTP-Header).</i></sup>
 
 In step 6 above, the Proxy is setting the HTTP header `X-Forwarded-Proto: https` to specify that the traffic it received is HTTPS. In step 8, the Server then uses the `X-Forwarded-Proto` to determine if the request was HTTP or HTTPS.
+
+You can read about how to set it up correctly here: []()
 
 ###### A warning about the `X-Forwarded-For`
 
@@ -6104,6 +6115,20 @@ location / {
     add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
 
   }
+
+}
+```
+
+##### Set correct scheme passed in X-Forwarded-Proto
+
+```bash
+# Sets a $real_scheme variable whose value is the scheme passed by the load
+# balancer in X-Forwarded-Proto (if any), defaulting to $scheme.
+# Similar to how the HttpRealIp module treats X-Forwarded-For.
+map $http_x_forwarded_proto $real_scheme {
+
+  default $http_x_forwarded_proto;
+  ''      $scheme;
 
 }
 ```
@@ -11221,6 +11246,33 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 - [Bypass IP blocks with the X-Forwarded-For header](https://www.sjoerdlangkemper.nl/2017/03/01/bypass-ip-block-with-x-forwarded-for-header/)
 - [Forwarded header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded)
 
+#### :beginner: Don't use X-Forwarded-Proto with $scheme behind reverse proxy
+
+###### Rationale
+
+  > `X-Forwarded-Proto` can be set by the reverse proxy to tell the app whether it is HTTPS or HTTP or even an invalid name.
+
+  > The HTTP scheme (i.e. HTTP, HTTPS) variable evaluated only on demand (used only for the current request).
+
+  > Setting the `$scheme` variable will cause distortions if it uses more than one proxy along the way. For example: if the client go to the `https://example.com`, the proxy stores the scheme value as HTTPS. If the communication between the proxy and the next-level proxy takes place over HTTP, then the backend sees the scheme as HTTP. So if you set `$scheme` for X-Forwarded-Proto on the next-level proxy, app will see a different value than the one the client came with.
+
+  > For resolve this problem you can also use [this](#set-correct-scheme-passed-in-x-forwarded-proto)) configuration snippet.
+
+###### Example
+
+```bash
+# 1) client <-> proxy <-> backend
+proxy_set_header    X-Forwarded-Proto  $scheme;
+
+# 2) client <-> proxy <-> proxy <-> backend
+# proxy_set_header  X-Forwarded-Proto  https;
+proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
+```
+
+###### External resources
+
+- [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
+
 #### :beginner: Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend
 
 ###### Rationale
@@ -11283,6 +11335,7 @@ location / {
 
 - [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
 - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-orwarded-proto-with-scheme-behind-reverse-proxy)
 - [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
 - [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
 
