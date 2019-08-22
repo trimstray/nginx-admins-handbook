@@ -278,7 +278,7 @@
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
-  * [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block)
+  * [Set global root directory for unmatched locations](#beginner-set-global-root-directory-for-unmatched-locations)
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
   * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
@@ -333,7 +333,7 @@
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
-  * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-orwarded-proto-with-scheme-behind-reverse-proxy)
+  * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
 - **[Load Balancing (2)](#load-balancing)**
@@ -422,9 +422,9 @@ Throughout this handbook you will explore the many features and capabilities of 
 
 In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
 
-If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
-
 Mostly, I apply the rules presented here on the NGINX working as a reverse proxy. However, does not to prevent them being implemented for NGINX as a standalone server.
+
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
 I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
@@ -829,7 +829,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
-| [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-orwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -855,7 +855,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)<br><sup>Provides the perfect way to block invalid visitors.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
-| [Drop the same root inside location block](#beginner-drop-the-same-root-inside-location-block) | Base Rules | ![low](static/img/priorities/low.png) |
+| [Set global root directory for unmatched locations](#beginner-set-global-root-directory-for-unmatched-locations)<br><sup>Specifies the root directory for an undefined locations.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)<br><sup>Watch out for duplicating the same rules.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
@@ -9094,11 +9094,15 @@ if ($device_redirect = "mobile") {
 - [Module ngx_http_map_module](http://nginx.org/en/docs/http/ngx_http_map_module.html)
 - [Cool Nginx feature of the week](https://www.ignoredbydinosaurs.com/posts/236-cool-nginx-feature-of-the-week)
 
-#### :beginner: Drop the same root inside location block
+#### :beginner: Set global root directory for unmatched locations
 
 ###### Rationale
 
-  > If you add a root to every location block then a location block that isn’t matched will have no root. Set global `root` inside server directive.
+  > Set global `root` inside server directive for requests. It specifies the root directory for undefined locations.
+
+  From official documentation:
+
+  > _If you add a root to every location block then a location block that isn’t matched will have no root. Therefore, it is important that a root directive occur prior to your location blocks, which can then override this directive if they need to._
 
 ###### Example
 
@@ -11335,7 +11339,7 @@ location / {
 
 - [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
 - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
-- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-orwarded-proto-with-scheme-behind-reverse-proxy)
+- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 - [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
 - [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
 
