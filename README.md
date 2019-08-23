@@ -132,6 +132,9 @@
     * [Generic Hash](#generic-hash)
     * [Other methods](#other-methods)
   * [Rate limiting](#rate-limiting)
+    * [Variables](#variables)
+    * [Directives, keys, and zones](#directives-keys-and-zones)
+    * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -562,6 +565,10 @@ Existing chapters:
     - [x] _Generic Hash_
     - [ ] _Fair module_
     - [x] _Other methods_
+  - _Rate Limiting_
+    - [x] _Variables_
+    - [x] _Directives, keys, and zones_
+    - [x] _Burst and nodelay parameters_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
@@ -3456,6 +3463,8 @@ Rate limiting rules are useful for:
 - mitigating ddos attacks
 - protect brute-force attacks
 
+##### Variables
+
 NGINX has following variables (unique keys) that can be used in a rate limiting rules. For example:
 
 | <b>VARIABLE</b> | <b>DESCRIPTION</b> |
@@ -3467,6 +3476,8 @@ NGINX has following variables (unique keys) that can be used in a rate limiting 
 | `$query_string` | arguments in the request line |
 
 <sup><i>Please see [official doc](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
+
+##### Directives, keys, and zones
 
 NGINX also provides following keys:
 
@@ -3559,6 +3570,8 @@ The range of zones is as follows:
   > All rate limiting rules (definitions) should be added to the NGINX `http` context.
 
 `limit_req_zone` key lets you set `rate` parameter (optional) - it defines the rate limited URL(s).
+
+##### Burst and nodelay parameters
 
 For enable queue you should use `limit_req` or `limit_conn` directives (see above). `limit_req` also provides optional parameters:
 
