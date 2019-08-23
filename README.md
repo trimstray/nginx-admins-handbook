@@ -118,7 +118,7 @@
     * [Trailing slashes](#trailing-slashes)
     * [Processing headers](#processing-headers)
     * [Passing headers](#passing-headers)
-      * [Importancy of the Host header](#importancy-of-the-host-header)
+      * [Importance of the Host header](#importance-of-the-host-header)
       * [Redirects and X-Forwarded-Proto](#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](#a-warning-about-the-x-forwarded-for)
       * [Improve extensibility with Forwarded](#improve-extensibility-with-forwarded)
@@ -551,7 +551,7 @@ Existing chapters:
     - [x] _Trailing slashes_
     - [x] _Processing headers_
     - [x] _Passing headers_
-      - [x] _Importancy of the Host header_
+      - [x] _Importance of the Host header_
       - [x] _Redirects and X-Forwarded-Proto_
       - [x] _A warning about the X-Forwarded-For_
       - [x] _Improve extensibility with Forwarded_
