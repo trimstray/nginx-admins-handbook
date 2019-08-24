@@ -59,8 +59,8 @@
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
   * [Checklist to rule them all](#checklist-to-rule-them-all)
-  * [Printable high-res hardening cheatsheets](#printable-high-res-hardening-cheatsheets)
-  * [Fully automatic installation from source](#fully-automatic-installation-from-source)
+  * [Printable hardening cheatsheets](#printable-hardening-cheatsheets)
+  * [Fully automatic installation](#fully-automatic-installation)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -469,7 +469,7 @@ Existing chapters:
 <summary><b>Introduction</b></summary><br>
 
   - [x] _Checklist to rule them all_
-  - [x] _Fully automatic installation from source_
+  - [x] _Fully automatic installation_
 
 </details>
 
@@ -880,7 +880,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
-## Printable high-res hardening cheatsheets
+## Printable hardening cheatsheets
 
 I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200). They are based on recipes from this handbook:
 
@@ -902,7 +902,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
 </p>
 
-## Fully automatic installation from source
+## Fully automatic installation
 
 I created a set of scripts for unattended installation of NGINX. For more information please see [Installation from source - Automatic installation](#automatic-installation) chapter.
 
