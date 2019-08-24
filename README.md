@@ -60,6 +60,7 @@
     * [Mozilla Observatory](#mozilla-observatory)
   * [Checklist to rule them all](#checklist-to-rule-them-all)
   * [Printable high-res hardening cheatsheets](#printable-high-res-hardening-cheatsheets)
+  * [Fully automatic installation from source](#fully-automatic-installation-from-source)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -135,6 +136,27 @@
     * [Variables](#variables)
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
+  * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
+    * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
+    * [Debian or Ubuntu](#debian-or-ubuntu)
+  * [Installation from source](#installation-from-source)
+    * [Automatic installation](#automatic-installation)
+    * [Nginx package](#nginx-package)
+    * [Dependencies](#dependencies)
+    * [3rd party modules](#3rd-party-modules)
+    * [Compiler and linker](#compiler-and-linker)
+      * [Debugging Symbols](#debugging-symbols)
+    * [SystemTap](#systemtap)
+      * [stapxx](#stapxx)
+    * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
+      * [Pre installation tasks](#pre-installation-tasks)
+      * [Install or build dependencies](#install-or-build-dependencies)
+      * [Get Nginx sources](#get-nginx-sources)
+      * [Download 3rd party modules](#download-3rd-party-modules)
+      * [Build Nginx](#build-nginx)
+      * [Post installation tasks](#post-installation-tasks)
+    * [Install OpenResty on CentOS 7](#install-openresty-on-centos-7)
+    * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -249,27 +271,6 @@
     * [Verification of the certificate](#verification-of-the-certificate)
     * [Verification of the CSR](#verification-of-the-csr)
     * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
-  * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
-    * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
-    * [Debian or Ubuntu](#debian-or-ubuntu)
-  * [Installation from source](#installation-from-source)
-    * [Automatic installation](#automatic-installation)
-    * [Nginx package](#nginx-package)
-    * [Dependencies](#dependencies)
-    * [3rd party modules](#3rd-party-modules)
-    * [Compiler and linker](#compiler-and-linker)
-      * [Debugging Symbols](#debugging-symbols)
-    * [SystemTap](#systemtap)
-      * [stapxx](#stapxx)
-    * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
-      * [Pre installation tasks](#pre-installation-tasks)
-      * [Install or build dependencies](#install-or-build-dependencies)
-      * [Get Nginx sources](#get-nginx-sources)
-      * [Download 3rd party modules](#download-3rd-party-modules)
-      * [Build Nginx](#build-nginx)
-      * [Post installation tasks](#post-installation-tasks)
-    * [Install OpenResty on CentOS 7](#install-openresty-on-centos-7)
-    * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
 - **[Base Rules (14)](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
@@ -288,7 +289,7 @@
 - **[Debugging (4)](#debugging-1)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
-  * [Disable daemon, master process and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
+  * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
 - **[Performance (11)](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
@@ -332,7 +333,7 @@
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy (7)](#reverse-proxy-1)**
-  * [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)
+  * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
@@ -468,6 +469,7 @@ Existing chapters:
 <summary><b>Introduction</b></summary><br>
 
   - [x] _Checklist to rule them all_
+  - [x] _Fully automatic installation from source_
 
 </details>
 
@@ -569,6 +571,15 @@ Existing chapters:
     - [x] _Variables_
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
+  - _Installation from source_
+    - [x] _Add autoinstaller for RHEL/Debian like distributions_
+    - [x] _Add compiler and linker options_
+      - [x] _Debugging Symbols_
+    - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
+    - [x] _Separation and improvement of installation methods_
+    - [x] _Add installation process on CentOS 7 for NGINX_
+    - [x] _Add installation process on CentOS 7 for OpenResty_
+    - [ ] _Add installation process on FreeBSD 11.2_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
@@ -667,15 +678,6 @@ Existing chapters:
     - [x] _Verification of the certificate_
     - [x] _Verification of the CSR_
     - [x] _Check whether the private key and the certificate match_
-  - _Installation from source_
-    - [x] _Add autoinstaller for RHEL/Debian like distributions_
-    - [x] _Add compiler and linker options_
-      - [x] _Debugging Symbols_
-    - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
-    - [x] _Separation and improvement of installation methods_
-    - [x] _Add installation process on CentOS 7 for NGINX_
-    - [x] _Add installation process on CentOS 7 for OpenResty_
-    - [ ] _Add installation process on FreeBSD 11.2_
 
 </details>
 
@@ -694,7 +696,7 @@ Existing chapters:
 <details>
 <summary><b>Debugging</b></summary><br>
 
-  - [x] _Disable daemon, master process and all workers except one_
+  - [x] _Disable daemon, master process, and all workers except one_
   - [x] _Use core dumps to figure out why NGINX keep crashing_
   - [ ] _Use mirror module to copy requests to another backend_
   - [ ] _Dynamic debugging with echo module_
@@ -731,7 +733,7 @@ Existing chapters:
 <details>
 <summary><b>Reverse Proxy</b></summary><br>
 
-  - [x] _Use pass directive compatible with backend layer protocol_
+  - [x] _Use pass directive compatible with backend protocol_
   - [x] _Be careful with trailing slashes in proxy_pass directive_
   - [x] _Set and pass Host header only with $host variable_
   - [x] _Set properly values of the X-Forwarded-For header_
@@ -815,7 +817,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)<br><sup>NGINX with PCRE JIT is much faster than without it.</sup> | Performance | ![high](static/img/priorities/high.png) |
-| [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix a vulnerabilities, bugs and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Always keep NGINX up-to-date](#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -834,7 +836,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Use pass directive compatible with backend layer protocol](#beginner-use-pass-directive-compatible-with-backend-layer-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -874,7 +876,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Map all the things...](#beginner-map-all-the-things)<br><sup>Map module provides a more elegant solution for clearly parsing a big list of regexes.</sup> | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](#beginner-use-custom-log-formats)<br><sup>This is extremely helpful for debugging specific location directives.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)<br><sup>There's probably more detail than you want, but that can sometimes be a lifesaver.</sup> | Debugging | ![info](static/img/priorities/info.png) |
-| [Disable daemon, master process and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
+| [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
 
@@ -899,6 +901,10 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
 </p>
+
+## Fully automatic installation from source
+
+I created a set of scripts for unattended installation of NGINX. For more information please see [Installation from source - Automatic installation](#automatic-installation) chapter.
 
 # Books
 
@@ -1208,9 +1214,9 @@ _In this ebook you will learn:_
 
 #### Directories and files
 
-  > If you compile NGINX server by default all files and directories are available from `/usr/local/nginx` location.
+  > If you compile NGINX with default parameters all files and directories are available from `/usr/local/nginx` location.
 
-For upstream NGINX packaging paths can be as follows (it depends on the type of system):
+For upstream NGINX packaging paths can be as follows (it depends on the type of system/distribution):
 
 - `/etc/nginx` - is the default configuration root for the NGINX service
   * other locations: `/usr/local/etc/nginx`, `/usr/local/nginx/conf`
@@ -1632,9 +1638,9 @@ From NGINX documentation:
 
 NGINX uses a custom event loop which was designed specifically for NGINX - all connections are processed in a highly efficient run-loop in a limited number of single-threaded processes called workers.
 
-Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()` or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
+Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()`, or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
-See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of NGINX.
+  > See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of NGINX.
 
 NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
 
@@ -3583,6 +3589,2111 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
+
+#### Installation from prebuilt packages
+
+##### RHEL7 or CentOS 7
+
+###### From EPEL
+
+```bash
+# Install epel repository:
+yum install epel-release
+# or alternative:
+#   wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   yum install epel-release-latest-7.noarch.rpm
+
+# Install NGINX:
+yum install nginx
+```
+
+###### From Software Collections
+
+```bash
+# Install and enable scl:
+yum install centos-release-scl
+yum-config-manager --enable rhel-server-rhscl-7-rpms
+
+# Install NGINX (rh-nginx14, rh-nginx16, rh-nginx18):
+yum install rh-nginx16
+
+# Enable NGINX from SCL:
+scl enable rh-nginx16 bash
+```
+
+###### From Official Repository
+
+```bash
+# Where:
+#   - <os_type> is: rhel or centos
+cat > /etc/yum.repos.d/nginx.repo << __EOF__
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/<os_type>/$releasever/$basearch/
+gpgcheck=0
+enabled=1
+__EOF__
+
+# Install NGINX:
+yum install nginx
+```
+
+##### Debian or Ubuntu
+
+Check available flavours of NGINX before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
+
+###### From Debian/Ubuntu Repository
+
+```bash
+# Install NGINX:
+apt-get install nginx
+```
+
+###### From Official Repository
+
+```bash
+# Where:
+#   - <os_type> is: debian or ubuntu
+#   - <os_release> is: xenial, bionic, jessie, stretch or other
+cat > /etc/apt/sources.list.d/nginx.list << __EOF__
+deb http://nginx.org/packages/<os_type>/ <os_release> nginx
+deb-src http://nginx.org/packages/<os_type>/ <os_release> nginx
+__EOF__
+
+# Update packages list:
+apt-get update
+
+# Download the public key (or <pub_key> from your GPG error):
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <pub_key>
+
+# Install NGINX:
+apt-get update
+apt-get install nginx
+```
+
+#### Installation from source
+
+The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
+
+Before the beginning installation process please read these important articles which describes exactly the entire installation process and the parameters using the `configure` command:
+
+- [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
+- [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
+- [Building nginx from Sources](https://nginx.org/en/docs/configure.html)
+
+In this chapter I'll present three (very similar) methods of installation. They relate to:
+
+- the [NGINX on CentOS 7](#install-nginx-on-centos-7)
+- the [OpenResty on CentOS 7](#install-openresty-on-centos-7)
+- the [Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+
+Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
+
+Look also on this short note about the system locations. That can be useful too:
+
+- For booting the system, rescues and maintenance: `/`
+  - `/bin` - user programs
+  - `/sbin` - system programs
+  - `/lib` - shared libraries
+
+- Full running environment: `/usr`
+  - `/usr/bin` - user programs
+  - `/usr/sbin` - system programs
+  - `/usr/lib` - shared libraries
+  - `/usr/share` - manual pages, data
+
+- Added packages: `/usr/local`
+  - `/usr/local/bin` - user programs
+  - `/usr/local/sbin` - system programs
+  - `/usr/local/lib` - shared libraries
+  - `/usr/local/share` - manual pages, data
+
+##### Automatic installation
+
+Installation from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
+
+  > It supports Debian and RHEL like distributions.
+
+This tool is located in `lib/ngx_installer.sh`. Configuration file is in `lib/ngx_installer.conf`. By default, it show prompt to confirm steps but you can disable it if you want:
+
+```bash
+cd lib/
+export NGX_PROMPT=0 ; bash ngx_installer.sh
+```
+
+##### Nginx package
+
+There are currently two versions of NGINX:
+
+- **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
+- **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
+
+You can download NGINX source code from an official read-only mirrors:
+
+  > Detailed instructions about download and compile the NGINX sources can be found later in the handbook.
+
+- [NGINX source code](https://nginx.org/download/)
+- [NGINX GitHub repository](https://github.com/nginx/nginx)
+
+##### Dependencies
+
+Mandatory requirements:
+
+  > Download, compile and install or install prebuilt packages from repository of your distribution.
+
+- [OpenSSL](https://www.openssl.org/source/) library
+- [Zlib](https://zlib.net/) or [Cloudflare Zlib](https://github.com/cloudflare/zlib) library
+- [PCRE](https://ftp.pcre.org/pub/pcre/) library
+- [LuaJIT v2.1](https://github.com/LuaJIT/LuaJIT) or [OpenResty's LuaJIT2](https://github.com/openresty/luajit2) library
+- [jemalloc](https://github.com/jemalloc/jemalloc) library
+
+OpenResty's LuaJIT uses its own branch of LuaJIT with various important bug fixes and optimizations for OpenResty's use cases.
+
+I also use Cloudflare Zlib version due to performance. See below articles:
+
+- [A comparison of Zlib implementations](http://www.htslib.org/benchmarks/zlib.html)
+- [Improving Nginx Zlib Compression Performance](https://medium.com/@centminmod/improving-nginx-zlib-compression-performance-eb961f3ac0f4)
+
+If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building NGINX:
+
+| <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
+| :---         | :---         | :---         |
+| `gcc`<br>`make`<br>`build-essential`<br>`linux-headers*`<br>`bison` | `gcc`<br>`gcc-c++`<br>`kernel-devel`<br>`bison` | |
+| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | |
+| `libssl-dev`* | `openssl-devel`* | |
+| `zlib1g-dev`* | `zlib-devel`* | |
+| `libpcre2-dev`* | `pcre-devel`* | |
+| `libluajit-5.1-dev`* | `luajit-devel`* | |
+| `libxslt-dev` | `libxslt libxslt-devel` | |
+| `libgd-dev` | `gd gd-devel` | |
+| `libgeoip-dev` | `GeoIP-devel` | |
+| `libxml2-dev` | `libxml2-devel` | |
+| `libexpat-dev` | `expat-devel` | |
+| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
+| | `cpio` | |
+| | `gettext-devel` | |
+| `autoconf` | `autoconf` | for `jemalloc` from sources |
+| `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
+| `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
+| `jq` | `jq` | for [http error pages](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages) generator |
+
+<sup><i>* If you don't use from sources.</i></sup>
+
+Shell one-liners example:
+
+```bash
+# Ubuntu/Debian
+apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
+
+# RedHat/CentOS
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+```
+
+##### 3rd party modules
+
+  > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release.
+
+  > Before installing external modules please read [Event-Driven architecture](#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
+
+Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
+
+I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules (they are not support dynamic linking).
+
+You can download external modules from:
+
+- [NGINX 3rd Party Modules](https://www.nginx.com/resources/wiki/modules/)
+- [OpenResty Components](https://openresty.org/en/components.html)
+- [Tengine Modules](https://github.com/alibaba/tengine/tree/master/modules)
+
+A short description of the modules that I used in this step-by-step tutorial:
+
+- [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit)** - adds additional generic tools that module developers can use in their own modules
+
+- [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into NGINX
+
+- [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX rewrite module
+
+- [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX config file
+
+- [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) - set, add, and clear arbitrary output headers
+
+- [`replace-filter-nginx-module`](https://github.com/openresty/replace-filter-nginx-module) - streaming regular expression replacement in response bodies
+
+- [`array-var-nginx-module`](https://github.com/openresty/array-var-nginx-module) - add supports for array-typed variables to NGINX config files
+
+- [`encrypted-session-nginx-module`](https://github.com/openresty/encrypted-session-nginx-module) - encrypt and decrypt NGINX variable values
+
+- [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
+
+- [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
+
+- [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - can do both regular expression and fixed string substitutions
+
+- [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src) - module to add a sticky cookie to be always forwarded to the same
+
+- [`nginx-module-vts`](https://github.com/vozlt/nginx-module-vts) - Nginx virtual host traffic status module
+
+- [`ngx_brotli`](https://github.com/google/ngx_brotli) - module for Brotli compression
+
+- [`ngx_http_naxsi_module`](https://github.com/nbs-system/naxsi) - is an open-source, high performance, low rules maintenance WAF for NGINX
+
+- [`ngx_http_delay_module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
+
+- [`nginx-backtrace`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
+
+- [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for NGINX memory pool
+
+- [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for NGINX
+
+- [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for NGINX
+
+- [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request upstream server
+
+- [`memc-nginx-module`](https://github.com/agentzh/memc-nginx-module) - extended version of the standard Memcached module
+
+- [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - NGINX-based Media Streaming Server
+
+- [`ngx-fancyindex`](https://github.com/aperezdc/ngx-fancyindex) - generates of file listings, like the built-in autoindex module does, but adding a touch of style
+
+- [`ngx_log_if`](https://github.com/cfsego/ngx_log_if) - allows you to control when not to write down access log
+
+- [`nginx-http-user-agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
+
+- [`ngx_http_auth_pam_module`](https://github.com/sto/ngx_http_auth_pam_module) - module to use PAM for simple http authentication
+
+- [`ngx_http_google_filter_module`](https://github.com/cuber/ngx_http_google_filter_module) - is a filter module which makes google mirror much easier to deploy
+
+- [`nginx-push-stream-module`](https://github.com/wandenberg/nginx-push-stream-module) - a pure stream http push technology for your Nginx setup
+
+- [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
+
+- [`ngx_http_custom_counters_module`](https://github.com/lyokha/nginx-custom-counters-module) - customizable counters shared by all worker processes and virtual servers
+
+<sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
+<sup><i>** Is already being used in quite a few third party modules.</i></sup>
+
+##### Compiler and linker
+
+Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags.
+
+See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat. You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
+
+There are examples:
+
+```bash
+# Example of use compiler options:
+# 1)
+--with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+# 2)
+--with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O3 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+
+# Example of use linker options:
+# 1)
+--with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
+# 2)
+--with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+```
+
+###### Debugging Symbols
+
+Debugging symbols helps obtain additional information for debugging, such as functions, variables, data structures, source file and line number information.
+
+However, if you get the `No symbol table info available` error when you run a `(gdb) backtrace` you should to recompile NGINX with support of debugging symbols. For this it is essential to include debugging symbols with the `-g` flag and make the debugger output easier to understand by disabling compiler optimization with the `-O0` flag:
+
+  > If you use `-O0` remember about disable `-D_FORTIFY_SOURCE=2`, if you don't do it you will get: `error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O)`.
+
+```bash
+./configure --with-debug --with-cc-opt='-O0 -g' ...
+```
+
+Also if you get errors similar to one of them:
+
+```bash
+Missing separate debuginfo for /usr/lib64/libluajit-5.1.so.2 ...
+Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found) ...
+```
+
+You should also recompile libraries with `-g` compiler option and optional with `-O0`. For more information please read [3.9 Options for Debugging Your Program](https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html).
+
+##### SystemTap
+
+SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
+
+  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
+
+  > Hint: Do not specify `--with-debug` while profiling. It slows everything down
+significantly.
+
+```bash
+cd /opt
+
+git clone --depth 1 https://github.com/openresty/openresty-systemtap-toolkit
+
+# RHEL/CentOS
+yum install yum-utils
+yum --enablerepo=base-debuginfo install kernel-devel-$(uname -r) kernel-headers-$(uname -r) kernel-debuginfo-$(uname -r) kernel-debuginfo-common-x86_64-$(uname -r)
+yum --enablerepo=base-debuginfo install systemtap systemtap-debuginfo
+
+reboot
+
+# Run this commands for testing SystemTap:
+stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'
+stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
+```
+
+For installation SystemTap on Ubuntu/Debian:
+
+- [Ubuntu Wiki - Systemtap](https://wiki.ubuntu.com/Kernel/Systemtap)
+- [Install SystemTap in Ubuntu 14.04](https://blog.jeffli.me/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/)
+
+###### stapxx
+
+The author of OpenResty created great and simple macro language extensions to the SystemTap: [stapxx](https://github.com/openresty/stapxx).
+
+#### Install Nginx on CentOS 7
+
+###### Pre installation tasks
+
+Set NGINX version (I use stable release):
+
+```bash
+export ngx_version="1.17.0"
+```
+
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/nginx-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+```
+
+Create directories:
+
+```bash
+for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+
+  mkdir "$i"
+
+done
+```
+
+###### Install or build dependencies
+
+  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
+
+**Install prebuilt packages, export variables and set symbolic link:**
+
+```bash
+# It's important and required, regardless of chosen sources:
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+
+# In this example we use sources for all below packages so we do not install them:
+yum install openssl-devel zlib-devel pcre-devel luajit-devel
+
+# For LuaJIT (libluajit-5.1-dev):
+export LUAJIT_LIB="/usr/local/x86_64-linux-gnu"
+export LUAJIT_INC="/usr/include/luajit-2.1"
+
+ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
+```
+
+  > Remember to build [`sregex`](#sregex) also if you use above steps.
+
+**Or download and compile them:**
+
+PCRE:
+
+```bash
+cd "${ngx_src}"
+
+export pcre_version="8.42"
+
+export PCRE_SRC="${ngx_src}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd "$PCRE_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
+./configure
+
+make -j2 && make test
+make install
+```
+
+Zlib:
+
+```bash
+# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
+cd "${ngx_src}"
+
+export ZLIB_SRC="${ngx_src}/zlib"
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
+
+# For original Zlib:
+#   export zlib_version="1.2.11"
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   cd "${ZLIB_SRC}-${zlib_version}"
+
+# For Cloudflare Zlib:
+git clone --depth 1 https://github.com/cloudflare/zlib
+
+cd "$ZLIB_SRC"
+
+./configure
+
+make -j2 && make test
+make install
+```
+
+OpenSSL:
+
+```bash
+cd "${ngx_src}"
+
+export openssl_version="1.1.1b"
+
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+# Please run this and add as a compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+# Add to compile with debugging symbols:
+#   ./config -d ...
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+make -j2 && make test
+make install
+
+# Setup PATH environment variables:
+cat > /etc/profile.d/openssl.sh << __EOF__
+#!/bin/sh
+export PATH=${OPENSSL_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
+__EOF__
+
+chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
+
+# To make the OpenSSL 1.1.1b version visible globally first:
+mv /usr/bin/openssl /usr/bin/openssl-old
+ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
+${OPENSSL_DIR}/lib
+__EOF__
+```
+
+LuaJIT:
+
+```bash
+# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+cd "${ngx_src}"
+
+export LUAJIT_SRC="${ngx_src}/luajit2"
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
+
+# For original LuaJIT:
+#   git clone http://luajit.org/git/luajit-2.0 luajit2
+#   cd "$LUAJIT_SRC"
+
+# For OpenResty's LuaJIT:
+git clone --depth 1 https://github.com/openresty/luajit2
+
+cd "$LUAJIT_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-g' make ...
+make && make install
+
+ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
+```
+
+<a id="sregex"></a>sregex:
+
+  > Required for `replace-filter-nginx-module` module.
+
+```bash
+cd "${ngx_src}"
+
+git clone --depth 1 https://github.com/openresty/sregex
+
+cd "${ngx_src}/sregex"
+
+make && make install
+```
+
+jemalloc:
+
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
+
+```bash
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="${ngx_src}/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
+
+git clone --depth 1 https://github.com/jemalloc/jemalloc
+
+cd "$JEMALLOC_SRC"
+
+./autogen.sh
+
+make && make install
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
+```
+
+###### Get Nginx sources
+
+```bash
+cd "${ngx_base}"
+
+wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
+
+# or alternative:
+#   git clone --depth 1 https://github.com/nginx/nginx master
+
+tar zxvf nginx-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
+```
+
+###### Download 3rd party modules
+
+```bash
+cd "${ngx_modules}"
+
+for i in \
+https://github.com/simplresty/ngx_devel_kit \
+https://github.com/openresty/lua-nginx-module \
+https://github.com/openresty/set-misc-nginx-module \
+https://github.com/openresty/echo-nginx-module \
+https://github.com/openresty/headers-more-nginx-module \
+https://github.com/openresty/replace-filter-nginx-module \
+https://github.com/openresty/array-var-nginx-module \
+https://github.com/openresty/encrypted-session-nginx-module \
+https://github.com/vozlt/nginx-module-sysguard \
+https://github.com/nginx-clojure/nginx-access-plus \
+https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
+https://github.com/vozlt/nginx-module-vts \
+https://github.com/google/ngx_brotli ; do
+
+  git clone --depth 1 "$i"
+
+done
+
+wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
+```
+
+For `ngx_brotli`:
+
+```bash
+cd "${ngx_modules}/ngx_brotli"
+
+git submodule update --init
+```
+
+I also use some modules from Tengine:
+
+- `ngx_backtrace_module`
+- `ngx_debug_pool`
+- `ngx_debug_timer`
+- `ngx_http_upstream_check_module`
+- `ngx_http_footer_filter_module`
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/alibaba/tengine
+```
+
+If you use NAXSI:
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/nbs-system/naxsi
+```
+
+###### Build Nginx
+
+```bash
+cd "${ngx_master}"
+
+# - you can also build NGINX without 3rd party modules
+# - remember about compiler and linker options
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
+./configure --prefix=/etc/nginx \
+            --conf-path=/etc/nginx/nginx.conf \
+            --sbin-path=/usr/sbin/nginx \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --user=nginx \
+            --group=nginx \
+            --modules-path=/etc/nginx/modules \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+            --with-compat \
+            --with-debug \
+            --with-file-aio \
+            --with-threads \
+            --with-stream \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_degradation_module \
+            --with-http_geoip_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_image_filter_module \
+            --with-http_perl_module \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-http_sub_module \
+            --with-http_v2_module \
+            --with-google_perftools_module \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
+            --with-pcre=${PCRE_SRC} \
+            --with-pcre-jit \
+            --with-zlib=${ZLIB_SRC} \
+            --without-http-cache \
+            --without-http_memcached_module \
+            --without-mail_pop3_module \
+            --without-mail_imap_module \
+            --without-mail_smtp_module \
+            --without-http_fastcgi_module \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --add-module=${ngx_modules}/ngx_devel_kit \
+            --add-module=${ngx_modules}/encrypted-session-nginx-module \
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-sticky-module-ng \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
+            --add-dynamic-module=${ngx_modules}/lua-nginx-module \
+            --add-dynamic-module=${ngx_modules}/set-misc-nginx-module \
+            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
+            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/array-var-nginx-module \
+            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O2 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+make -j2 && make test
+make install
+
+ldconfig
+```
+
+Check NGINX version:
+
+```bash
+nginx -v
+nginx version: nginx/1.16.0
+```
+
+And list all files in `/etc/nginx`:
+
+```bash
+.
+├── fastcgi.conf
+├── fastcgi.conf.default
+├── fastcgi_params
+├── fastcgi_params.default
+├── html
+│   ├── 50x.html
+│   └── index.html
+├── koi-utf
+├── koi-win
+├── mime.types
+├── mime.types.default
+├── modules
+│   ├── ngx_http_array_var_module.so
+│   ├── ngx_http_delay_module.so
+│   ├── ngx_http_echo_module.so
+│   ├── ngx_http_headers_more_filter_module.so
+│   ├── ngx_http_lua_module.so
+│   ├── ngx_http_naxsi_module.so
+│   ├── ngx_http_replace_filter_module.so
+│   ├── ngx_http_set_misc_module.so
+│   └── ngx_http_sysguard_module.so
+├── nginx.conf
+├── nginx.conf.default
+├── scgi_params
+├── scgi_params.default
+├── uwsgi_params
+├── uwsgi_params.default
+└── win-utf
+
+2 directories, 26 files
+```
+
+###### Post installation tasks
+
+Create a system user/group:
+
+```bash
+# Ubuntu/Debian
+adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos "nginx user" --group nginx
+
+# RedHat/CentOS
+groupadd -r -g 920 nginx
+
+useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
+
+passwd -l nginx
+```
+
+Create required directories:
+
+```bash
+for i in \
+/var/www \
+/var/log/nginx \
+/var/cache/nginx ; do
+
+  mkdir -p "$i" && chown -R nginx:nginx "$i"
+
+done
+```
+
+Include the necessary error pages:
+
+  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+
+- default location: `/etc/nginx/html`
+  ```bash
+  50x.html  index.html
+  ```
+
+Update modules list and include `modules.conf` to your configuration:
+
+```bash
+_mod_dir="/etc/nginx/modules"
+_mod_conf="/etc/nginx/modules.conf"
+
+:>"${_mod_conf}"
+
+for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "$_mod_conf" ; done
+```
+
+Create `logrotate` configuration:
+
+```bash
+cat > /etc/logrotate.d/nginx << __EOF__
+/var/log/nginx/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 nginx nginx
+  sharedscripts
+  prerotate
+    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+      run-parts /etc/logrotate.d/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+__EOF__
+```
+
+Add systemd service:
+
+```bash
+cat > /lib/systemd/system/nginx.service << __EOF__
+# Stop dance for nginx
+# =======================
+#
+# ExecStop sends SIGSTOP (graceful stop) to the nginx process.
+# If, after 5s (--retry QUIT/5) nginx is still running, systemd takes control
+# and sends SIGTERM (fast shutdown) to the main process.
+# After another 5s (TimeoutStopSec=5), and if nginx is alive, systemd sends
+# SIGKILL to all the remaining processes in the process group (KillMode=mixed).
+#
+# nginx signals reference doc:
+# http://nginx.org/en/docs/control.html
+#
+[Unit]
+Description=A high performance web server and a reverse proxy server
+Documentation=man:nginx(8)
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t -q -g 'daemon on; master_process on;'
+ExecStart=/usr/sbin/nginx -g 'daemon on; master_process on;'
+ExecReload=/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
+ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
+TimeoutStopSec=5
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+__EOF__
+```
+
+Reload systemd manager configuration:
+
+```bash
+systemctl daemon-reload
+```
+
+Enable NGINX service:
+
+```bash
+systemctl enable nginx
+```
+
+Test NGINX configuration:
+
+```bash
+nginx -t -c /etc/nginx/nginx.conf
+```
+
+#### Install OpenResty on CentOS 7
+
+  > _OpenResty is a full-fledged web application server by bundling the standard nginx core, lots of 3rd-party nginx modules, as well as most of their external dependencies._
+  >
+  > _This bundle is maintained by Yichun Zhang ([agentzh](https://github.com/agentzh))._
+
+- Official github repository: [OpenResty](https://github.com/openresty/openresty)
+- Official website: [OpenResty](https://openresty.org/en/)
+- Official documentations: [OpenResty Getting Started](https://openresty.org/en/getting-started.html) and [OpenResty eBooks](https://openresty.org/en/ebooks.html)
+
+OpenResty is a more than web server. I would call it a superset of the NGINX web server. OpenResty comes with LuaJIT, a just-in-time compiler for the Lua scripting language and many Lua libraries, lots of high quality 3rd-party NGINX modules, and most of their external dependencies.
+
+OpenResty has good quality and performance. For me, the ability to run Lua scripts from within is also really great.
+
+<details>
+<summary><b>Show step-by-step OpenResty installation</b></summary><br>
+
+* [Pre installation tasks](#pre-installation-tasks-1)
+* [Install or build dependencies](#install-or-build-dependencies-1)
+* [Get OpenResty sources](#get-openresty-sources-1)
+* [Download 3rd party modules](#download-3rd-party-modules-1)
+* [Build OpenResty](#build-openresty)
+* [Post installation tasks](#post-installation-tasks-1)
+
+###### Pre installation tasks
+
+Set the OpenResty version (I use newest and stable release):
+
+```bash
+export ngx_version="1.15.8.1"
+```
+
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/openresty-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+```
+
+Create directories:
+
+```bash
+for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+
+  mkdir "$i"
+
+done
+```
+
+###### Install or build dependencies
+
+  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support. In addition, LuaJIT comes with OpenResty.
+
+**Install prebuilt packages, export variables and set symbolic link:**
+
+```bash
+# It's important and required, regardless of chosen sources:
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+
+# In this example we use sources for all below packages so we do not install them:
+yum install openssl-devel zlib-devel pcre-devel
+```
+
+  > Remember to build [`sregex`](#sregex) also if you use above steps.
+
+**Or download and compile them:**
+
+PCRE:
+
+```bash
+cd "${ngx_src}"
+
+export pcre_version="8.42"
+
+export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd "$PCRE_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
+./configure
+
+make -j2 && make test
+make install
+```
+
+Zlib:
+
+```bash
+# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead of an original Zlib (zlib.net), but both installation methods are similar:
+cd "${ngx_src}"
+
+export ZLIB_SRC="${ngx_src}/zlib"
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
+
+# For original Zlib:
+#   export zlib_version="1.2.11"
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   cd "${ZLIB_SRC}-${zlib_version}"
+
+# For Cloudflare Zlib:
+git clone --depth 1 https://github.com/cloudflare/zlib
+
+cd "$ZLIB_SRC"
+
+./configure
+
+make -j2 && make test
+make install
+```
+
+OpenSSL:
+
+```bash
+cd "${ngx_src}"
+
+export openssl_version="1.1.1b"
+
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+# Please run this and add as a compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+# Add to compile with debugging symbols:
+#   ./config -d ...
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+make -j2 && make test
+make install
+
+# Setup PATH environment variables:
+cat > /etc/profile.d/openssl.sh << __EOF__
+#!/bin/sh
+export PATH=${OPENSSL_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
+__EOF__
+
+chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
+
+# To make the OpenSSL 1.1.1b version visible globally first:
+mv /usr/bin/openssl /usr/bin/openssl-old
+ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
+${OPENSSL_DIR}/lib
+__EOF__
+```
+
+<a id="sregex"></a>sregex:
+
+  > Required for `replace-filter-nginx-module` module.
+
+```bash
+cd "${ngx_src}"
+
+git clone --depth 1 https://github.com/openresty/sregex
+
+cd "${ngx_src}/sregex"
+
+make && make install
+```
+
+jemalloc:
+
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
+
+```bash
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="/usr/local/src/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
+
+git clone --depth 1 https://github.com/jemalloc/jemalloc
+
+cd "$JEMALLOC_SRC"
+
+./autogen.sh
+
+make && make install
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
+```
+
+###### Get OpenResty sources
+
+```bash
+cd "${ngx_base}"
+
+wget https://openresty.org/download/openresty-${ngx_version}.tar.gz
+
+tar zxvf openresty-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
+```
+
+###### Download 3rd party modules
+
+```bash
+cd "${ngx_modules}"
+
+for i in \
+https://github.com/openresty/replace-filter-nginx-module \
+https://github.com/vozlt/nginx-module-sysguard \
+https://github.com/nginx-clojure/nginx-access-plus \
+https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
+https://github.com/vozlt/nginx-module-vts \
+https://github.com/google/ngx_brotli ; do
+
+  git clone --depth 1 "$i"
+
+done
+
+wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
+```
+
+For `ngx_brotli`:
+
+```bash
+cd "${ngx_modules}/ngx_brotli"
+
+git submodule update --init
+```
+
+I also use some modules from Tengine:
+
+- `ngx_backtrace_module`
+- `ngx_debug_pool`
+- `ngx_debug_timer`
+- `ngx_http_upstream_check_module`
+- `ngx_http_footer_filter_module`
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/alibaba/tengine
+```
+
+If you use NAXSI:
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/nbs-system/naxsi
+```
+
+###### Build OpenResty
+
+```bash
+cd "${ngx_master}"
+
+# - you can also build OpenResty without 3rd party modules
+# - remember about compiler and linker options
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
+./configure --prefix=/etc/nginx \
+            --conf-path=/etc/nginx/nginx.conf \
+            --sbin-path=/usr/sbin/nginx \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --user=nginx \
+            --group=nginx \
+            --modules-path=/etc/nginx/modules \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+            --with-compat \
+            --with-debug \
+            --with-file-aio \
+            --with-threads \
+            --with-stream \
+            --with-stream_geoip_module \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_degradation_module \
+            --with-http_geoip_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_image_filter_module \
+            --with-http_perl_module \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_slice_module \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-http_sub_module \
+            --with-http_v2_module \
+            --with-google_perftools_module \
+            --with-luajit \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
+            --with-pcre=${PCRE_SRC} \
+            --with-pcre-jit \
+            --with-zlib=${ZLIB_SRC} \
+            --without-http-cache \
+            --without-http_memcached_module \
+            --without-http_redis2_module \
+            --without-http_redis_module \
+            --without-http_rds_json_module \
+            --without-http_rds_csv_module \
+            --without-lua_redis_parser \
+            --without-lua_rds_parser \
+            --without-lua_resty_redis \
+            --without-lua_resty_memcached \
+            --without-lua_resty_mysql \
+            --without-lua_resty_websocket \
+            --without-mail_pop3_module \
+            --without-mail_imap_module \
+            --without-mail_smtp_module \
+            --without-http_fastcgi_module \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O2 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
+            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+make && make test
+make install
+
+ldconfig
+```
+
+Check OpenResty version:
+
+```bash
+nginx -v
+nginx version: openresty/1.15.8.1
+```
+
+And list all files in `/etc/nginx`:
+
+```bash
+.
+├── bin
+│   ├── md2pod.pl
+│   ├── nginx-xml2pod
+│   ├── openresty -> /usr/sbin/nginx
+│   ├── opm
+│   ├── resty
+│   ├── restydoc
+│   └── restydoc-index
+├── COPYRIGHT
+├── fastcgi.conf
+├── fastcgi.conf.default
+├── fastcgi_params
+├── fastcgi_params.default
+├── koi-utf
+├── koi-win
+├── luajit
+│   ├── bin
+│   │   ├── luajit -> luajit-2.1.0-beta3
+│   │   └── luajit-2.1.0-beta3
+│   ├── include
+│   │   └── luajit-2.1
+│   │       ├── lauxlib.h
+│   │       ├── luaconf.h
+│   │       ├── lua.h
+│   │       ├── lua.hpp
+│   │       ├── luajit.h
+│   │       └── lualib.h
+│   ├── lib
+│   │   ├── libluajit-5.1.a
+│   │   ├── libluajit-5.1.so -> libluajit-5.1.so.2.1.0
+│   │   ├── libluajit-5.1.so.2 -> libluajit-5.1.so.2.1.0
+│   │   ├── libluajit-5.1.so.2.1.0
+│   │   ├── lua
+│   │   │   └── 5.1
+│   │   └── pkgconfig
+│   │       └── luajit.pc
+│   └── share
+│       ├── lua
+│       │   └── 5.1
+│       ├── luajit-2.1.0-beta3
+│       │   └── jit
+│       │       ├── bc.lua
+│       │       ├── bcsave.lua
+│       │       ├── dis_arm64be.lua
+│       │       ├── dis_arm64.lua
+│       │       ├── dis_arm.lua
+│       │       ├── dis_mips64el.lua
+│       │       ├── dis_mips64.lua
+│       │       ├── dis_mipsel.lua
+│       │       ├── dis_mips.lua
+│       │       ├── dis_ppc.lua
+│       │       ├── dis_x64.lua
+│       │       ├── dis_x86.lua
+│       │       ├── dump.lua
+│       │       ├── p.lua
+│       │       ├── v.lua
+│       │       ├── vmdef.lua
+│       │       └── zone.lua
+│       └── man
+│           └── man1
+│               └── luajit.1
+├── lualib
+│   ├── cjson.so
+│   ├── librestysignal.so
+│   ├── ngx
+│   │   ├── balancer.lua
+│   │   ├── base64.lua
+│   │   ├── errlog.lua
+│   │   ├── ocsp.lua
+│   │   ├── pipe.lua
+│   │   ├── process.lua
+│   │   ├── re.lua
+│   │   ├── resp.lua
+│   │   ├── semaphore.lua
+│   │   ├── ssl
+│   │   │   └── session.lua
+│   │   └── ssl.lua
+│   ├── resty
+│   │   ├── aes.lua
+│   │   ├── core
+│   │   │   ├── base64.lua
+│   │   │   ├── base.lua
+│   │   │   ├── ctx.lua
+│   │   │   ├── exit.lua
+│   │   │   ├── hash.lua
+│   │   │   ├── misc.lua
+│   │   │   ├── ndk.lua
+│   │   │   ├── phase.lua
+│   │   │   ├── regex.lua
+│   │   │   ├── request.lua
+│   │   │   ├── response.lua
+│   │   │   ├── shdict.lua
+│   │   │   ├── time.lua
+│   │   │   ├── uri.lua
+│   │   │   ├── utils.lua
+│   │   │   ├── var.lua
+│   │   │   └── worker.lua
+│   │   ├── core.lua
+│   │   ├── dns
+│   │   │   └── resolver.lua
+│   │   ├── limit
+│   │   │   ├── conn.lua
+│   │   │   ├── count.lua
+│   │   │   ├── req.lua
+│   │   │   └── traffic.lua
+│   │   ├── lock.lua
+│   │   ├── lrucache
+│   │   │   └── pureffi.lua
+│   │   ├── lrucache.lua
+│   │   ├── md5.lua
+│   │   ├── random.lua
+│   │   ├── sha1.lua
+│   │   ├── sha224.lua
+│   │   ├── sha256.lua
+│   │   ├── sha384.lua
+│   │   ├── sha512.lua
+│   │   ├── sha.lua
+│   │   ├── shell.lua
+│   │   ├── signal.lua
+│   │   ├── string.lua
+│   │   ├── upload.lua
+│   │   └── upstream
+│   │       └── healthcheck.lua
+│   └── tablepool.lua
+├── mime.types
+├── mime.types.default
+├── modules
+│   ├── ngx_http_delay_module.so
+│   ├── ngx_http_naxsi_module.so
+│   ├── ngx_http_replace_filter_module.so
+│   └── ngx_http_sysguard_module.so
+├── nginx
+│   └── html
+│       ├── 50x.html
+│       └── index.html
+├── nginx.conf
+├── nginx.conf.default
+├── pod
+│   ├── array-var-nginx-module-0.05
+│   │   └── array-var-nginx-module-0.05.pod
+│   ├── drizzle-nginx-module-0.1.11
+│   │   └── drizzle-nginx-module-0.1.11.pod
+│   ├── echo-nginx-module-0.61
+│   │   └── echo-nginx-module-0.61.pod
+│   ├── encrypted-session-nginx-module-0.08
+│   │   └── encrypted-session-nginx-module-0.08.pod
+│   ├── form-input-nginx-module-0.12
+│   │   └── form-input-nginx-module-0.12.pod
+│   ├── headers-more-nginx-module-0.33
+│   │   └── headers-more-nginx-module-0.33.pod
+│   ├── iconv-nginx-module-0.14
+│   │   └── iconv-nginx-module-0.14.pod
+│   ├── lua-5.1.5
+│   │   └── lua-5.1.5.pod
+│   ├── lua-cjson-2.1.0.7
+│   │   └── lua-cjson-2.1.0.7.pod
+│   ├── luajit-2.1
+│   │   ├── changes.pod
+│   │   ├── contact.pod
+│   │   ├── ext_c_api.pod
+│   │   ├── extensions.pod
+│   │   ├── ext_ffi_api.pod
+│   │   ├── ext_ffi.pod
+│   │   ├── ext_ffi_semantics.pod
+│   │   ├── ext_ffi_tutorial.pod
+│   │   ├── ext_jit.pod
+│   │   ├── ext_profiler.pod
+│   │   ├── faq.pod
+│   │   ├── install.pod
+│   │   ├── luajit-2.1.pod
+│   │   ├── running.pod
+│   │   └── status.pod
+│   ├── luajit-2.1-20190507
+│   │   └── luajit-2.1-20190507.pod
+│   ├── lua-rds-parser-0.06
+│   ├── lua-redis-parser-0.13
+│   │   └── lua-redis-parser-0.13.pod
+│   ├── lua-resty-core-0.1.17
+│   │   ├── lua-resty-core-0.1.17.pod
+│   │   ├── ngx.balancer.pod
+│   │   ├── ngx.base64.pod
+│   │   ├── ngx.errlog.pod
+│   │   ├── ngx.ocsp.pod
+│   │   ├── ngx.pipe.pod
+│   │   ├── ngx.process.pod
+│   │   ├── ngx.re.pod
+│   │   ├── ngx.resp.pod
+│   │   ├── ngx.semaphore.pod
+│   │   ├── ngx.ssl.pod
+│   │   └── ngx.ssl.session.pod
+│   ├── lua-resty-dns-0.21
+│   │   └── lua-resty-dns-0.21.pod
+│   ├── lua-resty-limit-traffic-0.06
+│   │   ├── lua-resty-limit-traffic-0.06.pod
+│   │   ├── resty.limit.conn.pod
+│   │   ├── resty.limit.count.pod
+│   │   ├── resty.limit.req.pod
+│   │   └── resty.limit.traffic.pod
+│   ├── lua-resty-lock-0.08
+│   │   └── lua-resty-lock-0.08.pod
+│   ├── lua-resty-lrucache-0.09
+│   │   └── lua-resty-lrucache-0.09.pod
+│   ├── lua-resty-memcached-0.14
+│   │   └── lua-resty-memcached-0.14.pod
+│   ├── lua-resty-mysql-0.21
+│   │   └── lua-resty-mysql-0.21.pod
+│   ├── lua-resty-redis-0.27
+│   │   └── lua-resty-redis-0.27.pod
+│   ├── lua-resty-shell-0.02
+│   │   └── lua-resty-shell-0.02.pod
+│   ├── lua-resty-signal-0.02
+│   │   └── lua-resty-signal-0.02.pod
+│   ├── lua-resty-string-0.11
+│   │   └── lua-resty-string-0.11.pod
+│   ├── lua-resty-upload-0.10
+│   │   └── lua-resty-upload-0.10.pod
+│   ├── lua-resty-upstream-healthcheck-0.06
+│   │   └── lua-resty-upstream-healthcheck-0.06.pod
+│   ├── lua-resty-websocket-0.07
+│   │   └── lua-resty-websocket-0.07.pod
+│   ├── lua-tablepool-0.01
+│   │   └── lua-tablepool-0.01.pod
+│   ├── memc-nginx-module-0.19
+│   │   └── memc-nginx-module-0.19.pod
+│   ├── nginx
+│   │   ├── accept_failed.pod
+│   │   ├── beginners_guide.pod
+│   │   ├── chunked_encoding_from_backend.pod
+│   │   ├── configure.pod
+│   │   ├── configuring_https_servers.pod
+│   │   ├── contributing_changes.pod
+│   │   ├── control.pod
+│   │   ├── converting_rewrite_rules.pod
+│   │   ├── daemon_master_process_off.pod
+│   │   ├── debugging_log.pod
+│   │   ├── development_guide.pod
+│   │   ├── events.pod
+│   │   ├── example.pod
+│   │   ├── faq.pod
+│   │   ├── freebsd_tuning.pod
+│   │   ├── hash.pod
+│   │   ├── howto_build_on_win32.pod
+│   │   ├── install.pod
+│   │   ├── license_copyright.pod
+│   │   ├── load_balancing.pod
+│   │   ├── nginx_dtrace_pid_provider.pod
+│   │   ├── nginx.pod
+│   │   ├── ngx_core_module.pod
+│   │   ├── ngx_google_perftools_module.pod
+│   │   ├── ngx_http_access_module.pod
+│   │   ├── ngx_http_addition_module.pod
+│   │   ├── ngx_http_api_module_head.pod
+│   │   ├── ngx_http_auth_basic_module.pod
+│   │   ├── ngx_http_auth_jwt_module.pod
+│   │   ├── ngx_http_auth_request_module.pod
+│   │   ├── ngx_http_autoindex_module.pod
+│   │   ├── ngx_http_browser_module.pod
+│   │   ├── ngx_http_charset_module.pod
+│   │   ├── ngx_http_core_module.pod
+│   │   ├── ngx_http_dav_module.pod
+│   │   ├── ngx_http_empty_gif_module.pod
+│   │   ├── ngx_http_f4f_module.pod
+│   │   ├── ngx_http_fastcgi_module.pod
+│   │   ├── ngx_http_flv_module.pod
+│   │   ├── ngx_http_geoip_module.pod
+│   │   ├── ngx_http_geo_module.pod
+│   │   ├── ngx_http_grpc_module.pod
+│   │   ├── ngx_http_gunzip_module.pod
+│   │   ├── ngx_http_gzip_module.pod
+│   │   ├── ngx_http_gzip_static_module.pod
+│   │   ├── ngx_http_headers_module.pod
+│   │   ├── ngx_http_hls_module.pod
+│   │   ├── ngx_http_image_filter_module.pod
+│   │   ├── ngx_http_index_module.pod
+│   │   ├── ngx_http_js_module.pod
+│   │   ├── ngx_http_keyval_module.pod
+│   │   ├── ngx_http_limit_conn_module.pod
+│   │   ├── ngx_http_limit_req_module.pod
+│   │   ├── ngx_http_log_module.pod
+│   │   ├── ngx_http_map_module.pod
+│   │   ├── ngx_http_memcached_module.pod
+│   │   ├── ngx_http_mirror_module.pod
+│   │   ├── ngx_http_mp4_module.pod
+│   │   ├── ngx_http_perl_module.pod
+│   │   ├── ngx_http_proxy_module.pod
+│   │   ├── ngx_http_random_index_module.pod
+│   │   ├── ngx_http_realip_module.pod
+│   │   ├── ngx_http_referer_module.pod
+│   │   ├── ngx_http_rewrite_module.pod
+│   │   ├── ngx_http_scgi_module.pod
+│   │   ├── ngx_http_secure_link_module.pod
+│   │   ├── ngx_http_session_log_module.pod
+│   │   ├── ngx_http_slice_module.pod
+│   │   ├── ngx_http_spdy_module.pod
+│   │   ├── ngx_http_split_clients_module.pod
+│   │   ├── ngx_http_ssi_module.pod
+│   │   ├── ngx_http_ssl_module.pod
+│   │   ├── ngx_http_status_module.pod
+│   │   ├── ngx_http_stub_status_module.pod
+│   │   ├── ngx_http_sub_module.pod
+│   │   ├── ngx_http_upstream_conf_module.pod
+│   │   ├── ngx_http_upstream_hc_module.pod
+│   │   ├── ngx_http_upstream_module.pod
+│   │   ├── ngx_http_userid_module.pod
+│   │   ├── ngx_http_uwsgi_module.pod
+│   │   ├── ngx_http_v2_module.pod
+│   │   ├── ngx_http_xslt_module.pod
+│   │   ├── ngx_mail_auth_http_module.pod
+│   │   ├── ngx_mail_core_module.pod
+│   │   ├── ngx_mail_imap_module.pod
+│   │   ├── ngx_mail_pop3_module.pod
+│   │   ├── ngx_mail_proxy_module.pod
+│   │   ├── ngx_mail_smtp_module.pod
+│   │   ├── ngx_mail_ssl_module.pod
+│   │   ├── ngx_stream_access_module.pod
+│   │   ├── ngx_stream_core_module.pod
+│   │   ├── ngx_stream_geoip_module.pod
+│   │   ├── ngx_stream_geo_module.pod
+│   │   ├── ngx_stream_js_module.pod
+│   │   ├── ngx_stream_keyval_module.pod
+│   │   ├── ngx_stream_limit_conn_module.pod
+│   │   ├── ngx_stream_log_module.pod
+│   │   ├── ngx_stream_map_module.pod
+│   │   ├── ngx_stream_proxy_module.pod
+│   │   ├── ngx_stream_realip_module.pod
+│   │   ├── ngx_stream_return_module.pod
+│   │   ├── ngx_stream_split_clients_module.pod
+│   │   ├── ngx_stream_ssl_module.pod
+│   │   ├── ngx_stream_ssl_preread_module.pod
+│   │   ├── ngx_stream_upstream_hc_module.pod
+│   │   ├── ngx_stream_upstream_module.pod
+│   │   ├── ngx_stream_zone_sync_module.pod
+│   │   ├── request_processing.pod
+│   │   ├── server_names.pod
+│   │   ├── stream_processing.pod
+│   │   ├── switches.pod
+│   │   ├── syntax.pod
+│   │   ├── sys_errlist.pod
+│   │   ├── syslog.pod
+│   │   ├── variables_in_config.pod
+│   │   ├── websocket.pod
+│   │   ├── welcome_nginx_facebook.pod
+│   │   └── windows.pod
+│   ├── ngx_coolkit-0.2
+│   ├── ngx_devel_kit-0.3.1rc1
+│   │   └── ngx_devel_kit-0.3.1rc1.pod
+│   ├── ngx_lua-0.10.15
+│   │   └── ngx_lua-0.10.15.pod
+│   ├── ngx_lua_upstream-0.07
+│   │   └── ngx_lua_upstream-0.07.pod
+│   ├── ngx_postgres-1.0
+│   │   ├── ngx_postgres-1.0.pod
+│   │   └── todo.pod
+│   ├── ngx_stream_lua-0.0.7
+│   │   ├── dev_notes.pod
+│   │   └── ngx_stream_lua-0.0.7.pod
+│   ├── opm-0.0.5
+│   │   └── opm-0.0.5.pod
+│   ├── rds-csv-nginx-module-0.09
+│   │   └── rds-csv-nginx-module-0.09.pod
+│   ├── rds-json-nginx-module-0.15
+│   │   └── rds-json-nginx-module-0.15.pod
+│   ├── redis2-nginx-module-0.15
+│   │   └── redis2-nginx-module-0.15.pod
+│   ├── redis-nginx-module-0.3.7
+│   ├── resty-cli-0.24
+│   │   └── resty-cli-0.24.pod
+│   ├── set-misc-nginx-module-0.32
+│   │   └── set-misc-nginx-module-0.32.pod
+│   ├── srcache-nginx-module-0.31
+│   │   └── srcache-nginx-module-0.31.pod
+│   └── xss-nginx-module-0.06
+│       └── xss-nginx-module-0.06.pod
+├── resty.index
+├── scgi_params
+├── scgi_params.default
+├── site
+│   ├── lualib
+│   ├── manifest
+│   └── pod
+├── uwsgi_params
+├── uwsgi_params.default
+└── win-utf
+
+78 directories, 305 files
+```
+
+###### Post installation tasks
+
+  > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
+
+</details>
+
+#### Install Tengine on Ubuntu 18.04
+
+  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
+
+- Official github repository: [Tengine](https://github.com/alibaba/tengine)
+- Official documentation: [Tengine Documentation](https://tengine.taobao.org/documentation.html)
+
+Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
+
+The build and installation process is very similar to [Install Nginx on Centos 7](#install-nginx-on-centos-7). However, I will only specify the most important changes.
+
+<details>
+<summary><b>Show step-by-step Tengine installation</b></summary><br>
+
+* [Pre installation tasks](#pre-installation-tasks-2)
+* [Install or build dependencies](#install-or-build-dependencies-2)
+* [Get Tengine sources](#get-tengine-sources)
+* [Download 3rd party modules](#download-3rd-party-modules-2)
+* [Build Tengine](#build-tengine)
+* [Post installation tasks](#post-installation-tasks-2)
+
+###### Pre installation tasks
+
+Set the Tengine version (I use newest and stable release):
+
+```bash
+export ngx_version="2.3.0"
+```
+
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/tengine-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+```
+
+Create directories:
+
+```bash
+for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+
+  mkdir "$i"
+
+done
+```
+
+###### Install or build dependencies
+
+Install prebuilt packages, export variables and set symbolic link:
+
+```bash
+apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
+
+# In this example we don't use zlib sources:
+apt-get install zlib1g-dev
+```
+
+PCRE:
+
+```bash
+cd "${ngx_src}"
+
+export pcre_version="8.42"
+
+export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd "$PCRE_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
+./configure
+
+make -j2 && make test
+make install
+```
+
+OpenSSL:
+
+```bash
+cd "${ngx_src}"
+
+export openssl_version="1.1.1b"
+
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+# Please run this and add as a compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+# Add to compile with debugging symbols:
+#   ./config -d ...
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+make -j2 && make test
+make install
+
+# Setup PATH environment variables:
+cat > /etc/profile.d/openssl.sh << __EOF__
+#!/bin/sh
+export PATH=${OPENSSL_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
+__EOF__
+
+chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
+
+# To make the OpenSSL 1.1.1b version visible globally first:
+mv /usr/bin/openssl /usr/bin/openssl-old
+ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
+${OPENSSL_DIR}/lib
+__EOF__
+```
+
+LuaJIT:
+
+```bash
+# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+cd "${ngx_src}"
+
+export LUAJIT_SRC="${ngx_src}/luajit2"
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
+
+# For original LuaJIT:
+#   git clone http://luajit.org/git/luajit-2.0 luajit2
+#   cd "$LUAJIT_SRC"
+
+# For OpenResty's LuaJIT:
+git clone --depth 1 https://github.com/openresty/luajit2
+
+cd "$LUAJIT_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-g' make ...
+make && make install
+
+ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
+```
+
+sregex:
+
+  > Required for `replace-filter-nginx-module` module.
+
+```bash
+cd "${ngx_src}"
+
+git clone --depth 1 https://github.com/openresty/sregex
+
+cd "${ngx_src}/sregex"
+
+make && make install
+```
+
+jemalloc:
+
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
+
+```bash
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="/usr/local/src/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
+
+git clone --depth 1 https://github.com/jemalloc/jemalloc
+
+cd "$JEMALLOC_SRC"
+
+./autogen.sh
+
+make && make install
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
+```
+
+###### Get Tengine sources
+
+```bash
+cd "${ngx_base}"
+
+wget https://tengine.taobao.org/download/tengine-${ngx_version}.tar.gz
+
+# or alternative:
+#   git clone --depth 1 https://github.com/alibaba/tengine master
+
+tar zxvf tengine-${ngx_version}.tar.gz -C "${ngx_master}"
+```
+
+###### Download 3rd party modules
+
+  > Not all modules from [this](#3rd-party-modules) section working properly with Tengine (e.g. `ndk_http_module` and other dependent on it).
+
+```bash
+cd "${ngx_modules}"
+
+for i in \
+https://github.com/openresty/echo-nginx-module \
+https://github.com/openresty/headers-more-nginx-module \
+https://github.com/openresty/replace-filter-nginx-module \
+https://github.com/nginx-clojure/nginx-access-plus \
+https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+https://github.com/vozlt/nginx-module-vts \
+https://github.com/google/ngx_brotli ; do
+
+  git clone --depth 1 "$i"
+
+done
+
+wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
+```
+
+For `ngx_brotli`:
+
+```bash
+cd "${ngx_modules}/ngx_brotli"
+
+git submodule update --init
+```
+
+If you use NAXSI:
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/nbs-system/naxsi
+```
+
+###### Build Tengine
+
+```bash
+cd "${ngx_master}"
+
+# - you can also build Tengine without 3rd party modules
+# - remember about compiler and linker options
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
+./configure --prefix=/etc/nginx \
+            --conf-path=/etc/nginx/nginx.conf \
+            --sbin-path=/usr/sbin/nginx \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --user=nginx \
+            --group=nginx \
+            --modules-path=/etc/nginx/modules \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+            --with-compat \
+            --with-debug \
+            --with-file-aio \
+            --with-threads \
+            --with-stream \
+            --with-stream_geoip_module \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_degradation_module \
+            --with-http_geoip_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_image_filter_module \
+            --with-http_lua_module \
+            --with-http_perl_module \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-http_sub_module \
+            --with-http_v2_module \
+            --with-google_perftools_module \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
+            --with-pcre=${PCRE_SRC} \
+            --with-pcre-jit \
+            --with-jemalloc=${JEMALLOC_SRC} \
+            --without-http-cache \
+            --without-http_memcached_module \
+            --without-mail_pop3_module \
+            --without-mail_imap_module \
+            --without-mail_smtp_module \
+            --without-http_fastcgi_module \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --without-http_upstream_keepalive_module \
+            --add-module=${ngx_master}/modules/ngx_backtrace_module \
+            --add-module=${ngx_master}/modules/ngx_debug_pool \
+            --add-module=${ngx_master}/modules/ngx_debug_timer \
+            --add-module=${ngx_master}/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_master}/modules/ngx_http_lua_module \
+            --add-module=${ngx_master}/modules/ngx_http_proxy_connect_module \
+            --add-module=${ngx_master}/modules/ngx_http_reqstat_module \
+            --add-module=${ngx_master}/modules/ngx_http_slice_module \
+            --add-module=${ngx_master}/modules/ngx_http_sysguard_module \
+            --add-module=${ngx_master}/modules/ngx_http_trim_filter_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_consistent_hash_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_dynamic_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_keepalive_module \
+            --add-module=${ngx_master}/modules/ngx_http_upstream_session_sticky_module \
+            --add-module=${ngx_master}/modules/ngx_http_user_agent_module \
+            --add-module=${ngx_master}/modules/ngx_slab_stat \
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
+            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
+            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
+            --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+
+make -j2 && make test
+make install
+
+ldconfig
+```
+
+Check Tengine version:
+
+```bash
+nginx -v
+Tengine version: Tengine/2.3.0
+nginx version: nginx/1.15.9
+```
+
+And list all files in `/etc/nginx`:
+
+```bash
+tree
+.
+├── fastcgi.conf
+├── fastcgi.conf.default
+├── fastcgi_params
+├── fastcgi_params.default
+├── html
+│   ├── 50x.html
+│   └── index.html
+├── koi-utf
+├── koi-win
+├── mime.types
+├── mime.types.default
+├── modules
+│   ├── ngx_http_delay_module.so
+│   ├── ngx_http_echo_module.so
+│   ├── ngx_http_headers_more_filter_module.so
+│   ├── ngx_http_naxsi_module.so
+│   └── ngx_http_replace_filter_module.so
+├── nginx.conf
+├── nginx.conf.default
+├── scgi_params
+├── scgi_params.default
+├── uwsgi_params
+├── uwsgi_params.default
+└── win-utf
+
+2 directories, 22 files
+```
+
+###### Post installation tasks
+
+  > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
+
+</details>
 
 #### Analyse configuration
 
@@ -6414,2111 +8525,6 @@ openssl req -text -noout -in ${_fd_csr} )
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 ```
 
-#### Installation from prebuilt packages
-
-##### RHEL7 or CentOS 7
-
-###### From EPEL
-
-```bash
-# Install epel repository:
-yum install epel-release
-# or alternative:
-#   wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-#   yum install epel-release-latest-7.noarch.rpm
-
-# Install NGINX:
-yum install nginx
-```
-
-###### From Software Collections
-
-```bash
-# Install and enable scl:
-yum install centos-release-scl
-yum-config-manager --enable rhel-server-rhscl-7-rpms
-
-# Install NGINX (rh-nginx14, rh-nginx16, rh-nginx18):
-yum install rh-nginx16
-
-# Enable NGINX from SCL:
-scl enable rh-nginx16 bash
-```
-
-###### From Official Repository
-
-```bash
-# Where:
-#   - <os_type> is: rhel or centos
-cat > /etc/yum.repos.d/nginx.repo << __EOF__
-[nginx]
-name=nginx repo
-baseurl=http://nginx.org/packages/<os_type>/$releasever/$basearch/
-gpgcheck=0
-enabled=1
-__EOF__
-
-# Install NGINX:
-yum install nginx
-```
-
-##### Debian or Ubuntu
-
-Check available flavours of NGINX before install. For more information please see [this](https://askubuntu.com/a/556382) great answer by [Thomas Ward](https://askubuntu.com/users/10616/thomas-ward).
-
-###### From Debian/Ubuntu Repository
-
-```bash
-# Install NGINX:
-apt-get install nginx
-```
-
-###### From Official Repository
-
-```bash
-# Where:
-#   - <os_type> is: debian or ubuntu
-#   - <os_release> is: xenial, bionic, jessie, stretch or other
-cat > /etc/apt/sources.list.d/nginx.list << __EOF__
-deb http://nginx.org/packages/<os_type>/ <os_release> nginx
-deb-src http://nginx.org/packages/<os_type>/ <os_release> nginx
-__EOF__
-
-# Update packages list:
-apt-get update
-
-# Download the public key (or <pub_key> from your GPG error):
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys <pub_key>
-
-# Install NGINX:
-apt-get update
-apt-get install nginx
-```
-
-#### Installation from source
-
-The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
-
-Before the beginning installation process please read these important articles which describes exactly the entire installation process and the parameters using the `configure` command:
-
-- [Installation and Compile-Time Options](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/)
-- [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
-- [Building nginx from Sources](https://nginx.org/en/docs/configure.html)
-
-In this chapter I'll present three (very similar) methods of installation. They relate to:
-
-- the [NGINX on CentOS 7](#install-nginx-on-centos-7)
-- the [OpenResty on CentOS 7](#install-openresty-on-centos-7)
-- the [Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
-
-Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
-
-Look also on this short note about the system locations. That can be useful too:
-
-- For booting the system, rescues and maintenance: `/`
-  - `/bin` - user programs
-  - `/sbin` - system programs
-  - `/lib` - shared libraries
-
-- Full running environment: `/usr`
-  - `/usr/bin` - user programs
-  - `/usr/sbin` - system programs
-  - `/usr/lib` - shared libraries
-  - `/usr/share` - manual pages, data
-
-- Added packages: `/usr/local`
-  - `/usr/local/bin` - user programs
-  - `/usr/local/sbin` - system programs
-  - `/usr/local/lib` - shared libraries
-  - `/usr/local/share` - manual pages, data
-
-##### Automatic installation
-
-Installation from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
-
-  > It supports Debian and RHEL like distributions.
-
-This tool is located in `lib/ngx_installer.sh`. Configuration file is in `lib/ngx_installer.conf`. By default, it show prompt to confirm steps but you can disable it if you want:
-
-```bash
-cd lib/
-export NGX_PROMPT=0 ; bash ngx_installer.sh
-```
-
-##### Nginx package
-
-There are currently two versions of NGINX:
-
-- **stable** - is recommended, doesn’t include all of the latest features, but has critical bug fixes from mainline release
-- **mainline** - is typically quite stable as well, includes the latest features and bug fixes and is always up to date
-
-You can download NGINX source code from an official read-only mirrors:
-
-  > Detailed instructions about download and compile the NGINX sources can be found later in the handbook.
-
-- [NGINX source code](https://nginx.org/download/)
-- [NGINX GitHub repository](https://github.com/nginx/nginx)
-
-##### Dependencies
-
-Mandatory requirements:
-
-  > Download, compile and install or install prebuilt packages from repository of your distribution.
-
-- [OpenSSL](https://www.openssl.org/source/) library
-- [Zlib](https://zlib.net/) or [Cloudflare Zlib](https://github.com/cloudflare/zlib) library
-- [PCRE](https://ftp.pcre.org/pub/pcre/) library
-- [LuaJIT v2.1](https://github.com/LuaJIT/LuaJIT) or [OpenResty's LuaJIT2](https://github.com/openresty/luajit2) library
-- [jemalloc](https://github.com/jemalloc/jemalloc) library
-
-OpenResty's LuaJIT uses its own branch of LuaJIT with various important bug fixes and optimizations for OpenResty's use cases.
-
-I also use Cloudflare Zlib version due to performance. See below articles:
-
-- [A comparison of Zlib implementations](http://www.htslib.org/benchmarks/zlib.html)
-- [Improving Nginx Zlib Compression Performance](https://medium.com/@centminmod/improving-nginx-zlib-compression-performance-eb961f3ac0f4)
-
-If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building NGINX:
-
-| <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
-| :---         | :---         | :---         |
-| `gcc`<br>`make`<br>`build-essential`<br>`linux-headers*`<br>`bison` | `gcc`<br>`gcc-c++`<br>`kernel-devel`<br>`bison` | |
-| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | |
-| `libssl-dev`* | `openssl-devel`* | |
-| `zlib1g-dev`* | `zlib-devel`* | |
-| `libpcre2-dev`* | `pcre-devel`* | |
-| `libluajit-5.1-dev`* | `luajit-devel`* | |
-| `libxslt-dev` | `libxslt libxslt-devel` | |
-| `libgd-dev` | `gd gd-devel` | |
-| `libgeoip-dev` | `GeoIP-devel` | |
-| `libxml2-dev` | `libxml2-devel` | |
-| `libexpat-dev` | `expat-devel` | |
-| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
-| | `cpio` | |
-| | `gettext-devel` | |
-| `autoconf` | `autoconf` | for `jemalloc` from sources |
-| `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
-| `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
-| `jq` | `jq` | for [http error pages](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages) generator |
-
-<sup><i>* If you don't use from sources.</i></sup>
-
-Shell one-liners example:
-
-```bash
-# Ubuntu/Debian
-apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
-
-# RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
-```
-
-##### 3rd party modules
-
-  > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release.
-
-  > Before installing external modules please read [Event-Driven architecture](#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
-
-Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
-
-I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules (they are not support dynamic linking).
-
-You can download external modules from:
-
-- [NGINX 3rd Party Modules](https://www.nginx.com/resources/wiki/modules/)
-- [OpenResty Components](https://openresty.org/en/components.html)
-- [Tengine Modules](https://github.com/alibaba/tengine/tree/master/modules)
-
-A short description of the modules that I used in this step-by-step tutorial:
-
-- [`ngx_devel_kit`](https://github.com/simplresty/ngx_devel_kit)** - adds additional generic tools that module developers can use in their own modules
-
-- [`lua-nginx-module`](https://github.com/openresty/lua-nginx-module) - embed the Power of Lua into NGINX
-
-- [`set-misc-nginx-module`](https://github.com/openresty/set-misc-nginx-module) - various `set_xxx` directives added to NGINX rewrite module
-
-- [`echo-nginx-module`](https://github.com/openresty/echo-nginx-module) - module for bringing the power of `echo`, `sleep`, `time` and more to NGINX config file
-
-- [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) - set, add, and clear arbitrary output headers
-
-- [`replace-filter-nginx-module`](https://github.com/openresty/replace-filter-nginx-module) - streaming regular expression replacement in response bodies
-
-- [`array-var-nginx-module`](https://github.com/openresty/array-var-nginx-module) - add supports for array-typed variables to NGINX config files
-
-- [`encrypted-session-nginx-module`](https://github.com/openresty/encrypted-session-nginx-module) - encrypt and decrypt NGINX variable values
-
-- [`nginx-module-sysguard`](https://github.com/vozlt/nginx-module-sysguard) - module to protect servers when system load or memory use goes too high
-
-- [`nginx-access-plus`](https://github.com/nginx-clojure/nginx-access-plus) - allows limiting access to certain http request methods and client addresses
-
-- [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) - can do both regular expression and fixed string substitutions
-
-- [`nginx-sticky-module-ng`](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/src) - module to add a sticky cookie to be always forwarded to the same
-
-- [`nginx-module-vts`](https://github.com/vozlt/nginx-module-vts) - Nginx virtual host traffic status module
-
-- [`ngx_brotli`](https://github.com/google/ngx_brotli) - module for Brotli compression
-
-- [`ngx_http_naxsi_module`](https://github.com/nbs-system/naxsi) - is an open-source, high performance, low rules maintenance WAF for NGINX
-
-- [`ngx_http_delay_module`](http://mdounin.ru/hg/ngx_http_delay_module) - allows to delay requests for a given time
-
-- [`nginx-backtrace`](https://github.com/alibaba/nginx-backtrace)* - module to dump backtrace when a worker process exits abnormally
-
-- [`ngx_debug_pool`](https://github.com/chobits/ngx_debug_pool)* - provides access to information of memory usage for NGINX memory pool
-
-- [`ngx_debug_timer`](https://github.com/hongxiaolong/ngx_debug_timer)* - provides access to information of timer usage for NGINX
-
-- [`nginx_upstream_check_module`](https://github.com/yaoweibin/nginx_upstream_check_module)* - health checks upstreams for NGINX
-
-- [`nginx-http-footer-filter`](https://github.com/alibaba/nginx-http-footer-filter)* - module that prints some text in the footer of a request upstream server
-
-- [`memc-nginx-module`](https://github.com/agentzh/memc-nginx-module) - extended version of the standard Memcached module
-
-- [`nginx-rtmp-module`](https://github.com/arut/nginx-rtmp-module) - NGINX-based Media Streaming Server
-
-- [`ngx-fancyindex`](https://github.com/aperezdc/ngx-fancyindex) - generates of file listings, like the built-in autoindex module does, but adding a touch of style
-
-- [`ngx_log_if`](https://github.com/cfsego/ngx_log_if) - allows you to control when not to write down access log
-
-- [`nginx-http-user-agent`](https://github.com/alibaba/nginx-http-user-agent) - module to match browsers and crawlers
-
-- [`ngx_http_auth_pam_module`](https://github.com/sto/ngx_http_auth_pam_module) - module to use PAM for simple http authentication
-
-- [`ngx_http_google_filter_module`](https://github.com/cuber/ngx_http_google_filter_module) - is a filter module which makes google mirror much easier to deploy
-
-- [`nginx-push-stream-module`](https://github.com/wandenberg/nginx-push-stream-module) - a pure stream http push technology for your Nginx setup
-
-- [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
-
-- [`ngx_http_custom_counters_module`](https://github.com/lyokha/nginx-custom-counters-module) - customizable counters shared by all worker processes and virtual servers
-
-<sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
-<sup><i>** Is already being used in quite a few third party modules.</i></sup>
-
-##### Compiler and linker
-
-Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags.
-
-See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat. You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
-
-There are examples:
-
-```bash
-# Example of use compiler options:
-# 1)
---with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
-# 2)
---with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O3 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
-
-# Example of use linker options:
-# 1)
---with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
-# 2)
---with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-```
-
-###### Debugging Symbols
-
-Debugging symbols helps obtain additional information for debugging, such as functions, variables, data structures, source file and line number information.
-
-However, if you get the `No symbol table info available` error when you run a `(gdb) backtrace` you should to recompile NGINX with support of debugging symbols. For this it is essential to include debugging symbols with the `-g` flag and make the debugger output easier to understand by disabling compiler optimization with the `-O0` flag:
-
-  > If you use `-O0` remember about disable `-D_FORTIFY_SOURCE=2`, if you don't do it you will get: `error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O)`.
-
-```bash
-./configure --with-debug --with-cc-opt='-O0 -g' ...
-```
-
-Also if you get errors similar to one of them:
-
-```bash
-Missing separate debuginfo for /usr/lib64/libluajit-5.1.so.2 ...
-Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found) ...
-```
-
-You should also recompile libraries with `-g` compiler option and optional with `-O0`. For more information please read [3.9 Options for Debugging Your Program](https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html).
-
-##### SystemTap
-
-SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
-
-  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
-
-  > Hint: Do not specify `--with-debug` while profiling. It slows everything down
-significantly.
-
-```bash
-cd /opt
-
-git clone --depth 1 https://github.com/openresty/openresty-systemtap-toolkit
-
-# RHEL/CentOS
-yum install yum-utils
-yum --enablerepo=base-debuginfo install kernel-devel-$(uname -r) kernel-headers-$(uname -r) kernel-debuginfo-$(uname -r) kernel-debuginfo-common-x86_64-$(uname -r)
-yum --enablerepo=base-debuginfo install systemtap systemtap-debuginfo
-
-reboot
-
-# Run this commands for testing SystemTap:
-stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'
-stap -v -e 'probe begin { printf("Hello, World!\n"); exit() }'
-```
-
-For installation SystemTap on Ubuntu/Debian:
-
-- [Ubuntu Wiki - Systemtap](https://wiki.ubuntu.com/Kernel/Systemtap)
-- [Install SystemTap in Ubuntu 14.04](https://blog.jeffli.me/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/)
-
-###### stapxx
-
-The author of OpenResty created great and simple macro language extensions to the SystemTap: [stapxx](https://github.com/openresty/stapxx).
-
-#### Install Nginx on CentOS 7
-
-###### Pre installation tasks
-
-Set NGINX version (I use stable release):
-
-```bash
-export ngx_version="1.17.0"
-```
-
-Set temporary variables:
-
-```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/nginx-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
-```
-
-Create directories:
-
-```bash
-for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
-
-  mkdir "$i"
-
-done
-```
-
-###### Install or build dependencies
-
-  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
-
-**Install prebuilt packages, export variables and set symbolic link:**
-
-```bash
-# It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
-
-# In this example we use sources for all below packages so we do not install them:
-yum install openssl-devel zlib-devel pcre-devel luajit-devel
-
-# For LuaJIT (libluajit-5.1-dev):
-export LUAJIT_LIB="/usr/local/x86_64-linux-gnu"
-export LUAJIT_INC="/usr/include/luajit-2.1"
-
-ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
-```
-
-  > Remember to build [`sregex`](#sregex) also if you use above steps.
-
-**Or download and compile them:**
-
-PCRE:
-
-```bash
-cd "${ngx_src}"
-
-export pcre_version="8.42"
-
-export PCRE_SRC="${ngx_src}/pcre-${pcre_version}"
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
-
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
-
-cd "$PCRE_SRC"
-
-# Add to compile with debugging symbols:
-#   CFLAGS='-O0 -g' ./configure
-./configure
-
-make -j2 && make test
-make install
-```
-
-Zlib:
-
-```bash
-# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
-cd "${ngx_src}"
-
-export ZLIB_SRC="${ngx_src}/zlib"
-export ZLIB_LIB="/usr/local/lib"
-export ZLIB_INC="/usr/local/include"
-
-# For original Zlib:
-#   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
-#   cd "${ZLIB_SRC}-${zlib_version}"
-
-# For Cloudflare Zlib:
-git clone --depth 1 https://github.com/cloudflare/zlib
-
-cd "$ZLIB_SRC"
-
-./configure
-
-make -j2 && make test
-make install
-```
-
-OpenSSL:
-
-```bash
-cd "${ngx_src}"
-
-export openssl_version="1.1.1b"
-
-export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
-export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
-export OPENSSL_LIB="${OPENSSL_DIR}/lib"
-export OPENSSL_INC="${OPENSSL_DIR}/include"
-
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
-
-cd "${ngx_src}/openssl-${openssl_version}"
-
-# Please run this and add as a compiler param:
-export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
-
-for _cc_opt in "${__GCC_SSL[@]}" ; do
-
-    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
-    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
-
-  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
-
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
-
-  fi
-
-done
-
-# Add to compile with debugging symbols:
-#   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
-
-make -j2 && make test
-make install
-
-# Setup PATH environment variables:
-cat > /etc/profile.d/openssl.sh << __EOF__
-#!/bin/sh
-export PATH=${OPENSSL_DIR}/bin:${PATH}
-export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
-__EOF__
-
-chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
-
-# To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
-
-cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-${OPENSSL_DIR}/lib
-__EOF__
-```
-
-LuaJIT:
-
-```bash
-# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
-cd "${ngx_src}"
-
-export LUAJIT_SRC="${ngx_src}/luajit2"
-export LUAJIT_LIB="/usr/local/lib"
-export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
-# For original LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0 luajit2
-#   cd "$LUAJIT_SRC"
-
-# For OpenResty's LuaJIT:
-git clone --depth 1 https://github.com/openresty/luajit2
-
-cd "$LUAJIT_SRC"
-
-# Add to compile with debugging symbols:
-#   CFLAGS='-g' make ...
-make && make install
-
-ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
-```
-
-<a id="sregex"></a>sregex:
-
-  > Required for `replace-filter-nginx-module` module.
-
-```bash
-cd "${ngx_src}"
-
-git clone --depth 1 https://github.com/openresty/sregex
-
-cd "${ngx_src}/sregex"
-
-make && make install
-```
-
-jemalloc:
-
-  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
-
-```bash
-cd "${ngx_src}"
-
-export JEMALLOC_SRC="${ngx_src}/jemalloc"
-export JEMALLOC_INC="/usr/local/include/jemalloc"
-
-git clone --depth 1 https://github.com/jemalloc/jemalloc
-
-cd "$JEMALLOC_SRC"
-
-./autogen.sh
-
-make && make install
-```
-
-Update links and cache to the shared libraries for both types of installation:
-
-```bash
-ldconfig
-```
-
-###### Get Nginx sources
-
-```bash
-cd "${ngx_base}"
-
-wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
-
-# or alternative:
-#   git clone --depth 1 https://github.com/nginx/nginx master
-
-tar zxvf nginx-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
-```
-
-###### Download 3rd party modules
-
-```bash
-cd "${ngx_modules}"
-
-for i in \
-https://github.com/simplresty/ngx_devel_kit \
-https://github.com/openresty/lua-nginx-module \
-https://github.com/openresty/set-misc-nginx-module \
-https://github.com/openresty/echo-nginx-module \
-https://github.com/openresty/headers-more-nginx-module \
-https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/openresty/array-var-nginx-module \
-https://github.com/openresty/encrypted-session-nginx-module \
-https://github.com/vozlt/nginx-module-sysguard \
-https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
-https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
-https://github.com/vozlt/nginx-module-vts \
-https://github.com/google/ngx_brotli ; do
-
-  git clone --depth 1 "$i"
-
-done
-
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
-mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
-```
-
-For `ngx_brotli`:
-
-```bash
-cd "${ngx_modules}/ngx_brotli"
-
-git submodule update --init
-```
-
-I also use some modules from Tengine:
-
-- `ngx_backtrace_module`
-- `ngx_debug_pool`
-- `ngx_debug_timer`
-- `ngx_http_upstream_check_module`
-- `ngx_http_footer_filter_module`
-
-```bash
-cd "${ngx_modules}"
-
-git clone --depth 1 https://github.com/alibaba/tengine
-```
-
-If you use NAXSI:
-
-```bash
-cd "${ngx_modules}"
-
-git clone --depth 1 https://github.com/nbs-system/naxsi
-```
-
-###### Build Nginx
-
-```bash
-cd "${ngx_master}"
-
-# - you can also build NGINX without 3rd party modules
-# - remember about compiler and linker options
-# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
-# - add to compile with debugging symbols: -O0 -g
-#   - and remove -D_FORTIFY_SOURCE=2 if you use above
-./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
-            --sbin-path=/usr/sbin/nginx \
-            --pid-path=/var/run/nginx.pid \
-            --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --http-client-body-temp-path=/var/cache/nginx/client_temp \
-            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-compat \
-            --with-debug \
-            --with-file-aio \
-            --with-threads \
-            --with-stream \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_degradation_module \
-            --with-http_geoip_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_image_filter_module \
-            --with-http_perl_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
-            --with-google_perftools_module \
-            --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
-            --with-pcre=${PCRE_SRC} \
-            --with-pcre-jit \
-            --with-zlib=${ZLIB_SRC} \
-            --without-http-cache \
-            --without-http_memcached_module \
-            --without-mail_pop3_module \
-            --without-mail_imap_module \
-            --without-mail_smtp_module \
-            --without-http_fastcgi_module \
-            --without-http_scgi_module \
-            --without-http_uwsgi_module \
-            --add-module=${ngx_modules}/ngx_devel_kit \
-            --add-module=${ngx_modules}/encrypted-session-nginx-module \
-            --add-module=${ngx_modules}/nginx-access-plus/src/c \
-            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
-            --add-module=${ngx_modules}/nginx-sticky-module-ng \
-            --add-module=${ngx_modules}/nginx-module-vts \
-            --add-module=${ngx_modules}/ngx_brotli \
-            --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
-            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
-            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
-            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
-            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
-            --add-dynamic-module=${ngx_modules}/lua-nginx-module \
-            --add-dynamic-module=${ngx_modules}/set-misc-nginx-module \
-            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
-            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
-            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
-            --add-dynamic-module=${ngx_modules}/array-var-nginx-module \
-            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
-            --add-dynamic-module=${ngx_modules}/delay-module \
-            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O2 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
-            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-
-make -j2 && make test
-make install
-
-ldconfig
-```
-
-Check NGINX version:
-
-```bash
-nginx -v
-nginx version: nginx/1.16.0
-```
-
-And list all files in `/etc/nginx`:
-
-```bash
-.
-├── fastcgi.conf
-├── fastcgi.conf.default
-├── fastcgi_params
-├── fastcgi_params.default
-├── html
-│   ├── 50x.html
-│   └── index.html
-├── koi-utf
-├── koi-win
-├── mime.types
-├── mime.types.default
-├── modules
-│   ├── ngx_http_array_var_module.so
-│   ├── ngx_http_delay_module.so
-│   ├── ngx_http_echo_module.so
-│   ├── ngx_http_headers_more_filter_module.so
-│   ├── ngx_http_lua_module.so
-│   ├── ngx_http_naxsi_module.so
-│   ├── ngx_http_replace_filter_module.so
-│   ├── ngx_http_set_misc_module.so
-│   └── ngx_http_sysguard_module.so
-├── nginx.conf
-├── nginx.conf.default
-├── scgi_params
-├── scgi_params.default
-├── uwsgi_params
-├── uwsgi_params.default
-└── win-utf
-
-2 directories, 26 files
-```
-
-###### Post installation tasks
-
-Create a system user/group:
-
-```bash
-# Ubuntu/Debian
-adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos "nginx user" --group nginx
-
-# RedHat/CentOS
-groupadd -r -g 920 nginx
-
-useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
-
-passwd -l nginx
-```
-
-Create required directories:
-
-```bash
-for i in \
-/var/www \
-/var/log/nginx \
-/var/cache/nginx ; do
-
-  mkdir -p "$i" && chown -R nginx:nginx "$i"
-
-done
-```
-
-Include the necessary error pages:
-
-  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
-
-- default location: `/etc/nginx/html`
-  ```bash
-  50x.html  index.html
-  ```
-
-Update modules list and include `modules.conf` to your configuration:
-
-```bash
-_mod_dir="/etc/nginx/modules"
-_mod_conf="/etc/nginx/modules.conf"
-
-:>"${_mod_conf}"
-
-for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "$_mod_conf" ; done
-```
-
-Create `logrotate` configuration:
-
-```bash
-cat > /etc/logrotate.d/nginx << __EOF__
-/var/log/nginx/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 nginx nginx
-  sharedscripts
-  prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
-__EOF__
-```
-
-Add systemd service:
-
-```bash
-cat > /lib/systemd/system/nginx.service << __EOF__
-# Stop dance for nginx
-# =======================
-#
-# ExecStop sends SIGSTOP (graceful stop) to the nginx process.
-# If, after 5s (--retry QUIT/5) nginx is still running, systemd takes control
-# and sends SIGTERM (fast shutdown) to the main process.
-# After another 5s (TimeoutStopSec=5), and if nginx is alive, systemd sends
-# SIGKILL to all the remaining processes in the process group (KillMode=mixed).
-#
-# nginx signals reference doc:
-# http://nginx.org/en/docs/control.html
-#
-[Unit]
-Description=A high performance web server and a reverse proxy server
-Documentation=man:nginx(8)
-After=network.target
-
-[Service]
-Type=forking
-PIDFile=/run/nginx.pid
-ExecStartPre=/usr/sbin/nginx -t -q -g 'daemon on; master_process on;'
-ExecStart=/usr/sbin/nginx -g 'daemon on; master_process on;'
-ExecReload=/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
-ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
-TimeoutStopSec=5
-KillMode=mixed
-
-[Install]
-WantedBy=multi-user.target
-__EOF__
-```
-
-Reload systemd manager configuration:
-
-```bash
-systemctl daemon-reload
-```
-
-Enable NGINX service:
-
-```bash
-systemctl enable nginx
-```
-
-Test NGINX configuration:
-
-```bash
-nginx -t -c /etc/nginx/nginx.conf
-```
-
-#### Install OpenResty on CentOS 7
-
-  > _OpenResty is a full-fledged web application server by bundling the standard nginx core, lots of 3rd-party nginx modules, as well as most of their external dependencies._
-  >
-  > _This bundle is maintained by Yichun Zhang ([agentzh](https://github.com/agentzh))._
-
-- Official github repository: [OpenResty](https://github.com/openresty/openresty)
-- Official website: [OpenResty](https://openresty.org/en/)
-- Official documentations: [OpenResty Getting Started](https://openresty.org/en/getting-started.html) and [OpenResty eBooks](https://openresty.org/en/ebooks.html)
-
-OpenResty is a more than web server. I would call it a superset of the NGINX web server. OpenResty comes with LuaJIT, a just-in-time compiler for the Lua scripting language and many Lua libraries, lots of high quality 3rd-party NGINX modules, and most of their external dependencies.
-
-OpenResty has good quality and performance. For me, the ability to run Lua scripts from within is also really great.
-
-<details>
-<summary><b>Show step-by-step OpenResty installation</b></summary><br>
-
-* [Pre installation tasks](#pre-installation-tasks-1)
-* [Install or build dependencies](#install-or-build-dependencies-1)
-* [Get OpenResty sources](#get-openresty-sources-1)
-* [Download 3rd party modules](#download-3rd-party-modules-1)
-* [Build OpenResty](#build-openresty)
-* [Post installation tasks](#post-installation-tasks-1)
-
-###### Pre installation tasks
-
-Set the OpenResty version (I use newest and stable release):
-
-```bash
-export ngx_version="1.15.8.1"
-```
-
-Set temporary variables:
-
-```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/openresty-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
-```
-
-Create directories:
-
-```bash
-for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
-
-  mkdir "$i"
-
-done
-```
-
-###### Install or build dependencies
-
-  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support. In addition, LuaJIT comes with OpenResty.
-
-**Install prebuilt packages, export variables and set symbolic link:**
-
-```bash
-# It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
-
-# In this example we use sources for all below packages so we do not install them:
-yum install openssl-devel zlib-devel pcre-devel
-```
-
-  > Remember to build [`sregex`](#sregex) also if you use above steps.
-
-**Or download and compile them:**
-
-PCRE:
-
-```bash
-cd "${ngx_src}"
-
-export pcre_version="8.42"
-
-export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
-
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
-
-cd "$PCRE_SRC"
-
-# Add to compile with debugging symbols:
-#   CFLAGS='-O0 -g' ./configure
-./configure
-
-make -j2 && make test
-make install
-```
-
-Zlib:
-
-```bash
-# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead of an original Zlib (zlib.net), but both installation methods are similar:
-cd "${ngx_src}"
-
-export ZLIB_SRC="${ngx_src}/zlib"
-export ZLIB_LIB="/usr/local/lib"
-export ZLIB_INC="/usr/local/include"
-
-# For original Zlib:
-#   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
-#   cd "${ZLIB_SRC}-${zlib_version}"
-
-# For Cloudflare Zlib:
-git clone --depth 1 https://github.com/cloudflare/zlib
-
-cd "$ZLIB_SRC"
-
-./configure
-
-make -j2 && make test
-make install
-```
-
-OpenSSL:
-
-```bash
-cd "${ngx_src}"
-
-export openssl_version="1.1.1b"
-
-export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
-export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
-export OPENSSL_LIB="${OPENSSL_DIR}/lib"
-export OPENSSL_INC="${OPENSSL_DIR}/include"
-
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
-
-cd "${ngx_src}/openssl-${openssl_version}"
-
-# Please run this and add as a compiler param:
-export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
-
-for _cc_opt in "${__GCC_SSL[@]}" ; do
-
-    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
-    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
-
-  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
-
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
-
-  fi
-
-done
-
-# Add to compile with debugging symbols:
-#   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
-
-make -j2 && make test
-make install
-
-# Setup PATH environment variables:
-cat > /etc/profile.d/openssl.sh << __EOF__
-#!/bin/sh
-export PATH=${OPENSSL_DIR}/bin:${PATH}
-export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
-__EOF__
-
-chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
-
-# To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
-
-cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-${OPENSSL_DIR}/lib
-__EOF__
-```
-
-<a id="sregex"></a>sregex:
-
-  > Required for `replace-filter-nginx-module` module.
-
-```bash
-cd "${ngx_src}"
-
-git clone --depth 1 https://github.com/openresty/sregex
-
-cd "${ngx_src}/sregex"
-
-make && make install
-```
-
-jemalloc:
-
-  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
-
-```bash
-cd "${ngx_src}"
-
-export JEMALLOC_SRC="/usr/local/src/jemalloc"
-export JEMALLOC_INC="/usr/local/include/jemalloc"
-
-git clone --depth 1 https://github.com/jemalloc/jemalloc
-
-cd "$JEMALLOC_SRC"
-
-./autogen.sh
-
-make && make install
-```
-
-Update links and cache to the shared libraries for both types of installation:
-
-```bash
-ldconfig
-```
-
-###### Get OpenResty sources
-
-```bash
-cd "${ngx_base}"
-
-wget https://openresty.org/download/openresty-${ngx_version}.tar.gz
-
-tar zxvf openresty-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
-```
-
-###### Download 3rd party modules
-
-```bash
-cd "${ngx_modules}"
-
-for i in \
-https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/vozlt/nginx-module-sysguard \
-https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
-https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
-https://github.com/vozlt/nginx-module-vts \
-https://github.com/google/ngx_brotli ; do
-
-  git clone --depth 1 "$i"
-
-done
-
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
-mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
-```
-
-For `ngx_brotli`:
-
-```bash
-cd "${ngx_modules}/ngx_brotli"
-
-git submodule update --init
-```
-
-I also use some modules from Tengine:
-
-- `ngx_backtrace_module`
-- `ngx_debug_pool`
-- `ngx_debug_timer`
-- `ngx_http_upstream_check_module`
-- `ngx_http_footer_filter_module`
-
-```bash
-cd "${ngx_modules}"
-
-git clone --depth 1 https://github.com/alibaba/tengine
-```
-
-If you use NAXSI:
-
-```bash
-cd "${ngx_modules}"
-
-git clone --depth 1 https://github.com/nbs-system/naxsi
-```
-
-###### Build OpenResty
-
-```bash
-cd "${ngx_master}"
-
-# - you can also build OpenResty without 3rd party modules
-# - remember about compiler and linker options
-# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
-# - add to compile with debugging symbols: -O0 -g
-#   - and remove -D_FORTIFY_SOURCE=2 if you use above
-./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
-            --sbin-path=/usr/sbin/nginx \
-            --pid-path=/var/run/nginx.pid \
-            --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --http-client-body-temp-path=/var/cache/nginx/client_temp \
-            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-compat \
-            --with-debug \
-            --with-file-aio \
-            --with-threads \
-            --with-stream \
-            --with-stream_geoip_module \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_degradation_module \
-            --with-http_geoip_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_image_filter_module \
-            --with-http_perl_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_slice_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
-            --with-google_perftools_module \
-            --with-luajit \
-            --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
-            --with-pcre=${PCRE_SRC} \
-            --with-pcre-jit \
-            --with-zlib=${ZLIB_SRC} \
-            --without-http-cache \
-            --without-http_memcached_module \
-            --without-http_redis2_module \
-            --without-http_redis_module \
-            --without-http_rds_json_module \
-            --without-http_rds_csv_module \
-            --without-lua_redis_parser \
-            --without-lua_rds_parser \
-            --without-lua_resty_redis \
-            --without-lua_resty_memcached \
-            --without-lua_resty_mysql \
-            --without-lua_resty_websocket \
-            --without-mail_pop3_module \
-            --without-mail_imap_module \
-            --without-mail_smtp_module \
-            --without-http_fastcgi_module \
-            --without-http_scgi_module \
-            --without-http_uwsgi_module \
-            --add-module=${ngx_modules}/nginx-access-plus/src/c \
-            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
-            --add-module=${ngx_modules}/nginx-module-vts \
-            --add-module=${ngx_modules}/ngx_brotli \
-            --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
-            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
-            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
-            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
-            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
-            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
-            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
-            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
-            --add-dynamic-module=${ngx_modules}/delay-module \
-            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O2 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf" \
-            --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-
-make && make test
-make install
-
-ldconfig
-```
-
-Check OpenResty version:
-
-```bash
-nginx -v
-nginx version: openresty/1.15.8.1
-```
-
-And list all files in `/etc/nginx`:
-
-```bash
-.
-├── bin
-│   ├── md2pod.pl
-│   ├── nginx-xml2pod
-│   ├── openresty -> /usr/sbin/nginx
-│   ├── opm
-│   ├── resty
-│   ├── restydoc
-│   └── restydoc-index
-├── COPYRIGHT
-├── fastcgi.conf
-├── fastcgi.conf.default
-├── fastcgi_params
-├── fastcgi_params.default
-├── koi-utf
-├── koi-win
-├── luajit
-│   ├── bin
-│   │   ├── luajit -> luajit-2.1.0-beta3
-│   │   └── luajit-2.1.0-beta3
-│   ├── include
-│   │   └── luajit-2.1
-│   │       ├── lauxlib.h
-│   │       ├── luaconf.h
-│   │       ├── lua.h
-│   │       ├── lua.hpp
-│   │       ├── luajit.h
-│   │       └── lualib.h
-│   ├── lib
-│   │   ├── libluajit-5.1.a
-│   │   ├── libluajit-5.1.so -> libluajit-5.1.so.2.1.0
-│   │   ├── libluajit-5.1.so.2 -> libluajit-5.1.so.2.1.0
-│   │   ├── libluajit-5.1.so.2.1.0
-│   │   ├── lua
-│   │   │   └── 5.1
-│   │   └── pkgconfig
-│   │       └── luajit.pc
-│   └── share
-│       ├── lua
-│       │   └── 5.1
-│       ├── luajit-2.1.0-beta3
-│       │   └── jit
-│       │       ├── bc.lua
-│       │       ├── bcsave.lua
-│       │       ├── dis_arm64be.lua
-│       │       ├── dis_arm64.lua
-│       │       ├── dis_arm.lua
-│       │       ├── dis_mips64el.lua
-│       │       ├── dis_mips64.lua
-│       │       ├── dis_mipsel.lua
-│       │       ├── dis_mips.lua
-│       │       ├── dis_ppc.lua
-│       │       ├── dis_x64.lua
-│       │       ├── dis_x86.lua
-│       │       ├── dump.lua
-│       │       ├── p.lua
-│       │       ├── v.lua
-│       │       ├── vmdef.lua
-│       │       └── zone.lua
-│       └── man
-│           └── man1
-│               └── luajit.1
-├── lualib
-│   ├── cjson.so
-│   ├── librestysignal.so
-│   ├── ngx
-│   │   ├── balancer.lua
-│   │   ├── base64.lua
-│   │   ├── errlog.lua
-│   │   ├── ocsp.lua
-│   │   ├── pipe.lua
-│   │   ├── process.lua
-│   │   ├── re.lua
-│   │   ├── resp.lua
-│   │   ├── semaphore.lua
-│   │   ├── ssl
-│   │   │   └── session.lua
-│   │   └── ssl.lua
-│   ├── resty
-│   │   ├── aes.lua
-│   │   ├── core
-│   │   │   ├── base64.lua
-│   │   │   ├── base.lua
-│   │   │   ├── ctx.lua
-│   │   │   ├── exit.lua
-│   │   │   ├── hash.lua
-│   │   │   ├── misc.lua
-│   │   │   ├── ndk.lua
-│   │   │   ├── phase.lua
-│   │   │   ├── regex.lua
-│   │   │   ├── request.lua
-│   │   │   ├── response.lua
-│   │   │   ├── shdict.lua
-│   │   │   ├── time.lua
-│   │   │   ├── uri.lua
-│   │   │   ├── utils.lua
-│   │   │   ├── var.lua
-│   │   │   └── worker.lua
-│   │   ├── core.lua
-│   │   ├── dns
-│   │   │   └── resolver.lua
-│   │   ├── limit
-│   │   │   ├── conn.lua
-│   │   │   ├── count.lua
-│   │   │   ├── req.lua
-│   │   │   └── traffic.lua
-│   │   ├── lock.lua
-│   │   ├── lrucache
-│   │   │   └── pureffi.lua
-│   │   ├── lrucache.lua
-│   │   ├── md5.lua
-│   │   ├── random.lua
-│   │   ├── sha1.lua
-│   │   ├── sha224.lua
-│   │   ├── sha256.lua
-│   │   ├── sha384.lua
-│   │   ├── sha512.lua
-│   │   ├── sha.lua
-│   │   ├── shell.lua
-│   │   ├── signal.lua
-│   │   ├── string.lua
-│   │   ├── upload.lua
-│   │   └── upstream
-│   │       └── healthcheck.lua
-│   └── tablepool.lua
-├── mime.types
-├── mime.types.default
-├── modules
-│   ├── ngx_http_delay_module.so
-│   ├── ngx_http_naxsi_module.so
-│   ├── ngx_http_replace_filter_module.so
-│   └── ngx_http_sysguard_module.so
-├── nginx
-│   └── html
-│       ├── 50x.html
-│       └── index.html
-├── nginx.conf
-├── nginx.conf.default
-├── pod
-│   ├── array-var-nginx-module-0.05
-│   │   └── array-var-nginx-module-0.05.pod
-│   ├── drizzle-nginx-module-0.1.11
-│   │   └── drizzle-nginx-module-0.1.11.pod
-│   ├── echo-nginx-module-0.61
-│   │   └── echo-nginx-module-0.61.pod
-│   ├── encrypted-session-nginx-module-0.08
-│   │   └── encrypted-session-nginx-module-0.08.pod
-│   ├── form-input-nginx-module-0.12
-│   │   └── form-input-nginx-module-0.12.pod
-│   ├── headers-more-nginx-module-0.33
-│   │   └── headers-more-nginx-module-0.33.pod
-│   ├── iconv-nginx-module-0.14
-│   │   └── iconv-nginx-module-0.14.pod
-│   ├── lua-5.1.5
-│   │   └── lua-5.1.5.pod
-│   ├── lua-cjson-2.1.0.7
-│   │   └── lua-cjson-2.1.0.7.pod
-│   ├── luajit-2.1
-│   │   ├── changes.pod
-│   │   ├── contact.pod
-│   │   ├── ext_c_api.pod
-│   │   ├── extensions.pod
-│   │   ├── ext_ffi_api.pod
-│   │   ├── ext_ffi.pod
-│   │   ├── ext_ffi_semantics.pod
-│   │   ├── ext_ffi_tutorial.pod
-│   │   ├── ext_jit.pod
-│   │   ├── ext_profiler.pod
-│   │   ├── faq.pod
-│   │   ├── install.pod
-│   │   ├── luajit-2.1.pod
-│   │   ├── running.pod
-│   │   └── status.pod
-│   ├── luajit-2.1-20190507
-│   │   └── luajit-2.1-20190507.pod
-│   ├── lua-rds-parser-0.06
-│   ├── lua-redis-parser-0.13
-│   │   └── lua-redis-parser-0.13.pod
-│   ├── lua-resty-core-0.1.17
-│   │   ├── lua-resty-core-0.1.17.pod
-│   │   ├── ngx.balancer.pod
-│   │   ├── ngx.base64.pod
-│   │   ├── ngx.errlog.pod
-│   │   ├── ngx.ocsp.pod
-│   │   ├── ngx.pipe.pod
-│   │   ├── ngx.process.pod
-│   │   ├── ngx.re.pod
-│   │   ├── ngx.resp.pod
-│   │   ├── ngx.semaphore.pod
-│   │   ├── ngx.ssl.pod
-│   │   └── ngx.ssl.session.pod
-│   ├── lua-resty-dns-0.21
-│   │   └── lua-resty-dns-0.21.pod
-│   ├── lua-resty-limit-traffic-0.06
-│   │   ├── lua-resty-limit-traffic-0.06.pod
-│   │   ├── resty.limit.conn.pod
-│   │   ├── resty.limit.count.pod
-│   │   ├── resty.limit.req.pod
-│   │   └── resty.limit.traffic.pod
-│   ├── lua-resty-lock-0.08
-│   │   └── lua-resty-lock-0.08.pod
-│   ├── lua-resty-lrucache-0.09
-│   │   └── lua-resty-lrucache-0.09.pod
-│   ├── lua-resty-memcached-0.14
-│   │   └── lua-resty-memcached-0.14.pod
-│   ├── lua-resty-mysql-0.21
-│   │   └── lua-resty-mysql-0.21.pod
-│   ├── lua-resty-redis-0.27
-│   │   └── lua-resty-redis-0.27.pod
-│   ├── lua-resty-shell-0.02
-│   │   └── lua-resty-shell-0.02.pod
-│   ├── lua-resty-signal-0.02
-│   │   └── lua-resty-signal-0.02.pod
-│   ├── lua-resty-string-0.11
-│   │   └── lua-resty-string-0.11.pod
-│   ├── lua-resty-upload-0.10
-│   │   └── lua-resty-upload-0.10.pod
-│   ├── lua-resty-upstream-healthcheck-0.06
-│   │   └── lua-resty-upstream-healthcheck-0.06.pod
-│   ├── lua-resty-websocket-0.07
-│   │   └── lua-resty-websocket-0.07.pod
-│   ├── lua-tablepool-0.01
-│   │   └── lua-tablepool-0.01.pod
-│   ├── memc-nginx-module-0.19
-│   │   └── memc-nginx-module-0.19.pod
-│   ├── nginx
-│   │   ├── accept_failed.pod
-│   │   ├── beginners_guide.pod
-│   │   ├── chunked_encoding_from_backend.pod
-│   │   ├── configure.pod
-│   │   ├── configuring_https_servers.pod
-│   │   ├── contributing_changes.pod
-│   │   ├── control.pod
-│   │   ├── converting_rewrite_rules.pod
-│   │   ├── daemon_master_process_off.pod
-│   │   ├── debugging_log.pod
-│   │   ├── development_guide.pod
-│   │   ├── events.pod
-│   │   ├── example.pod
-│   │   ├── faq.pod
-│   │   ├── freebsd_tuning.pod
-│   │   ├── hash.pod
-│   │   ├── howto_build_on_win32.pod
-│   │   ├── install.pod
-│   │   ├── license_copyright.pod
-│   │   ├── load_balancing.pod
-│   │   ├── nginx_dtrace_pid_provider.pod
-│   │   ├── nginx.pod
-│   │   ├── ngx_core_module.pod
-│   │   ├── ngx_google_perftools_module.pod
-│   │   ├── ngx_http_access_module.pod
-│   │   ├── ngx_http_addition_module.pod
-│   │   ├── ngx_http_api_module_head.pod
-│   │   ├── ngx_http_auth_basic_module.pod
-│   │   ├── ngx_http_auth_jwt_module.pod
-│   │   ├── ngx_http_auth_request_module.pod
-│   │   ├── ngx_http_autoindex_module.pod
-│   │   ├── ngx_http_browser_module.pod
-│   │   ├── ngx_http_charset_module.pod
-│   │   ├── ngx_http_core_module.pod
-│   │   ├── ngx_http_dav_module.pod
-│   │   ├── ngx_http_empty_gif_module.pod
-│   │   ├── ngx_http_f4f_module.pod
-│   │   ├── ngx_http_fastcgi_module.pod
-│   │   ├── ngx_http_flv_module.pod
-│   │   ├── ngx_http_geoip_module.pod
-│   │   ├── ngx_http_geo_module.pod
-│   │   ├── ngx_http_grpc_module.pod
-│   │   ├── ngx_http_gunzip_module.pod
-│   │   ├── ngx_http_gzip_module.pod
-│   │   ├── ngx_http_gzip_static_module.pod
-│   │   ├── ngx_http_headers_module.pod
-│   │   ├── ngx_http_hls_module.pod
-│   │   ├── ngx_http_image_filter_module.pod
-│   │   ├── ngx_http_index_module.pod
-│   │   ├── ngx_http_js_module.pod
-│   │   ├── ngx_http_keyval_module.pod
-│   │   ├── ngx_http_limit_conn_module.pod
-│   │   ├── ngx_http_limit_req_module.pod
-│   │   ├── ngx_http_log_module.pod
-│   │   ├── ngx_http_map_module.pod
-│   │   ├── ngx_http_memcached_module.pod
-│   │   ├── ngx_http_mirror_module.pod
-│   │   ├── ngx_http_mp4_module.pod
-│   │   ├── ngx_http_perl_module.pod
-│   │   ├── ngx_http_proxy_module.pod
-│   │   ├── ngx_http_random_index_module.pod
-│   │   ├── ngx_http_realip_module.pod
-│   │   ├── ngx_http_referer_module.pod
-│   │   ├── ngx_http_rewrite_module.pod
-│   │   ├── ngx_http_scgi_module.pod
-│   │   ├── ngx_http_secure_link_module.pod
-│   │   ├── ngx_http_session_log_module.pod
-│   │   ├── ngx_http_slice_module.pod
-│   │   ├── ngx_http_spdy_module.pod
-│   │   ├── ngx_http_split_clients_module.pod
-│   │   ├── ngx_http_ssi_module.pod
-│   │   ├── ngx_http_ssl_module.pod
-│   │   ├── ngx_http_status_module.pod
-│   │   ├── ngx_http_stub_status_module.pod
-│   │   ├── ngx_http_sub_module.pod
-│   │   ├── ngx_http_upstream_conf_module.pod
-│   │   ├── ngx_http_upstream_hc_module.pod
-│   │   ├── ngx_http_upstream_module.pod
-│   │   ├── ngx_http_userid_module.pod
-│   │   ├── ngx_http_uwsgi_module.pod
-│   │   ├── ngx_http_v2_module.pod
-│   │   ├── ngx_http_xslt_module.pod
-│   │   ├── ngx_mail_auth_http_module.pod
-│   │   ├── ngx_mail_core_module.pod
-│   │   ├── ngx_mail_imap_module.pod
-│   │   ├── ngx_mail_pop3_module.pod
-│   │   ├── ngx_mail_proxy_module.pod
-│   │   ├── ngx_mail_smtp_module.pod
-│   │   ├── ngx_mail_ssl_module.pod
-│   │   ├── ngx_stream_access_module.pod
-│   │   ├── ngx_stream_core_module.pod
-│   │   ├── ngx_stream_geoip_module.pod
-│   │   ├── ngx_stream_geo_module.pod
-│   │   ├── ngx_stream_js_module.pod
-│   │   ├── ngx_stream_keyval_module.pod
-│   │   ├── ngx_stream_limit_conn_module.pod
-│   │   ├── ngx_stream_log_module.pod
-│   │   ├── ngx_stream_map_module.pod
-│   │   ├── ngx_stream_proxy_module.pod
-│   │   ├── ngx_stream_realip_module.pod
-│   │   ├── ngx_stream_return_module.pod
-│   │   ├── ngx_stream_split_clients_module.pod
-│   │   ├── ngx_stream_ssl_module.pod
-│   │   ├── ngx_stream_ssl_preread_module.pod
-│   │   ├── ngx_stream_upstream_hc_module.pod
-│   │   ├── ngx_stream_upstream_module.pod
-│   │   ├── ngx_stream_zone_sync_module.pod
-│   │   ├── request_processing.pod
-│   │   ├── server_names.pod
-│   │   ├── stream_processing.pod
-│   │   ├── switches.pod
-│   │   ├── syntax.pod
-│   │   ├── sys_errlist.pod
-│   │   ├── syslog.pod
-│   │   ├── variables_in_config.pod
-│   │   ├── websocket.pod
-│   │   ├── welcome_nginx_facebook.pod
-│   │   └── windows.pod
-│   ├── ngx_coolkit-0.2
-│   ├── ngx_devel_kit-0.3.1rc1
-│   │   └── ngx_devel_kit-0.3.1rc1.pod
-│   ├── ngx_lua-0.10.15
-│   │   └── ngx_lua-0.10.15.pod
-│   ├── ngx_lua_upstream-0.07
-│   │   └── ngx_lua_upstream-0.07.pod
-│   ├── ngx_postgres-1.0
-│   │   ├── ngx_postgres-1.0.pod
-│   │   └── todo.pod
-│   ├── ngx_stream_lua-0.0.7
-│   │   ├── dev_notes.pod
-│   │   └── ngx_stream_lua-0.0.7.pod
-│   ├── opm-0.0.5
-│   │   └── opm-0.0.5.pod
-│   ├── rds-csv-nginx-module-0.09
-│   │   └── rds-csv-nginx-module-0.09.pod
-│   ├── rds-json-nginx-module-0.15
-│   │   └── rds-json-nginx-module-0.15.pod
-│   ├── redis2-nginx-module-0.15
-│   │   └── redis2-nginx-module-0.15.pod
-│   ├── redis-nginx-module-0.3.7
-│   ├── resty-cli-0.24
-│   │   └── resty-cli-0.24.pod
-│   ├── set-misc-nginx-module-0.32
-│   │   └── set-misc-nginx-module-0.32.pod
-│   ├── srcache-nginx-module-0.31
-│   │   └── srcache-nginx-module-0.31.pod
-│   └── xss-nginx-module-0.06
-│       └── xss-nginx-module-0.06.pod
-├── resty.index
-├── scgi_params
-├── scgi_params.default
-├── site
-│   ├── lualib
-│   ├── manifest
-│   └── pod
-├── uwsgi_params
-├── uwsgi_params.default
-└── win-utf
-
-78 directories, 305 files
-```
-
-###### Post installation tasks
-
-  > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
-
-</details>
-
-#### Install Tengine on Ubuntu 18.04
-
-  > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
-
-- Official github repository: [Tengine](https://github.com/alibaba/tengine)
-- Official documentation: [Tengine Documentation](https://tengine.taobao.org/documentation.html)
-
-Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
-
-The build and installation process is very similar to [Install Nginx on Centos 7](#install-nginx-on-centos-7). However, I will only specify the most important changes.
-
-<details>
-<summary><b>Show step-by-step Tengine installation</b></summary><br>
-
-* [Pre installation tasks](#pre-installation-tasks-2)
-* [Install or build dependencies](#install-or-build-dependencies-2)
-* [Get Tengine sources](#get-tengine-sources)
-* [Download 3rd party modules](#download-3rd-party-modules-2)
-* [Build Tengine](#build-tengine)
-* [Post installation tasks](#post-installation-tasks-2)
-
-###### Pre installation tasks
-
-Set the Tengine version (I use newest and stable release):
-
-```bash
-export ngx_version="2.3.0"
-```
-
-Set temporary variables:
-
-```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/tengine-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
-```
-
-Create directories:
-
-```bash
-for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
-
-  mkdir "$i"
-
-done
-```
-
-###### Install or build dependencies
-
-Install prebuilt packages, export variables and set symbolic link:
-
-```bash
-apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
-
-# In this example we don't use zlib sources:
-apt-get install zlib1g-dev
-```
-
-PCRE:
-
-```bash
-cd "${ngx_src}"
-
-export pcre_version="8.42"
-
-export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
-
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
-
-cd "$PCRE_SRC"
-
-# Add to compile with debugging symbols:
-#   CFLAGS='-O0 -g' ./configure
-./configure
-
-make -j2 && make test
-make install
-```
-
-OpenSSL:
-
-```bash
-cd "${ngx_src}"
-
-export openssl_version="1.1.1b"
-
-export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
-export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
-export OPENSSL_LIB="${OPENSSL_DIR}/lib"
-export OPENSSL_INC="${OPENSSL_DIR}/include"
-
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
-
-cd "${ngx_src}/openssl-${openssl_version}"
-
-# Please run this and add as a compiler param:
-export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
-
-for _cc_opt in "${__GCC_SSL[@]}" ; do
-
-    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
-    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
-
-  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
-
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
-
-  fi
-
-done
-
-# Add to compile with debugging symbols:
-#   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
-
-make -j2 && make test
-make install
-
-# Setup PATH environment variables:
-cat > /etc/profile.d/openssl.sh << __EOF__
-#!/bin/sh
-export PATH=${OPENSSL_DIR}/bin:${PATH}
-export LD_LIBRARY_PATH=${OPENSSL_DIR}/lib:${LD_LIBRARY_PATH}
-__EOF__
-
-chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
-
-# To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
-
-cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
-${OPENSSL_DIR}/lib
-__EOF__
-```
-
-LuaJIT:
-
-```bash
-# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
-cd "${ngx_src}"
-
-export LUAJIT_SRC="${ngx_src}/luajit2"
-export LUAJIT_LIB="/usr/local/lib"
-export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
-# For original LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0 luajit2
-#   cd "$LUAJIT_SRC"
-
-# For OpenResty's LuaJIT:
-git clone --depth 1 https://github.com/openresty/luajit2
-
-cd "$LUAJIT_SRC"
-
-# Add to compile with debugging symbols:
-#   CFLAGS='-g' make ...
-make && make install
-
-ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
-```
-
-sregex:
-
-  > Required for `replace-filter-nginx-module` module.
-
-```bash
-cd "${ngx_src}"
-
-git clone --depth 1 https://github.com/openresty/sregex
-
-cd "${ngx_src}/sregex"
-
-make && make install
-```
-
-jemalloc:
-
-  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
-
-```bash
-cd "${ngx_src}"
-
-export JEMALLOC_SRC="/usr/local/src/jemalloc"
-export JEMALLOC_INC="/usr/local/include/jemalloc"
-
-git clone --depth 1 https://github.com/jemalloc/jemalloc
-
-cd "$JEMALLOC_SRC"
-
-./autogen.sh
-
-make && make install
-```
-
-Update links and cache to the shared libraries for both types of installation:
-
-```bash
-ldconfig
-```
-
-###### Get Tengine sources
-
-```bash
-cd "${ngx_base}"
-
-wget https://tengine.taobao.org/download/tengine-${ngx_version}.tar.gz
-
-# or alternative:
-#   git clone --depth 1 https://github.com/alibaba/tengine master
-
-tar zxvf tengine-${ngx_version}.tar.gz -C "${ngx_master}"
-```
-
-###### Download 3rd party modules
-
-  > Not all modules from [this](#3rd-party-modules) section working properly with Tengine (e.g. `ndk_http_module` and other dependent on it).
-
-```bash
-cd "${ngx_modules}"
-
-for i in \
-https://github.com/openresty/echo-nginx-module \
-https://github.com/openresty/headers-more-nginx-module \
-https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
-https://github.com/vozlt/nginx-module-vts \
-https://github.com/google/ngx_brotli ; do
-
-  git clone --depth 1 "$i"
-
-done
-
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
-mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
-```
-
-For `ngx_brotli`:
-
-```bash
-cd "${ngx_modules}/ngx_brotli"
-
-git submodule update --init
-```
-
-If you use NAXSI:
-
-```bash
-cd "${ngx_modules}"
-
-git clone --depth 1 https://github.com/nbs-system/naxsi
-```
-
-###### Build Tengine
-
-```bash
-cd "${ngx_master}"
-
-# - you can also build Tengine without 3rd party modules
-# - remember about compiler and linker options
-# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
-# - add to compile with debugging symbols: -O0 -g
-#   - and remove -D_FORTIFY_SOURCE=2 if you use above
-./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
-            --sbin-path=/usr/sbin/nginx \
-            --pid-path=/var/run/nginx.pid \
-            --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --http-client-body-temp-path=/var/cache/nginx/client_temp \
-            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-            --with-compat \
-            --with-debug \
-            --with-file-aio \
-            --with-threads \
-            --with-stream \
-            --with-stream_geoip_module \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_degradation_module \
-            --with-http_geoip_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_image_filter_module \
-            --with-http_lua_module \
-            --with-http_perl_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_secure_link_module \
-            --with-http_ssl_module \
-            --with-http_stub_status_module \
-            --with-http_sub_module \
-            --with-http_v2_module \
-            --with-google_perftools_module \
-            --with-openssl=${OPENSSL_SRC} \
-            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
-            --with-pcre=${PCRE_SRC} \
-            --with-pcre-jit \
-            --with-jemalloc=${JEMALLOC_SRC} \
-            --without-http-cache \
-            --without-http_memcached_module \
-            --without-mail_pop3_module \
-            --without-mail_imap_module \
-            --without-mail_smtp_module \
-            --without-http_fastcgi_module \
-            --without-http_scgi_module \
-            --without-http_uwsgi_module \
-            --without-http_upstream_keepalive_module \
-            --add-module=${ngx_master}/modules/ngx_backtrace_module \
-            --add-module=${ngx_master}/modules/ngx_debug_pool \
-            --add-module=${ngx_master}/modules/ngx_debug_timer \
-            --add-module=${ngx_master}/modules/ngx_http_footer_filter_module \
-            --add-module=${ngx_master}/modules/ngx_http_lua_module \
-            --add-module=${ngx_master}/modules/ngx_http_proxy_connect_module \
-            --add-module=${ngx_master}/modules/ngx_http_reqstat_module \
-            --add-module=${ngx_master}/modules/ngx_http_slice_module \
-            --add-module=${ngx_master}/modules/ngx_http_sysguard_module \
-            --add-module=${ngx_master}/modules/ngx_http_trim_filter_module \
-            --add-module=${ngx_master}/modules/ngx_http_upstream_check_module \
-            --add-module=${ngx_master}/modules/ngx_http_upstream_consistent_hash_module \
-            --add-module=${ngx_master}/modules/ngx_http_upstream_dynamic_module \
-            --add-module=${ngx_master}/modules/ngx_http_upstream_keepalive_module \
-            --add-module=${ngx_master}/modules/ngx_http_upstream_session_sticky_module \
-            --add-module=${ngx_master}/modules/ngx_http_user_agent_module \
-            --add-module=${ngx_master}/modules/ngx_slab_stat \
-            --add-module=${ngx_modules}/nginx-access-plus/src/c \
-            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
-            --add-module=${ngx_modules}/nginx-module-vts \
-            --add-module=${ngx_modules}/ngx_brotli \
-            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
-            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
-            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
-            --add-dynamic-module=${ngx_modules}/delay-module \
-            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
-            --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC" \
-            --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
-
-make -j2 && make test
-make install
-
-ldconfig
-```
-
-Check Tengine version:
-
-```bash
-nginx -v
-Tengine version: Tengine/2.3.0
-nginx version: nginx/1.15.9
-```
-
-And list all files in `/etc/nginx`:
-
-```bash
-tree
-.
-├── fastcgi.conf
-├── fastcgi.conf.default
-├── fastcgi_params
-├── fastcgi_params.default
-├── html
-│   ├── 50x.html
-│   └── index.html
-├── koi-utf
-├── koi-win
-├── mime.types
-├── mime.types.default
-├── modules
-│   ├── ngx_http_delay_module.so
-│   ├── ngx_http_echo_module.so
-│   ├── ngx_http_headers_more_filter_module.so
-│   ├── ngx_http_naxsi_module.so
-│   └── ngx_http_replace_filter_module.so
-├── nginx.conf
-├── nginx.conf.default
-├── scgi_params
-├── scgi_params.default
-├── uwsgi_params
-├── uwsgi_params.default
-└── win-utf
-
-2 directories, 22 files
-```
-
-###### Post installation tasks
-
-  > Check all post installation tasks from [Nginx on CentOS 7 - Post installation tasks](#post-installation-tasks) section.
-
-</details>
-
 # Base Rules
 
 These are the basic set of rules to keep NGINX in good condition.
@@ -9507,7 +9513,7 @@ error_log /var/log/nginx/error-debug.log debug;
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 - [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
 
-#### :beginner: Disable daemon, master process and all workers except one
+#### :beginner: Disable daemon, master process, and all workers except one
 
 ###### Rationale
 
@@ -11092,7 +11098,7 @@ send_timeout 10s;
 
 One of the frequent uses of the NGINX is setting it up as a proxy server.
 
-#### :beginner: Use pass directive compatible with backend layer protocol
+#### :beginner: Use pass directive compatible with backend protocol
 
 ###### Rationale
 
