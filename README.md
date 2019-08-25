@@ -392,6 +392,7 @@ These essential documents should be the main source of knowledge for you:
 
 - **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
+- **[Development guide](http://nginx.org/en/docs/dev/development_guide.html)**
 
 In addition, I would like to recommend two great docs focuses on the concept of the HTTP protocol:
 
@@ -882,7 +883,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 ## Printable hardening cheatsheets
 
-I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200). They are based on recipes from this handbook:
+I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200) based on recipes from this handbook:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
@@ -904,7 +905,9 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 ## Fully automatic installation
 
-I created a set of scripts for unattended installation of NGINX. For more information please see [Installation from source - Automatic installation](#automatic-installation) chapter.
+I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
+
+For more information please see [Installation from source - Automatic installation](#automatic-installation) chapter.
 
 # Books
 
@@ -998,6 +1001,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/"><b>Nginx Wiki</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Admin's Guide</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/"><b>Nginx Pitfalls and Common Mistakes</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://nginx.org/en/docs/dev/development_guide.html"><b>Development guide</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://forum.nginx.org/"><b>Nginx Forum</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mailman.nginx.org/mailman/listinfo/nginx"><b>Nginx Mailing List</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
@@ -1417,6 +1421,18 @@ Global/Main Context
         |
         +-----» Mail Context
 ```
+
+NGINX also provides other contexts (mainly used for mapping) such as:
+
+- `map` - is used to set the value of a variable depending on the value of another variable. It provides a mapping of one variable’s values to determine what the second variable should be set to
+
+- `geo` - is used to specify a mapping. However, this mapping is specifically used to categorize client IP addresses. It sets the value of a variable depending on the connecting IP address
+
+- `types` - is used to map MIME types to the file extensions that should be associated with them
+
+- `if` - provide conditional processing of directives defined within, execute the instructions contained if a given test returns `true`
+
+- `limit_except` - is used to restrict the use of certain HTTP methods within a location context
 
 Also look at the graphic below. It presents the most important contexts with reference to the configuration:
 
@@ -2094,6 +2110,10 @@ You may feel lost now (me too...) so I let myself put this great and simple prev
 
 <sup><i>This infographic comes from [Inside NGINX](https://www.nginx.com/resources/library/infographic-inside-nginx/) official library.</i></sup>
 
+On every phase you can register any number of your handlers. Each phase has a list of handlers associated with it.
+
+I recommend a great explanation about [HTTP request processing phases in Nginx](http://scm.zoomquiet.top/data/20120312173425/index.html) and, of course, official [Development guide](http://nginx.org/en/docs/dev/development_guide.html).
+
 #### Server blocks logic
 
   > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` and `server_name` directives to bind to TCP sockets.
@@ -2687,9 +2707,13 @@ The `ngx_http_rewrite_module` also provides additional directives:
   }
   ```
 
-- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired (see [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)). The NGINX docs say also:
+- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. The NGINX docs say also:
 
   > _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
+
+  You should also remember about this:
+
+  > _> The `if` context in NGINX is provided by the rewrite module and this is the primary intended use of this context. Since NGINX will test conditions of a request with many other purpose-made directives, `if` **should not** be used for most forms of conditional execution. This is such an important note that the NGINX community has created a page called [if is evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)._
 
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
@@ -11275,7 +11299,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 
   > `X-Forwarded-Proto` can be set by the reverse proxy to tell the app whether it is HTTPS or HTTP or even an invalid name.
 
-  > The HTTP scheme (i.e. HTTP, HTTPS) variable evaluated only on demand (used only for the current request).
+  > The scheme (i.e. HTTP, HTTPS) variable evaluated only on demand (used only for the current request).
 
   > Setting the `$scheme` variable will cause distortions if it uses more than one proxy along the way. For example: if the client go to the `https://example.com`, the proxy stores the scheme value as HTTPS. If the communication between the proxy and the next-level proxy takes place over HTTP, then the backend sees the scheme as HTTP. So if you set `$scheme` for X-Forwarded-Proto on the next-level proxy, app will see a different value than the one the client came with.
 
