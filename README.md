@@ -86,6 +86,8 @@
   * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
+- **[HTTP basics](#http-basics)
+  * [Request and Response](#request-and-response)
 - **[Helpers](#helpers)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
@@ -523,6 +525,13 @@ Existing chapters:
     - [x] _Mozilla Web Security_
     - [x] _Application Security Wiki_
     - [x] _OWASP ASVS 4.0_
+
+</details>
+
+<details>
+<summary><b>HTTP basics</b></summary><br>
+
+  - _Request and Response_
 
 </details>
 
@@ -1213,6 +1222,70 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/leandromoreira/linux-network-performance-parameters"><b>Learn where some of the network sysctl variables fit into the Linux/Kernel network flow</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
+
+# HTTP basics
+
+HTTP stands for hypertext transfer protocol and is used to transfer data across the Web.
+
+## Request and Response
+
+- all requests originate at the client (e.g. browser)
+- the server responds to a request
+- the requests and responses are in readable text
+- the requests are independent of each other and the server doesn’t need to track the requests
+
+An HTTP client sends an HTTP request to a server in the form of a request message which includes following format:
+
+- a Request-line
+- zero or more header (General|Request|Entity) fields followed by CRLF
+- an empty line (i.e., a line with nothing preceding the CRLF) indicating the end of the header fields
+- optionally a message-body
+
+```
+                  FIELDS OF HTTP REQUEST   PART OF RFC 2616
+-----------------------------------------------------------------
+  Request       = Request-Line              ; Section 5.1
+                  *(( general-header        ; Section 4.5
+                   | request-header         ; Section 5.3
+                   | entity-header ) CRLF)  ; Section 7.1
+                  CRLF
+                  [ message-body ]          ; Section 4.3
+```
+
+Example of form an HTTP request to fetch `index.html` page from the web server running on `example.com`:
+
+```bash
+GET /index.html HTTP/1.1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:64.0) Gecko/20100101 Firefox/64.0
+Host: example.com
+Accept-Language: en-us
+Accept-Encoding: gzip, deflate
+Connection: Keep-Alive
+```
+
+For more information about HTTP requests please see [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Requests](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html).
+
+How to generate a requests?
+
+- `telnet`
+
+  ```bash
+  telnet example.com 80
+  GET /index.html HTTP/1.1
+  Host: example.com
+  ```
+
+- `openssl`
+
+  ```bash
+  openssl s_client -connect example.com:443
+  ...
+  ---
+  GET /index.html HTTP/1.1
+  Host: example.com
+  ```
+
+!!! WORK IN PROGRESS !!!
 
 # Helpers
 
