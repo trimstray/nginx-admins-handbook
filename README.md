@@ -583,6 +583,8 @@ Existing chapters:
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
 
+</details>
+
 <details>
 <summary><b>Helpers</b></summary><br>
 
