@@ -86,7 +86,7 @@
   * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
-- **[HTTP basics](#http-basics)
+- **[HTTP basics](#http-basics)**
   * [Request and Response](#request-and-response)
 - **[NGINX basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
