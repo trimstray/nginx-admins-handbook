@@ -87,7 +87,10 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[HTTP basics](#http-basics)**
-  * [Request and Response](#request-and-response)
+  * [Requests](#requests)
+    * [Request-line](#request-line)
+      * [Methods](#methods)
+    * [Generate requests](#generate-requests)
 - **[NGINX basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
@@ -532,7 +535,18 @@ Existing chapters:
 <details>
 <summary><b>HTTP basics</b></summary><br>
 
-  - [x] _Request and Response_
+  - [ ] _Features and architecture_
+  - [ ] _URI vs URL_
+  - [x] _Requests_
+    - [x] _Request-line_
+      - [x] _Methods_
+      - [ ] _Request-URI_
+    - [ ] _Request header fields_
+    - [x] _Generate requests_
+  - [ ] _Responses_
+    - [ ] _Status-line_
+      - [ ] _Status codes_
+    - [ ] _Response Headeh fields_
 
 </details>
 
@@ -1232,31 +1246,35 @@ _In this ebook you will learn:_
 
 # HTTP basics
 
-HTTP stands for hypertext transfer protocol and is used to transfer data across the Web.
+**Still work in progress**
 
-#### Request and Response
+HTTP stands for hypertext transfer protocol and is used to transfer data across the Web.
 
 - all requests originate at the client (e.g. browser)
 - the server responds to a request
 - the requests and responses are in readable text
 - the requests are independent of each other and the server doesn’t need to track the requests
 
+#### Requests
+
+  > For more information about HTTP requests please see [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Requests](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html).
+
 An HTTP client sends an HTTP request to a server in the form of a request message which includes following format:
 
-- a Request-line
-- zero or more header (General|Request|Entity) fields followed by CRLF
-- an empty line (i.e., a line with nothing preceding the CRLF) indicating the end of the header fields
-- optionally a message-body
+- (1) a Request-line
+- (2) zero or more header (General|Request|Entity) fields followed by CRLF
+- (3) an empty line (e.g. with nothing preceding the CRLF) indicating the end of the header fields
+- (4) optionally a message-body
 
 ```
-                  FIELDS OF HTTP REQUEST   PART OF RFC 2616
------------------------------------------------------------------
-  Request       = Request-Line              ; Section 5.1
-                  *(( general-header        ; Section 4.5
-                   | request-header         ; Section 5.3
-                   | entity-header ) CRLF)  ; Section 7.1
-                  CRLF
-                  [ message-body ]          ; Section 4.3
+                      FIELDS OF HTTP REQUEST       PART OF RFC 2616
+---------------------------------------------------------------------
+  Request       = (1) : Request-line                ; Section 5.1
+                  (2) : *(( general-header          ; Section 4.5
+                          | request-header          ; Section 5.3
+                          | entity-header ) CRLF)   ; Section 7.1
+                  (3)   CRLF
+                  (4)   [ message-body ]            ; Section 4.3
 ```
 
 Example of form an HTTP request to fetch `index.html` page from the web server running on `example.com`:
@@ -1270,7 +1288,84 @@ Accept-Encoding: gzip, deflate
 Connection: Keep-Alive
 ```
 
-For more information about HTTP requests please see [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Requests](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html).
+##### Request-line
+
+The Request-line begins with a method token, followed by the Request-URI and the protocol version, and ending with CRLF. The elements are separated by space SP characters:
+
+```bash
+Request-Line = Method SP Request-URI SP HTTP-Version CRLF
+```
+
+###### Methods
+
+| <b>METHOD</b> | <b>DESCRIPTION</b> |
+| :---:         | :---         |
+| GET | is used to retreive data from a server at the specified resource |
+
+For example, say you have an API with a `/api/v2/users` endpoint. Making a GET request to that endpoint should return a list of all available users.
+
+At a basic level, these things should be validated:
+
+- check that a valid `GET` request returns a 200 status code
+- ensure that a GET request to a specific resource returns the correct data
+
+  > Requests with GET method does not change any data.
+
+| <b>METHOD</b> | <b>DESCRIPTION</b> |
+| :---:         | :---         |
+| POST | is used to send data to the sever to modify and update a resource |
+
+The simplest example is a contact form on a website. When you fill out the inputs in a form and hit Send, that data is put in the response body of the request and sent to the server.
+
+  > Requests with POST method change data on the backend server (by modifying or updating a resource).
+
+Here are some tips for testing POST requests:
+
+- create a resource with a POST request and ensure a 200 status code is returned
+- next, make a GET request for that resource, and ensure the data was saved correctly
+- add tests that ensure POST requests fail with incorrect or ill-formatted data
+
+Modify and update a resource:
+
+```bash
+POST /items/<existing_item> HTTP/1.1
+Host: example.com
+```
+
+The following is an error:
+
+```bash
+POST /items/<new_item> HTTP/1.1
+Host: example.com
+```
+
+| <b>METHOD</b> | <b>DESCRIPTION</b> |
+| :---:         | :---         |
+| PUT | is used to send data to the sever to create or overwrite a resource |
+
+The same PUT request multiple times will always produce the same result.
+
+Check for these things when testing PUT requests:
+
+- repeatedly cally a PUT request always returns the same result (idempotent)
+- after updating a resource with a PUT request, a GET request for that resource should return the new data
+- PUT requests should fail if invalid data is supplied in the request - nothing should be updated
+
+For a new resource:
+
+```bash
+PUT /items/<new_item> HTTP/1.1
+Host: example.com
+```
+
+To overwrite an existing resource:
+
+```bash
+PUT /items/<existing_item> HTTP/1.1
+Host: example.com
+```
+
+##### Generate requests
 
 How to generate a requests?
 
@@ -1285,7 +1380,7 @@ How to generate a requests?
 - `openssl`
 
   ```bash
-  openssl s_client -connect example.com:443
+  openssl s_client -servername example.com -connect example.com:443
   ...
   ---
   GET /index.html HTTP/1.1
