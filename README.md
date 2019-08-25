@@ -1292,8 +1292,6 @@ How to generate a requests?
   Host: example.com
   ```
 
-!!! WORK IN PROGRESS !!!
-
 # NGINX basics
 
 #### Directories and files
