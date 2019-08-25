@@ -88,7 +88,7 @@
   * [Other stuff](#other-stuff)
 - **[HTTP basics](#http-basics)
   * [Request and Response](#request-and-response)
-- **[Helpers](#helpers)**
+- **[NGINX basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
@@ -138,6 +138,7 @@
     * [Variables](#variables)
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
+- **[Helpers](#helpers)**
   * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
@@ -531,12 +532,12 @@ Existing chapters:
 <details>
 <summary><b>HTTP basics</b></summary><br>
 
-  - _Request and Response_
+  - [x] _Request and Response_
 
 </details>
 
 <details>
-<summary><b>Helpers</b></summary><br>
+<summary><b>NGINX basics</b></summary><br>
 
   - _Server blocks logic_
     - [x] _rewrite vs return_
@@ -581,6 +582,10 @@ Existing chapters:
     - [x] _Variables_
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
+
+<details>
+<summary><b>Helpers</b></summary><br>
+
   - _Installation from source_
     - [x] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add compiler and linker options_
@@ -1227,7 +1232,7 @@ _In this ebook you will learn:_
 
 HTTP stands for hypertext transfer protocol and is used to transfer data across the Web.
 
-## Request and Response
+#### Request and Response
 
 - all requests originate at the client (e.g. browser)
 - the server responds to a request
@@ -1287,7 +1292,7 @@ How to generate a requests?
 
 !!! WORK IN PROGRESS !!!
 
-# Helpers
+# NGINX basics
 
 #### Directories and files
 
@@ -3686,6 +3691,8 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
+
+# Helpers
 
 #### Installation from prebuilt packages
 
