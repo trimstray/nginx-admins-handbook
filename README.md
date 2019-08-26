@@ -87,9 +87,15 @@
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
 - **[HTTP basics](#http-basics)**
-  * [Requests](#requests)
+  * [Features and architecture](#features-and-architecture)
+  * [URI vs URL](#uri-vs-url)
+  * [Request](#request)
     * [Request-line](#request-line)
       * [Methods](#methods)
+      * [Request-URI](#request-uri)
+      * [HTTP version](#http-version)
+    * [Request header fields](#request-header-fields)
+    * [Message body](#message-body)
     * [Generate requests](#generate-requests)
 - **[NGINX basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
@@ -535,15 +541,17 @@ Existing chapters:
 <details>
 <summary><b>HTTP basics</b></summary><br>
 
-  - [ ] _Features and architecture_
-  - [ ] _URI vs URL_
-  - [x] _Requests_
+  - [x] _Features and architecture_
+  - [x] _URI vs URL_
+  - [x] _Request_
     - [x] _Request-line_
       - [x] _Methods_
-      - [ ] _Request-URI_
-    - [ ] _Request header fields_
+      - [x] _Request-URI_
+      - [x] _HTTP version_
+    - [x] _Request header fields_
+    - [x] _Message body_
     - [x] _Generate requests_
-  - [ ] _Responses_
+  - [ ] _Response_
     - [ ] _Status-line_
       - [ ] _Status codes_
     - [ ] _Response Headeh fields_
@@ -1246,25 +1254,65 @@ _In this ebook you will learn:_
 
 # HTTP basics
 
-**Still work in progress**
-
 HTTP stands for hypertext transfer protocol and is used to transfer data across the Web.
+
+Some important information about HTTP:
 
 - all requests originate at the client (e.g. browser)
 - the server responds to a request
 - the requests and responses are in readable text
 - the requests are independent of each other and the server doesn’t need to track the requests
 
-#### Requests
+There are a lot of great articles about HTTP:
 
-  > For more information about HTTP requests please see [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Requests](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html).
+- [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1 - Requests](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html)
+- [MDN web docs - HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 
-An HTTP client sends an HTTP request to a server in the form of a request message which includes following format:
+#### Features and architecture
 
-- (1) a Request-line
-- (2) zero or more header (General|Request|Entity) fields followed by CRLF
-- (3) an empty line (e.g. with nothing preceding the CRLF) indicating the end of the header fields
-- (4) optionally a message-body
+- the HTTP client, i.e., a browser initiates an HTTP request and after a request is made, the client waits for the response
+
+- any type of data can be sent by HTTP as long as both the client and the server know how to handle the data content
+
+- the server and client are aware of each other only during a current request. Afterwards, both of them forget about each other
+
+The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server.
+
+**Client**
+
+The HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection.
+
+**Server**
+
+The HTTP server responds with a status line, including the message's protocol version and a success or error code, followed by a MIME-like message containing server information, entity meta information, and possible entity-body content.
+
+#### URI vs URL
+
+I think, the best explanation about URI and URL comes from [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
+
+For me, the short and clear explanation is also:
+
+  > URIs **identify** and URLs **identifies** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
+
+Look at the following examples to get your mind out of confusion and take it simple and you will understand:
+
+| <b>TYPE</b> | <b>DESCRIPTION</b> |
+| :---:         | :---         |
+| **URI** | `https://www.google.com/folder/page.html` |
+| **URL** | `https://www.google.com/` |
+| **URN** | `/folder/page.html` |
+
+So `URI = (URL + URN)` or `URL` only or `URN` only.
+
+The following is a graphic explanation of the url format:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
+</p>
+
+#### Request
+
+A request consists of: `(1) a command or request + (2) optional headers + (4) optional body content`
 
 ```
                       FIELDS OF HTTP REQUEST       PART OF RFC 2616
@@ -1273,26 +1321,21 @@ An HTTP client sends an HTTP request to a server in the form of a request messag
                   (2) : *(( general-header          ; Section 4.5
                           | request-header          ; Section 5.3
                           | entity-header ) CRLF)   ; Section 7.1
-                  (3)   CRLF
-                  (4)   [ message-body ]            ; Section 4.3
+                  (3) : CRLF
+                  (4) : [ message-body ]            ; Section 4.3
 ```
 
-Example of form an HTTP request to fetch `index.html` page from the web server running on `example.com`:
+Example of form an HTTP request to fetch `/alerts/status` page from the web server running on `localhost:8000`:
 
-```bash
-GET /index.html HTTP/1.1
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:64.0) Gecko/20100101 Firefox/64.0
-Host: example.com
-Accept-Language: en-us
-Accept-Encoding: gzip, deflate
-Connection: Keep-Alive
-```
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_request.png" alt="http_request">
+</p>
 
 ##### Request-line
 
-The Request-line begins with a method token, followed by the Request-URI and the protocol version, and ending with CRLF. The elements are separated by space SP characters:
+The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF. The elements are separated by space SP characters:
 
-```bash
+```
 Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 ```
 
@@ -1300,20 +1343,20 @@ Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| GET | is used to retreive data from a server at the specified resource |
+| `GET` | is used to retreive data from a server at the specified resource |
 
 For example, say you have an API with a `/api/v2/users` endpoint. Making a GET request to that endpoint should return a list of all available users.
+
+  > Requests with GET method does not change any data.
 
 At a basic level, these things should be validated:
 
 - check that a valid `GET` request returns a 200 status code
 - ensure that a GET request to a specific resource returns the correct data
 
-  > Requests with GET method does not change any data.
-
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| POST | is used to send data to the sever to modify and update a resource |
+| `POST` | is used to send data to the sever to modify and update a resource |
 
 The simplest example is a contact form on a website. When you fill out the inputs in a form and hit Send, that data is put in the response body of the request and sent to the server.
 
@@ -1327,21 +1370,21 @@ Here are some tips for testing POST requests:
 
 Modify and update a resource:
 
-```bash
+```
 POST /items/<existing_item> HTTP/1.1
 Host: example.com
 ```
 
 The following is an error:
 
-```bash
+```
 POST /items/<new_item> HTTP/1.1
 Host: example.com
 ```
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| PUT | is used to send data to the sever to create or overwrite a resource |
+| `PUT` | is used to send data to the sever to create or overwrite a resource |
 
 The same PUT request multiple times will always produce the same result.
 
@@ -1353,17 +1396,64 @@ Check for these things when testing PUT requests:
 
 For a new resource:
 
-```bash
+```
 PUT /items/<new_item> HTTP/1.1
 Host: example.com
 ```
 
 To overwrite an existing resource:
 
-```bash
+```
 PUT /items/<existing_item> HTTP/1.1
 Host: example.com
 ```
+
+###### Request-URI
+
+The Request-URI is a Uniform Resource Identifier and identifies the resource upon which to apply the request. The exact resource identified by an Internet request is determined by examining both the Request-URI and the Host header field.
+
+The most common form of Request-URI is that used to identify a resource on an origin server or gateway. For example, a client wishing to retrieve a resource directly from the origin server would create a TCP connection to port 80 of the host `example.com` and send the following lines:
+
+```
+GET /pub/index.html HTTP/1.1
+Host: example.com
+```
+
+The absoluteURI form is required when the request is being made to a proxy:
+
+```
+GET http://example.com/pub/index.html HTTP/1.1
+```
+
+  > Note that the absolute path cannot be empty; if none is present in the original URI, it MUST be given as `/` (the server root).
+
+  > The asterisk `*` is used when an HTTP request does not apply to a particular resource, but to the server itself, and is only allowed when the method used does not necessarily apply to a resource.
+
+###### HTTP version
+
+HTTP has four versions — HTTP/0.9, HTTP/1.0, HTTP/1.1, and HTTP/2.0. Today the versions in common use are HTTP/1.1 and HTTP/2.0.
+
+The last part of the request indicating the client's supported HTTP version.
+
+Determining the appropriate version of the HTTP protocol is very important because it allows you to set specific HTTP method or required headers (e.g. `cache-control` and HTTP/1.1).
+
+There is nice explanation about [How does a HTTP 1.1 server respond to a HTTP 1.0 request?](https://stackoverflow.com/questions/35850518/how-does-a-http-1-1-server-respond-to-a-http-1-0-request).
+
+##### Request header fields
+
+There are three types of HTTP message headers for requests:
+
+- **General-header** - applying to both requests and responses but with no relation to the data eventually transmitted in the body
+
+- **Request-header** - containing more information about the resource to be fetched or about the client itself
+
+- **Entity-header** - containing more information about the body of the entity, like its content length or its MIME-type
+
+The request-header fields allow the client to pass additional information about the request, and about the client itself, to the server.
+
+##### Message body
+
+It is optional. Most HTTP requests are GET requests without bodies. However, simulating requests with bodies is important to properly stress the proxy code and to test various hooks working with such requests. Most HTTP requests with bodies use POST or PUT request method.
 
 ##### Generate requests
 
@@ -1371,7 +1461,7 @@ How to generate a requests?
 
 - `telnet`
 
-  ```bash
+  ```
   telnet example.com 80
   GET /index.html HTTP/1.1
   Host: example.com
@@ -1379,7 +1469,7 @@ How to generate a requests?
 
 - `openssl`
 
-  ```bash
+  ```
   openssl s_client -servername example.com -connect example.com:443
   ...
   ---
