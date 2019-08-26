@@ -90,13 +90,19 @@
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
   * [Request](#request)
-    * [Request-line](#request-line)
+    * [Request line](#request-line)
       * [Methods](#methods)
-      * [Request-URI](#request-uri)
+      * [Request URI](#request-uri)
       * [HTTP version](#http-version)
     * [Request header fields](#request-header-fields)
     * [Message body](#message-body)
     * [Generate requests](#generate-requests)
+  * [Response](#response)
+    * [Status line](#status-line)
+      * [HTTP version](#http-version-1)
+      * [Status codes and reason phrase](#status-codes-and-reason-phrase)
+    * [Response header fields](#response-header-fields)
+    * [Message body](#message-body-1)
 - **[NGINX basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
@@ -544,17 +550,19 @@ Existing chapters:
   - [x] _Features and architecture_
   - [x] _URI vs URL_
   - [x] _Request_
-    - [x] _Request-line_
+    - [x] _Request line_
       - [x] _Methods_
-      - [x] _Request-URI_
+      - [x] _Request URI_
       - [x] _HTTP version_
     - [x] _Request header fields_
     - [x] _Message body_
     - [x] _Generate requests_
-  - [ ] _Response_
-    - [ ] _Status-line_
-      - [ ] _Status codes_
-    - [ ] _Response Headeh fields_
+  - [x] _Response_
+    - [x] _Status line_
+      - [x] _HTTP version_
+      - [x] _Status codes and reason phrase_
+    - [x] _Response header fields_
+    - [x] _Message body_
 
 </details>
 
@@ -1263,11 +1271,13 @@ Some important information about HTTP:
 - the requests and responses are in readable text
 - the requests are independent of each other and the server doesn’t need to track the requests
 
-There are a lot of great articles about HTTP:
+I will not describe the HTTP protocol in detail. I will list the most important things because we have some great documents about the HTTP protocol:
 
 - [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
+- [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)
+- [MDN web docs - An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview)
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
-- [MDN web docs - HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
+- [HTTP and everything you need to know about it](https://medium.com/faun/http-and-everything-you-need-to-know-about-it-8273bc224491)
 
 We also have some interesting books:
 
@@ -1284,7 +1294,7 @@ The HTTP protocol is a request/response protocol based on the client/server base
 
 - the server and client are aware of each other only during a current request. Afterwards, both of them forget about each other
 
-The HTTP protocol allows clients and servers to communicate. Clients send requests using an HTTP method request. Servers listen for requests on a host and port. The following is a comparison:
+The HTTP protocol allows clients and servers to communicate. Clients send requests using an HTTP method request and servers listen for requests on a host and port. The following is a comparison:
 
 - **Client** - the HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection
 
@@ -1294,7 +1304,7 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 I think, the best explanation about both comes from [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
 
-For me, the short and clear explanation is also:
+For me, the short and clear explanation is also interesting:
 
   > URIs **identify** and URLs **identify** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
 
@@ -1308,7 +1318,7 @@ Look at the following examples to get your mind out of confusion and take it sim
 
 So `URI = (URL + URN)` or `URL` only or `URN` only.
 
-The following is a graphic explanation of the url format:
+The graphic below explains the URL format:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
@@ -1335,7 +1345,7 @@ Example of form an HTTP request to fetch `/alerts/status` page from the web serv
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_request.png" alt="http_request">
 </p>
 
-##### Request-line
+##### Request line
 
 The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF. The elements are separated by space SP characters:
 
@@ -1412,7 +1422,7 @@ PUT /items/<existing_item> HTTP/1.1
 Host: example.com
 ```
 
-###### Request-URI
+###### Request URI
 
 The Request-URI is a Uniform Resource Identifier and identifies the resource upon which to apply the request. The exact resource identified by an Internet request is determined by examining both the Request-URI and the Host header field.
 
@@ -1435,11 +1445,11 @@ GET http://example.com/pub/index.html HTTP/1.1
 
 ###### HTTP version
 
-HTTP has four versions — HTTP/0.9, HTTP/1.0, HTTP/1.1, and HTTP/2.0. Today the versions in common use are HTTP/1.1 and HTTP/2.0.
-
 The last part of the request indicating the client's supported HTTP version.
 
-Determining the appropriate version of the HTTP protocol is very important because it allows you to set specific HTTP method or required headers (e.g. `cache-control` and HTTP/1.1).
+HTTP has four versions — HTTP/0.9, HTTP/1.0, HTTP/1.1, and HTTP/2.0. Today the versions in common use are HTTP/1.1 and HTTP/2.0.
+
+Determining the appropriate version of the HTTP protocol is very important because it allows you to set specific HTTP method or required headers (e.g. `cache-control` for HTTP/1.1).
 
 There is a nice explanation about [How does a HTTP 1.1 server respond to a HTTP 1.0 request?](https://stackoverflow.com/questions/35850518/how-does-a-http-1-1-server-respond-to-a-http-1-0-request).
 
@@ -1453,13 +1463,13 @@ There are three types of HTTP message headers for requests:
 
 - **Entity-header** - containing more information about the body of the entity, like its content length or its MIME-type
 
-The request-header fields allow the client to pass additional information about the request, and about the client itself, to the server.
+The Request-header fields allow the client to pass additional information about the request, and about the client itself, to the server.
 
 ##### Message body
 
 Request (message) body is the part of the HTTP request where additional content can be sent to the server.
 
-It is optional. Most HTTP requests are GET requests without bodies. However, simulating requests with bodies is important to properly stress the proxy code and to test various hooks working with such requests. Most HTTP requests with bodies use POST or PUT request method.
+It is optional. Most of the HTTP requests are GET requests without bodies. However, simulating requests with bodies is important to properly stress the proxy code and to test various hooks working with such requests. Most HTTP requests with bodies use POST or PUT request method.
 
 ##### Generate requests
 
@@ -1482,6 +1492,63 @@ How to generate a requests?
   GET /index.html HTTP/1.1
   Host: example.com
   ```
+
+#### Response
+
+After receiving and interpreting a request message, a server responds with an HTTP response message.
+
+```
+                     FIELDS OF HTTP RESPONSE       PART OF RFC 2616
+---------------------------------------------------------------------
+  Request       = (1) : Status-line                 ; Section 6.1
+                  (2) : *(( general-header          ; Section 4.5
+                          | response-header         ; Section 6.2
+                          | entity-header ) CRLF)   ; Section 7.1
+                  (3) : CRLF
+                  (4) : [ message-body ]            ; Section 4.3
+```
+
+Example of form an HTTP response for a request to fetch the `/alerts/status` page from the web server running on `localhost:8000`:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_response.png" alt="http_request">
+</p>
+
+##### Status line
+
+The Status-line consisting of the protocol version followed by a numeric status code and its associated textual phrase.
+
+```
+Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+```
+
+###### HTTP version
+
+  > When an HTTP/1.1 message is sent to an HTTP/1.0 recipient or a recipient whose version is unknown, the HTTP/1.1 message is constructed such that it can be interpreted as a valid HTTP/1.0 message if all of the newer features are ignored.
+
+###### Status codes and reason phrase
+
+For more information please see:
+
+- [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+- [HTTP Status Codes](https://httpstatuses.com/)
+- [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Status Code Definitions](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
+
+##### Response header fields
+
+There are three types of HTTP message headers for responses:
+
+- **General-header** - applying to both requests and responses but with no relation to the data eventually transmitted in the body
+
+- **Response-header** - these header fields give information about the server and about further access to the resource identified by the Request-URI
+
+- **Entity-header** - containing more information about the body of the entity, like its content length or its MIME-type
+
+The response-header fields allow the server to pass additional information about the response.
+
+##### Message body
+
+Contains the resource data that was requested by the client.
 
 # NGINX basics
 
