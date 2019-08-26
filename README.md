@@ -1265,10 +1265,18 @@ Some important information about HTTP:
 
 There are a lot of great articles about HTTP:
 
-- [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1 - Requests](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html)
+- [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
 - [MDN web docs - HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
+- [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
+
+We also have some interesting books:
+
+- [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
+- [RESTful Web Services](https://www.crummy.com/writing/RESTful-Web-Services/)
 
 #### Features and architecture
+
+The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server.
 
 - the HTTP client, i.e., a browser initiates an HTTP request and after a request is made, the client waits for the response
 
@@ -1276,19 +1284,13 @@ There are a lot of great articles about HTTP:
 
 - the server and client are aware of each other only during a current request. Afterwards, both of them forget about each other
 
-The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server.
+- **Client** - the HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection
 
-**Client**
-
-The HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection.
-
-**Server**
-
-The HTTP server responds with a status line, including the message's protocol version and a success or error code, followed by a MIME-like message containing server information, entity meta information, and possible entity-body content.
+- **Server** - the HTTP server responds with a status line, including the message's protocol version and a success or error code, followed by a MIME-like message containing server information, entity meta information, and possible entity-body content
 
 #### URI vs URL
 
-I think, the best explanation about URI and URL comes from [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
+I think, the best explanation about both comes from [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
 
 For me, the short and clear explanation is also:
 
@@ -1437,7 +1439,7 @@ The last part of the request indicating the client's supported HTTP version.
 
 Determining the appropriate version of the HTTP protocol is very important because it allows you to set specific HTTP method or required headers (e.g. `cache-control` and HTTP/1.1).
 
-There is nice explanation about [How does a HTTP 1.1 server respond to a HTTP 1.0 request?](https://stackoverflow.com/questions/35850518/how-does-a-http-1-1-server-respond-to-a-http-1-0-request).
+There is a nice explanation about [How does a HTTP 1.1 server respond to a HTTP 1.0 request?](https://stackoverflow.com/questions/35850518/how-does-a-http-1-1-server-respond-to-a-http-1-0-request).
 
 ##### Request header fields
 
@@ -1452,6 +1454,8 @@ There are three types of HTTP message headers for requests:
 The request-header fields allow the client to pass additional information about the request, and about the client itself, to the server.
 
 ##### Message body
+
+Request (message) body is the part of the HTTP request where additional content can be sent to the server.
 
 It is optional. Most HTTP requests are GET requests without bodies. However, simulating requests with bodies is important to properly stress the proxy code and to test various hooks working with such requests. Most HTTP requests with bodies use POST or PUT request method.
 
