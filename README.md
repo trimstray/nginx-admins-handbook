@@ -1296,7 +1296,7 @@ I think, the best explanation about both comes from [The Difference Between URLs
 
 For me, the short and clear explanation is also:
 
-  > URIs **identify** and URLs **identifies** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
+  > URIs **identify** and URLs **identify** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
 
 Look at the following examples to get your mind out of confusion and take it simple and you will understand:
 
