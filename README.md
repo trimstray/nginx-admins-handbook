@@ -1266,8 +1266,8 @@ Some important information about HTTP:
 There are a lot of great articles about HTTP:
 
 - [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
-- [MDN web docs - HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
+- [MDN web docs - HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 
 We also have some interesting books:
 
@@ -1283,6 +1283,8 @@ The HTTP protocol is a request/response protocol based on the client/server base
 - any type of data can be sent by HTTP as long as both the client and the server know how to handle the data content
 
 - the server and client are aware of each other only during a current request. Afterwards, both of them forget about each other
+
+The HTTP protocol allows clients and servers to communicate. Clients send requests using an HTTP method request. Servers listen for requests on a host and port. The following is a comparison:
 
 - **Client** - the HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection
 
