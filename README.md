@@ -850,6 +850,8 @@ I also got the highest note on the Observatory:
   </a>
 </p>
 
+# Extras
+
 ## Checklist to rule them all
 
   > This checklist contains all rules (68) from this handbook.
@@ -1271,7 +1273,7 @@ _In this ebook you will learn:_
 
 # HTTP basics
 
-HTTP stands for hypertext transfer protocol and is used to transfer data across the Web.
+HTTP stands for hypertext transfer protocol and is used for transmitting data (web pages) over the Internet.
 
 Some important information about HTTP:
 
@@ -1280,7 +1282,7 @@ Some important information about HTTP:
 - the requests and responses are in readable text
 - the requests are independent of each other and the server doesn’t need to track the requests
 
-I will not describe the HTTP protocol in detail. I will list the most important things because we have some great documents about the HTTP protocol:
+I will not describe the HTTP protocol in detail, but I will discuss only the most important things because we have some great documents which describe it meticulously:
 
 - [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
 - [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)
@@ -1288,7 +1290,7 @@ I will not describe the HTTP protocol in detail. I will list the most important 
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
 - [HTTP and everything you need to know about it](https://medium.com/faun/http-and-everything-you-need-to-know-about-it-8273bc224491)
 
-We also have some interesting books:
+We have also some interesting books:
 
 - [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
 - [RESTful Web Services](https://www.crummy.com/writing/RESTful-Web-Services/)
@@ -1297,7 +1299,11 @@ We also have some interesting books:
 
 The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server.
 
+Here is a brief explanation:
+
 - the HTTP client, i.e., a browser initiates an HTTP request and after a request is made, the client waits for the response
+
+- the HTTP server which handles and processing requests from clients, after that it sends a response to the client
 
 - any type of data can be sent by HTTP as long as both the client and the server know how to handle the data content
 
@@ -1305,33 +1311,64 @@ The HTTP protocol is a request/response protocol based on the client/server base
 
 The HTTP protocol allows clients and servers to communicate. Clients send requests using an HTTP method request and servers listen for requests on a host and port. The following is a comparison:
 
-- **Client** - the HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection
+- **client** - the HTTP client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a TCP/IP connection
 
-- **Server** - the HTTP server responds with a status line, including the message's protocol version and a success or error code, followed by a MIME-like message containing server information, entity meta information, and possible entity-body content
+- **server** - the HTTP server responds with a status line, including the message's protocol version and a success or error code, followed by a MIME-like message containing server information, entity meta information, and possible entity-body content
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/HTTP_steps.png" alt="HTTP_steps">
+</p>
+
+<sup><i>This infographic comes from [www.ntu.edu.sg - HTTP (HyperText Transfer Protocol)](https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html).</i></sup>
 
 #### URI vs URL
 
-I think, the best explanation about both comes from [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
+Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet
 
-For me, the short and clear explanation is also interesting:
+A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
+
+I think, the best explanation is here: [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
+
+For me, this short and clear explanation is also interesting:
 
   > URIs **identify** and URLs **identify** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
 
-Look at the following examples to get your mind out of confusion and take it simple and you will understand:
+Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet
+
+A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
+
+To put it differently:
+
+- a URL is a URI that identifies a resource and also provides the means of locating the resource by describing the way to access it
+- a URL is a URI
+- a URI is not necessarily a URL
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_urn_uri.png" alt="url_urn_uri">
+</p>
+
+Look at the following examples to get your mind out of confusion and take it simple:
 
 | <b>TYPE</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| **URI** | `https://www.google.com/folder/page.html` |
-| **URL** | `https://www.google.com/` |
-| **URN** | `/folder/page.html` |
-
-So `URI = (URL + URN)` or `URL` only or `URN` only.
+| **URL** | `https://www.google.com/folder/page.html` |
+| **URL** | `http://example.com/resource?foo=bar#fragment` |
+| **URL** | `ftp://example.com/download.zip` |
+| **URL** | `mailto:user@example.com` |
+| **URL** | `file:///home/user/file.txt` |
+| **URL** | `/other/link.html` (a relative URL) |
+| **URN** | `www.pierobon.org/iis/review1.htm#one` |
+| **URN** | `urn:ietf:rfc:2648` |
+| **URN** | `urn:isbn:0451450523` |
+| **URI** | `http://www.pierobon.org/iis/review1.htm.html#one` |
 
 The graphic below explains the URL format:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
 </p>
+
+If it is still unclear to you, I recommend you read: [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225).
 
 #### Request
 
@@ -3052,7 +3089,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
   }
   ```
 
-- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. The NGINX docs say also:
+- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. The NGINX docs say:
 
   > _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
 
