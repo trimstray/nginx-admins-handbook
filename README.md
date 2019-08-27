@@ -53,6 +53,9 @@
 
 - **[Introduction](#introduction)**
   * [Prologue](#prologue)
+  * [Why I Create This Book](#why-i-create-this-book)
+  * [Who This Book is For](#who-this-book-is-for)
+  * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
   * [ToDo list](#todo-list)
 - **[Extras](#extras)**
@@ -87,7 +90,7 @@
   * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
-- **[HTTP basics](#http-basics)**
+- **[HTTP Basics](#http-basics)**
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
   * [Request](#request)
@@ -104,7 +107,7 @@
       * [Status codes and reason phrase](#status-codes-and-reason-phrase)
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
-- **[NGINX basics](#nginx-basics)**
+- **[NGINX Basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
@@ -436,6 +439,8 @@ Of course, [Official Documentation](https://nginx.org/en/docs/) is the best plac
 
 These are definitely the best assets for us and in the first place you should seek help there.
 
+## Why I Create This Book
+
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
   > This handbook is a collection of rules, helpers, notes, papers, best practices, and recommendations gathered and used by me (also in production environments). Many of them refer to external resources.
@@ -448,11 +453,15 @@ In this handbook I added set of guidelines and examples has also been produced t
 
 Mostly, I apply the rules presented here on the NGINX working as a reverse proxy. However, does not to prevent them being implemented for NGINX as a standalone server.
 
+## Who This Book is For
+
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
 I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
 
-Before you start, remember about the following most important things:
+## Before You Start
+
+Remember about the following most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
@@ -489,6 +498,10 @@ Existing chapters:
 <details>
 <summary><b>Introduction</b></summary><br>
 
+  - [x] _Prologue_
+  - [x] _Why I Create This Book_
+  - [x] _Who This Book is For_
+  - [x] _Before You Start_
   - [x] _ToDo list_
 
 </details>
@@ -554,7 +567,7 @@ Existing chapters:
 </details>
 
 <details>
-<summary><b>HTTP basics</b></summary><br>
+<summary><b>HTTP Basics</b></summary><br>
 
   - [x] _Features and architecture_
   - [x] _URI vs URL_
@@ -576,7 +589,7 @@ Existing chapters:
 </details>
 
 <details>
-<summary><b>NGINX basics</b></summary><br>
+<summary><b>NGINX Basics</b></summary><br>
 
   - _Server blocks logic_
     - [x] _rewrite vs return_
@@ -1271,7 +1284,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
 
-# HTTP basics
+# HTTP Basics
 
 HTTP stands for hypertext transfer protocol and is used for transmitting data (web pages) over the Internet.
 
@@ -1584,7 +1597,7 @@ The response-header fields allow the server to pass additional information about
 
 Contains the resource data that was requested by the client.
 
-# NGINX basics
+# NGINX Basics
 
 #### Directories and files
 
