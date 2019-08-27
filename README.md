@@ -52,13 +52,13 @@
 # Table of Contents
 
 - **[Introduction](#introduction)**
-  * [General disclaimer](#general-disclaimer)
+  * [Prologue](#prologue)
   * [Contributing & Support](#contributing--support)
   * [ToDo list](#todo-list)
+- **[Extras](#extras)**
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
-- **[Extras](#extras)**
   * [Checklist to rule them all](#checklist-to-rule-them-all)
   * [Printable hardening cheatsheets](#printable-hardening-cheatsheets)
   * [Fully automatic installation](#fully-automatic-installation)
@@ -155,10 +155,10 @@
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
 - **[Helpers](#helpers)**
-  * [Installation from prebuilt packages](#installation-from-prebuilt-packages)
+  * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
-  * [Installation from source](#installation-from-source)
+  * [Installing from source](#installing-from-source)
     * [Automatic installation](#automatic-installation)
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
@@ -167,15 +167,15 @@
       * [Debugging Symbols](#debugging-symbols)
     * [SystemTap](#systemtap)
       * [stapxx](#stapxx)
-    * [Install Nginx on CentOS 7](#install-nginx-on-centos-7)
+    * [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7)
       * [Pre installation tasks](#pre-installation-tasks)
-      * [Install or build dependencies](#install-or-build-dependencies)
+      * [Dependencies](#dependencies)
       * [Get Nginx sources](#get-nginx-sources)
       * [Download 3rd party modules](#download-3rd-party-modules)
       * [Build Nginx](#build-nginx)
       * [Post installation tasks](#post-installation-tasks)
-    * [Install OpenResty on CentOS 7](#install-openresty-on-centos-7)
-    * [Install Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+    * [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
+    * [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -420,7 +420,7 @@ In addition, I would like to recommend two great docs focuses on the concept of 
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols).
 
-## General disclaimer
+## Prologue
 
 When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
 
@@ -627,7 +627,7 @@ Existing chapters:
 <details>
 <summary><b>Helpers</b></summary><br>
 
-  - _Installation from source_
+  - _Installing from source_
     - [x] _Add autoinstaller for RHEL/Debian like distributions_
     - [x] _Add compiler and linker options_
       - [x] _Debugging Symbols_
@@ -811,6 +811,8 @@ Other stuff:
 
   - [x] _Add static error pages generator to the NGINX snippets directory_
 
+# Extras
+
 ## Reports: blkcipher.info
 
 Many of these recipes have been applied to the configuration of my private website.
@@ -849,8 +851,6 @@ I also got the highest note on the Observatory:
     <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
   </a>
 </p>
-
-# Extras
 
 ## Checklist to rule them all
 
@@ -964,7 +964,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
 
-For more information please see [Installation from source - Automatic installation](#automatic-installation) chapter.
+For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter.
 
 # Books
 
@@ -3986,7 +3986,7 @@ Without `nodelay` NGINX would wait (no 503 response) and handle excessive reques
 
 # Helpers
 
-#### Installation from prebuilt packages
+#### Installing from prebuilt packages
 
 ##### RHEL7 or CentOS 7
 
@@ -4067,7 +4067,7 @@ apt-get update
 apt-get install nginx
 ```
 
-#### Installation from source
+#### Installing from source
 
 The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
 
@@ -4079,9 +4079,9 @@ Before the beginning installation process please read these important articles w
 
 In this chapter I'll present three (very similar) methods of installation. They relate to:
 
-- the [NGINX on CentOS 7](#install-nginx-on-centos-7)
-- the [OpenResty on CentOS 7](#install-openresty-on-centos-7)
-- the [Tengine on Ubuntu 18.04](#install-tengine-on-ubuntu-1804)
+- the [NGINX on CentOS 7](#installation-nginx-on-centos-7)
+- the [OpenResty on CentOS 7](#installation-openresty-on-centos-7)
+- the [Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
 
 Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
 
@@ -4106,7 +4106,7 @@ Look also on this short note about the system locations. That can be useful too:
 
 ##### Automatic installation
 
-Installation from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
+Installing from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
 
   > It supports Debian and RHEL like distributions.
 
@@ -4346,7 +4346,7 @@ For installation SystemTap on Ubuntu/Debian:
 
 The author of OpenResty created great and simple macro language extensions to the SystemTap: [stapxx](https://github.com/openresty/stapxx).
 
-#### Install Nginx on CentOS 7
+#### Installation Nginx on CentOS 7
 
 ###### Pre installation tasks
 
@@ -4375,7 +4375,7 @@ for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
 done
 ```
 
-###### Install or build dependencies
+###### Dependencies
 
   > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
 
@@ -4907,7 +4907,7 @@ Test NGINX configuration:
 nginx -t -c /etc/nginx/nginx.conf
 ```
 
-#### Install OpenResty on CentOS 7
+#### Installation OpenResty on CentOS 7
 
   > _OpenResty is a full-fledged web application server by bundling the standard nginx core, lots of 3rd-party nginx modules, as well as most of their external dependencies._
   >
@@ -4925,7 +4925,7 @@ OpenResty has good quality and performance. For me, the ability to run Lua scrip
 <summary><b>Show step-by-step OpenResty installation</b></summary><br>
 
 * [Pre installation tasks](#pre-installation-tasks-1)
-* [Install or build dependencies](#install-or-build-dependencies-1)
+* [Dependencies](#dependencies-1)
 * [Get OpenResty sources](#get-openresty-sources-1)
 * [Download 3rd party modules](#download-3rd-party-modules-1)
 * [Build OpenResty](#build-openresty)
@@ -4958,7 +4958,7 @@ for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
 done
 ```
 
-###### Install or build dependencies
+###### Dependencies
 
   > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support. In addition, LuaJIT comes with OpenResty.
 
@@ -5686,7 +5686,7 @@ And list all files in `/etc/nginx`:
 
 </details>
 
-#### Install Tengine on Ubuntu 18.04
+#### Installation Tengine on Ubuntu 18.04
 
   > _Tengine is a web server originated by Taobao, the largest e-commerce website in Asia. It is based on the NGINX HTTP server and has many advanced features. There’s a lot of features in Tengine that do not (yet) exist in NGINX._
 
@@ -5695,13 +5695,13 @@ And list all files in `/etc/nginx`:
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar to [Install Nginx on Centos 7](#install-nginx-on-centos-7). However, I will only specify the most important changes.
+The build and installation process is very similar to [Install Nginx on Centos 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes.
 
 <details>
 <summary><b>Show step-by-step Tengine installation</b></summary><br>
 
 * [Pre installation tasks](#pre-installation-tasks-2)
-* [Install or build dependencies](#install-or-build-dependencies-2)
+* [Dependencies](#dependencies-2)
 * [Get Tengine sources](#get-tengine-sources)
 * [Download 3rd party modules](#download-3rd-party-modules-2)
 * [Build Tengine](#build-tengine)
@@ -5734,7 +5734,7 @@ for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
 done
 ```
 
-###### Install or build dependencies
+###### Dependencies
 
 Install prebuilt packages, export variables and set symbolic link:
 
@@ -10438,8 +10438,8 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 
 ###### External resources
 
-- [Installation from prebuilt packages (from this handbook)](#installation-from-prebuilt-packages)
-- [Installation from source (from this handbook)](#installation-from-source)
+- [Installing from prebuilt packages (from this handbook)](#installing-from-prebuilt-packages)
+- [Installing from source (from this handbook)](#installing-from-source)
 
 #### :beginner: Run as an unprivileged user
 
@@ -10693,7 +10693,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1).
 
-  > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installation-from-source) process (see OpenSSL sub-section).
+  > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
 
 ###### External resources
 
@@ -11923,7 +11923,7 @@ This chapter is still work in progress.
 
 ## Installation
 
-I used step-by-step tutorial from this handbook [Installation from source](#installation-from-source).
+I used step-by-step tutorial from this handbook [Installing from source](#installing-from-source).
 
 ## Configuration
 
@@ -11941,7 +11941,7 @@ I used Google Cloud instance with following parameters:
 
 This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
 
-  > Configuration is based on the [installation from source](#installation-from-source) chapter. If you go through the installation process step by step you can use the following configuration (minor adjustments may be required).
+  > Configuration is based on the [installation from source](#installing-from-source) chapter. If you go through the installation process step by step you can use the following configuration (minor adjustments may be required).
 
 #### Import configuration
 
