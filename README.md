@@ -1303,7 +1303,7 @@ Here is a brief explanation:
 
 - the HTTP client, i.e., a browser initiates an HTTP request and after a request is made, the client waits for the response
 
-- the HTTP server which handles and processing requests from clients, after that it sends a response to the client
+- the HTTP server handles and processing requests from clients, after that it sends a response to the client
 
 - any type of data can be sent by HTTP as long as both the client and the server know how to handle the data content
 
