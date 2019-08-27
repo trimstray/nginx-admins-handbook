@@ -1323,25 +1323,13 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 #### URI vs URL
 
-Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet
-
-A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
+Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet. A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
 
 I think, the best explanation is here: [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
 
 For me, this short and clear explanation is also interesting:
 
   > URIs **identify** and URLs **identify** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
-
-Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet
-
-A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
-
-To put it differently:
-
-- a URL is a URI that identifies a resource and also provides the means of locating the resource by describing the way to access it
-- a URL is a URI
-- a URI is not necessarily a URL
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_urn_uri.png" alt="url_urn_uri">
@@ -1368,7 +1356,7 @@ The graphic below explains the URL format:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
 </p>
 
-If it is still unclear to you, I recommend you read: [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225).
+If it is still unclear to you, I recommend you read: [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225). This is an amazing explanation.
 
 #### Request
 
