@@ -53,7 +53,7 @@
 
 - **[Introduction](#introduction)**
   * [Prologue](#prologue)
-  * [Why I Create This Book](#why-i-create-this-book)
+  * [Why I Created This Book](#why-i-created-this-book)
   * [Who This Book is For](#who-this-book-is-for)
   * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
@@ -439,7 +439,7 @@ Of course, [Official Documentation](https://nginx.org/en/docs/) is the best plac
 
 These are definitely the best assets for us and in the first place you should seek help there.
 
-## Why I Create This Book
+## Why I Created This Book
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
@@ -499,7 +499,7 @@ Existing chapters:
 <summary><b>Introduction</b></summary><br>
 
   - [x] _Prologue_
-  - [x] _Why I Create This Book_
+  - [x] _Why I Created This Book_
   - [x] _Who This Book is For_
   - [x] _Before You Start_
   - [x] _ToDo list_
