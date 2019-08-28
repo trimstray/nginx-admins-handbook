@@ -1363,16 +1363,16 @@ Look at the following examples to get your mind out of confusion and take it sim
 
 | <b>TYPE</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| **URL** | `https://www.google.com/folder/page.html` |
-| **URL** | `http://example.com/resource?foo=bar#fragment` |
-| **URL** | `ftp://example.com/download.zip` |
-| **URL** | `mailto:user@example.com` |
-| **URL** | `file:///home/user/file.txt` |
-| **URL** | `/other/link.html` (a relative URL) |
-| **URN** | `www.pierobon.org/iis/review1.htm#one` |
-| **URN** | `urn:ietf:rfc:2648` |
-| **URN** | `urn:isbn:0451450523` |
-| **URI** | `http://www.pierobon.org/iis/review1.htm.html#one` |
+| URL | `https://www.google.com/folder/page.html` |
+| URL | `http://example.com/resource?foo=bar#fragment` |
+| URL | `ftp://example.com/download.zip` |
+| URL | `mailto:user@example.com` |
+| URL | `file:///home/user/file.txt` |
+| URL | `/other/link.html` (a relative URL) |
+| URN | `www.pierobon.org/iis/review1.htm#one` |
+| URN | `urn:ietf:rfc:2648` |
+| URN | `urn:isbn:0451450523` |
+| URI | `http://www.pierobon.org/iis/review1.htm.html#one` |
 
 The graphic below explains the URL format:
 
@@ -1380,7 +1380,7 @@ The graphic below explains the URL format:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
 </p>
 
-If it is still unclear to you, I recommend you read: [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225). This is an amazing explanation.
+If it is still unclear to you, I recommend you read: [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225). Also read on [The History of the URL: Path, Fragment, Query, and Auth](https://eager.io/blog/the-history-of-the-url-path-fragment-query-auth/).
 
 #### Request
 
