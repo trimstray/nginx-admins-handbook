@@ -57,7 +57,7 @@
   * [Who This Book is For](#who-this-book-is-for)
   * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
-- **[Extras & Bonus Stuff](#extras--bonus-stuff)**
+- **[Bonus Stuff](#bonus-stuff)**
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
@@ -485,7 +485,7 @@ What needs to be done? Look at the following ToDo list:
 
 New chapters:
 
-- [x] **Extras & Bonus Stuff**
+- [x] **Bonus Stuff**
 - [x] **Reverse Proxy**
 - [ ] **Caching**
 - [ ] **3rd party modules**
@@ -507,7 +507,7 @@ Existing chapters:
 </details>
 
 <details>
-<summary><b>Extras & Bonus Stuff</b></summary><br>
+<summary><b>Bonus Stuff</b></summary><br>
 
   - [x] _Checklist to rule them all_
   - [x] _Fully automatic installation_
@@ -827,7 +827,7 @@ Other stuff:
 
 If you have an idea, send it back to me or add a pull request.
 
-# Extras & Bonus Stuff
+# Bonus Stuff
 
 ## Reports: blkcipher.info
 
