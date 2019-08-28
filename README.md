@@ -53,11 +53,10 @@
 
 - **[Introduction](#introduction)**
   * [Prologue](#prologue)
-  * [Why I Created This Book](#why-i-created-this-book)
+  * [Why I Created This Handbook](#why-i-created-this-handbook)
   * [Who This Book is For](#who-this-book-is-for)
   * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
-    * [ToDo list](#todo-list)
 - **[Extras](#extras)**
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
@@ -439,7 +438,7 @@ Of course, [Official Documentation](https://nginx.org/en/docs/) is the best plac
 
 These are definitely the best assets for us and in the first place you should seek help there.
 
-## Why I Created This Book
+## Why I Created This Handbook
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
@@ -457,7 +456,7 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
-I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#todo-list). I hope you enjoy it, and fun with it.
+I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy it, and fun with it.
 
 ## Before You Start
 
@@ -481,7 +480,7 @@ Before adding a pull request, please see the **[contributing guidelines](CONTRIB
 
 If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
 
-### ToDo list
+What needs to be done? Look at the following ToDo list:
 
 New chapters:
 
@@ -499,11 +498,10 @@ Existing chapters:
 <summary><b>Introduction</b></summary><br>
 
   - [x] _Prologue_
-  - [x] _Why I Created This Book_
+  - [x] _Why I Created This Handbook_
   - [x] _Who This Book is For_
   - [x] _Before You Start_
   - [x] _Contributing & Support_
-    - [x] _ToDo list_
 
 </details>
 
