@@ -829,6 +829,8 @@ If you have an idea, send it back to me or add a pull request.
 
 # Bonus Stuff
 
+Here you'll find a few of the different things I've worked and which included to this repository. I hope that this extras has been useful to you.
+
 ## Reports: blkcipher.info
 
 Many of these recipes have been applied to the configuration of my private website.
