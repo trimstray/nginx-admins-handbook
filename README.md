@@ -57,13 +57,14 @@
   * [Who This Book is For](#who-this-book-is-for)
   * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
-- **[Extras](#extras)**
+- **[Extras & Bonus Stuff](#extras--bonus-stuff)**
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
   * [Checklist to rule them all](#checklist-to-rule-them-all)
   * [Printable hardening cheatsheets](#printable-hardening-cheatsheets)
   * [Fully automatic installation](#fully-automatic-installation)
+  * [Static error pages generator](#static-error-pages-generator)
 - **[Books](#books)**
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -484,7 +485,7 @@ What needs to be done? Look at the following ToDo list:
 
 New chapters:
 
-- [x] **Extras**
+- [x] **Extras & Bonus Stuff**
 - [x] **Reverse Proxy**
 - [ ] **Caching**
 - [ ] **3rd party modules**
@@ -506,10 +507,11 @@ Existing chapters:
 </details>
 
 <details>
-<summary><b>Extras</b></summary><br>
+<summary><b>Extras & Bonus Stuff</b></summary><br>
 
   - [x] _Checklist to rule them all_
   - [x] _Fully automatic installation_
+  - [x] _Static error pages generator_
 
 </details>
 
@@ -823,7 +825,9 @@ Other stuff:
 
   - [x] _Add static error pages generator to the NGINX snippets directory_
 
-# Extras
+If you have an idea, send it back to me or add a pull request.
+
+# Extras & Bonus Stuff
 
 ## Reports: blkcipher.info
 
@@ -977,6 +981,12 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
 
 For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter.
+
+## Static error pages generator
+
+I created a simple to use generator for static pages with errors to replace the default error pages that come with any web server like NGINX.
+
+For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
 # Books
 
