@@ -57,7 +57,7 @@
   * [Who This Book is For](#who-this-book-is-for)
   * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
-  * [ToDo list](#todo-list)
+    * [ToDo list](#todo-list)
 - **[Extras](#extras)**
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
@@ -481,7 +481,7 @@ Before adding a pull request, please see the **[contributing guidelines](CONTRIB
 
 If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
 
-## ToDo list
+### ToDo list
 
 New chapters:
 
@@ -502,7 +502,8 @@ Existing chapters:
   - [x] _Why I Created This Book_
   - [x] _Who This Book is For_
   - [x] _Before You Start_
-  - [x] _ToDo list_
+  - [x] _Contributing & Support_
+    - [x] _ToDo list_
 
 </details>
 
