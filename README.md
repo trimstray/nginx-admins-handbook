@@ -54,7 +54,7 @@
 - **[Introduction](#introduction)**
   * [Prologue](#prologue)
   * [Why I Created This Handbook](#why-i-created-this-handbook)
-  * [Who This Book is For](#who-this-book-is-for)
+  * [Who This Handbook is For](#who-this-handbook-is-for)
   * [Before You Start](#before-you-start)
   * [Contributing & Support](#contributing--support)
 - **[Bonus Stuff](#bonus-stuff)**
@@ -453,7 +453,7 @@ In this handbook I added set of guidelines and examples has also been produced t
 
 Mostly, I apply the rules presented here on the NGINX working as a reverse proxy. However, does not to prevent them being implemented for NGINX as a standalone server.
 
-## Who This Book is For
+## Who This Handbook is For
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
@@ -500,7 +500,7 @@ Existing chapters:
 
   - [x] _Prologue_
   - [x] _Why I Created This Handbook_
-  - [x] _Who This Book is For_
+  - [x] _Who This Handbook is For_
   - [x] _Before You Start_
   - [x] _Contributing & Support_
 
@@ -851,6 +851,24 @@ I finally got **A+** grade and following scores:
 - Protocol Support = **100%**
 - Key Exchange = **90%**
 - Cipher Strength = **90%**
+
+But look at the following recommendations: The NGINX SSL config given below will give you the following SSL Labs scores. You choose:
+
+- **Recommended**
+
+  - A+
+  - Certificate: 100/100
+  - Protocol Support: 95/100
+  - Key Exchange: 90/100
+  - Cipher Strength: 90/100
+
+- **Perfect but restrictive**
+
+  - A+
+  - Certificate: 100/100
+  - Protocol Support: 100/100
+  - Key Exchange: 100/100
+  - Cipher Strength: 100/100
 
 <p align="center">
   <a href="https://www.ssllabs.com/ssltest/analyze.html?d=blkcipher.info&hideResults=on">
@@ -10810,13 +10828,13 @@ certbot certonly -d domain.com -d www.domain.com
 
   > TLS 1.0 and TLS 1.1 must not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)) and were superceded by TLS 1.2, which has now itself been superceded by TLS 1.3. They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST SP 80052r2) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS1].
 
-  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: DSA, RC4, SHA1, MD5, CBC MAC-then-Encrypt ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
+  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, `CBC` MAC-then-Encrypt ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
 
   > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > I think the best way to deploy secure configuration is: enable TLS 1.2 without any CBC Ciphers (is safe enough) only TLS 1.3 is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
+  > I think the best way to deploy secure configuration is: enable TLS 1.2 without any `CBC` Ciphers (is safe enough) only TLS 1.3 is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
@@ -10901,6 +10919,8 @@ ssl_protocols TLSv1.2 TLSv1.1;
   > It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLS 1.3 cipher suites. NGINX isn't able to influence that so at this moment it's always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
+
+  > Recently new vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.2 or TLS 1.1 or TLS 1.0 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) presentation from Black Hat Asia 2019.
 
   > Disable TLS cipher modes (all ciphers that start with `TLS_RSA`) that use RSA encryption because they are vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support RSA key exchange are vulnerable. But it is recommended to disable RSA key exchange ciphers as it does not support forward secrecy.
 
@@ -10990,6 +11010,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 - [Mozilla’s Modern compatibility suite](https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility)
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
 - [Cipher Suite Breakdown](https://blogs.technet.microsoft.com/askpfeplat/2017/12/26/cipher-suite-breakdown/)
+- [Zombie POODLE and GOLDENDOODLE Vulnerabilities](https://blog.qualys.com/technology/2019/04/22/zombie-poodle-and-goldendoodle-vulnerabilities)
 - [OpenSSL IANA Mapping](https://testssl.sh/openssl-iana.mapping.html)
 - [Goodbye TLS_RSA](https://lightshipsec.com/goodbye-tls_rsa/)
 
@@ -11067,11 +11088,27 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
 ###### Rationale
 
+  > By default, NGINX will use the default DHE (Ephemeral Diffie-Hellman) paramaters provided by OpenSSL. This uses a weak key that gets lower scores.
+
   > The DH key is only used if DH ciphers are used. Modern clients prefer `ECDHE` instead and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange.
 
-  > Most of the modern profiles from places like Mozilla's ssl config generator no longer recommend using this.
+  > Most of the modern profiles from places like Mozilla's SSL config generator no longer recommend using this (for TLS 1.3 but DH Key is still used for TLS 1.2).
 
-  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own `4096 bit` DH Group or use known safe ones pre-defined DH groups (it's recommended) from [mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
+  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended) from the [Mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
+
+  > The 2048 bit is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance You would go up to 4096 bit (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
+
+  > You should remember that the 4096 bit modulus will make DH computations slower and won’t actually improve security.
+
+  There is [good explanation](https://security.stackexchange.com/questions/47204/dh-parameters-recommended-size/47207#47207) about DH parameters recommended size:
+
+  > _Current recommendations from various bodies (including NIST) call for a 2048-bit modulus for DH. Known DH-breaking algorithms would have a cost so ludicrously high that they could not be run to completion with known Earth-based technology. See this site for pointers on that subject._
+
+  > _You don't want to overdo the size because the computational usage cost rises relatively sharply with prime size (somewhere between quadratic and cubic, depending on some implementation details) but a 2048-bit DH ought to be fine (a basic low-end PC can do several hundreds of 2048-bit DH per second)._
+
+  Look also at this answer by [Matt Palmer](https://www.hezmatt.org/~mpalmer/blog/):
+
+  > _Indeed, characterising 2048 bit DH parameters as "weak as hell" is quite misleading. There are no known feasible cryptographic attacks against arbitrary strong 2048 bit DH groups. To protect against future disclosure of a session key due to breaking DH, sure, you want your DH parameters to be as long as is practical, but since 1024 bit DH is only just getting feasible, 2048 bits should be OK for most purposes for a while yet._
 
 ###### Example
 
@@ -11082,14 +11119,30 @@ openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 # To produce "DSA-like" DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
-# To generate a ECDH key:
-openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
-
 # NGINX configuration:
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
 
 &nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
+
+```bash
+# To generate a DH key:
+openssl dhparam -out /etc/nginx/ssl/dhparam_2048.pem 2048
+
+# To produce "DSA-like" DH parameters:
+openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_2048.pem 2048
+
+# NGINX configuration:
+ssl_dhparam /etc/nginx/ssl/dhparams_2048.pem;
+```
+
+&nbsp;&nbsp;:arrow_right: ssllabs score: <b>90%</b>
+
+To generate a ECDH key:
+
+```bash
+openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
+```
 
 ###### External resources
 
@@ -11098,6 +11151,7 @@ ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 - [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 - [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
+- [Public Diffie-Hellman Parameter Service/Tool](https://2ton.com.au/dhtool/)
 
 #### :beginner: Prevent Replay Attacks on Zero Round-Trip Time
 
@@ -11187,11 +11241,11 @@ server {
 
 ###### Rationale
 
-  > Generally the BEAST attack relies on a weakness in the way CBC mode is used in SSL/TLS.
+  > Generally the BEAST attack relies on a weakness in the way `CBC` mode is used in SSL/TLS.
 
   > More specifically, to successfully perform the BEAST attack, there are some conditions which needs to be met:
   >
-  >   - vulnerable version of SSL must be used using a block cipher (CBC in particular)
+  >   - vulnerable version of SSL must be used using a block cipher (`CBC` in particular)
   >   - JavaScript or a Java applet injection - should be in the same origin of the web site
   >   - data sniffing of the network connection must be possible
 
@@ -11208,6 +11262,7 @@ ssl_prefer_server_ciphers on;
 - [An Illustrated Guide to the BEAST Attack](https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art027)
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 - [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls)
+- [Use only strong ciphers (from this handbook)](#beginner-use-only-strong-ciphers)
 
 #### :beginner: Mitigation of CRIME/BREACH attacks
 
@@ -11776,11 +11831,11 @@ location / {
 
 ###### External resources
 
+- [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
+- [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
 - [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
 - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
 - [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
-- [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
-- [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
 
 #### :beginner: Use custom headers without X- prefix
 
