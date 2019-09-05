@@ -471,9 +471,13 @@ Remember about the following most important things:
 
   > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
 
+<br>
+
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
 </p>
+
+<br>
 
 ## Contributing & Support
 
