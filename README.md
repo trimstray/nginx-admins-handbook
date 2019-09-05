@@ -596,6 +596,15 @@ Existing chapters:
 </details>
 
 <details>
+<summary><b>SSL Basics</b></summary><br>
+
+  - [ ] _TLS versions_
+  - [ ] _Ciphersuites_
+  - [ ] _DH key_
+
+</details>
+
+<details>
 <summary><b>NGINX Basics</b></summary><br>
 
   - _Server blocks logic_
@@ -11027,7 +11036,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
   > In my opinion your main source of knowledge should be [The SafeCurves web site](https://safecurves.cr.yp.to/). This site reports security assessments of various specific curves.
 
-  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm). NGINX provides directive to specifies a curve for ECDHE ciphers.
+  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm). NGINX provides directive to specifies a curve for `ECDHE` ciphers.
 
   > `x25519` is a more secure (also with SafeCurves requirements) but slightly less compatible option. I think to maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves. Of course there's tons of different opinions about `P-256` and `P-384` curves.
 
@@ -11110,7 +11119,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > In a `ECDHE/DHE` cipher suites, the server generates on-the-fly a new Diffie-Hellman key pair, signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
 
-  > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the `DH` param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive.
+  > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the `DH` param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
 
   > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack.
 
