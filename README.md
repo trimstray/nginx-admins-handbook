@@ -471,6 +471,10 @@ Remember about the following most important things:
 
   > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
 
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
+</p>
+
 ## Contributing & Support
 
   > _A real community, however, exists only when its members interact in a meaningful way that deepens their understanding of each other and leads to learning._
