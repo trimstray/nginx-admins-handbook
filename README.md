@@ -339,7 +339,7 @@
   * [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
-  * [Use strong Key Exchange](#beginner-use-strong-key-exchange)
+  * [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)
   * [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
   * [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)
@@ -926,7 +926,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use only strong ciphers](#beginner-use-only-strong-ciphers)<br><sup>Use only strong and not vulnerable cipher suites.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Use strong Key Exchange](#beginner-use-strong-key-exchange)<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy))<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [HTTP Strict Transport Security](#beginner-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defence-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -10928,7 +10928,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Recently new vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.2 or TLS 1.1 or TLS 1.0 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) presentation from Black Hat Asia 2019.
 
-  > Disable TLS cipher modes (all ciphers that start with `TLS_RSA`) that use RSA encryption because they are vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support RSA key exchange are vulnerable. But it is recommended to disable RSA key exchange ciphers as it does not support forward secrecy.
+  > Disable TLS cipher modes (all ciphers that start with `TLS_RSA_WITH_*`) that use RSA encryption because they are vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support RSA key exchange are vulnerable, but it is recommended to disable RSA key exchange ciphers as it does not support forward secrecy.
 
   > You should also absolutely disable weak ciphers regardless of the TLS version do you use, like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
 
@@ -11007,6 +11007,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
 ###### External resources
 
+- [RFC 7525 - TLS Recommendations](https://tools.ietf.org/html/rfc7525)
 - [TLS Cipher Suites](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-4)
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
@@ -11026,7 +11027,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
   > In my opinion your main source of knowledge should be [The SafeCurves web site](https://safecurves.cr.yp.to/). This site reports security assessments of various specific curves.
 
-  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm).
+  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm). NGINX provides directive to specifies a curve for ECDHE ciphers.
 
   > `x25519` is a more secure (also with SafeCurves requirements) but slightly less compatible option. I think to maximise interoperability with existing browsers and servers, stick to `P-256 prime256v1` and `P-384 secp384r1` curves. Of course there's tons of different opinions about `P-256` and `P-384` curves.
 
@@ -11089,66 +11090,83 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 - [Testing for Weak SSL/TLS Ciphers, Insufficient Transport Layer Protection (OTG-CRYPST-001)](https://www.owasp.org/index.php/Testing_for_Weak_SSL/TLS_Ciphers,_Insufficient_Transport_Layer_Protection_(OTG-CRYPST-001))
 - [Elliptic Curve performance: NIST vs Brainpool](https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool)
 - [Which elliptic curve should I use?](https://security.stackexchange.com/questions/78621/which-elliptic-curve-should-i-use/91562)
+- [Elliptic Curve Cryptography for those who are afraid of maths](http://www.lapsedordinary.net/files/ECC_BSidesLDN_2015.pdf)
 
-#### :beginner: Use strong Key Exchange
+#### :beginner: Use strong Key Exchange with Perfect Forward Secrecy
 
 ###### Rationale
 
-  > By default, NGINX will use the default DHE (Ephemeral Diffie-Hellman) paramaters provided by OpenSSL. This uses a weak key that gets lower scores.
+  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. By default, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters provided by OpenSSL. This uses a weak key (by default: `1024 bit`) that gets lower scores.
 
-  > The DH key is only used if DH ciphers are used. Modern clients prefer `ECDHE` instead and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange.
+  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`). Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525](https://tools.ietf.org/html/rfc7525#section-6.3).
 
-  > Most of the modern profiles from places like Mozilla's SSL config generator no longer recommend using this (for TLS 1.3 but DH Key is still used for TLS 1.2).
+  > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with min. 2048 `ssl_dhparam`) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
+
+  > Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange, which enables Perfect Forward Secrecy (PFS). Forward Secrecy is the prime feature of the ephemeral version of Diffie–Hellman which means if the private key of the server gets leaked, his past communications are secure. Ephemeral Diffie-Hellman doesn't provide authentication on its own, because the key is different every time. So neither party can be sure that the key is from the intended party.
+
+  > The `ECDHE` is a variant of the Diffie–Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
+
+  > Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.`
+
+  > In a `ECDHE/DHE` cipher suites, the server generates on-the-fly a new Diffie-Hellman key pair, signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
+
+  > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the `DH` param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive.
+
+  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack.
+
+  > These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use. Elliptic curve Diffie–Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
+
+  > Cipher suites using `DHE` key exchange in OpenSSL require `tmp_DH` parameters, which the `ssl_dhparam` directive provides. The same is true for `DH_anon` key exchange, but in practice nobody uses those. The openssl wiki page for Diffie Hellman Parameters it says: _To use perfect forward secrecy cipher suites, you must set up Diffie-Hellman parameters (on the server side)._ Look also at [SSL_CTX_set_tmp_dh_callback](https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_tmp_dh.html).
 
   > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended) from the [Mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
 
-  > The 2048 bit is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance You would go up to 4096 bit (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
+  > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance You would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
 
-  > You should remember that the 4096 bit modulus will make DH computations slower and won’t actually improve security.
+  > You should remember that the `4096 bit` modulus will make DH computations slower and won’t actually improve security.
 
   There is [good explanation](https://security.stackexchange.com/questions/47204/dh-parameters-recommended-size/47207#47207) about DH parameters recommended size:
 
-  > _Current recommendations from various bodies (including NIST) call for a 2048-bit modulus for DH. Known DH-breaking algorithms would have a cost so ludicrously high that they could not be run to completion with known Earth-based technology. See this site for pointers on that subject._
+  > _Current recommendations from various bodies (including NIST) call for a `2048-bit` modulus for DH. Known DH-breaking algorithms would have a cost so ludicrously high that they could not be run to completion with known Earth-based technology. See this site for pointers on that subject._
 
-  > _You don't want to overdo the size because the computational usage cost rises relatively sharply with prime size (somewhere between quadratic and cubic, depending on some implementation details) but a 2048-bit DH ought to be fine (a basic low-end PC can do several hundreds of 2048-bit DH per second)._
+  > _You don't want to overdo the size because the computational usage cost rises relatively sharply with prime size (somewhere between quadratic and cubic, depending on some implementation details) but a `2048-bit` DH ought to be fine (a basic low-end PC can do several hundreds of `2048-bit` DH per second)._
 
   Look also at this answer by [Matt Palmer](https://www.hezmatt.org/~mpalmer/blog/):
 
-  > _Indeed, characterising 2048 bit DH parameters as "weak as hell" is quite misleading. There are no known feasible cryptographic attacks against arbitrary strong 2048 bit DH groups. To protect against future disclosure of a session key due to breaking DH, sure, you want your DH parameters to be as long as is practical, but since 1024 bit DH is only just getting feasible, 2048 bits should be OK for most purposes for a while yet._
+  > _Indeed, characterising `2048 bit` DH parameters as "weak as hell" is quite misleading. There are no known feasible cryptographic attacks against arbitrary strong 2048 bit DH groups. To protect against future disclosure of a session key due to breaking DH, sure, you want your DH parameters to be as long as is practical, but since `1024 bit` DH is only just getting feasible, `2048 bits` should be OK for most purposes for a while yet._
+
+  > `DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same. `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
+
+  **My recommendation:**
+
+  > If you use only TLS 1.3 - `ssl_dhparam` is not required (not used). Also, if you use `ECDHE/ECDH` - `ssl_dhparam` is not required (not used). If you use `DHE/DH` - `ssl_dhparam` with DH parameters is required (min. `2048 bit`). By default no parameters are set, and therefore `DHE` ciphers will not be used.
 
 ###### Example
 
 ```bash
-# To generate a DH key:
+# To generate a DH parameters:
 openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
 # To produce "DSA-like" DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
-# NGINX configuration:
+# NGINX configuration only for DH/DHE:
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
 
 &nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 ```bash
-# To generate a DH key:
+# To generate a DH parameters:
 openssl dhparam -out /etc/nginx/ssl/dhparam_2048.pem 2048
 
 # To produce "DSA-like" DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_2048.pem 2048
 
-# NGINX configuration:
-ssl_dhparam /etc/nginx/ssl/dhparams_2048.pem;
+# NGINX configuration only for DH/DHE:
+ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
 ```
 
 &nbsp;&nbsp;:arrow_right: ssllabs score: <b>90%</b>
-
-To generate a ECDH key:
-
-```bash
-openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
-```
 
 ###### External resources
 
@@ -11158,6 +11176,10 @@ openssl ecparam -out /etc/nginx/ssl/ecparam.pem -name prime256v1
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 - [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
 - [Public Diffie-Hellman Parameter Service/Tool](https://2ton.com.au/dhtool/)
+- [Vincent Bernat's SSL/TLS & Perfect Forward Secrecy](http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html)
+- [RSA and ECDSA performance](https://securitypitfalls.wordpress.com/2014/10/06/rsa-and-ecdsa-performance/)
+- [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
+- [Diffie-Hellman and its TLS/SSL usage](https://security.stackexchange.com/questions/41205/diffie-hellman-and-its-tls-ssl-usage)
 
 #### :beginner: Prevent Replay Attacks on Zero Round-Trip Time
 
