@@ -477,8 +477,6 @@ Remember about the following most important things:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
 </p>
 
-<br>
-
 ## Contributing & Support
 
   > _A real community, however, exists only when its members interact in a meaningful way that deepens their understanding of each other and leads to learning._
