@@ -85,6 +85,7 @@
   * [Static analyzers](#static-analyzers)
   * [Log analyzers](#log-analyzers)
   * [Performance analyzers](#performance-analyzers)
+  * [Builder tools](#builder-tools)
   * [Benchmarking tools](#benchmarking-tools)
   * [Debugging tools](#debugging-tools)
   * [Development](#development)
@@ -556,6 +557,8 @@ Existing chapters:
   - _Comparison reviews_
     - [x] _NGINX vs. Apache (Pro/Con Review, Uses, & Hosting for Each)_
     - [x] _Web cache server performance benchmark: nuster vs nginx vs varnish vs squid_
+  - _Builder tools_
+    - [x] _Nginx-builder_
   - _Benchmarking tools_
     - [x] _wrk2_
     - [x] _httperf_
@@ -1231,6 +1234,12 @@ _In this ebook you will learn:_
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/lebinh/ngxtop"><b>ngxtop</b></a> - parses your Nginx access log and outputs useful, top-like, metrics of your Nginx server.<br>
+</p>
+
+##### Builder tools
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/TinkoffCreditSystems/Nginx-builder"><b>Nginx-builder</b></a> - is a tool for building deb or rpm package NGINX from the source code.<br>
 </p>
 
 ##### Benchmarking tools
