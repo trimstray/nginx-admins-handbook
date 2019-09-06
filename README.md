@@ -107,6 +107,9 @@
       * [Status codes and reason phrase](#status-codes-and-reason-phrase)
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
+- **[SSL Basics](#ssl-basics)**
+  * [TLS versions](#tls-versions)
+  * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
 - **[NGINX Basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
@@ -598,9 +601,9 @@ Existing chapters:
 <details>
 <summary><b>SSL Basics</b></summary><br>
 
-  - [ ] _TLS versions_
+  - [x] _TLS versions_
   - [ ] _Ciphersuites_
-  - [ ] _DH key_
+  - [x] _Diffie-Hellman key exchange_
 
 </details>
 
@@ -1640,6 +1643,34 @@ The response-header fields allow the server to pass additional information about
 ##### Message body
 
 Contains the resource data that was requested by the client.
+
+# SSL Basics
+
+#### TLS versions
+
+| <b>PROTOCOL</b> | <b>RFC</b> | <b>PUBLISHED</b> | <b>STATUS</b> |
+| :---:        | :---:        | :---:        | :---         |
+| SSL 1.0 | | Unpublished | Unpublished |
+| SSL 2.0 | | 1995 | Depracated in 2011 ([RFC 6176](https://tools.ietf.org/html/rfc6176)) |
+| SSL 3.0 | | 1996 | Depracated in 2015 ([RFC 7568](https://tools.ietf.org/html/rfc7568)) |
+| TLS 1.0 | [RFC 2246](https://tools.ietf.org/html/rfc2246) | 1999 | Deprecation in 2020 |
+| TLS 1.1 | [RFC 4346](https://tools.ietf.org/html/rfc4346) | 2006 | Deprecation in 2020 |
+| TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) | 2008 | Still secure |
+| TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) | 2018 | Still secure |
+
+#### Diffie-Hellman key exchange
+
+`DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same. `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
+
+Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange (on-the-fly), which enables Perfect Forward Secrecy (PFS). Next, it signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
+
+Forward Secrecy is the prime feature of the ephemeral version of Diffie–Hellman which means if the private key of the server gets leaked, his past communications are secure. Ephemeral Diffie-Hellman doesn't provide authentication on its own, because the key is different every time. So neither party can be sure that the key is from the intended party.
+
+The `ECDHE` is a variant of the Diffie–Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
+
+Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.`
+
+These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
 
 # NGINX Basics
 
@@ -11105,25 +11136,17 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
 ###### Rationale
 
-  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. By default, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters provided by OpenSSL. This uses a weak key (by default: `1024 bit`) that gets lower scores.
+  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use it, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters to define how performs the Diffie-Hellman (`DH`) key-exchange. This uses a weak key (by default: `1024 bit`) that gets lower scores.
 
   > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`). Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525](https://tools.ietf.org/html/rfc7525#section-6.3).
 
   > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with min. 2048 `ssl_dhparam`) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
 
-  > Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange, which enables Perfect Forward Secrecy (PFS). Forward Secrecy is the prime feature of the ephemeral version of Diffie–Hellman which means if the private key of the server gets leaked, his past communications are secure. Ephemeral Diffie-Hellman doesn't provide authentication on its own, because the key is different every time. So neither party can be sure that the key is from the intended party.
-
-  > The `ECDHE` is a variant of the Diffie–Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
-
-  > Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.`
-
-  > In a `ECDHE/DHE` cipher suites, the server generates on-the-fly a new Diffie-Hellman key pair, signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
+  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack.
 
   > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the `DH` param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
 
-  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack.
-
-  > These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use. Elliptic curve Diffie–Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
+  > Elliptic curve Diffie–Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
 
   > Cipher suites using `DHE` key exchange in OpenSSL require `tmp_DH` parameters, which the `ssl_dhparam` directive provides. The same is true for `DH_anon` key exchange, but in practice nobody uses those. The openssl wiki page for Diffie Hellman Parameters it says: _To use perfect forward secrecy cipher suites, you must set up Diffie-Hellman parameters (on the server side)._ Look also at [SSL_CTX_set_tmp_dh_callback](https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_tmp_dh.html).
 
@@ -11142,8 +11165,6 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
   Look also at this answer by [Matt Palmer](https://www.hezmatt.org/~mpalmer/blog/):
 
   > _Indeed, characterising `2048 bit` DH parameters as "weak as hell" is quite misleading. There are no known feasible cryptographic attacks against arbitrary strong 2048 bit DH groups. To protect against future disclosure of a session key due to breaking DH, sure, you want your DH parameters to be as long as is practical, but since `1024 bit` DH is only just getting feasible, `2048 bits` should be OK for most purposes for a while yet._
-
-  > `DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same. `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
 
   **My recommendation:**
 
