@@ -271,6 +271,7 @@
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
+    * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
     * [Set correct scheme passed in X-Forwarded-Proto](#set-correct-scheme-passed-in-x-forwarded-proto)
   * [Other snippets](#other-snippets)
@@ -496,6 +497,8 @@ What needs to be done? Look at the following ToDo list:
 New chapters:
 
 - [x] **Bonus Stuff**
+- [x] **HTTP Basics**
+- [x] **SSL Basics**
 - [x] **Reverse Proxy**
 - [ ] **Caching**
 - [ ] **3rd party modules**
@@ -733,6 +736,7 @@ Existing chapters:
     - [ ] _Custom error pages_
     - [x] _Adding and removing the www prefix_
     - [x] _Redirect POST request with payload to external endpoint_
+    - [x] _Route to different backends based on HTTP method_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [x] _Set correct scheme passed in X-Forwarded-Proto_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
@@ -8666,6 +8670,69 @@ location /api {
   ...
 
 }
+```
+
+##### Route to different backends based on HTTP method
+
+This snippet is helpful if you want to route requests to different backends based on method. For example:
+
+- `POST /v1/orders/` - would go to one backend pool
+- `GET /v1/orders/` - would go to another backend pool
+
+If you don't want to mix the two methods in the same backend, for example the reason being that sometimes POST needs to be always fast, while GET involves DB queries and can be slow.
+
+Example 1:
+
+  > In this example users can only see specific resource (`/v1/id`). The rest is hidden for them.
+
+```bash
+# 1) File: /etc/nginx/map_methods.conf
+map $request_method $method_dest {
+
+  default '/_get/v1/id';
+
+  GET     '/_get/v1/id';
+  POST    '/_post/v1/id';
+
+}
+
+# 2) Include this file in http context:
+include /etc/nginx/map_methods.conf;
+
+# 3) Use it in a specific context (e.g. location):
+...
+
+server_name example.com;
+
+  # It's only accessible to the clients.
+  location /v1/id {
+
+    set $original_uri $uri;
+    rewrite ^ $method_dest last;
+
+  }
+
+  # It's not accessible to the clients.
+  location /_get/v1/id {
+
+    internal;
+    rewrite ^ $original_uri break;
+
+    proxy_pass http://default.example.com-get-80;
+
+  }
+
+  # It's not accessible to the clients.
+  location /_post/v1/id {
+
+    internal;
+    rewrite ^ $original_uri break;
+
+    proxy_pass http://default.example.com-post-80;
+
+  }
+
+  ...
 ```
 
 ##### Allow multiple cross-domains using the CORS headers
