@@ -269,6 +269,7 @@
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
+    * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
@@ -421,10 +422,11 @@ These essential documents should be the main source of knowledge for you:
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
 - **[Development guide](http://nginx.org/en/docs/dev/development_guide.html)**
 
-In addition, I would like to recommend two great docs focuses on the concept of the HTTP protocol:
+In addition, I would like to recommend three great docs focuses on the concept of the HTTP protocol:
 
 - **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)**
 - **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
+- **[Web technology for developers - HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)**
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols).
 
@@ -734,6 +736,7 @@ Existing chapters:
   - _Configuration snippets_
     - [x] _Custom log formats_
     - [ ] _Custom error pages_
+    - [x] _Properly redirect all HTTP requests to HTTPS_
     - [x] _Adding and removing the www prefix_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
@@ -1321,6 +1324,7 @@ _In this ebook you will learn:_
 ##### Other stuff
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://developer.mozilla.org/en-US/docs/Web"><b>Web technology for developers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/"><b>OWASP Cheat Sheet Series</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://infosec.mozilla.org/guidelines/web_security.html"><b>Mozilla Web Security</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://appsecwiki.com/#/"><b>Application Security Wiki</b></a><br>
@@ -8607,6 +8611,44 @@ Longest transaction:    1.10
 Shortest transaction:   0.38
 ```
 
+##### Properly redirect all HTTP requests to HTTPS
+
+None of the standard answers are safe to use if at any point you had unsecure HTTP set up and expect user content, have forms, host an API, or have configured any website, tool, application, or utility to speak to your site. The problem occurs when a POST request is made to your server. If the server response with a plain 30x redirect the POST content will be lost. To prevent this situation remember about correct redirect HTTP code for POSTs ([Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)).
+
+```bash
+server {
+
+  listen        192.168.200.10:80;
+  server_name   example.com;
+
+  if ($request_method = POST) {
+
+    return      307 https://$server_name$request_uri;
+
+  }
+
+  # return      301 https://example.com$request_uri;
+  return        301 https://$server_name$request_uri;
+
+  ...
+
+}
+
+server {
+
+  listen        192.168.200.10:443 ssl;
+  server_name   example.com;
+
+  # add Strict-Transport-Security to prevent man in the middle attacks:
+  add_header    Strict-Transport-Security "max-age=31536000" always;
+
+  ...
+
+}
+```
+
+  > Look also at [HTTP Strict Transport Security (from this handbook)](#beginner-http-strict-transport-security).
+
 ##### Adding and removing the `www` prefix
 
 - `www` to `non-www`:
@@ -8658,12 +8700,12 @@ location /api {
   # HTTP 307 only for POST requests:
   if ($request_method = POST) {
 
-    return 307 https://api.example.com?request_uri;
+    return 307 https://api.example.com$request_uri;
 
   }
 
   # You can keep this for non-POST requests:
-  rewrite ^ https://api.example.com?request_uri permanent;
+  rewrite ^ https://api.example.com$request_uri permanent;
 
   client_max_body_size    10m;
 
@@ -11486,6 +11528,7 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
 ###### External resources
 
+- [Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
 - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
 - [Security HTTP Headers - Strict-Transport-Security](https://zinoui.com/blog/security-http-headers#strict-transport-security)
 - [Is HSTS as a proper substitute for HTTP-to-HTTPS redirects?](https://www.reddit.com/r/bigseo/comments/8zw45d/is_hsts_as_a_proper_substitute_for_httptohttps/)
