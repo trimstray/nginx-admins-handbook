@@ -8613,7 +8613,9 @@ Shortest transaction:   0.38
 
 ##### Properly redirect all HTTP requests to HTTPS
 
-None of the standard answers are safe to use if at any point you had unsecure HTTP set up and expect user content, have forms, host an API, or have configured any website, tool, application, or utility to speak to your site. The problem occurs when a POST request is made to your server. If the server response with a plain 30x redirect the POST content will be lost. To prevent this situation remember about correct redirect HTTP code for POSTs ([Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)).
+None of the standard answers are safe to use if at any point you had unsecure HTTP set up and expect user content, have forms, host an API, or have configured any website, tool, application, or utility to speak to your site.
+
+The problem occurs when a `POST` request is made to your server. If the server response with a plain 30x redirect the POST content will be lost. To prevent this situation remember about the correct redirect HTTP code for `POST` request ([Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)).
 
 ```bash
 server {
