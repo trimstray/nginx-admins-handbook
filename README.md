@@ -1442,12 +1442,12 @@ A request consists of: `(1) a command or request + (2) optional headers + (4) op
 ```
                       FIELDS OF HTTP REQUEST       PART OF RFC 2616
 ---------------------------------------------------------------------
-  Request       = (1) : Request-line                ; Section 5.1
-                  (2) : *(( general-header          ; Section 4.5
-                          | request-header          ; Section 5.3
-                          | entity-header ) CRLF)   ; Section 7.1
+  Request       = (1) : Request-line                 Section 5.1
+                  (2) : *(( general-header           Section 4.5
+                          | request-header           Section 5.3
+                          | entity-header ) CRLF)    Section 7.1
                   (3) : CRLF
-                  (4) : [ message-body ]            ; Section 4.3
+                  (4) : [ message-body ]             Section 4.3
 ```
 
 Example of form an HTTP request to fetch `/alerts/status` page from the web server running on `localhost:8000`:
@@ -1611,12 +1611,12 @@ After receiving and interpreting a request message, a server responds with an HT
 ```
                      FIELDS OF HTTP RESPONSE       PART OF RFC 2616
 ---------------------------------------------------------------------
-  Request       = (1) : Status-line                 ; Section 6.1
-                  (2) : *(( general-header          ; Section 4.5
-                          | response-header         ; Section 6.2
-                          | entity-header ) CRLF)   ; Section 7.1
+  Request       = (1) : Status-line                  Section 6.1
+                  (2) : *(( general-header           Section 4.5
+                          | response-header          Section 6.2
+                          | entity-header ) CRLF)    Section 7.1
                   (3) : CRLF
-                  (4) : [ message-body ]            ; Section 4.3
+                  (4) : [ message-body ]             Section 4.3
 ```
 
 Example of form an HTTP response for a request to fetch the `/alerts/status` page from the web server running on `localhost:8000`:
@@ -1681,9 +1681,9 @@ Contains the resource data that was requested by the client.
 
 Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange (on-the-fly), which enables Perfect Forward Secrecy (PFS). Next, it signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
 
-Forward Secrecy is the prime feature of the ephemeral version of Diffie–Hellman which means if the private key of the server gets leaked, his past communications are secure. Ephemeral Diffie-Hellman doesn't provide authentication on its own, because the key is different every time. So neither party can be sure that the key is from the intended party.
+Forward Secrecy is the prime feature of the ephemeral version of Diffie-Hellman which means if the private key of the server gets leaked, his past communications are secure. Ephemeral Diffie-Hellman doesn't provide authentication on its own, because the key is different every time. So neither party can be sure that the key is from the intended party.
 
-The `ECDHE` is a variant of the Diffie–Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
+The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
 
 Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.`
 
@@ -2125,7 +2125,7 @@ NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only rea
 
 From NGINX documentation:
 
-  > _The NGINX configuration recommended in most cases – running one worker process per CPU core – makes the most efficient use of hardware resources._
+  > _The NGINX configuration recommended in most cases - running one worker process per CPU core - makes the most efficient use of hardware resources._
 
 NGINX uses a custom event loop which was designed specifically for NGINX - all connections are processed in a highly efficient run-loop in a limited number of single-threaded processes called workers.
 
@@ -10186,7 +10186,7 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 
   Official NGINX documentation say:
 
-  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it). [...] running one worker process per CPU core – makes the most efficient use of hardware resources._
+  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it). [...] running one worker process per CPU core - makes the most efficient use of hardware resources._
 
   > How many worker processes do you need? Do some multiple load testing. Hit the app hard and see what happens with only one. Then add some more to it and hit it again. At some point you'll reach a point of truly saturating the server resources. That's when you know you have the right balance.
 
@@ -11266,7 +11266,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the `DH` param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
 
-  > Elliptic curve Diffie–Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
+  > Elliptic curve Diffie-Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
 
   > Cipher suites using `DHE` key exchange in OpenSSL require `tmp_DH` parameters, which the `ssl_dhparam` directive provides. The same is true for `DH_anon` key exchange, but in practice nobody uses those. The OpenSSL wiki page for Diffie Hellman Parameters it says: _To use perfect forward secrecy cipher suites, you must set up Diffie-Hellman parameters (on the server side)._ Look also at [SSL_CTX_set_tmp_dh_callback](https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_tmp_dh.html).
 
