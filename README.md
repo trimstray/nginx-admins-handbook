@@ -268,6 +268,7 @@
     * [Limiting referrer spam](#limiting-referrer-spam)
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+    * [Limiting the rate of requests per IP with geo and map](#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
@@ -736,6 +737,7 @@ Existing chapters:
   - _Configuration snippets_
     - [x] _Custom log formats_
     - [ ] _Custom error pages_
+    - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Properly redirect all HTTP requests to HTTPS_
     - [x] _Adding and removing the www prefix_
     - [x] _Redirect POST request with payload to external endpoint_
@@ -8441,7 +8443,6 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
 
 - key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
-  - limit requests per IP as following
 - zone name: `req_for_remote_addr`
 - zone size: `64k` (1024 IP addresses)
 - rate is `0,16` request each second or `10` requests per minute (`1` request every `6` second)
@@ -8506,7 +8507,6 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=2r/s;
 
 - key/zone type: `limit_req_zone`
 - the unique key for limiter: `$binary_remote_addr`
-  - limit requests per IP as following
 - zone name: `req_for_remote_addr`
 - zone size: `50m` (800,000 IP addresses)
 - rate is `2` request each second or `120` requests per minute (`2` requests every `1` second)
@@ -8562,6 +8562,44 @@ Successful transactions:   6
 Failed transactions:       6
 Longest transaction:    0.22
 Shortest transaction:   0.18
+```
+
+##### Limiting the rate of requests per IP with geo and map
+
+```bash
+geo $limit_per_ip {
+
+  default         0;
+  10.10.10.135    1;
+
+}
+
+map $limit_per_ip $limit_key {
+
+  0 "";
+  1 $binary_remote_addr;
+
+}
+
+limit_req_zone $limit_key zone=per_ip:10m rate=20r/m;
+```
+
+- key/zone type: `limit_req_zone`
+- the unique key for limiter: `$limit_key` (`$binary_remote_addr`)
+  - `$limit_per_ip` from geo module
+  - match `$limit_per_ip` to `$limit_key` from map module
+- zone name: `per_ip`
+- zone size: `10m` (160,000 IP addresses)
+- rate is `0.3` request each second or `20` requests per minute (`1` request every `3` second)
+
+Example of use:
+
+```bash
+location ~ /stats {
+
+  limit_req zone=per_ip;
+
+  ...
 ```
 
 ##### Limiting the number of connections
