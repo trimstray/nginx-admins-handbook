@@ -1685,7 +1685,7 @@ Forward Secrecy is the prime feature of the ephemeral version of Diffie-Hellman 
 
 The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
 
-Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.`
+Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
 
@@ -8360,7 +8360,7 @@ location /check_status {
 How to test?
 
 ```bash
-siege -b -r 2 -c 40 -v https:/example.com/storage/img/header.jpg -H "Referer: https://spamdomain4.com/"
+siege -b -r 2 -c 40 -v https://example.com/storage/img/header.jpg -H "Referer: https://spamdomain4.com/"
 ** SIEGE 4.0.4
 ** Preparing 5 concurrent users for battle.
 The server is now under siege...
@@ -8415,7 +8415,7 @@ server_name example.com;
 How to test?
 
 ```bash
-siege -b -r 2 -c 40 -v https:/example.com/storage/img/header.jpg -H "Referer: https://spamdomain4.com/"
+siege -b -r 2 -c 40 -v https://example.com/storage/img/header.jpg -H "Referer: https://spamdomain4.com/"
 ** SIEGE 4.0.4
 ** Preparing 5 concurrent users for battle.
 The server is now under siege...
