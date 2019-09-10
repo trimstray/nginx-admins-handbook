@@ -108,8 +108,9 @@
       * [Status codes and reason phrase](#status-codes-and-reason-phrase)
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
-- **[SSL Basics](#ssl-basics)**
+- **[SSL/TLS Basics](#ssl--tls-basics)**
   * [TLS versions](#tls-versions)
+  * [Cipher suites](#cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
 - **[NGINX Basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
@@ -292,7 +293,8 @@
     * [Generate multidomain certificate](#generate-multidomain-certificate)
     * [Generate wildcard certificate](#generate-wildcard-certificate)
     * [Generate certificate with 4096 bit private key](#generate-certificate-with-4096-bit-private-key)
-    * [Generate DH Param key](#generate-dh-param-key)
+    * [Generate DH public parameters](#generate-dh-public-parameters)
+    * [Display DH public parameters](#display-dh-public-parameters)
     * [Convert DER to PEM](#convert-der-to-pem)
     * [Convert PEM to DER](#convert-pem-to-der)
     * [Verification of the private key](#verification-of-the-private-key)
@@ -501,7 +503,7 @@ New chapters:
 
 - [x] **Bonus Stuff**
 - [x] **HTTP Basics**
-- [x] **SSL Basics**
+- [x] **SSL/TLS Basics**
 - [x] **Reverse Proxy**
 - [ ] **Caching**
 - [ ] **3rd party modules**
@@ -608,10 +610,10 @@ Existing chapters:
 </details>
 
 <details>
-<summary><b>SSL Basics</b></summary><br>
+<summary><b>SSL/TLS Basics</b></summary><br>
 
   - [x] _TLS versions_
-  - [ ] _Ciphersuites_
+  - [x] _Cipher suites_
   - [x] _Diffie-Hellman key exchange_
 
 </details>
@@ -770,7 +772,8 @@ Existing chapters:
     - [x] _Generate multidomain certificate_
     - [x] _Generate wildcard certificate_
     - [x] _Generate certificate with 4096 bit private key_
-    - [x] _Generate DH Param key_
+    - [x] _Generate DH public parameters_
+    - [x] _Display DH public parameters_
     - [x] _Convert DER to PEM_
     - [x] _Convert PEM to DER_
     - [x] _Verification of the private key_
@@ -1352,7 +1355,7 @@ _In this ebook you will learn:_
 
 # HTTP Basics
 
-HTTP stands for hypertext transfer protocol and is used for transmitting data (web pages) over the Internet.
+HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
 Some important information about HTTP:
 
@@ -1663,7 +1666,13 @@ The response-header fields allow the server to pass additional information about
 
 Contains the resource data that was requested by the client.
 
-# SSL Basics
+# SSL/TLS Basics
+
+TLS stands for "Transport Layer Security". It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
+
+TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1 and 1.0.
+
+I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). It is the most comprehensive book about deploying TLS.
 
 #### TLS versions
 
@@ -1677,9 +1686,37 @@ Contains the resource data that was requested by the client.
 | TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) | 2008 | Still secure |
 | TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) | 2018 | Still secure |
 
+#### Cipher suites
+
+To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher suite is a combination of authentication, encryption, and message authentication code (MAC) algorithms. They are used during the negotiation of security settings for a TLS/SSL connection as well as for the transfer of data.
+
+There are essentially 4 different parts of a TLS 1.2 cipher suite:
+
+- `Authentication` - what crypto is used to verify the authenticity of the server?
+- `Key exchange` - what asymmetric crypto is used to exchange keys?
+- `Cipher` - what symmetric crypto is used to encrypt the data?
+- `MAC` - what hash function is used to ensure message integrity?
+
+For example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `TLS_RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
+
+The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
+
+Look also at this great table with [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm).
+
 #### Diffie-Hellman key exchange
 
+The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shared secret key, without any other users knowing that key. The exchange is performed over a public network, i.e. all messages sent between the two users can be intercepted and read by any other user.
+
+The protocol makes use of modular arithmetic and especially exponentials. The security of the protocol relies on the fact that solving a discrete logarithm (the inverse of an exponential) is practically impossible when large enough values are used.
+
 `DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same. `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
+
+| <b>TYPE</b> | <b>ELLIPTIC CURVE</b> | <b>EPHERMAL</b> | <b>KEY ROTATION</b> | <b>PFS</b> | <b>DHPARAM FILE</b> |
+| :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
+| `DH` | no | no | no | no | yes | |
+| `DHE` | no | yes | yes | yes | no |
+| `ECDH` | yes | no | no | no | yes |
+| `ECDHE` | yes | yes | yes | yes | no |
 
 Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange (on-the-fly), which enables Perfect Forward Secrecy (PFS). Next, it signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
 
@@ -9092,10 +9129,17 @@ certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example
 certbot certonly -d example.com -d www.example.com --rsa-key-size 4096
 ```
 
-###### Generate DH Param key
+###### Generate DH public parameters
 
 ```bash
-openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
+( _dh_size="2048" ; \
+openssl dhparam -out /etc/nginx/ssl/dhparam_${_dh_size}.pem "$_dh_size" )
+```
+
+###### Display DH public parameters
+
+```bash
+openssl pkeyparam -in dhparam.pem -text
 ```
 
 ###### Extract private key from pfx
@@ -11110,7 +11154,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. `Ephemeral DHE/ECDHE` are recommended and support Perfect Forward Secrecy.
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy.
 
   > For backward compatibility software components you should use less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2), you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
@@ -11307,6 +11351,8 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
   > Elliptic curve Diffie-Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
 
   > Cipher suites using `DHE` key exchange in OpenSSL require `tmp_DH` parameters, which the `ssl_dhparam` directive provides. The same is true for `DH_anon` key exchange, but in practice nobody uses those. The OpenSSL wiki page for Diffie Hellman Parameters it says: _To use perfect forward secrecy cipher suites, you must set up Diffie-Hellman parameters (on the server side)._ Look also at [SSL_CTX_set_tmp_dh_callback](https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_tmp_dh.html).
+
+  > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
 
   > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended) from the [Mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
 
