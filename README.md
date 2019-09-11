@@ -108,7 +108,7 @@
       * [Status codes and reason phrase](#status-codes-and-reason-phrase)
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
-- **[SSL/TLS Basics](#ssl--tls-basics)**
+- **[SSL/TLS Basics](#ssltls-basics)**
   * [TLS versions](#tls-versions)
   * [Cipher suites](#cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
@@ -136,6 +136,7 @@
     * [rewrite vs return](#rewrite-vs-return)
     * [try_files directive](#try_files-directive)
     * [if, break, and set](#if-break-and-set)
+    * [root vs alias](#root-vs-alias)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -584,6 +585,9 @@ Existing chapters:
     - [x] _Mozilla Web Security_
     - [x] _Application Security Wiki_
     - [x] _OWASP ASVS 4.0_
+    - [x] _The System Design Primer_
+    - [x] _awesome-scalability_
+    - [x] _Web Architecture 101_
 
 </details>
 
@@ -625,6 +629,7 @@ Existing chapters:
     - [x] _rewrite vs return_
     - [x] _try_files directive_
     - [x] _if, break and set_
+    - [x] _root vs alias_
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_
@@ -930,7 +935,7 @@ Generally, I think that each of these principles is important and should be cons
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 28 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 21 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 22 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
@@ -1349,6 +1354,9 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="http://www.kegel.com/c10k.html"><b>The C10K problem by Dan Kegel</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://highscalability.com/blog/2013/5/13/the-secret-to-10-million-concurrent-connections-the-kernel-i.html"><b>The Secret To 10 Million Concurrent Connections</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://hpbn.co/"><b>High Performance Browser Networking</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/donnemartin/system-design-primer"><b>The System Design Primer</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/binhnguyennus/awesome-scalability"><b>awesome-scalability</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://engineering.videoblocks.com/web-architecture-101-a3224e126947"><b>Web Architecture 101</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/leandromoreira/linux-network-performance-parameters"><b>Learn where some of the network sysctl variables fit into the Linux/Kernel network flow</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
@@ -1475,14 +1483,14 @@ Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 | :---:         | :---         |
 | `GET` | is used to retreive data from a server at the specified resource |
 
-For example, say you have an API with a `/api/v2/users` endpoint. Making a GET request to that endpoint should return a list of all available users.
+For example, say you have an API with a `/api/v2/users` endpoint. Making a `GET` request to that endpoint should return a list of all available users.
 
-  > Requests with GET method does not change any data.
+  > Requests with `GET` method does not change any data.
 
 At a basic level, these things should be validated:
 
 - check that a valid `GET` request returns a 200 status code
-- ensure that a GET request to a specific resource returns the correct data
+- ensure that a `GET` request to a specific resource returns the correct data
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
@@ -1490,13 +1498,13 @@ At a basic level, these things should be validated:
 
 The simplest example is a contact form on a website. When you fill out the inputs in a form and hit Send, that data is put in the response body of the request and sent to the server.
 
-  > Requests with POST method change data on the backend server (by modifying or updating a resource).
+  > Requests with `POST` method change data on the backend server (by modifying or updating a resource).
 
-Here are some tips for testing POST requests:
+Here are some tips for testing `POST` requests:
 
-- create a resource with a POST request and ensure a 200 status code is returned
-- next, make a GET request for that resource, and ensure the data was saved correctly
-- add tests that ensure POST requests fail with incorrect or ill-formatted data
+- create a resource with a `POST` request and ensure a 200 status code is returned
+- next, make a `GET` request for that resource, and ensure the data was saved correctly
+- add tests that ensure `POST` requests fail with incorrect or ill-formatted data
 
 Modify and update a resource:
 
@@ -3261,6 +3269,101 @@ if ($test = ABC) {
 }
 ```
 
+##### `root` vs `alias`
+
+  > Placing a `root` or `alias` directive in a location block overrides the `root` or `alias` directive that was applied at a higher scope.
+
+With `alias` you can map to another file name. With `root` forces you to name your file on the server. In the first case, NGINX replaces the string prefix e.g `/robots.txt` in the URL path with e.g. `/var/www/static/robots.01.txt` and then uses the result as a filesystem path. In the second, NGINX inserts the string e.g. `/var/www/static/` at the beginning of the URL path and then uses the result as a file system path.
+
+Look at this. There is a difference, when the `alias` is for a whole directory will work:
+
+```bash
+location ^~ /data/ { alias /home/www/static/data/; }
+```
+
+But the following code won't do:
+
+```bash
+location ^~ /data/ { root /home/www/static/data/; }
+```
+
+This would have to be:
+
+```bash
+location ^~ /data/ { root /home/www/static/; }
+```
+
+The `root` directive is typically placed in server and location blocks. Placing a `root` directive in the server block makes the `root` directive available to all location blocks within the same server block.
+
+The `root` directive tells NGINX to take the request url and append it behind the specified directory. For example, with the following configuration block:
+
+```bash
+server {
+
+  server_name example.com;
+  listen 10.250.250.10:80;
+
+  index index.html;
+  root /var/www/example.com;
+
+  location / {
+
+    try_files $uri $uri/ =404;
+
+  }
+
+  location ^~ /images {
+
+    root /var/www/static;
+    try_files $uri $uri/ =404;
+
+  }
+
+}
+```
+
+NGINX will map the request made to:
+
+- `http://example.com/images/logo.png` into the file path `/var/www/static/images/logo.png`
+- `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
+- `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
+
+NGINX documentation on the `alias` directive suggests that it is better to use `root` over `alias` when the location matches the last part of the directive’s value.
+
+The `alias` directive can only be placed in a location block. The following is a set of configurations for illustrating how the `alias` directive is applied:
+
+```bash
+server {
+
+  server_name example.com;
+  listen 10.250.250.10:80;
+
+  index index.html;
+  root /var/www/example.com;
+
+  location / {
+
+    try_files $uri $uri/ =404;
+
+  }
+
+  location ^~ /images {
+
+    root /var/www/static;
+    try_files $uri $uri/ =404;
+
+  }
+
+}
+```
+
+NGINX will map the request made to:
+
+- `http://example.com/images/logo.png` into the file path `/var/www/static/logo.png`
+- `http://example.com/images/third-party/facebook-logo.png` into the file path `/var/www/static/third-party/facebook-logo.png`
+- `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
+- `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
+
 #### Log files
 
 Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the last phase: `NGX_HTTP_LOG_PHASE`).
@@ -3344,6 +3447,8 @@ This is one of the greatest feature of the NGINX. In simplest terms, a reverse p
 Official NGINX documentation say:
 
   > _Proxying is typically used to distribute the load among several servers, seamlessly show content from different websites, or pass requests for processing to application servers over protocols other than HTTP._
+
+You can also read a very good explanation about [What's the difference between proxy server and reverse proxy server?](https://stackoverflow.com/questions/224664/whats-the-difference-between-proxy-server-and-reverse-proxy-server/366212#366212).
 
 A reverse proxy can off load much of the infrastructure concerns of a high-volume distributed web application.
 
