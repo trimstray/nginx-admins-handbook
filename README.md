@@ -264,7 +264,7 @@
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Custom log formats](#custom-log-formats)
-    * [Log only 4xx/5xx](#log-only-4xx-5xx)
+    * [Log only 4xx/5xx](#log-only-4xx5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
