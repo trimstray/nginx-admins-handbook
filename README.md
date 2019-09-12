@@ -1450,7 +1450,7 @@ If it is still unclear to you, I recommend you read: [What is the difference bet
 
 #### Request
 
-A request consists of: `(1) a command or request + (2) optional headers + (4) optional body content`
+A request consists of: `(1) a command or request + (2) optional headers + (4) optional body content`:
 
 ```
                       FIELDS OF HTTP REQUEST       PART OF RFC 2616
@@ -1619,7 +1619,7 @@ How to generate a requests?
 
 #### Response
 
-After receiving and interpreting a request message, a server responds with an HTTP response message.
+After receiving and interpreting a request message, a server responds with an HTTP response message:
 
 ```
                      FIELDS OF HTTP RESPONSE       PART OF RFC 2616
@@ -1705,7 +1705,7 @@ There are essentially 4 different parts of a TLS 1.2 cipher suite:
 - `Cipher` - what symmetric crypto is used to encrypt the data?
 - `MAC` - what hash function is used to ensure message integrity?
 
-For example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `TLS_RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
+For example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
@@ -1717,7 +1717,7 @@ The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shar
 
 The protocol makes use of modular arithmetic and especially exponentials. The security of the protocol relies on the fact that solving a discrete logarithm (the inverse of an exponential) is practically impossible when large enough values are used.
 
-`DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same. `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
+`DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same (`EDH` in OpenSSL-speak, `DHE` elsewhere). `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
 
 | <b>TYPE</b> | <b>ELLIPTIC CURVE</b> | <b>EPHERMAL</b> | <b>KEY ROTATION</b> | <b>PFS</b> | <b>DHPARAM FILE</b> |
 | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
@@ -2147,7 +2147,7 @@ Look what the official documentation says about it:
 
 I must not forget to mention here about Non-Blocking and 3rd party modules (from official documentation):
 
-  > Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs.
+  > _Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs._
 
 To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded but it can fork several processes to utilize multiple cores.
 
@@ -3349,7 +3349,7 @@ server {
 
   location ^~ /images {
 
-    root /var/www/static;
+    alias /var/www/static;
     try_files $uri $uri/ =404;
 
   }
@@ -3440,7 +3440,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Reverse proxy
 
-  > After reading this chapter, please see on the [Rules: Reverse Proxy)](#reverse-proxy-1).
+  > After reading this chapter, please see: [Rules: Reverse Proxy)](#reverse-proxy-1).
 
 This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 
@@ -3702,19 +3702,19 @@ It's also important to distinguish between request headers and response headers.
 
 Ok, so look at following short explanation about proxy directives (for more information about valid header values please see [this](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend) rule):
 
-- `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1
+- `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1:
 
   ```bash
   proxy_http_version  1.1;
   ```
 
-- `proxy_cache_bypass` - sets conditions under which the response will not be taken from a cache
+- `proxy_cache_bypass` - sets conditions under which the response will not be taken from a cache:
 
   ```bash
   proxy_cache_bypass  $http_upgrade;
   ```
 
-- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (overrides the error page on the backend side)
+- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (overrides the error page on the backend side):
 
   ```bash
   proxy_intercept_errors on;
@@ -3723,44 +3723,44 @@ Ok, so look at following short explanation about proxy directives (for more info
 
 - `proxy_set_header` - allows redefining or appending fields to the request header passed to the proxied server
 
-  - `Upgrade` and `Connection` - these header fields are required if your application is using Websockets
+  - `Upgrade` and `Connection` - these header fields are required if your application is using Websockets:
 
     ```bash
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
     ```
 
-  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request
+  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request:
 
     ```bash
     proxy_set_header Host $host;
     ```
 
-  - `X-Real-IP` - forwards the real visitor remote IP address to the proxied server
+  - `X-Real-IP` - forwards the real visitor remote IP address to the proxied server:
 
     ```bash
     proxy_set_header X-Real-IP $remote_addr;
     ```
 
-  - `X-Forwarded-For` - is the conventional way of identifying the originating IP address of the user connecting to the web server coming from either a HTTP proxy, load balancer
+  - `X-Forwarded-For` - is the conventional way of identifying the originating IP address of the user connecting to the web server coming from either a HTTP proxy or load balancer:
 
     ```bash
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     ```
 
-  - `X-Forwarded-Proto` - identifies the protocol (HTTP or HTTPS) that a client used to connect to your proxy or load balancer
+  - `X-Forwarded-Proto` - identifies the protocol (HTTP or HTTPS) that a client used to connect to your proxy or load balancer:
 
     ```bash
     proxy_set_header X-Forwarded-Proto $scheme;
     ```
 
-  - `X-Forwarded-Host` - defines the original host requested by the client
+  - `X-Forwarded-Host` - defines the original host requested by the client:
 
     ```bash
     proxy_set_header X-Forwarded-Host $host;
     ```
 
-  - `X-Forwarded-Port` - defines the original port requested by the client
+  - `X-Forwarded-Port` - defines the original port requested by the client:
 
     ```bash
     proxy_set_header X-Forwarded-Port $server_port;
