@@ -264,6 +264,7 @@
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Custom log formats](#custom-log-formats)
+    * [Log only 4xx/5xx](#log-only-4xx-5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
@@ -743,6 +744,7 @@ Existing chapters:
     - [ ] _Common errors_
   - _Configuration snippets_
     - [x] _Custom log formats_
+    - [x] _Log only 4xx/5xx_
     - [ ] _Custom error pages_
     - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Properly redirect all HTTP requests to HTTPS_
@@ -8279,6 +8281,33 @@ log_format geoip-level-0
                 '$status $body_bytes_sent "$http_referer" '
                 '"$http_user_agent" "$http_x_forwarded_for" '
                 '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
+```
+
+##### Log only 4xx/5xx
+
+```bash
+# 1) File: /etc/nginx/map/logs.conf
+
+# Map module:
+map $status $error_codes {
+
+  default   1;
+  ~^[23]    0;
+
+}
+
+# 2) Include this file in http context:
+include /etc/nginx/map/logs.conf;
+
+# 3) Turn on in a specific context (e.g. location):
+server {
+
+  ...
+
+  # Add if condition to access log:
+  access_log /var/log/nginx/example.com-access.log combined if=$error_codes;
+
+}
 ```
 
 ##### Restricting access with basic authentication
