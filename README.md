@@ -1723,10 +1723,13 @@ The protocol makes use of modular arithmetic and especially exponentials. The se
 
 | <b>TYPE</b> | <b>ELLIPTIC CURVE</b> | <b>EPHERMAL</b> | <b>KEY ROTATION</b> | <b>PFS</b> | <b>DHPARAM FILE</b> |
 | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
-| `DH` | no | no | no | no | yes | |
-| `DHE` | no | yes | yes | yes | no |
-| `ECDH` | yes | no | no | no | yes |
+| `DHE` | no | yes | yes | yes | yes |
+| `ECDH` | yes | no | no | no | no |
 | `ECDHE` | yes | yes | yes | yes | no |
+
+Using `DHE` means even the `g` and `p` parameters may be randomly generated, but as this is a very expensive process (because you need to find a safe prime), computationally seen, you usually don't do this.
+
+However, when you're doing a `DH` (without the "E") key exchange, the server has a certificate, which embeds a static, public Diffie-Hellman key, i.e. `gxmodp` as well as `g` and `p` allowing you to save an additional signature (e.g. using `RSA` or `ECDSA`) to verify the authenticity of the `DH` parameter. So while the server's `DH` value is static, the client still usually chooses a random value for security and storage-reduction reasons. Obviously fixing the parameters in the certificate implies they can't be changed at run-time.
 
 Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange (on-the-fly), which enables Perfect Forward Secrecy (PFS). Next, it signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The `DH` key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
 
@@ -1736,7 +1739,7 @@ The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curv
 
 Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any `DH` exchange, you can only use RSA in encryption mode.
 
-These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
+These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the `DH` params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
 
 # NGINX Basics
 
