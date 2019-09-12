@@ -1686,6 +1686,9 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 
 #### TLS versions
 
+  > Rules:
+  > - [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
+
 | <b>PROTOCOL</b> | <b>RFC</b> | <b>PUBLISHED</b> | <b>STATUS</b> |
 | :---:        | :---:        | :---:        | :---         |
 | SSL 1.0 | | Unpublished | Unpublished |
@@ -1697,6 +1700,10 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 | TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) | 2018 | Still secure |
 
 #### Cipher suites
+
+  > Rules:
+  > - [Use only strong ciphers](#beginner-use-only-strong-ciphers)
+  > - [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
 
 To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher suite is a combination of authentication, encryption, and message authentication code (MAC) algorithms. They are used during the negotiation of security settings for a TLS/SSL connection as well as for the transfer of data.
 
@@ -1714,6 +1721,9 @@ The client and the server negotiate which cipher suite to use at the beginning o
 Look also at this great table with [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm).
 
 #### Diffie-Hellman key exchange
+
+  > Rules:
+  > - [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)
 
 The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shared secret key, without any other users knowing that key. The exchange is performed over a public network, i.e. all messages sent between the two users can be intercepted and read by any other user.
 
