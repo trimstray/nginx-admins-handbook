@@ -8873,6 +8873,8 @@ server {
 
 ##### Adding and removing the `www` prefix
 
+  > Note that these solutions gets tricky if you use HTTPS, as you must then have a single certificate to cover all of your domain names if you want this to work properly. The best practice of using a separate `server` would still stand.
+
 - `www` to `non-www`:
 
 ```bash
@@ -8905,14 +8907,56 @@ server {
 }
 ```
 
-This removes `www` prefix before any domain. It is not a recommended (uses the `if` condition) but in some cases it may be useful:
+or:
 
 ```bash
 server {
 
   ...
 
-  server_name example.com example2.com www.example.com www.example2.com;
+  server_name ~^www\.(?<domain>(?:example\.org|example\.com|subdomain\.example\.net))$;
+
+  return 301 $scheme://$domain$request_uri;
+
+}
+```
+
+This matches all domain names pointed to the server starting with `www.` and redirects to `non-www`:
+
+```bash
+server {
+
+  ...
+
+  server_name ~^www\.(?<domain>.+)$;
+
+  return 301 $scheme://$domain$request_uri;
+
+}
+```
+
+These final solutions is generally not considered to be the best practice, however, it still works and does the job. Both removes `www` prefix before any domain.:
+
+```bash
+server {
+
+  ...
+
+  if ($host ~ ^www\.(?<domain>.+)$) {
+
+    return 301 $scheme://$domain$request_uri;
+
+  }
+
+}
+```
+
+It is not a recommended if you don't care for the most ultimate performance (uses the `if` condition and regular expression) but in some cases it may be useful:
+
+```bash
+server {
+
+  ...
 
   if ($host ~* ^www\.(.*)$) {
 
@@ -8948,6 +8992,24 @@ server {
   server_name ~^(?!www\.)(?<domain>.+)$;
 
   return 301 $scheme://www.$domain$request_uri;
+
+}
+```
+
+The following is very similar to above but uses `if`:
+
+```bash
+server {
+
+  ...
+
+  server_name www.example.com www.example2.com;
+
+  if ($host ~ ^(?!www\.)(?<domain>.+)$) {
+
+    return  301 $scheme://www.$domain$request_uri;
+
+  }
 
 }
 ```
@@ -9588,9 +9650,13 @@ kill -HUP $(pgrep -f "nginx: master")
 
   > If you served HTTP and HTTPS with the exact same config (a single server that handles both HTTP and HTTPS requests) NGINX is intelligent enough to ignore the SSL directives if loaded over port 80.
 
+  > Best practice with NGINX is to use a separate server for a redirect like this (not shared with the server of your main configuration), to hardcode everything, and not use regular expressions at all.
+
   > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration.
 
   > It's useful if you pin multiple domains to one IP address. This allows you to attach one listen directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
+
+  > It may also be necessary to hardcode the domains if you're using HTTPS, because you have to know upfront which certificates you'll be providing.
 
 ###### Example
 
@@ -9808,6 +9874,8 @@ server {
   > Another good idea is to move common server settings into a separate file, i.e. `common/example.com.conf` and then include it in separate `server` blocks.
 
   > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address. It's also to prevent mistakes and configuration mismatch.
+
+  > For me, this rule making it easier to debug and maintain.
 
   From NGINX documentation:
 
