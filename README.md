@@ -275,7 +275,6 @@
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
-    * [Removes www prefix before any domain](#removes-www-prefix-before-any-domain)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
@@ -750,7 +749,6 @@ Existing chapters:
     - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Properly redirect all HTTP requests to HTTPS_
     - [x] _Adding and removing the www prefix_
-    - [x] _Removes www prefix before any domain_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
     - [x] _Allow multiple cross-domains using the CORS headers_
@@ -8907,6 +8905,24 @@ server {
 }
 ```
 
+This removes `www` prefix before any domain. It is not a recommended (uses the `if` condition) but in some cases it may be useful:
+
+```bash
+server {
+
+  ...
+
+  server_name example.com example2.com www.example.com www.example2.com;
+
+  if ($host ~* ^www\.(.*)$) {
+
+    rewrite / $scheme://$1 permanent;
+
+  }
+
+}
+```
+
 - `non-www` to `www`:
 
 ```bash
@@ -8922,22 +8938,16 @@ server {
 }
 ```
 
-##### Removes `www` prefix before any domain
-
-This is not a recommended but in some cases it may be useful:
+This matches all domain names pointed to the server starting with whatever but `www.` and redirects to `www.<domain>`:
 
 ```bash
 server {
 
   ...
 
-  server_name example.com example2.com www.example.com www.example2.com;
+  server_name ~^(?!www\.)(?<domain>.+)$;
 
-  if ($host ~* ^www\.(.*)$) {
-
-    rewrite / $scheme://$1 permanent;
-
-  }
+  return 301 $scheme://www.$domain$request_uri;
 
 }
 ```
