@@ -3729,7 +3729,7 @@ It is important to pass more than just the URI if you expect the upstream server
 
 NGINX use the `proxy_set_header` directive to sets headers that sends to the backend servers.
 
-  > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser), `proxy_set_header` sends headers to the backend server.
+  > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser) and will work on successful requests only, unless you set up `always` parameter. `proxy_set_header` sends headers to the backend server.
 
 It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
 
@@ -4546,6 +4546,8 @@ A short description of the modules that I used in this step-by-step tutorial:
 - [`nginx_tcp_proxy_module`](https://github.com/yaoweibin/nginx_tcp_proxy_module) - add the feature of tcp proxy with nginx, with health check and status monitor
 
 - [`ngx_http_custom_counters_module`](https://github.com/lyokha/nginx-custom-counters-module) - customizable counters shared by all worker processes and virtual servers
+
+- [`ngx_chash_map`](https://github.com/Wine93/chash-map-nginx-module) - creates variables whose values are mapped to group by consistent hashing method
 
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
@@ -11176,6 +11178,8 @@ more_set_headers "Server: Unknown";
 
 ###### Rationale
 
+  > Securing a server goes far beyond not showing what's running but I think less is more is better.
+
   > When NGINX is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (e.g. the version of PHP running).
 
 ###### Example
@@ -12238,6 +12242,8 @@ location ^~ /a/ {
   > You should almost always use `$host` as a incoming host variable, because it's the only one guaranteed to have something sensible regardless of how the user-agent behaves, unless you specifically need the semantics of one of the other variables.
 
   > `$host` is simply `$http_host` with some processing (stripping port number and lowercasing) and a default value (of the `server_name`), so there's no less "exposure" to the `Host` header sent by the client when using `$http_host`. There's no danger in this though.
+
+  > The variable `$host` is the host name from the request line or the http header. The variable `$server_name` is the name of the server block we are in right now.
 
   > The difference is explained in the NGINX documentation:
   >
