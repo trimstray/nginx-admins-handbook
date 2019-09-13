@@ -3765,7 +3765,7 @@ Ok, so look at following short explanation about proxy directives (for more info
     proxy_set_header Connection "upgrade";
     ```
 
-  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request:
+  - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request: NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed:
 
     ```bash
     proxy_set_header Host $host;
