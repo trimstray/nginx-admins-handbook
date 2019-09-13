@@ -263,6 +263,7 @@
       * [Core dump backtrace](#core-dump-backtrace)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
+    * [Nginx server header removal](#nginx-server-header-removal)
     * [Custom log formats](#custom-log-formats)
     * [Log only 4xx/5xx](#log-only-4xx5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
@@ -744,6 +745,7 @@ Existing chapters:
   - _Errors & Issues_
     - [ ] _Common errors_
   - _Configuration snippets_
+    - [x] _Nginx server header removal_
     - [x] _Custom log formats_
     - [x] _Log only 4xx/5xx_
     - [ ] _Custom error pages_
@@ -8251,6 +8253,12 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 
 #### Configuration snippets
 
+##### Nginx server header removal
+
+You could use a module like `ngx_headers_more` to disable or replace the server header. However, why compile, test and configure an extra module if it is also possible to change the upstream code with only a few simple lines? No module, not a multitude of code changes. Only one single patch.
+
+This [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch) will remove NGINX as server header.
+
 ##### Custom log formats
 
 ```bash
@@ -11159,9 +11167,11 @@ server_tokens off;
 
 ###### Rationale
 
+  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc.
+
   > In my opinion there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number.
 
-  > You should compile NGINX from sources with `ngx_headers_more` to used `more_set_headers` directive.
+  > You should compile NGINX from sources with `ngx_headers_more` to used `more_set_headers` directive or use a [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch).
 
 ###### Example
 
