@@ -280,6 +280,7 @@
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
     * [Set correct scheme passed in X-Forwarded-Proto](#set-correct-scheme-passed-in-x-forwarded-proto)
   * [Other snippets](#other-snippets)
+    * [Recreate base directory](#recreate-base-directory)
     * [Create a temporary static backend](#create-a-temporary-static-backend)
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Generate private key without passphrase](#generate-private-key-without-passphrase)
@@ -764,6 +765,7 @@ Existing chapters:
     - [ ] _Lua snippets_
     - [ ] _nginscripts snippets_
   - _Other snippets_
+    - [x] _Recreate base directory_
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
     - [x] _Generate private key without passphrase_
@@ -9193,6 +9195,21 @@ map $http_x_forwarded_proto $real_scheme {
 ```
 
 #### Other snippets
+
+###### Recreate base directory
+
+Debian like distributions:
+
+```bash
+# Remove even configuration files and records:
+apt-get purge nginx nginx-common nginx-full
+
+# Reinstall:
+apt-get install nginx
+
+# You can also try using --force-confmiss option of dpkg:
+dpkg --force-confmiss -i /var/cache/apt/archives/nginx-common_*.deb
+```
 
 ###### Create a temporary static backend
 
