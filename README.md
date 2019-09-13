@@ -275,6 +275,7 @@
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
+    * [Removes www prefix before any domain](#removes-www-prefix-before-any-domain)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
@@ -749,6 +750,7 @@ Existing chapters:
     - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Properly redirect all HTTP requests to HTTPS_
     - [x] _Adding and removing the www prefix_
+    - [x] _Removes www prefix before any domain_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
     - [x] _Allow multiple cross-domains using the CORS headers_
@@ -3677,9 +3679,7 @@ If the URI is specified along with the address, it replaces the part of the requ
 
 If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
 
-Look also at this:
-
-Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`.
+Look also at this. Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`.
 
 ```bash
 location /foo/ {
@@ -8890,6 +8890,23 @@ server {
 }
 ```
 
+You can also do it for multiple `www` to `non-www` (e.g. for subdomains):
+
+```bash
+server {
+
+  ...
+
+  server_name
+    "~^www\.(api.example.com)$"
+    "~^www\.(public.example.com)$"
+    "~^www\.(static.example.com)$";
+
+  return 301 $scheme://$1$request_uri;
+
+}
+```
+
 - `non-www` to `www`:
 
 ```bash
@@ -8901,6 +8918,26 @@ server {
 
   # $scheme will get the http or https protocol:
   return 301 $scheme://www.domain.com$request_uri;
+
+}
+```
+
+##### Removes `www` prefix before any domain
+
+This is not a recommended but in some cases it may be useful:
+
+```bash
+server {
+
+  ...
+
+  server_name example.com example2.com www.example.com www.example2.com;
+
+  if ($host ~* ^www\.(.*)$) {
+
+    rewrite / $scheme://$1 permanent;
+
+  }
 
 }
 ```
