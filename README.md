@@ -1593,6 +1593,8 @@ There are three types of HTTP message headers for requests:
 
 The Request-header fields allow the client to pass additional information about the request, and about the client itself, to the server.
 
+What is an accepted maximum allowed size for HTTP headers? Read [this](https://stackoverflow.com/questions/686217/maximum-on-http-header-values) great answer. HTTP does not define any limit. However most web servers do limit size of headers they accept. Server will return `413 Entity Too Large` error if headers size exceeds that limit.
+
 ##### Message body
 
 Request (message) body is the part of the HTTP request where additional content can be sent to the server.
@@ -3344,6 +3346,22 @@ NGINX will map the request made to:
 - `http://example.com/images/logo.png` into the file path `/var/www/static/images/logo.png`
 - `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
 - `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
+
+Like you want to forward all requests which start `/static` and your data present in `/var/www/static` you should set:
+
+- first path: `/var/www`
+- last path: `/static`
+- full path: `/var/www/static`
+
+```bash
+location <last path> {
+
+  root <first path>;
+
+  ...
+
+}
+```
 
 NGINX documentation on the `alias` directive suggests that it is better to use `root` over `alias` when the location matches the last part of the directive’s value.
 
