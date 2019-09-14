@@ -110,6 +110,7 @@
     * [Message body](#message-body-1)
 - **[SSL/TLS Basics](#ssltls-basics)**
   * [TLS versions](#tls-versions)
+  * [TLS handshake](#tls-handshake)
   * [Cipher suites](#cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
 - **[NGINX Basics](#nginx-basics)**
@@ -620,6 +621,7 @@ Existing chapters:
 <summary><b>SSL/TLS Basics</b></summary><br>
 
   - [x] _TLS versions_
+  - [x] _TLS handshake_
   - [x] _Cipher suites_
   - [x] _Diffie-Hellman key exchange_
 
@@ -1704,6 +1706,29 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 | TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) | 2008 | Still secure |
 | TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) | 2018 | Still secure |
 
+#### TLS handshake
+
+The differences between TLS 1.2 and TLS 1.3 are presented in the following illustrations (every byte explained and reproduced):
+
+- [The New Illustrated TLS Connection TLS 1.2](https://tls.ulfheim.net/)
+- [The New Illustrated TLS Connection TLS 1.3](https://tls13.ulfheim.net/)
+
+The full TLS 1.2 handshake looks like this:
+
+<p align="center">
+  <a href="https://ldapwiki.com/wiki/How%20SSL-TLS%20Works">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tls-handshake.png" alt="tls-handshake">
+  </a>
+</p>
+
+<sup><i>This infographic comes from [ldapwiki - How SSL-TLS Works](https://ldapwiki.com/wiki/How%20SSL-TLS%20Works).</i></sup>
+
+For TLS 1.3 is different:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tls-1.3-handshake.png" alt="tls-1.3-handshake">
+</p>
+
 #### Cipher suites
 
   > **:bookmark: [Use only strong ciphers](#beginner-use-only-strong-ciphers)**<br>
@@ -1713,12 +1738,20 @@ To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher
 
 There are essentially 4 different parts of a TLS 1.2 cipher suite:
 
-- `Authentication` - what crypto is used to verify the authenticity of the server?
-- `Key exchange` - what asymmetric crypto is used to exchange keys?
-- `Cipher` - what symmetric crypto is used to encrypt the data?
-- `MAC` - what hash function is used to ensure message integrity?
+- `Key exchange` - what asymmetric crypto is used to exchange keys? (RSA, DH, ECDH, DHE, ECDHE, PSK)
+- `Authentication/Digital Signature Algorithm` - what crypto is used to verify the authenticity of the server? (RSA, ECDSA, DSA)
+- `Cipher/Bulk Encryption Algorithms` - what symmetric crypto is used to encrypt the data? (AES, CHACHA20, Camellia, ARIA)
+- `MAC` - what hash function is used to ensure message integrity? (SHA-256, POLY1305)
 
 For example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
+
+Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
+
+| <b>PROTOCOL</b> | <b>KEY EXCHANGE</b> | <b>AUTHENTICATION</b> | <b>CIPHER</b> | <b>HASHING</b> |
+| :---:        | :---:        | :---:        | :---:        | :---:        |
+| `TLS` | `ECDHE` | `ECDSA` | `AES_128_GCM` | `SHA256` |
+
+`TLS` is the protocol. Starting with `ECDHE` we can see that during the handshake the keys will be exchanged via ephemeral Elliptic Curve Diffie Hellman (`ECDHE`). `ECDSA` is the authentication algorithm. `AES_128_GCM` is the bulk encryption algorithm: AES running Galois Counter Mode with 128-bit key size. Finally, `SHA-256` is the hashing algorithm.
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
