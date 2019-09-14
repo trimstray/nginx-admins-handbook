@@ -268,6 +268,7 @@
     * [Custom log formats](#custom-log-formats)
     * [Log only 4xx/5xx](#log-only-4xx5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
+    * [Restricting access with client certificate](#restricting-access-with-client-certificate)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
     * [Limiting referrer spam](#limiting-referrer-spam)
@@ -754,6 +755,7 @@ Existing chapters:
     - [x] _Nginx server header removal_
     - [x] _Custom log formats_
     - [x] _Log only 4xx/5xx_
+    - [x] _Restricting access with client certificate_
     - [ ] _Custom error pages_
     - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Using trailing slashes_
@@ -8449,6 +8451,25 @@ server_name example.com;
   ...
 ```
 
+##### Restricting access with client certificate
+
+```bash
+server {
+
+  server_name example.com;
+
+  ssl_client_certificate certs/client-X0.pem;
+  ssl_verify_client on;
+  ssl_verify_depth 3;
+  proxy_set_header ClientDN $ssl_client_s_dn;
+
+  ...
+
+}
+```
+
+Read also this: [Nginx SSL certificate authentication signed by intermediate CA (chain)](https://stackoverflow.com/questions/8431528/nginx-ssl-certificate-authentication-signed-by-intermediate-ca-chain).
+
 ##### Blocking/allowing IP addresses
 
 Example 1:
@@ -9100,6 +9121,10 @@ location /some/path/ {
 ```
 
 ##### Proxy/rewrite without changing the original URL (in browser)
+
+  > Generally, this is not recommend (possible), because you're changing hostnames. Browser security is tied to it, as is webserver configuration.
+
+  > You can rewrite URLs within same hostname, but changing hostnames requires redirect or using a frame. You can change hostname only if you have the same backends under control.
 
 If you want to get resources from `app1.domain` and the data should comes from `app2.domain/app`:
 
