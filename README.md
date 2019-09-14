@@ -1692,8 +1692,7 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 
 #### TLS versions
 
-  > Rules:
-  > - [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
+  > **:bookmark: [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)**
 
 | <b>PROTOCOL</b> | <b>RFC</b> | <b>PUBLISHED</b> | <b>STATUS</b> |
 | :---:        | :---:        | :---:        | :---         |
@@ -1707,9 +1706,8 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 
 #### Cipher suites
 
-  > Rules:
-  > - [Use only strong ciphers](#beginner-use-only-strong-ciphers)
-  > - [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
+  > **:bookmark: [Use only strong ciphers](#beginner-use-only-strong-ciphers)**<br>
+  > **:bookmark: [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)**
 
 To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher suite is a combination of authentication, encryption, and message authentication code (MAC) algorithms. They are used during the negotiation of security settings for a TLS/SSL connection as well as for the transfer of data.
 
@@ -1728,8 +1726,7 @@ Look also at this great table with [cipher suite definitions](https://www.ibm.co
 
 #### Diffie-Hellman key exchange
 
-  > Rules:
-  > - [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)
+  > **:bookmark: [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)**
 
 The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shared secret key, without any other users knowing that key. The exchange is performed over a public network, i.e. all messages sent between the two users can be intercepted and read by any other user.
 
@@ -3699,7 +3696,7 @@ If the URI is specified along with the address, it replaces the part of the requ
 
 If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
 
-Look also at this. Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`.
+Look also at this. Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`:
 
 ```bash
 location /foo/ {
@@ -3709,7 +3706,7 @@ location /foo/ {
 }
 ```
 
-If one go to address `http://yourserver.com/foo/path/id?param=1` NGINX will proxy request to `http://127.0.0.1/barpath/id?param=1`. See how `bar` and `path` concatenates.
+See how `bar` and `path` concatenates. If one go to address `http://yourserver.com/foo/path/id?param=1` NGINX will proxy request to `http://127.0.0.1/barpath/id?param=1`.
 
 ##### Passing headers
 
