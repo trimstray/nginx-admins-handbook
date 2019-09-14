@@ -138,6 +138,7 @@
     * [try_files directive](#try_files-directive)
     * [if, break, and set](#if-break-and-set)
     * [root vs alias](#root-vs-alias)
+    * [Internal requests](#internal-requests)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -290,6 +291,7 @@
     * [Recreate base directory](#recreate-base-directory)
     * [Create a temporary static backend](#create-a-temporary-static-backend)
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
+    * [Generate password file with htpasswd command](#generate-password-file-with-htpasswd-command)
     * [Generate private key without passphrase](#generate-private-key-without-passphrase)
     * [Generate CSR](#generate-csr)
     * [Generate CSR (metadata from existing certificate)](#generate-csr-metadata-from-existing-certificate)
@@ -640,6 +642,7 @@ Existing chapters:
     - [x] _try_files directive_
     - [x] _if, break and set_
     - [x] _root vs alias_
+    - [x] _Internal requests_
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_
@@ -782,6 +785,7 @@ Existing chapters:
     - [x] _Recreate base directory_
     - [x] _Create a temporary static backend_
     - [x] _Create a temporary static backend with SSL support_
+    - [x] _Generate password file with htpasswd command_
     - [x] _Generate private key without passphrase_
     - [x] _Generate CSR_
     - [x] _Generate CSR (metadata from existing certificate)_
@@ -3442,6 +3446,58 @@ NGINX will map the request made to:
 - `http://example.com/images/third-party/facebook-logo.png` into the file path `/var/www/static/third-party/facebook-logo.png`
 - `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
 - `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
+
+##### Internal requests
+
+It specifies how external redirections, i.e. locations like `http://example.com/app.php/some-path` should be handled; while set, they should return 404, only allowing internal redirections.
+
+In brief, this tells NGINX it's not accessible from the outside.
+
+Conditions handled as internal redirections are listed in the documentation for internal directive:
+
+- requests redirected by the `error_page`, `index`, `random_index`, and `try_files` directives
+- requests redirected by the `X-Accel-Redirect` response header field from an upstream server
+- subrequests formed by the `include virtual` command of the `ngx_http_ssi_module module`, by the `ngx_http_addition_module` module directives, and by `auth_request` and `mirror` directives
+- requests changed by the `rewrite` directive
+
+Examples:
+
+```bash
+# 1)
+error_page 404 /404.html;
+
+location = /404.html {
+
+  internal;
+
+}
+
+# 2)
+location /hidden-files/ {
+
+  internal;
+  alias /srv/hidden-files/;
+
+}
+
+# 3)
+location /external-api/ {
+
+  internal;
+  set $redirect_uri "$upstream_http_redirect_uri";
+  set $authorization "$upstream_http_authorization";
+
+  # For performance"
+  proxy_buffering off;
+  # Pass on secret from backend:
+  proxy_set_header Authorization $authorization;
+  # Use URI determined by backend:
+  proxy_pass $redirect_uri;
+
+}
+```
+
+  > There is a limit of 10 internal redirects per request to prevent request processing cycles that can occur in incorrect configurations. If this limit is reached, the error 500 (Internal Server Error) is returned. In such cases, the `rewrite or internal redirection cycle` message can be seen in the error log.
 
 #### Log files
 
@@ -8418,7 +8474,7 @@ server {
 ##### Restricting access with basic authentication
 
 ```bash
-# 1) Generate file with htpasswd command:
+# 1) Generate password file with htpasswd command:
 htpasswd -c htpasswd_example.com.conf <username>
 
 # 2) Include this file in specific context: (e.g. server):
@@ -8442,6 +8498,8 @@ server_name example.com;
 
     ...
 
+  }
+
   location /public/ {
 
     auth_basic off;
@@ -8453,6 +8511,8 @@ server_name example.com;
 
 ##### Restricting access with client certificate
 
+If the client-side certificate failed to authenticate, NGINX show a "400 No required SSL certificate was sent".
+
 ```bash
 server {
 
@@ -8462,6 +8522,17 @@ server {
   ssl_verify_client on;
   ssl_verify_depth 3;
   proxy_set_header ClientDN $ssl_client_s_dn;
+
+  # You can also show specific message to the client:
+  location / {
+
+    if ($ssl_client_verify != SUCCESS) {
+
+      return 403;
+
+    }
+
+  }
 
   ...
 
@@ -9359,7 +9430,7 @@ include /etc/nginx/map_methods.conf;
 
 server_name example.com;
 
-  # It's only accessible to the clients.
+  # It's only accessible to the clients:
   location /v1/id {
 
     set $original_uri $uri;
@@ -9367,7 +9438,7 @@ server_name example.com;
 
   }
 
-  # It's not accessible to the clients.
+  # It's not accessible to the clients:
   location /_get/v1/id {
 
     internal;
@@ -9377,7 +9448,7 @@ server_name example.com;
 
   }
 
-  # It's not accessible to the clients.
+  # It's not accessible to the clients:
   location /_post/v1/id {
 
     internal;
@@ -9534,6 +9605,12 @@ httpd.socket = ssl.wrap_socket (httpd.socket,
         certfile='path/to/cert.pem', server_side=True)
 
 httpd.serve_forever()
+```
+
+###### Generate password file with `htpasswd` command
+
+```bash
+htpasswd -c htpasswd_example.com.conf <username>
 ```
 
 ###### Generate private key without passphrase
