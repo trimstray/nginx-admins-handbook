@@ -275,9 +275,12 @@
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the rate of requests per IP with geo and map](#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
     * [Limiting the number of connections](#limiting-the-number-of-connections)
+    * [Using trailing slashes](#using-trailing-slashes)
     * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
     * [Proxy/rewrite and keep the original URL](#proxyrewrite-and-keep-the-original-url)
+    * [Proxy/rewrite and keep the part of original URL](#proxyrewrite-and-keep-the-part-of-original-url)
+    * [Proxy/rewrite without changing the original URL (in browser)](#proxyrewrite-without-changing-the-original-url-in-browser)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
@@ -753,9 +756,12 @@ Existing chapters:
     - [x] _Log only 4xx/5xx_
     - [ ] _Custom error pages_
     - [x] _Limiting the rate of requests per IP with geo and map_
+    - [x] _Using trailing slashes_
     - [x] _Properly redirect all HTTP requests to HTTPS_
     - [x] _Adding and removing the www prefix_
     - [x] _Proxy/rewrite and keep the original URL_
+    - [x] _Proxy/rewrite and keep the part of original URL_
+    - [x] _Proxy/rewrite without changing the original URL (in browser)_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
     - [x] _Allow multiple cross-domains using the CORS headers_
@@ -3041,7 +3047,7 @@ Anything else may possibly cause unpredictable behaviour, including potential `S
 
 The `rewrite` directives are executed sequentially in order of their appearance in the configuration file. It's slower (but still extremely fast) than a `return` and returns HTTP 302 in all cases, irrespective of `permanent`.
 
-Importantly only the part of the original url that matches the regex is rewritten. It can be used for temporary url changes.
+The `rewrite` directive just changes the request URI, not the response of request. Importantly only the part of the original url that matches the regex is rewritten. It can be used for temporary url changes.
 
 I sometimes used `rewrite` to capture elementes in the original URL, change or add elements in the path, and in general when I do something more complex:
 
@@ -3719,12 +3725,27 @@ However, more complex apps may need additional directives:
 
 ##### Trailing slashes
 
-Look at this example:
+  > **:bookmark: [Be careful with trailing slashes in `proxy_pass` directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
+
+If you have something like:
+
+```bash
+location /public/ {
+
+  proxy_pass http://bck_testing_01;
+
+}
+```
+
+and go to `http://example.com/public`, NGINX will automatically redirect you to `http://example.com/public/`.
+
+Look also at this example:
 
 ```bash
 location /foo/bar/ {
 
-  proxy_pass    http://www.example.com/url/;
+  # proxy_pass  http://example.com/url/;
+  proxy_pass    http://192.168.100.20/url/;
 
 }
 ```
@@ -3744,6 +3765,10 @@ location /foo/ {
 ```
 
 See how `bar` and `path` concatenates. If one go to address `http://yourserver.com/foo/path/id?param=1` NGINX will proxy request to `http://127.0.0.1/barpath/id?param=1`.
+
+As stated in NGINX documentation if `proxy_pass` used without URI (i.e. without path after `server:port`) NGINX will put URI from original request exactly as it was with all double slashes, `../` and so on.
+
+Look also at the configuration snippets: [Using trailing slashes](#using-trailing-slashes).
 
 ##### Passing headers
 
@@ -3837,11 +3862,11 @@ Ok, so look at following short explanation about proxy directives (for more info
 
 ###### Importancy of the `Host` header
 
-The host Header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
+The `Host` header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
 
 In NGINX, `$host` equals `$http_host`, lowercase and without the port number (if present), except when `HTTP_HOST` is absent or is an empty value. In that case, `$host` equals the value of the `server_name` directive of the server which processed the request
 
-For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be "MASTER:8080" as it just reflects the whole header).
+For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be `MASTER:8080` as it just reflects the whole header).
 
 ###### Redirects and `X-Forwarded-Proto`
 
@@ -3861,7 +3886,10 @@ This header is very important because it prevent a redirect loop. When used insi
 
 In step 6 above, the Proxy is setting the HTTP header `X-Forwarded-Proto: https` to specify that the traffic it received is HTTPS. In step 8, the Server then uses the `X-Forwarded-Proto` to determine if the request was HTTP or HTTPS.
 
-You can read about how to set it up correctly here: []()
+You can read about how to set it up correctly here:
+
+- [Set correct scheme passed in X-Forwarded-Proto](#set-correct-scheme-passed-in-x-forwarded-proto)
+- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
 ###### A warning about the `X-Forwarded-For`
 
@@ -8895,6 +8923,75 @@ Longest transaction:    1.10
 Shortest transaction:   0.38
 ```
 
+##### Using trailing slashes
+
+If you have something like:
+
+```bash
+location /api/ {
+
+  proxy_pass http://bck_testing_01;
+
+}
+```
+
+And go to `http://example.com/api`, NGINX will automatically redirect you to `http://example.com/api/`.
+
+Even if you don't use one of these directives above, you could always do the redirect manually:
+
+```bash
+location = /api {
+
+  rewrite ^ /api/ permanent;
+
+}
+```
+
+Or, if you don't want redirect you could use:
+
+```bash
+location = /api {
+
+  proxy_pass http://bck_testing_01;
+
+}
+```
+
+If you want to rewrite/redirect the URL with trailing slash at end you could:
+
+```bash
+# 1. At the http level:
+
+map $request_uri $no_trailing_slash {
+
+  default  1;
+  ~.*[^/]$ 0;
+
+}
+
+# 2. At the server level:
+server {
+
+  listen       80;
+  server_name  example.com;
+
+  location / {
+
+    if ($no_trailing_slash) {
+
+      return 302 $request_uri/;
+
+    }
+
+    proxy_pass              http://192.168.10.50:80;
+    proxy_redirect          off;
+    server_name_in_redirect off;
+
+   }
+
+}
+```
+
 ##### Properly redirect all HTTP requests to HTTPS
 
 None of the standard answers are safe to use if at any point you had unsecure HTTP set up and expect user content, have forms, host an API, or have configured any website, tool, application, or utility to speak to your site.
@@ -8953,25 +9050,78 @@ But apps should use relative links or account for their absolute location. For m
 location /v1/app1/ {
 
   rewrite ^/v1/app1/(.*) /$1 break;
-  proxy_pass http://localhost:9001/;
+  proxy_pass http://192.168.252.10:9001/;
 
 }
+```
 
-# next, a few control groups:
+Next, a few control groups:
+
+```bash
 location /api/ {
 
   rewrite ^ $request_uri;
   rewrite ^/api/(.*) $1 break;
-  # if the second rewrite won't match:
+  # If the second rewrite won't match:
   return 400;
-  proxy_pass http://127.0.0.1:82/$uri;
+  proxy_pass http://192.168.252.10:82/$uri;
 
 }
 
 location /bar/ {
 
   rewrite ^/bar(/.*) $1 break;
-  proxy_pass http://127.0.0.1:82;
+  proxy_pass http://192.168.252.10:82;
+
+}
+```
+
+##### Proxy/rewrite and keep the part of original URL
+
+```bash
+location ~ /some/path/(?<section>.+)/index.html {
+
+  proxy_pass http://192.168.252.10/$section/index.html;
+  proxy_set_header Host $host;
+
+}
+```
+
+Or:
+
+```bash
+location /some/path/ {
+
+  proxy_pass http://192.168.252.10/;
+  # Note this slash  -------------^
+  proxy_set_header Host $host;
+
+}
+```
+
+##### Proxy/rewrite without changing the original URL (in browser)
+
+If you want to get resources from `app1.domain` and the data should comes from `app2.domain/app`:
+
+```bash
+server_name app1.domain;
+
+location / {
+
+  rewrite ^/(.*)$ /app/$1 break;
+  proxy_pass http://192.168.252.10:80;  # upstream for app2.domain
+  proxy_set_header Host app2.domain;
+
+}
+```
+
+Other example:
+
+```bash
+location /site99 {
+
+  rewrite /site99(.*)$ /site99/page$1 break;
+  proxy_pass http://tomcat_b9:8000;
 
 }
 ```
@@ -9012,7 +9162,7 @@ server {
 }
 ```
 
-or:
+Or:
 
 ```bash
 server {
@@ -12286,7 +12436,7 @@ server {
 - [Passing a Request to a Proxied Server](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server)
 - [Reverse proxy (from this handbook)](#reverse-proxy)
 
-#### :beginner: Be careful with trailing slashes in proxy_pass directive
+#### :beginner: Be careful with trailing slashes in `proxy_pass` directive
 
 ###### Rationale
 
@@ -12320,7 +12470,7 @@ location ^~ /a/ {
 
 - [ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 
-#### :beginner: Set and pass Host header only with $host variable
+#### :beginner: Set and pass `Host` header only with `$host` variable
 
 ###### Rationale
 
@@ -12356,7 +12506,7 @@ proxy_set_header    Host    $host;
 - [What is a Host Header Attack?](https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/)
 - [Practical HTTP Host header attacks](https://www.skeletonscribe.net/2013/05/practical-http-host-header-attacks.html)
 
-#### :beginner: Set properly values of the X-Forwarded-For header
+#### :beginner: Set properly values of the `X-Forwarded-For` header
 
 ###### Rationale
 
@@ -12397,7 +12547,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 - [Bypass IP blocks with the X-Forwarded-For header](https://www.sjoerdlangkemper.nl/2017/03/01/bypass-ip-block-with-x-forwarded-for-header/)
 - [Forwarded header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded)
 
-#### :beginner: Don't use X-Forwarded-Proto with $scheme behind reverse proxy
+#### :beginner: Don't use `X-Forwarded-Proto` with $scheme behind reverse proxy
 
 ###### Rationale
 
@@ -12405,7 +12555,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 
   > The scheme (i.e. HTTP, HTTPS) variable evaluated only on demand (used only for the current request).
 
-  > Setting the `$scheme` variable will cause distortions if it uses more than one proxy along the way. For example: if the client go to the `https://example.com`, the proxy stores the scheme value as HTTPS. If the communication between the proxy and the next-level proxy takes place over HTTP, then the backend sees the scheme as HTTP. So if you set `$scheme` for X-Forwarded-Proto on the next-level proxy, app will see a different value than the one the client came with.
+  > Setting the `$scheme` variable will cause distortions if it uses more than one proxy along the way. For example: if the client go to the `https://example.com`, the proxy stores the scheme value as HTTPS. If the communication between the proxy and the next-level proxy takes place over HTTP, then the backend sees the scheme as HTTP. So if you set `$scheme` for `X-Forwarded-Proto` on the next-level proxy, app will see a different value than the one the client came with.
 
   > For resolve this problem you can also use [this](#set-correct-scheme-passed-in-x-forwarded-proto)) configuration snippet.
 
@@ -12424,7 +12574,7 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 
 - [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
 
-#### :beginner: Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend
+#### :beginner: Always pass `Host`, `X-Real-IP`, and `X-Forwarded` stack headers to the backend
 
 ###### Rationale
 
@@ -12432,13 +12582,13 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 
   > It's very important for servers behind proxy because it allow to interpret the client correctly. Proxies are the "eyes" of such servers, they should not allow a curved perception of reality. If not all requests are passed through a proxy, as a result, requests received directly from clients may contain e.g. inaccurate IP addresses in headers.
 
-  > X-Forwarded headers are also important for statistics or filtering. Other example could be access control rules on your app, because without these headers filtering mechanism may not working properly.
+  > `X-Forwarded` headers are also important for statistics or filtering. Other example could be access control rules on your app, because without these headers filtering mechanism may not working properly.
 
   > If you use a front-end service like Apache or whatever else as the front-end to your APIs, you will need these headers to understand what IP or hostname was used to connect to the API.
 
   > Forwarding these headers is also important if you use the https protocol (it has become a standard nowadays).
 
-  > However, I would not rely on either the presence of all X-Forwarded headers, or the validity of their data.
+  > However, I would not rely on either the presence of all `X-Forwarded` headers, or the validity of their data.
 
 ###### Example
 
@@ -12490,7 +12640,7 @@ location / {
 - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
 - [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
-#### :beginner: Use custom headers without X- prefix
+#### :beginner: Use custom headers without `X-` prefix
 
 ###### Rationale
 
