@@ -277,6 +277,7 @@
     * [Limiting the number of connections](#limiting-the-number-of-connections)
     * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
     * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
+    * [Proxy/rewrite and keep the original URL](#proxyrewrite-and-keep-the-original-url)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
@@ -754,6 +755,7 @@ Existing chapters:
     - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Properly redirect all HTTP requests to HTTPS_
     - [x] _Adding and removing the www prefix_
+    - [x] _Proxy/rewrite and keep the original URL_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
     - [x] _Allow multiple cross-domains using the CORS headers_
@@ -8932,6 +8934,47 @@ server {
 ```
 
   > Look also at [HTTP Strict Transport Security (from this handbook)](#beginner-http-strict-transport-security).
+
+##### Proxy/rewrite and keep the original URL
+
+If you just want to mount several locations from upstreams - you do not need rewrites, just use:
+
+```bash
+location /v1/app1/ {
+
+  proxy_pass http://localhost:9001/;
+
+}
+```
+
+But apps should use relative links or account for their absolute location. For more complex url manipulation you can use `break`-rewrites:
+
+```bash
+location /v1/app1/ {
+
+  rewrite ^/v1/app1/(.*) /$1 break;
+  proxy_pass http://localhost:9001/;
+
+}
+
+# next, a few control groups:
+location /api/ {
+
+  rewrite ^ $request_uri;
+  rewrite ^/api/(.*) $1 break;
+  # if the second rewrite won't match:
+  return 400;
+  proxy_pass http://127.0.0.1:82/$uri;
+
+}
+
+location /bar/ {
+
+  rewrite ^/bar(/.*) $1 break;
+  proxy_pass http://127.0.0.1:82;
+
+}
+```
 
 ##### Adding and removing the `www` prefix
 
