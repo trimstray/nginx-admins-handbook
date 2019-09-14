@@ -1729,6 +1729,8 @@ For TLS 1.3 is different:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tls-1.3-handshake.png" alt="tls-1.3-handshake">
 </p>
 
+By the way, the [How SSL-TLS Works](https://ldapwiki.com/wiki/How%20SSL-TLS%20Works) from ldapwiki is an amazing explanation.
+
 #### Cipher suites
 
   > **:bookmark: [Use only strong ciphers](#beginner-use-only-strong-ciphers)**<br>
