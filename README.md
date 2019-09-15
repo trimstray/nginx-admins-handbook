@@ -639,15 +639,6 @@ Existing chapters:
 <details>
 <summary><b>NGINX Basics</b></summary><br>
 
-  - _Server blocks logic_
-    - [x] _rewrite vs return_
-    - [x] _try_files directive_
-    - [x] _if, break and set_
-    - [x] _root vs alias_
-    - [x] _Internal requests_
-  - _Log files_
-    - [x] _Conditional logging_
-    - [x] _Manually log rotation_
   - _Configuration syntax_
     - [x] _Comments_
     - [x] _End of lines_
@@ -662,6 +653,18 @@ Existing chapters:
     - [x] _Multiple processes_
     - [x] _Simultaneous connections_
     - [x] _HTTP Keep-Alive connections_
+  - _Server blocks logic_
+    - [x] _Matching location_
+      - [ ] _if in location_
+      - [ ] _Nested locations_
+    - [x] _rewrite vs return_
+    - [x] _try_files directive_
+    - [x] _if, break and set_
+    - [x] _root vs alias_
+    - [x] _Internal requests_
+  - _Log files_
+    - [x] _Conditional logging_
+    - [x] _Manually log rotation_
   - _Reverse proxy_
     - [x] _Passing requests_
     - [x] _Trailing slashes_
