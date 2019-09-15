@@ -1853,6 +1853,8 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 
 #### Commands
 
+  > **:bookmark: [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)**
+
 - `nginx -h` - shows the help
 - `nginx -v` - shows the NGINX version
 - `nginx -V` - shows the extended information about NGINX: version, build parameters, and configuration arguments
@@ -1915,6 +1917,9 @@ Some useful snippets for management of the NGINX daemon:
   ```
 
 #### Configuration syntax
+
+  > **:bookmark: [Organising Nginx configuration](#beginner-organising-nginx-configuration)**<br>
+  > **:bookmark: [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)**
 
 NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX configuration has a simple and very transparent structure.
 
@@ -2797,6 +2802,9 @@ http {
 ```
 
 ##### Handle incoming connections
+
+  > **:bookmark: [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)**<br>
+  > **:bookmark: [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
