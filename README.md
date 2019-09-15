@@ -12260,6 +12260,7 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 - [Security HTTP Headers - Strict-Transport-Security](https://zinoui.com/blog/security-http-headers#strict-transport-security)
 - [Is HSTS as a proper substitute for HTTP-to-HTTPS redirects?](https://www.reddit.com/r/bigseo/comments/8zw45d/is_hsts_as_a_proper_substitute_for_httptohttps/)
 - [How to configure HSTS on www and other subdomains](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
+- [Check HSTS preload status and eligibility](https://hstspreload.org/)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
 
@@ -12282,7 +12283,10 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 
 ###### External resources
 
+- [Content Security Policy - An Introduction - Scott Helme](https://scotthelme.co.uk/content-security-policy-an-introduction/)
+- [CSP Cheat Sheet](https://scotthelme.co.uk/csp-cheat-sheet/)
 - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
+- [Content Security Policy Cheat Sheet – OWASP](https://www.owasp.org/index.php/Content_Security_Policy_Cheat_Sheet)
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
 - [Security HTTP Headers - Content-Security-Policy](https://zinoui.com/blog/security-http-headers#content-security-policy)
 
@@ -12317,8 +12321,10 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 
 ###### External resources
 
+- [HTTP Header Field X-Frame-Options](https://tools.ietf.org/html/rfc7034)
 - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
 - [Security HTTP Headers - X-Frame-Options](https://zinoui.com/blog/security-http-headers#x-frame-options)
+- [X-Frame-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-frame-options)
 
 #### :beginner: Prevent some categories of XSS attacks (X-XSS-Protection)
 
@@ -12334,6 +12340,8 @@ add_header X-XSS-Protection "1; mode=block" always;
 
 ###### External resources
 
+- [XSS (Cross Site Scripting) Prevention Cheat Sheet](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet)
+- [DOM based XSS Prevention Cheat Sheet](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
 - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
 - [Security HTTP Headers - X-XSS-Protection](https://zinoui.com/blog/security-http-headers#x-xss-protection)
 
@@ -12353,6 +12361,7 @@ add_header X-Content-Type-Options "nosniff" always;
 
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
 - [Security HTTP Headers - X-Content-Type-Options](https://zinoui.com/blog/security-http-headers#x-content-type-options)
+- [X-Content-Type-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-content-type-options)
 
 #### :beginner: Deny the use of browser features (Feature-Policy)
 
