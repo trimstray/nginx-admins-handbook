@@ -887,6 +887,9 @@ Other stuff:
 
 If you have an idea, send it back to me or add a pull request.
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # Bonus Stuff
 
 Here you'll find a few of the different things I've worked and which included to this repository. I hope that these extras has been useful to you.
@@ -1068,6 +1071,9 @@ I created a simple to use generator for static pages with errors to replace the 
 
 For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # Books
 
 #### [Nginx Essentials](https://www.amazon.com/Nginx-Essentials-Valery-Kholodkov/dp/1785289535)
@@ -1149,6 +1155,9 @@ _In this ebook you will learn:_
 - _Why you should go with a software load balancer, and not hardware_
 
 <sup><i>This short review comes from this book or the store.</i></sup>
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # External Resources
 
@@ -1383,6 +1392,9 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/leandromoreira/linux-network-performance-parameters"><b>Learn where some of the network sysctl variables fit into the Linux/Kernel network flow</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # HTTP Basics
 
@@ -1699,6 +1711,9 @@ The response-header fields allow the server to pass additional information about
 
 Contains the resource data that was requested by the client.
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # SSL/TLS Basics
 
 TLS stands for "Transport Layer Security". It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
@@ -1804,6 +1819,9 @@ Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-He
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # NGINX Basics
 
 #### Directories and files
@@ -1895,6 +1913,9 @@ Some useful snippets for management of the NGINX daemon:
   kill -HUP $(cat /var/run/nginx.pid)
   kill -HUP $(pgrep -f "nginx: master")
   ```
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 #### Configuration syntax
 
@@ -4389,6 +4410,9 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # Helpers
 
 #### Installing from prebuilt packages
@@ -6498,6 +6522,9 @@ tree
 
 </details>
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 #### Analyse configuration
 
 It is an essential way for testing NGINX configuration:
@@ -6598,6 +6625,9 @@ ngxtop -l access.log -i 'status >= 400' print request status
 ```bash
 ssh user@remote_host tail -f access.log | ngxtop -f combined
 ```
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 #### Testing
 
@@ -7806,6 +7836,9 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 ./goldeneye.py <scheme>://<server_name> -w 150 -s 75 -m GET
 ```
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 #### Debugging
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
@@ -8355,6 +8388,9 @@ You can use also this recipe:
 ```bash
 gdb --core /var/dump/nginx/core.nginx.8125.x-9s-web01-prod.1561475764
 ```
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 #### Shell aliases
 
@@ -9544,6 +9580,9 @@ map $http_x_forwarded_proto $real_scheme {
 }
 ```
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 #### Other snippets
 
 ###### Recreate base directory
@@ -9839,6 +9878,9 @@ openssl req -text -noout -in ${_fd_csr} )
 (openssl rsa -noout -modulus -in private.key | openssl md5 ; \
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 ```
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # Base Rules
 
@@ -10142,9 +10184,9 @@ server {
   # location / {
 
     # static file (error page):
-    # root /etc/nginx/error-pages/404;
+    #   root /etc/nginx/error-pages/404;
     # or redirect:
-    # return 301 https://badssl.com;
+    #   return 301 https://badssl.com;
 
     # return 444;
 
@@ -10708,6 +10750,9 @@ http {
 
 - [Pitfalls and Common Mistakes - Multiple Index Directives](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#multiple-index-directives)
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # Debugging
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
@@ -10888,6 +10933,9 @@ working_directory     /var/dump/nginx;
 
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
 - [Dump a process's memory (from this handbook)](#dump-a-processs-memory)
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # Performance
 
@@ -11229,8 +11277,8 @@ server {
     return      403;
 
     # or other examples:
-    # return    301 https://domain.com$request_uri;
-    # return    301 $scheme://$host$request_uri;
+    #   return    301 https://domain.com$request_uri;
+    #   return    301 $scheme://$host$request_uri;
 
   }
 
@@ -11344,6 +11392,9 @@ location /videos {
 ###### External resources
 
 - [How to Limit Nginx download Speed](https://www.scalescale.com/tips/nginx/how-to-limit-nginx-download-speed/)
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # Hardening
 
@@ -12482,6 +12533,9 @@ send_timeout 10s;
 - [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
 - [Effectively Using and Detecting The Slowloris HTTP DoS Tool](https://ma.ttias.be/effectively-using-detecting-the-slowloris-http-dos-tool/)
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # Reverse Proxy
 
 One of the frequent uses of the NGINX is setting it up as a proxy server.
@@ -12783,6 +12837,9 @@ add_header Backend-Server   $hostname;
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00)
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
 
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
+
 # Load Balancing
 
 Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
@@ -12836,6 +12893,9 @@ upstream backend {
 ###### External resources
 
 - [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # Others
 
@@ -12908,6 +12968,9 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 
 - [A Method for Web Security Policies](https://tools.ietf.org/html/draft-foudil-securitytxt-05)
 - [security.txt](https://securitytxt.org/)
+
+**[⬆ back to top](#nginx-basics)**
+**[⬆ back to toc](#table-of-contents)**
 
 # Configuration Examples
 
