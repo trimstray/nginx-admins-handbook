@@ -892,6 +892,22 @@ If you have an idea, send it back to me or add a pull request.
 
 # Bonus Stuff
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Bonus Stuff](#toc-bonus-stuff)**
+
+<details>
+<summary><b>Bonus Stuff - Subsections</b></summary><br>
+
+  * [Reports: blkcipher.info](#reports-blkcipherinfo)
+    * [SSL Labs](#ssl-labs)
+    * [Mozilla Observatory](#mozilla-observatory)
+  * [Checklist to rule them all](#checklist-to-rule-them-all)
+  * [Printable hardening cheatsheets](#printable-hardening-cheatsheets)
+  * [Fully automatic installation](#fully-automatic-installation)
+  * [Static error pages generator](#static-error-pages-generator)
+
+</details>
+
 Here you'll find a few of the different things I've worked and which included to this repository. I hope that these extras has been useful to you.
 
 ## Reports: blkcipher.info
@@ -1076,6 +1092,22 @@ For more information please see [HTTP Static Error Pages Generator](https://gith
 
 # Books
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Books](#toc-books)**
+
+<details>
+<summary><b>Books - Subsections</b></summary><br>
+
+  * [Nginx Essentials](#nginx-essentials)
+  * [Nginx Cookbook](#nginx-cookbook)
+  * [Nginx HTTP Server](#nginx-http-server)
+  * [Nginx High Performance](#nginx-high-performance)
+  * [Mastering Nginx](#mastering-nginx)
+  * [ModSecurity 3.0 and NGINX: Quick Start Guide](#modsecurity-30-and-nginx-quick-start-guide)
+  * [Cisco ACE to NGINX: Migration Guide](#cisco-ace-to-nginx-migration-guide)
+
+</details>
+
 #### [Nginx Essentials](https://www.amazon.com/Nginx-Essentials-Valery-Kholodkov/dp/1785289535)
 
 Authors: **Valery Kholodkov**
@@ -1160,6 +1192,32 @@ _In this ebook you will learn:_
 **[⬆ back to toc entry](#toc-books)**
 
 # External Resources
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - External Resources](#toc-external-resources)**
+
+<details>
+<summary><b>External Resources - Subsections</b></summary><br>
+
+  * [Nginx official](#nginx-official)
+  * [Nginx distributions](#nginx-distributions)
+  * [Comparison reviews](#comparison-reviews)
+  * [Cheatsheets & References](#cheatsheets--references)
+  * [Performance & Hardening](#performance--hardening)
+  * [Presentations & Videos](#presentations--videos)
+  * [Playgrounds](#playgrounds)
+  * [Config generators](#config-generators)
+  * [Static analyzers](#static-analyzers)
+  * [Log analyzers](#log-analyzers)
+  * [Performance analyzers](#performance-analyzers)
+  * [Builder tools](#builder-tools)
+  * [Benchmarking tools](#benchmarking-tools)
+  * [Debugging tools](#debugging-tools)
+  * [Development](#development)
+  * [Online tools](#online-tools)
+  * [Other stuff](#other-stuff)
+
+</details>
 
 ##### Nginx official
 
@@ -1397,6 +1455,31 @@ _In this ebook you will learn:_
 **[⬆ back to toc entry](#toc-external-resources)**
 
 # HTTP Basics
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - HTTP Basics](#toc-http-basics)**
+
+<details>
+<summary><b>HTTP Basics - Subsections</b></summary><br>
+
+  * [Features and architecture](#features-and-architecture)
+  * [URI vs URL](#uri-vs-url)
+  * [Request](#request)
+    * [Request line](#request-line)
+      * [Methods](#methods)
+      * [Request URI](#request-uri)
+      * [HTTP version](#http-version)
+    * [Request header fields](#request-header-fields)
+    * [Message body](#message-body)
+    * [Generate requests](#generate-requests)
+  * [Response](#response)
+    * [Status line](#status-line)
+      * [HTTP version](#http-version-1)
+      * [Status codes and reason phrase](#status-codes-and-reason-phrase)
+    * [Response header fields](#response-header-fields)
+    * [Message body](#message-body-1)
+
+</details>
 
 HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
@@ -1716,6 +1799,19 @@ Contains the resource data that was requested by the client.
 
 # SSL/TLS Basics
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - SSL/TLS Basics](#toc-ssltls-basics)**
+
+<details>
+<summary><b>SSL/TLS Basics - Subsections</b></summary><br>
+
+  * [TLS versions](#tls-versions)
+  * [TLS handshake](#tls-handshake)
+  * [Cipher suites](#cipher-suites)
+  * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
+
+</details>
+
 TLS stands for "Transport Layer Security". It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
 TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1 and 1.0.
@@ -1823,6 +1919,66 @@ These parameters aren't secret and can be reused; plus they take several seconds
 **[⬆ back to toc entry](#toc-ssl-tls-basics)**
 
 # NGINX Basics
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - NGINX Basics](#toc-nginx-basics)**
+
+<details>
+<summary><b>NGINX Basics - Subsections</b></summary><br>
+
+  * [Directories and files](#directories-and-files)
+  * [Commands](#commands)
+  * [Processes](#processes)
+  * [Configuration syntax](#configuration-syntax)
+    * [Comments](#comments)
+    * [End of lines](#end-of-lines)
+    * [Variables, Strings, and Quotes](#variables-strings-and-quotes)
+    * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
+    * [External files](#external-files)
+    * [Measurement units](#measurement-units)
+    * [Enable syntax highlighting](#enable-syntax-highlighting)
+  * [Connection processing](#connection-processing)
+    * [Event-Driven architecture](#event-driven-architecture)
+    * [Multiple processes](#multiple-processes)
+    * [Simultaneous connections](#simultaneous-connections)
+    * [HTTP Keep-Alive connections](#http-keep-alive-connections)
+  * [Request processing stages](#request-processing-stages)
+  * [Server blocks logic](#server-blocks-logic)
+    * [Handle incoming connections](#handle-incoming-connections)
+    * [Matching location](#matching-location)
+    * [rewrite vs return](#rewrite-vs-return)
+    * [try_files directive](#try_files-directive)
+    * [if, break, and set](#if-break-and-set)
+    * [root vs alias](#root-vs-alias)
+    * [Internal requests](#internal-requests)
+  * [Log files](#log-files)
+    * [Conditional logging](#conditional-logging)
+    * [Manually log rotation](#manually-log-rotation)
+    * [Error log severity levels](#error-log-severity-levels)
+  * [Reverse proxy](#reverse-proxy)
+    * [Passing requests](#passing-requests)
+    * [Trailing slashes](#trailing-slashes)
+    * [Processing headers](#processing-headers)
+    * [Passing headers](#passing-headers)
+      * [Importance of the Host header](#importance-of-the-host-header)
+      * [Redirects and X-Forwarded-Proto](#redirects-and-x-forwarded-proto)
+      * [A warning about the X-Forwarded-For](#a-warning-about-the-x-forwarded-for)
+      * [Improve extensibility with Forwarded](#improve-extensibility-with-forwarded)
+  * [Load balancing algorithms](#load-balancing-algorithms)
+    * [Backend parameters](#backend-parameters)
+    * [Round Robin](#round-robin)
+    * [Weighted Round Robin](#weighted-round-robin)
+    * [Least Connections](#least-connections)
+    * [Weighted Least Connections](#weighted-least-connections)
+    * [IP Hash](#ip-hash)
+    * [Generic Hash](#generic-hash)
+    * [Other methods](#other-methods)
+  * [Rate limiting](#rate-limiting)
+    * [Variables](#variables)
+    * [Directives, keys, and zones](#directives-keys-and-zones)
+    * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
+
+</details>
 
 #### Directories and files
 
@@ -4419,6 +4575,163 @@ Without `nodelay` NGINX would wait (no 503 response) and handle excessive reques
 **[⬆ back to toc entry](#toc-nginx-basics)**
 
 # Helpers
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Helpers](#toc-helpers)**
+
+<details>
+<summary><b>Helpers - Subsections</b></summary><br>
+
+  * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
+    * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
+    * [Debian or Ubuntu](#debian-or-ubuntu)
+  * [Installing from source](#installing-from-source)
+    * [Automatic installation](#automatic-installation)
+    * [Nginx package](#nginx-package)
+    * [Dependencies](#dependencies)
+    * [3rd party modules](#3rd-party-modules)
+    * [Compiler and linker](#compiler-and-linker)
+      * [Debugging Symbols](#debugging-symbols)
+    * [SystemTap](#systemtap)
+      * [stapxx](#stapxx)
+    * [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7)
+      * [Pre installation tasks](#pre-installation-tasks)
+      * [Dependencies](#dependencies)
+      * [Get Nginx sources](#get-nginx-sources)
+      * [Download 3rd party modules](#download-3rd-party-modules)
+      * [Build Nginx](#build-nginx)
+      * [Post installation tasks](#post-installation-tasks)
+    * [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
+    * [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
+  * [Analyse configuration](#analyse-configuration)
+  * [Monitoring](#monitoring)
+    * [GoAccess](#goaccess)
+      * [Build and install](#build-and-install)
+      * [Analyse log file and enable all recorded statistics](#analyse-log-file-and-enable-all-recorded-statistics)
+      * [Analyse compressed log file](#analyse-compressed-log-file)
+      * [Analyse log file remotely](#analyse-log-file-remotely)
+      * [Analyse log file and generate html report](#analyse-log-file-and-generate-html-report)
+    * [Ngxtop](#ngxtop)
+      * [Analyse log file](#analyse-log-file)
+      * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
+      * [Analyse log file remotely](#analyse-log-file-remotely-1)
+  * [Testing](#testing)
+    * [Send request and show response headers](#send-request-and-show-response-headers)
+    * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
+    * [Send multiple requests](#send-multiple-requests)
+    * [Testing SSL connection](#testing-ssl-connection)
+    * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
+    * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
+    * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
+    * [Verify 0-RTT](#verify-0-rtt)
+    * [Load testing with ApacheBench (ab)](#load-testing-with-apachebench-ab)
+      * [Standard test](#standard-test)
+      * [Test with Keep-Alive header](#test-with-keep-alive-header)
+    * [Load testing with wrk2](#load-testing-with-wrk2)
+      * [Standard scenarios](#standard-scenarios)
+      * [POST call (with Lua)](#post-call-with-lua)
+      * [Random paths (with Lua)](#random-paths-with-lua)
+      * [Multiple paths (with Lua)](#multiple-paths-with-lua)
+      * [Random server address to each thread (with Lua)](#random-server-address-to-each-thread-with-lua)
+      * [Multiple json requests (with Lua)](#multiple-json-requests-with-lua)
+      * [Debug mode (with Lua)](#debug-mode-with-lua)
+      * [Analyse data pass to and from the threads](#analyse-data-pass-to-and-from-the-threads)
+      * [Parsing wrk result and generate report](#parsing-wrk-result-and-generate-report)
+    * [Load testing with locust](#load-testing-with-locust)
+      * [Multiple paths](#multiple-paths)
+      * [Multiple paths with different user sessions](#multiple-paths-with-different-user-sessions)
+    * [TCP SYN flood Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
+    * [HTTP Denial of Service attack](#tcp-syn-flood-denial-of-service-attack)
+  * [Debugging](#debugging)
+    * [Show information about processes](#show-information-about-nginx-processes)
+    * [Check memory usage](#check-memoryusage)
+    * [Show open files](#show-open-files)
+    * [Dump configuration](#dump-configuration)
+    * [Get the list of configure arguments](#get-the-list-of-configure-arguments)
+    * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
+    * [Show the most accessed IP addresses](#show-the-most-accessed-ip-addresses)
+    * [Show the top 5 visitors (IP addresses)](#show-the-top-5-visitors-ip-addresses)
+    * [Show the most requested urls](#show-the-most-requested-urls)
+    * [Show the most requested urls containing 'string'](#show-the-most-requested-urls-containing-string)
+    * [Show the most requested urls with http methods](#show-the-most-requested-urls-with-http-methods)
+    * [Show the most accessed response codes](#show-the-most-accessed-response-codes)
+    * [Analyse web server log and show only 2xx http codes](#analyse-web-server-log-and-show-only-2xx-http-codes)
+    * [Analyse web server log and show only 5xx http codes](#analyse-web-server-log-and-show-only-5xx-http-codes)
+    * [Show requests which result 502 and sort them by number per requests by url](#show-requests-which-result-502-and-sort-them-by-number-per-requests-by-url)
+    * [Show requests which result 404 for php files and sort them by number per requests by url](#show-requests-which-result-404-for-php-files-and-sort-them-by-number-per-requests-by-url)
+    * [Calculating amount of http response codes](#calculating-amount-of-http-response-codes)
+    * [Calculating requests per second](#calculating-requests-per-second)
+    * [Calculating requests per second with IP addresses](#calculating-requests-per-second-with-ip-addresses)
+    * [Calculating requests per second with IP addresses and urls](#calculating-requests-per-second-with-ip-addresses-and-urls)
+    * [Get entries within last n hours](#get-entries-within-last-n-hours)
+    * [Get entries between two timestamps (range of dates)](#get-entries-between-two-timestamps-range-of-dates)
+    * [Get line rates from web server log](#get-line-rates-from-web-server-log)
+    * [Trace network traffic for all processes](#trace-network-traffic-for-all-nginx-processes)
+    * [List all files accessed by a NGINX](#list-all-files-accessed-by-a-nginx)
+    * [Check that the gzip_static module is working](#check-that-the-gzip_static-module-is-working)
+    * [Which worker processing current request](#which-worker-processing-current-request)
+    * [Capture only http packets](#capture-only-http-packets)
+    * [Extract User Agent from the http packets](#extract-user-agent-from-the-http-packets)
+    * [Capture only http GET and POST packets](#capture-only-http-get-and-post-packets)
+    * [Capture requests and filter by source ip and destination port](#capture-requests-and-filter-by-source-ip-and-destination-port)
+    * [Dump a process's memory](#dump-a-processs-memory)
+    * [GNU Debugger (gdb)](#gnu-debugger-gdb)
+      * [Dump configuration from a running process](#dump-configuration-from-a-running-process)
+      * [Show debug log in memory](#show-debug-log-in-memory)
+      * [Core dump backtrace](#core-dump-backtrace)
+  * [Shell aliases](#shell-aliases)
+  * [Configuration snippets](#configuration-snippets)
+    * [Nginx server header removal](#nginx-server-header-removal)
+    * [Custom log formats](#custom-log-formats)
+    * [Log only 4xx/5xx](#log-only-4xx5xx)
+    * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
+    * [Restricting access with client certificate](#restricting-access-with-client-certificate)
+    * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
+    * [Blocking referrer spam](#blocking-referrer-spam)
+    * [Limiting referrer spam](#limiting-referrer-spam)
+    * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
+    * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+    * [Limiting the rate of requests per IP with geo and map](#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
+    * [Limiting the number of connections](#limiting-the-number-of-connections)
+    * [Using trailing slashes](#using-trailing-slashes)
+    * [Properly redirect all HTTP requests to HTTPS](#properly-redirect-all-http-requests-to-https)
+    * [Adding and removing the www prefix](#adding-and-removing-the-www-prefix)
+    * [Proxy/rewrite and keep the original URL](#proxyrewrite-and-keep-the-original-url)
+    * [Proxy/rewrite and keep the part of original URL](#proxyrewrite-and-keep-the-part-of-original-url)
+    * [Proxy/rewrite without changing the original URL (in browser)](#proxyrewrite-without-changing-the-original-url-in-browser)
+    * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
+    * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
+    * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
+    * [Set correct scheme passed in X-Forwarded-Proto](#set-correct-scheme-passed-in-x-forwarded-proto)
+  * [Other snippets](#other-snippets)
+    * [Recreate base directory](#recreate-base-directory)
+    * [Create a temporary static backend](#create-a-temporary-static-backend)
+    * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
+    * [Generate password file with htpasswd command](#generate-password-file-with-htpasswd-command)
+    * [Generate private key without passphrase](#generate-private-key-without-passphrase)
+    * [Generate CSR](#generate-csr)
+    * [Generate CSR (metadata from existing certificate)](#generate-csr-metadata-from-existing-certificate)
+    * [Generate CSR with -config param](#generate-csr-with--config-param)
+    * [Generate private key and CSR](#generate-private-key-and-csr)
+    * [Generate ECDSA private key](#generate-ecdsa-private-key)
+    * [Generate private key with CSR (ECC)](#generate-private-key-with-csr-ecc)
+    * [Generate self-signed certificate](#generate-self-signed-certificate)
+    * [Generate self-signed certificate from existing private key](#generate-self-signed-certificate-from-existing-private-key)
+    * [Generate self-signed certificate from existing private key and csr](#generate-self-signed-certificate-from-existing-private-key-and-csr)
+    * [Generate multidomain certificate](#generate-multidomain-certificate)
+    * [Generate wildcard certificate](#generate-wildcard-certificate)
+    * [Generate certificate with 4096 bit private key](#generate-certificate-with-4096-bit-private-key)
+    * [Generate DH public parameters](#generate-dh-public-parameters)
+    * [Display DH public parameters](#display-dh-public-parameters)
+    * [Convert DER to PEM](#convert-der-to-pem)
+    * [Convert PEM to DER](#convert-pem-to-der)
+    * [Verification of the private key](#verification-of-the-private-key)
+    * [Verification of the public key](#verification-of-the-public-key)
+    * [Verification of the certificate](#verification-of-the-certificate)
+    * [Verification of the CSR](#verification-of-the-csr)
+    * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
+
+</details>
 
 #### Installing from prebuilt packages
 
@@ -9874,6 +10187,29 @@ openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 
 # Base Rules
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Base Rules](#toc-base-rules)**
+
+<details>
+<summary><b>Base Rules - Subsections</b></summary><br>
+
+  * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
+  * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
+  * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
+  * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
+  * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
+  * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
+  * [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)
+  * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
+  * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
+  * [Map all the things...](#beginner-map-all-the-things)
+  * [Set global root directory for unmatched locations](#beginner-set-global-root-directory-for-unmatched-locations)
+  * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
+  * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
+  * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
+
+</details>
+
 These are the basic set of rules to keep NGINX in good condition.
 
 #### :beginner: Organising Nginx configuration
@@ -10745,6 +11081,19 @@ http {
 
 # Debugging
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Debugging](#toc-debugging)**
+
+<details>
+<summary><b>Debugging - Subsections</b></summary><br>
+
+  * [Use custom log formats](#beginner-use-custom-log-formats)
+  * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
+  * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
+  * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
+
+</details>
+
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
 #### :beginner: Use custom log formats
@@ -10928,6 +11277,26 @@ working_directory     /var/dump/nginx;
 **[⬆ back to toc entry](#toc-debugging)**
 
 # Performance
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Performance](#toc-performance)**
+
+<details>
+<summary><b>Performance - Subsections</b></summary><br>
+
+  * [Adjust worker processes](#beginner-adjust-worker-processes)
+  * [Use HTTP/2](#beginner-use-http2)
+  * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
+  * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)
+  * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
+  * [Use $request_uri to avoid using regular expressions](#beginner-use-request_uri-to-avoid-using-regular-expressions)
+  * [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)
+  * [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
+  * [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
+  * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
+  * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
+
+</details>
 
 NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
@@ -11387,6 +11756,43 @@ location /videos {
 **[⬆ back to toc entry](#toc-performance)**
 
 # Hardening
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Hardening](#toc-hardening)**
+
+<details>
+<summary><b>Hardening - Subsections</b></summary><br>
+
+  * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
+  * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
+  * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
+  * [Protect sensitive resources](#beginner-protect-sensitive-resources)
+  * [Hide Nginx version number](#beginner-hide-nginx-version-number)
+  * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
+  * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
+  * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
+  * [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)
+  * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
+  * [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
+  * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
+  * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
+  * [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)
+  * [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)
+  * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
+  * [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)
+  * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
+  * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
+  * [Control the behaviour of the Referer header (Referrer-Policy)](#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)
+  * [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)
+  * [Prevent some categories of XSS attacks (X-XSS-Protection)](#beginner-prevent-some-categories-of-xss-attacks-x-xss-protection)
+  * [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)
+  * [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)
+  * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
+  * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
+  * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
+  * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
+
+</details>
 
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
@@ -12528,6 +12934,22 @@ send_timeout 10s;
 
 # Reverse Proxy
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Reverse Proxy](#toc-reverse-proxy)**
+
+<details>
+<summary><b>Reverse Proxy - Subsections</b></summary><br>
+
+  * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
+  * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
+  * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
+  * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+  * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
+  * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+  * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
+
+</details>
+
 One of the frequent uses of the NGINX is setting it up as a proxy server.
 
 #### :beginner: Use pass directive compatible with backend protocol
@@ -12832,6 +13254,17 @@ add_header Backend-Server   $hostname;
 
 # Load Balancing
 
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Load Balancing](#toc-load-balancing)**
+
+<details>
+<summary><b>Load Balancing - Subsections</b></summary><br>
+
+  * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
+  * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
+
+</details>
+
 Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
 #### :beginner: Tweak passive health checks
@@ -12888,6 +13321,17 @@ upstream backend {
 **[⬆ back to toc entry](#toc-load-balancing)**
 
 # Others
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Others](#toc-others)**
+
+<details>
+<summary><b>Others - Subsections</b></summary><br>
+
+  * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
+  * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
+
+</details>
 
 This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
 
@@ -12963,6 +13407,26 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 **[⬆ back to toc entry](#toc-others)**
 
 # Configuration Examples
+
+- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Configuration Examples](#toc-configuration-examples)**
+
+<details>
+<summary><b>Configuration Examples - Subsections</b></summary><br>
+
+  * [Reverse Proxy](#reverse-proxy)
+    * [Installation](#installation)
+    * [Configuration](#configuration)
+    * [Import configuration](#import-configuration)
+    * [Set bind IP address](#set-bind-ip-address)
+    * [Set your domain name](#set-your-domain-name)
+    * [Regenerate private keys and certs](#regenerate-private-keys-and-certs)
+    * [Update modules list](#update-modules-list)
+    * [Generating the necessary error pages](#generating-the-necessary-error-pages)
+    * [Add new domain](#add-new-domain)
+    * [Test your configuration](#test-your-configuration)
+
+</details>
 
   > Remember to make a copy of the current configuration and all files/directories.
 
