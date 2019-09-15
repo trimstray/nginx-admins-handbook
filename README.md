@@ -887,7 +887,7 @@ Other stuff:
 
 If you have an idea, send it back to me or add a pull request.
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#contributing--support)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Bonus Stuff
@@ -1071,7 +1071,7 @@ I created a simple to use generator for static pages with errors to replace the 
 
 For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#bonus-stuff)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Books
@@ -1156,7 +1156,7 @@ _In this ebook you will learn:_
 
 <sup><i>This short review comes from this book or the store.</i></sup>
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#books)**
 **[⬆ back to toc](#table-of-contents)**
 
 # External Resources
@@ -1393,7 +1393,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#external-resources)**
 **[⬆ back to toc](#table-of-contents)**
 
 # HTTP Basics
@@ -1711,7 +1711,7 @@ The response-header fields allow the server to pass additional information about
 
 Contains the resource data that was requested by the client.
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#http-basics)**
 **[⬆ back to toc](#table-of-contents)**
 
 # SSL/TLS Basics
@@ -1819,7 +1819,7 @@ Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-He
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#ssltls-basics)**
 **[⬆ back to toc](#table-of-contents)**
 
 # NGINX Basics
@@ -1913,9 +1913,6 @@ Some useful snippets for management of the NGINX daemon:
   kill -HUP $(cat /var/run/nginx.pid)
   kill -HUP $(pgrep -f "nginx: master")
   ```
-
-**[⬆ back to top](#nginx-basics)**
-**[⬆ back to toc](#table-of-contents)**
 
 #### Configuration syntax
 
@@ -6522,9 +6519,6 @@ tree
 
 </details>
 
-**[⬆ back to top](#nginx-basics)**
-**[⬆ back to toc](#table-of-contents)**
-
 #### Analyse configuration
 
 It is an essential way for testing NGINX configuration:
@@ -6625,9 +6619,6 @@ ngxtop -l access.log -i 'status >= 400' print request status
 ```bash
 ssh user@remote_host tail -f access.log | ngxtop -f combined
 ```
-
-**[⬆ back to top](#nginx-basics)**
-**[⬆ back to toc](#table-of-contents)**
 
 #### Testing
 
@@ -7836,9 +7827,6 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 ./goldeneye.py <scheme>://<server_name> -w 150 -s 75 -m GET
 ```
 
-**[⬆ back to top](#nginx-basics)**
-**[⬆ back to toc](#table-of-contents)**
-
 #### Debugging
 
   > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
@@ -8388,9 +8376,6 @@ You can use also this recipe:
 ```bash
 gdb --core /var/dump/nginx/core.nginx.8125.x-9s-web01-prod.1561475764
 ```
-
-**[⬆ back to top](#nginx-basics)**
-**[⬆ back to toc](#table-of-contents)**
 
 #### Shell aliases
 
@@ -9580,9 +9565,6 @@ map $http_x_forwarded_proto $real_scheme {
 }
 ```
 
-**[⬆ back to top](#nginx-basics)**
-**[⬆ back to toc](#table-of-contents)**
-
 #### Other snippets
 
 ###### Recreate base directory
@@ -9879,7 +9861,7 @@ openssl req -text -noout -in ${_fd_csr} )
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 ```
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#helpers)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Base Rules
@@ -10750,7 +10732,7 @@ http {
 
 - [Pitfalls and Common Mistakes - Multiple Index Directives](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#multiple-index-directives)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#base-rules)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Debugging
@@ -10934,7 +10916,7 @@ working_directory     /var/dump/nginx;
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
 - [Dump a process's memory (from this handbook)](#dump-a-processs-memory)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#debugging)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Performance
@@ -11393,7 +11375,7 @@ location /videos {
 
 - [How to Limit Nginx download Speed](https://www.scalescale.com/tips/nginx/how-to-limit-nginx-download-speed/)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#performance)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Hardening
@@ -12533,7 +12515,7 @@ send_timeout 10s;
 - [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
 - [Effectively Using and Detecting The Slowloris HTTP DoS Tool](https://ma.ttias.be/effectively-using-detecting-the-slowloris-http-dos-tool/)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#hardening)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Reverse Proxy
@@ -12837,7 +12819,7 @@ add_header Backend-Server   $hostname;
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00)
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#reverse-proxy)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Load Balancing
@@ -12894,7 +12876,7 @@ upstream backend {
 
 - [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#load-balancing)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Others
@@ -12969,7 +12951,7 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 - [A Method for Web Security Policies](https://tools.ietf.org/html/draft-foudil-securitytxt-05)
 - [security.txt](https://securitytxt.org/)
 
-**[⬆ back to top](#nginx-basics)**
+**[⬆ back to top](#others)**
 **[⬆ back to toc](#table-of-contents)**
 
 # Configuration Examples
@@ -13161,3 +13143,6 @@ cp /etc/nginx/snippets/logrotate.d/nginx /etc/logrotate.d/
 ```bash
 nginx -t -c /etc/nginx/nginx.conf
 ```
+
+**[⬆ back to top](#configuration-examples)**
+**[⬆ back to toc](#table-of-contents)**
