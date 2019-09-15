@@ -271,6 +271,7 @@
     * [Log only 4xx/5xx](#log-only-4xx5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Restricting access with client certificate](#restricting-access-with-client-certificate)
+    * [Dynamic error pages with SSI](#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
     * [Limiting referrer spam](#limiting-referrer-spam)
@@ -747,6 +748,7 @@ Existing chapters:
     - [x] _Extract User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture requests and filter by source ip and destination port_
+    - [ ] _Server Side Include (SSI) debugging_
     - [x] _Dump a process's memory_
     - _GNU Debugger (gdb)_
       - [x] _Dump configuration from a running process_
@@ -762,6 +764,7 @@ Existing chapters:
     - [x] _Log only 4xx/5xx_
     - [x] _Restricting access with client certificate_
     - [ ] _Custom error pages_
+    - [x] _Dynamic error pages with SSI_
     - [x] _Limiting the rate of requests per IP with geo and map_
     - [x] _Using trailing slashes_
     - [x] _Properly redirect all HTTP requests to HTTPS_
@@ -832,6 +835,7 @@ Existing chapters:
   - [x] _Use core dumps to figure out why NGINX keep crashing_
   - [ ] _Use mirror module to copy requests to another backend_
   - [ ] _Dynamic debugging with echo module_
+  - [ ] _Dynamic debugging with SSI_
 
 </details>
 
@@ -4687,6 +4691,7 @@ Without `nodelay` NGINX would wait (no 503 response) and handle excessive reques
     * [Log only 4xx/5xx](#log-only-4xx5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Restricting access with client certificate](#restricting-access-with-client-certificate)
+    * [Dynamic error pages with SSI](#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
     * [Limiting referrer spam](#limiting-referrer-spam)
@@ -8884,6 +8889,117 @@ server {
 ```
 
 Read also this: [Nginx SSL certificate authentication signed by intermediate CA (chain)](https://stackoverflow.com/questions/8431528/nginx-ssl-certificate-authentication-signed-by-intermediate-ca-chain).
+
+##### Dynamic error pages with SSI
+
+Example 1:
+
+1. Create error page template in `/var/www/error_pages/error.html`:
+
+```html
+<!-- Based on: https://blog.adriaan.io/one-nginx-error-page-to-rule-them-all.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Error</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--# if expr="$status = 502" -->
+      <meta http-equiv="refresh" content="2">
+    <!--# endif -->
+  </head>
+<body>
+  <!--# if expr="$status = 502" -->
+    <h1>We are updating our website</h1>
+    <p>This is only for a few seconds, you will be redirected.</p>
+  <!--# else -->
+    <h1><!--# echo var="status" default="" --> <!--# echo var="status_text" default="Something goes wrong..." --></h1>
+  <!--# endif -->
+</body>
+</html>
+```
+
+2. Define error codes map in the http context or include it from file:
+
+```bash
+map $status $status_text {
+
+  default 'Something is wrong';
+
+  400 'Bad Request';
+  401 'Unauthorized';
+  402 'Payment Required';
+  403 'Forbidden';
+  404 'Not Found';
+  405 'Method Not Allowed';
+  406 'Not Acceptable';
+  407 'Proxy Authentication Required';
+  408 'Request Timeout';
+  409 'Conflict';
+  410 'Gone';
+  411 'Length Required';
+  412 'Precondition Failed';
+  413 'Payload Too Large';
+  414 'URI Too Long';
+  415 'Unsupported Media Type';
+  416 'Range Not Satisfiable';
+  417 'Expectation Failed';
+  418 'I\'m a teapot';
+  421 'Misdirected Request';
+  422 'Unprocessable Entity';
+  423 'Locked';
+  424 'Failed Dependency';
+  426 'Upgrade Required';
+  428 'Precondition Required';
+  429 'Too Many Requests';
+  431 'Request Header Fields Too Large';
+  451 'Unavailable For Legal Reasons';
+  500 'Internal Server Error';
+  501 'Not Implemented';
+  502 'Bad Gateway';
+  503 'Service Unavailable';
+  504 'Gateway Timeout';
+  505 'HTTP Version Not Supported';
+  506 'Variant Also Negotiates';
+  507 'Insufficient Storage';
+  508 'Loop Detected';
+  510 'Not Extended';
+  511 'Network Authentication Required';
+
+}
+```
+
+3. Create an `error_page` in your context (e.g. server):
+
+```bash
+server {
+
+  ...
+
+  error_page 400 401 403 404 405 500 501 502 503 /error.html;
+
+  location = /error.html {
+
+    ssi on;
+    internal;
+    root /var/www/error_pages;
+
+  }
+
+}
+```
+
+4. Turn on the specific error page:
+
+```bash
+location = /404.html {
+
+  return 404;
+
+}
+```
+
+Read also this: [Static error pages generator](#static-error-pages-generator).
 
 ##### Blocking/allowing IP addresses
 
