@@ -889,9 +889,6 @@ Other stuff:
 
 If you have an idea, send it back to me or add a pull request.
 
-**[⬆ back to beginning](#introduction)**
-**[⬆ back to toc entry](#toc-introduction)**
-
 # Bonus Stuff
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -1089,9 +1086,6 @@ I created a simple to use generator for static pages with errors to replace the 
 
 For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
-**[⬆ back to beginning](#bonus-stuff)**
-**[⬆ back to toc entry](#toc-bonus-stuff)**
-
 # Books
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -1189,9 +1183,6 @@ _In this ebook you will learn:_
 - _Why you should go with a software load balancer, and not hardware_
 
 <sup><i>This short review comes from this book or the store.</i></sup>
-
-**[⬆ back to beginning](#books)**
-**[⬆ back to toc entry](#toc-books)**
 
 # External Resources
 
@@ -1451,9 +1442,6 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/leandromoreira/linux-network-performance-parameters"><b>Learn where some of the network sysctl variables fit into the Linux/Kernel network flow</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
 </p>
-
-**[⬆ back to beginning](#external-resources)**
-**[⬆ back to toc entry](#toc-external-resources)**
 
 # HTTP Basics
 
@@ -1812,9 +1800,6 @@ The response-header fields allow the server to pass additional information about
 
 Contains the resource data that was requested by the client.
 
-**[⬆ back to beginning](#http-basics)**
-**[⬆ back to toc entry](#toc-http-basics)**
-
 # SSL/TLS Basics
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -1932,9 +1917,6 @@ The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curv
 Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any DH exchange, you can only use RSA in encryption mode.
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
-
-**[⬆ back to beginning](#ssltls-basics)**
-**[⬆ back to toc entry](#toc-ssl-tls-basics)**
 
 # NGINX Basics
 
@@ -4592,9 +4574,6 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
-
-**[⬆ back to beginning](#nginx-basics)**
-**[⬆ back to toc entry](#toc-nginx-basics)**
 
 # Helpers
 
@@ -10204,9 +10183,6 @@ openssl req -text -noout -in ${_fd_csr} )
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 ```
 
-**[⬆ back to beginning](#helpers)**
-**[⬆ back to toc entry](#toc-helpers)**
-
 # Base Rules
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -11098,9 +11074,6 @@ http {
 
 - [Pitfalls and Common Mistakes - Multiple Index Directives](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#multiple-index-directives)
 
-**[⬆ back to beginning](#base-rules)**
-**[⬆ back to toc entry](#toc-base-rules)**
-
 # Debugging
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -11294,9 +11267,6 @@ working_directory     /var/dump/nginx;
 
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
 - [Dump a process's memory (from this handbook)](#dump-a-processs-memory)
-
-**[⬆ back to beginning](#debugging)**
-**[⬆ back to toc entry](#toc-debugging)**
 
 # Performance
 
@@ -11773,9 +11743,6 @@ location /videos {
 ###### External resources
 
 - [How to Limit Nginx download Speed](https://www.scalescale.com/tips/nginx/how-to-limit-nginx-download-speed/)
-
-**[⬆ back to beginning](#performance)**
-**[⬆ back to toc entry](#toc-performance)**
 
 # Hardening
 
@@ -12951,9 +12918,6 @@ send_timeout 10s;
 - [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
 - [Effectively Using and Detecting The Slowloris HTTP DoS Tool](https://ma.ttias.be/effectively-using-detecting-the-slowloris-http-dos-tool/)
 
-**[⬆ back to beginning](#hardening)**
-**[⬆ back to toc entry](#toc-hardening)**
-
 # Reverse Proxy
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -13271,9 +13235,6 @@ add_header Backend-Server   $hostname;
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00)
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
 
-**[⬆ back to beginning](#reverse-proxy)**
-**[⬆ back to toc entry](#toc-reverse-proxy)**
-
 # Load Balancing
 
 - **[⬆ Table of Contents - Main](#table-of-contents)**
@@ -13338,9 +13299,6 @@ upstream backend {
 ###### External resources
 
 - [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
-
-**[⬆ back to beginning](#load-balancing)**
-**[⬆ back to toc entry](#toc-load-balancing)**
 
 # Others
 
@@ -13424,9 +13382,6 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 
 - [A Method for Web Security Policies](https://tools.ietf.org/html/draft-foudil-securitytxt-05)
 - [security.txt](https://securitytxt.org/)
-
-**[⬆ back to beginning](#others)**
-**[⬆ back to toc entry](#toc-others)**
 
 # Configuration Examples
 
@@ -13637,6 +13592,3 @@ cp /etc/nginx/snippets/logrotate.d/nginx /etc/logrotate.d/
 ```bash
 nginx -t -c /etc/nginx/nginx.conf
 ```
-
-**[⬆ back to beginning](#configuration-examples)**
-**[⬆ back to toc entry](#toc-configuration-examples)**
