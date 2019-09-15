@@ -124,6 +124,7 @@
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
     * [External files](#external-files)
     * [Measurement units](#measurement-units)
+    * [Regular expressions with PCRE](#regular-expressions-with-pcre)
     * [Enable syntax highlighting](#enable-syntax-highlighting)
   * [Connection processing](#connection-processing)
     * [Event-Driven architecture](#event-driven-architecture)
@@ -469,7 +470,7 @@ For me, however, there hasn't been a truly in-depth and reasonably simple cheats
 
 There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
-Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here are few best tips to avoid pitfails and configuration mistakes.
+Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here a few best tips to avoid pitfalls and configuration mistakes.
 
 In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
 
@@ -653,6 +654,7 @@ Existing chapters:
     - [x] _Directives, Blocks, and Contexts_
     - [x] _External files_
     - [x] _Measurement units_
+    - [x] _Regular expressions with PCRE_
     - [x] _Enable syntax highlighting_
   - _Connection processing_
     - [x] _Event-Driven architecture_
@@ -908,7 +910,7 @@ If you have an idea, send it back to me or add a pull request.
 
 </details>
 
-Here you'll find a few of the different things I've worked and which included to this repository. I hope that these extras has been useful to you.
+Here you'll find a few of the different things I've worked and which included to this repository. I hope that these extras will be useful to you.
 
 ## Reports: blkcipher.info
 
@@ -931,7 +933,7 @@ I finally got **A+** grade and following scores:
 - Key Exchange = **90%**
 - Cipher Strength = **90%**
 
-But look at the following recommendations: The NGINX SSL config given below will give you the following SSL Labs scores. You choose:
+Look also at the following recommendations. In my opinion, the right configuration of NGINX should give the following SSL Labs scores:
 
 - **Recommended**
 
@@ -986,7 +988,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | :---         | :---         | :---:        |
 | [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors, e.g. traffic forwarding to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
-| [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)<br><sup>While this may work, it will come with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)<br><sup>While this may work, it will comes with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)<br><sup>NGINX with PCRE JIT is much faster than without it.</sup> | Performance | ![high](static/img/priorities/high.png) |
@@ -1083,7 +1085,7 @@ For more information please see [Installing from source - Automatic installation
 
 ## Static error pages generator
 
-I created a simple to use generator for static pages with errors to replace the default error pages that come with any web server like NGINX.
+I created a simple to use generator for static pages with errors to replace the default error pages that comes with any web server like NGINX.
 
 For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
@@ -1392,7 +1394,6 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.openmymind.net/An-Introduction-To-OpenResty-Part-3/"><b>An Introduction To OpenResty - Part 3</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://blog.dutchcoders.io/openresty-with-dynamic-generated-certificates/"><b>OpenResty (Nginx) with dynamically generated certificates</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/programming-openresty"><b>Programming OpenResty</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.lua.org/pil/contents.html"><b>Programming in Lua (first edition)</b></a><br>
 </p>
 
 ##### Online tools
@@ -1564,7 +1565,10 @@ The graphic below explains the URL format:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
 </p>
 
-If it is still unclear to you, I recommend you read: [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225). Also read on [The History of the URL: Path, Fragment, Query, and Auth](https://eager.io/blog/the-history-of-the-url-path-fragment-query-auth/).
+If it is still unclear to you, I would advise you to look at the following articles:
+
+- [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225)
+- [The History of the URL: Path, Fragment, Query, and Auth](https://eager.io/blog/the-history-of-the-url-path-fragment-query-auth/)
 
 #### Request
 
@@ -1642,13 +1646,13 @@ Host: example.com
 | :---:         | :---         |
 | `PUT` | is used to send data to the sever to create or overwrite a resource |
 
-The same PUT request multiple times will always produce the same result.
+The same `PUT` request multiple times will always produce the same result.
 
-Check for these things when testing PUT requests:
+Check for these things when testing `PUT` requests:
 
-- repeatedly cally a PUT request always returns the same result (idempotent)
-- after updating a resource with a PUT request, a GET request for that resource should return the new data
-- PUT requests should fail if invalid data is supplied in the request - nothing should be updated
+- repeatedly cally a `PUT` request always returns the same result (idempotent)
+- after updating a resource with a `PUT` request, a `GET` request for that resource should return the new data
+- `PUT` requests should fail if invalid data is supplied in the request - nothing should be updated
 
 For a new resource:
 
@@ -1717,7 +1721,19 @@ It is optional. Most of the HTTP requests are GET requests without bodies. Howev
 
 ##### Generate requests
 
-How to generate a requests?
+How to generate a request?
+
+- `curl`
+
+  ```
+  curl -Iks -v -X GET -H "Connection: keep-alive" -H "User-Agent: X-AGENT" https://example.com
+  ```
+
+- `httpie`
+
+  ```
+  http -p Hh GET https://example.com User-Agent:X-AGENT --follow
+  ```
 
 - `telnet`
 
@@ -1736,6 +1752,8 @@ How to generate a requests?
   GET /index.html HTTP/1.1
   Host: example.com
   ```
+
+For more examples, see [Testing](#testing) chapter.
 
 #### Response
 
@@ -1866,10 +1884,10 @@ To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher
 
 There are essentially 4 different parts of a TLS 1.2 cipher suite:
 
-- `Key exchange` - what asymmetric crypto is used to exchange keys? (RSA, DH, ECDH, DHE, ECDHE, PSK)
-- `Authentication/Digital Signature Algorithm` - what crypto is used to verify the authenticity of the server? (RSA, ECDSA, DSA)
-- `Cipher/Bulk Encryption Algorithms` - what symmetric crypto is used to encrypt the data? (AES, CHACHA20, Camellia, ARIA)
-- `MAC` - what hash function is used to ensure message integrity? (SHA-256, POLY1305)
+- **Key exchange** - what asymmetric crypto is used to exchange keys? (`RSA`, `DH`, `ECDH`, `DHE`, `ECDHE`, `PSK`)
+- **Authentication/Digital Signature Algorithm** - what crypto is used to verify the authenticity of the server? (`RSA`, `ECDSA`, `DSA`)
+- **Cipher/Bulk Encryption Algorithms** - what symmetric crypto is used to encrypt the data? (`AES`, `CHACHA20`, `Camellia`, `ARIA`)
+- **MAC** - what hash function is used to ensure message integrity? (`SHA-256`, `POLY1305`)
 
 For example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
 
@@ -1936,6 +1954,7 @@ These parameters aren't secret and can be reused; plus they take several seconds
     * [Directives, Blocks, and Contexts](#directives-blocks-and-contexts)
     * [External files](#external-files)
     * [Measurement units](#measurement-units)
+    * [Regular expressions with PCRE](#regular-expressions-with-pcre)
     * [Enable syntax highlighting](#enable-syntax-highlighting)
   * [Connection processing](#connection-processing)
     * [Event-Driven architecture](#event-driven-architecture)
@@ -2245,6 +2264,31 @@ Time intervals can be specified in:
 ```bash
 proxy_read_timeout 20s;
 ```
+
+##### Regular expressions with PCRE
+
+Before start reading next chapters you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
+
+- [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
+- [Regex cookbook — Top 10 Most wanted regex](https://medium.com/factory-mind/regex-cookbook-most-wanted-regex-aa721558c3c1)
+
+Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skills of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
+
+NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives. Below is something interesting:
+
+- [Learn PCRE in Y minutes](https://learnxinyminutes.com/docs/pcre/)
+- [PCRE Regex Cheatsheet](https://www.debuggex.com/cheatsheet/regex/pcre)
+- [Regular Expression Cheat Sheet - PCRE](https://github.com/niklongstone/regular-expression-cheat-sheet)
+- [Regex cheatsheet](https://remram44.github.io/regex-cheatsheet/regex.html)
+- [Regular expressions in Perl](http://jkorpela.fi/perl/regexp.html)
+- [Regexp Security Cheatsheet](https://github.com/attackercan/regexp-security-cheatsheet)
+
+You can also use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
+
+If you're good at it, check these very nice and brainstorming regex challenges:
+
+- [RegexGolf](https://alf.nu/RegexGolf)
+- [Regex Crossword](https://regexcrossword.com/)
 
 ##### Enable syntax highlighting
 
@@ -2887,29 +2931,6 @@ I recommend a great explanation about [HTTP request processing phases in Nginx](
 
   > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` and `server_name` directives to bind to TCP sockets.
 
-Before start reading this chapter you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
-
-- [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
-- [Regex cookbook — Top 10 Most wanted regex](https://medium.com/factory-mind/regex-cookbook-most-wanted-regex-aa721558c3c1)
-
-Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skills of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
-
-NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives. Below is something interesting:
-
-- [Learn PCRE in Y minutes](https://learnxinyminutes.com/docs/pcre/)
-- [PCRE Regex Cheatsheet](https://www.debuggex.com/cheatsheet/regex/pcre)
-- [Regular Expression Cheat Sheet - PCRE](https://github.com/niklongstone/regular-expression-cheat-sheet)
-- [Regex cheatsheet](https://remram44.github.io/regex-cheatsheet/regex.html)
-- [Regular expressions in Perl](http://jkorpela.fi/perl/regexp.html)
-- [Regexp Security Cheatsheet](https://github.com/attackercan/regexp-security-cheatsheet)
-
-You can also use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
-
-If you're good at it, check these very nice and brainstorming regex challenges:
-
-- [RegexGolf](https://alf.nu/RegexGolf)
-- [Regex Crossword](https://regexcrossword.com/)
-
 It's a short example of two server block contexts with several regular expressions:
 
 ```bash
@@ -3225,7 +3246,7 @@ And here's the table with the results:
 
 Generally there are two ways of implementing redirects in NGINX: with `rewrite` and `return`.
 
-These directives (they come from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
+These directives (comes from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
 
 - `return ...;`
 - `rewrite ... last;`
@@ -3325,6 +3346,7 @@ I use `return` directive in the following cases:
 
     ...
 
+    # It's only example. You shouldn't use 'if' statement for redirects.
     if ($host = www.domain.com) {
 
       return  301 https://domain.com$request_uri;
@@ -3404,7 +3426,7 @@ I use `return` directive in the following cases:
 
 We have one more very interesting and important directive: `try_files` (from the `ngx_http_core_module`). This directive tells NGINX to check for the existence of a named set of files or directories (checks files conditionally breaking on success).
 
-I think the best explanation come from official documentation:
+I think the best explanation comes from official documentation:
 
   > _`try_files` checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. The path to a file is constructed from the file parameter according to the root and alias directives. It is possible to check directory’s existence by specifying a slash at the end of a name, e.g. `$uri/`. If none of the files were found, an internal redirect to the uri specified in the last parameter is made._
 
@@ -3485,7 +3507,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
 
   You should also remember about this:
 
-  > _> The `if` context in NGINX is provided by the rewrite module and this is the primary intended use of this context. Since NGINX will test conditions of a request with many other purpose-made directives, `if` **should not** be used for most forms of conditional execution. This is such an important note that the NGINX community has created a page called [if is evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)._
+  > _The `if` context in NGINX is provided by the rewrite module and this is the primary intended use of this context. Since NGINX will test conditions of a request with many other purpose-made directives, `if` **should not** be used for most forms of conditional execution. This is such an important note that the NGINX community has created a page called [if is evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)._
 
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
@@ -3966,7 +3988,7 @@ However, more complex apps may need additional directives:
 
 ##### Trailing slashes
 
-  > **:bookmark: [Be careful with trailing slashes in `proxy_pass` directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
+  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
 
 If you have something like:
 
@@ -5019,7 +5041,7 @@ A short description of the modules that I used in this step-by-step tutorial:
 
 ##### Compiler and linker
 
-Someting about compiler and linker options. Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags.
+Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults. However, in order to optimise for speed and/or security, you should probably provide a few compiler flags.
 
 See [this](https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/) recommendations by RedHat. You should also read [Compilation and Installation](https://wiki.openssl.org/index.php/Compilation_and_Installation) for OpenSSL.
 
