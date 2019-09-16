@@ -464,6 +464,8 @@ Of course, [Official Documentation](https://nginx.org/en/docs/) is the best plac
 
 These are definitely the best assets for us and in the first place you should seek help there.
 
+Moreover, in order to improve your knowledge please see [Books](#books) chapter. It contains top literature on NGINX.
+
 ## Why I Created This Handbook
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
