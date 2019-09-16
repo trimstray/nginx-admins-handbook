@@ -139,7 +139,8 @@
     * [try_files directive](#try_files-directive)
     * [if, break, and set](#if-break-and-set)
     * [root vs alias](#root-vs-alias)
-    * [Internal requests](#internal-requests)
+    * [internal directive](#internal-directive)
+    * [External and internal redirects](#external-and-internal-redirects)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -661,7 +662,8 @@ Existing chapters:
     - [x] _try_files directive_
     - [x] _if, break and set_
     - [x] _root vs alias_
-    - [x] _Internal requests_
+    - [x] _internal directive_
+    - [x] _External and internal redirects_
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_
@@ -1958,7 +1960,8 @@ These parameters aren't secret and can be reused; plus they take several seconds
     * [try_files directive](#try_files-directive)
     * [if, break, and set](#if-break-and-set)
     * [root vs alias](#root-vs-alias)
-    * [Internal requests](#internal-requests)
+    * [internal directive](#internal-directive)
+    * [External and internal redirects](#external-and-internal-redirects)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -3310,6 +3313,22 @@ Note:
 
 Official documentation has a great tutorials about [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html).
 
+Finally, look at difference between `last` and `break` flags in action:
+
+- `last`:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/rewrites/last_01.jpeg" alt="last">
+</p>
+
+- `break`:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/rewrites/break_01.jpeg" alt="break">
+</p>
+
+<sup><i>This infographic comes from [Internal rewrite - nginx](https://www.linkedin.com/pulse/internal-rewrite-nginx-ivan-dabi%C4%87) by [Ivan Dabic](https://www.linkedin.com/in/ivan-dabic).</i></sup>
+
 ###### `return` directive
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
@@ -3474,6 +3493,8 @@ server {
 
   - `try_files $uri $uri/ =404` - if a file and directory not found, NGINX sends `HTTP 404` (Not Found)
 
+On the other hand, `try_files` is relatively primitive. When encountered, NGINX will look for any of the specified files physically in the directory matched by the location block. If they don’t exist, NGINX does an internal redirect to the last entry in the directive.
+
 ##### `if`, `break` and `set`
 
 The `ngx_http_rewrite_module` also provides additional directives:
@@ -3496,7 +3517,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
 
   You should also remember about this:
 
-  > _The `if` context in NGINX is provided by the rewrite module and this is the primary intended use of this context. Since NGINX will test conditions of a request with many other purpose-made directives, `if` **should not** be used for most forms of conditional execution. This is such an important note that the NGINX community has created a page called [if is evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)._
+  > _The `if` context in NGINX is provided by the rewrite module and this is the primary intended use of this context. Since NGINX will test conditions of a request with many other purpose-made directives, `if` **should not** be used for most forms of conditional execution. This is such an important note that the NGINX community has created a page called [if is evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/) (and in most cases not needed)._
 
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
@@ -3641,23 +3662,23 @@ NGINX will map the request made to:
 - `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
 - `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
 
-##### Internal requests
+##### `internal` directive
 
-It specifies how external redirections, i.e. locations like `http://example.com/app.php/some-path` should be handled; while set, they should return 404, only allowing internal redirections.
+This directive specifies that the location block is internal. In other words,
+the specified resource cannot be accessed by external requests.
 
-In brief, this tells NGINX it's not accessible from the outside.
+On the other hand, it specifies how external redirections, i.e. locations like `http://example.com/app.php/some-path` should be handled; while set, they should return 404, only allowing internal redirections. In brief, this tells NGINX it's not accessible from the outside (it doesn't redirect anything).
 
-Conditions handled as internal redirections are listed in the documentation for internal directive:
+Conditions handled as internal redirections are listed in the documentation for `internal` directive. Specifies that a given location can only be used for internal requests and are the following:
 
 - requests redirected by the `error_page`, `index`, `random_index`, and `try_files` directives
 - requests redirected by the `X-Accel-Redirect` response header field from an upstream server
 - subrequests formed by the `include virtual` command of the `ngx_http_ssi_module module`, by the `ngx_http_addition_module` module directives, and by `auth_request` and `mirror` directives
 - requests changed by the `rewrite` directive
 
-Examples:
+Example 1:
 
 ```bash
-# 1)
 error_page 404 /404.html;
 
 location = /404.html {
@@ -3665,23 +3686,37 @@ location = /404.html {
   internal;
 
 }
+```
 
-# 2)
+Example 2:
+
+The files are served from the directory `/srv/hidden-files` by the path prefix `/hidden-files/`. Pretty straightforward. The internal declaration tells NGINX that this path is accessible only through rewrites in the NGINX config, or via the `X-Accel-Redirect `header in proxied responses.
+
+To use this, just return an empty response which contains that header. The content of the header should be the location you want to redirect to:
+
+```bash
 location /hidden-files/ {
 
   internal;
   alias /srv/hidden-files/;
 
 }
+```
 
-# 3)
+Example 3:
+
+Another use case for internal redirects in NGINX is to hide credentials. Often you need to make requests to 3rd party services. For example, you want to send text messages or access a paid maps server. It would be the most efficient to send these requests directly from your JavaScript front end. However, doing so means you would have to embed an access token in the front end. This means savvy users could extract this token and make requests on your account.
+
+An easy fix is to make an endpoint in your back end which initiates the actual request. We could make use of an HTTP client library inside the back end. However, this will again tie up workers, especially if you expect a barrage of requests and the 3rd party service is responding very slowly.
+
+```bash
 location /external-api/ {
 
   internal;
   set $redirect_uri "$upstream_http_redirect_uri";
   set $authorization "$upstream_http_authorization";
 
-  # For performance"
+  # For performance:
   proxy_buffering off;
   # Pass on secret from backend:
   proxy_set_header Authorization $authorization;
@@ -3692,6 +3727,36 @@ location /external-api/ {
 ```
 
   > There is a limit of 10 internal redirects per request to prevent request processing cycles that can occur in incorrect configurations. If this limit is reached, the error 500 (Internal Server Error) is returned. In such cases, the `rewrite or internal redirection cycle` message can be seen in the error log.
+
+<sup><i>Examples 2 and 3 (both are great!) comes from [How to use internal redirects in NGINX](https://clubhouse.io/developer-how-to/how-to-use-internal-redirects-in-nginx/).</i></sup>
+
+Look also at [Authentication Based on Subrequest Result](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/) from official documentation.
+
+##### External and internal redirects
+
+External redirects originate directly from the client. So, if the client fetched `https://example.com/directory` it would be directly fall into preceding `location` block.
+
+Internal redirect means that it doesn’t send a 302 response to the client, it simply performs an implicit rewrite of the url and attempts to process it as though the user typed the new url originally.
+
+The internal redirect is different from the external redirect defined by HTTP response code 302 and 301, client browser won't update its URI addresses.
+
+To begin rewriting internally, we should explain the difference between redirects and internal rewrite. When source points to a destination that is out of source domain that is what we call redirect as your request will go from source to outside domain/destination.
+
+With internal rewrite you would be, basically, doing the same only the destination is local path under same domain and not the outside location.
+
+There is also [great explanation](https://openresty.org/download/agentzh-nginx-tutorials-en.html#02-nginxdirectiveexecorder06) about internal redirects:
+
+  > _The internal redirection (e.g. via the `echo_exec` or `rewrite` directive) is an operation that makes NGINX jump from one location to another while processing a request (are very similar to `goto` statement in the C language). This "jumping" happens completely within the server itself._
+
+There are two different kinds of internal requests:
+
+- internal redirects - redirects the client requests internally. The URI is
+changed, and the request may therefore match another location block and
+become eligible for different settings. The most common case of internal
+redirects is when using the `rewrite` directive, which allows you to rewrite the
+request URI
+
+- sub-requests - additional requests that are triggered internally to generate (insert or append to the body of the original request) content that is complementary to the main request (`addition` or `ssi` module)
 
 #### Log files
 
