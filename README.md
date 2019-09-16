@@ -902,12 +902,11 @@ If you have an idea, send it back to me or add a pull request.
 
 # Bonus Stuff
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Bonus Stuff](#toc-bonus-stuff)**
-
-<details>
-<summary><b>Bonus Stuff (subsections)</b></summary><br>
-
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
@@ -1099,12 +1098,11 @@ For more information please see [HTTP Static Error Pages Generator](https://gith
 
 # Books
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Books](#toc-books)**
-
-<details>
-<summary><b>Books (subsections)</b></summary><br>
-
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
   * [Nginx HTTP Server](#nginx-http-server)
@@ -1197,12 +1195,11 @@ _In this ebook you will learn:_
 
 # External Resources
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - External Resources](#toc-external-resources)**
-
-<details>
-<summary><b>External Resources (subsections)</b></summary><br>
-
   * [Nginx official](#nginx-official)
   * [Nginx distributions](#nginx-distributions)
   * [Comparison reviews](#comparison-reviews)
@@ -1456,12 +1453,11 @@ _In this ebook you will learn:_
 
 # HTTP Basics
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - HTTP Basics](#toc-http-basics)**
-
-<details>
-<summary><b>HTTP Basics (subsections)</b></summary><br>
-
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
   * [Request](#request)
@@ -1813,12 +1809,11 @@ Contains the resource data that was requested by the client.
 
 # SSL/TLS Basics
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - SSL/TLS Basics](#toc-ssltls-basics)**
-
-<details>
-<summary><b>SSL/TLS Basics (subsections)</b></summary><br>
-
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
   * [Cipher suites](#cipher-suites)
@@ -1931,12 +1926,11 @@ These parameters aren't secret and can be reused; plus they take several seconds
 
 # NGINX Basics
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - NGINX Basics](#toc-nginx-basics)**
-
-<details>
-<summary><b>NGINX Basics (subsections)</b></summary><br>
-
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
@@ -4651,12 +4645,11 @@ Without `nodelay` NGINX would wait (no 503 response) and handle excessive reques
 
 # Helpers
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Helpers](#toc-helpers)**
-
-<details>
-<summary><b>Helpers (subsections)</b></summary><br>
-
   * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
@@ -10371,12 +10364,11 @@ openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 
 # Base Rules
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Base Rules](#toc-base-rules)**
-
-<details>
-<summary><b>Base Rules (subsections)</b></summary><br>
-
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -11262,12 +11254,11 @@ http {
 
 # Debugging
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Debugging](#toc-debugging)**
-
-<details>
-<summary><b>Debugging (subsections)</b></summary><br>
-
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
@@ -11456,12 +11447,11 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Performance](#toc-performance)**
-
-<details>
-<summary><b>Performance (subsections)</b></summary><br>
-
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
@@ -11932,12 +11922,11 @@ location /videos {
 
 # Hardening
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Hardening](#toc-hardening)**
-
-<details>
-<summary><b>Hardening (subsections)</b></summary><br>
-
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -13106,12 +13095,11 @@ send_timeout 10s;
 
 # Reverse Proxy
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Reverse Proxy](#toc-reverse-proxy)**
-
-<details>
-<summary><b>Reverse Proxy (subsections)</b></summary><br>
-
   * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
@@ -13423,12 +13411,11 @@ add_header Backend-Server   $hostname;
 
 # Load Balancing
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Load Balancing](#toc-load-balancing)**
-
-<details>
-<summary><b>Load Balancing (subsections)</b></summary><br>
-
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 
@@ -13488,12 +13475,11 @@ upstream backend {
 
 # Others
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Others](#toc-others)**
-
-<details>
-<summary><b>Others (subsections)</b></summary><br>
-
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
 
@@ -13571,12 +13557,11 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 
 # Configuration Examples
 
+<details>
+<summary><b>Chapter TOC</b></summary><br>
+
 - **[⬆ Table of Contents - Main](#table-of-contents)**
 - **[⬆ Table of Contents - Configuration Examples](#toc-configuration-examples)**
-
-<details>
-<summary><b>Configuration Examples (subsections)</b></summary><br>
-
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
     * [Configuration](#configuration)
