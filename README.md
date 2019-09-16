@@ -446,7 +446,7 @@ In addition, I would like to recommend three great docs focuses on the concept o
 - **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
 - **[Web technology for developers - HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)**
 
-If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols).
+If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
 ## Prologue
 
@@ -1828,7 +1828,7 @@ TLS stands for "Transport Layer Security". It is a protocol that provides privac
 
 TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1 and 1.0.
 
-I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). It is the most comprehensive book about deploying TLS.
+I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/).
 
 #### TLS versions
 
