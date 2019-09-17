@@ -902,7 +902,7 @@ If you have an idea, send it back to me or add a pull request.
 
 ## Checklist to rule them all
 
-  > This checklist contains all rules (68) from this handbook.
+  > This checklist contains [all rules (68)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
 
