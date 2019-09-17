@@ -1050,7 +1050,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)<br><sup>Watch out for duplicating the same rules.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Adjust worker processes](#beginner-adjust-worker-processes)<br><sup>You can adjust this value to maximum throughput under high concurrency.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)<br><sup>Exact location matches are often used to speed up the selection process.</sup> | Performance | ![low](static/img/priorities/low.png) |
-| [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed) | Performance | ![low](static/img/priorities/low.png) |
+| [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)<br><sup>Limits NGINX download speed per connection.</sup> | Performance | ![low](static/img/priorities/low.png) |
 | [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)<br><sup>Incorrect setting could end up with some strange url.</sup> | Reverse Proxy | ![low](static/img/priorities/low.png) |
 | [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)<br><sup>The use of custom headers with X- prefix is discouraged.</sup> | Reverse Proxy | ![low](static/img/priorities/low.png) |
 | [Tweak passive health checks](#beginner-tweak-passive-health-checks)<br><sup>Improve behaviour of the passive health checks.</sup> | Load Balancing | ![low](static/img/priorities/low.png) |
@@ -1060,7 +1060,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)<br><sup>There's probably more detail than you want, but that can sometimes be a lifesaver.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
-| [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter) | Load Balancing | ![info](static/img/priorities/info.png) |
+| [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)<br><sup>Is a good solution to marks the server as permanently unavailable.</sup> | Load Balancing | ![info](static/img/priorities/info.png) |
 
 ## Printable hardening cheatsheets
 
