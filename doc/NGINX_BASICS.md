@@ -1400,6 +1400,9 @@ Finally, look at difference between `last` and `break` flags in action:
 
 ###### `return` directive
 
+  > **:bookmark: [Use return directive instead of rewrite for redirects](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
+  > **:bookmark: [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
+
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
 
 I use `return` directive in the following cases:
