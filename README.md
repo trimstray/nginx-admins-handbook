@@ -332,7 +332,7 @@
   * [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)
   * [Don't duplicate index directive, use it only in the http block](doc/RULES.md#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
-- **[Debugging (4)](doc/RULES.md#debugging-1)**<a id="toc-debugging"></a>
+- **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging"></a>
   * [Use custom log formats](doc/RULES.md#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](doc/RULES.md#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process, and all workers except one](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)
@@ -378,7 +378,7 @@
   * [Prevent caching of sensitive data](doc/RULES.md#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](doc/RULES.md#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](doc/RULES.md#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy-1)**<a id="toc-reverse-proxy"></a>
+- **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy"></a>
   * [Use pass directive compatible with backend protocol](doc/RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](doc/RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)
