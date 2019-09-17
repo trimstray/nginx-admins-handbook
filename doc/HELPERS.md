@@ -1,15 +1,6 @@
-# Welcome to the Nginx Admins Handbook!
-
-You can [file an issue](https://github.com/trimstray/nginx-admins-handbook/issues) about it and ask that it be added.
-
-  > <sup>**Nginx Admins Handbook** provides a high-level overview of the NGINX http server. It is not an official standard or handbook.</sup>
-
----
-
 # Helpers
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Helpers](../README.md#toc-helpers)**
+- **[⬆ Helpers](../README.md#toc-helpers)**
   * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)

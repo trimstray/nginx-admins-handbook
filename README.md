@@ -1398,10 +1398,10 @@ _In this ebook you will learn:_
 
 # What's next?
 
-- **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**
-- **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**
-- **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**
-- **[Helpers](doc/HELPERS.md#helpers)**
+- **[HTTP Basics](doc/HTTP_BASICS.md)**
+- **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md)**
+- **[NGINX Basics](doc/NGINX_BASICS.md)**
+- **[Helpers](doc/HELPERS.md)**
 - **[Base Rules (14)](doc/RULES.md#base-rules)**
 - **[Debugging (4)](doc/RULES.md#debugging)**
 - **[Performance (11)](doc/RULES.md#performance)**
@@ -1409,4 +1409,4 @@ _In this ebook you will learn:_
 - **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**
 - **[Others (2)](doc/RULES.md#others)**
-- **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**
+- **[Configuration Examples](doc/EXAMPLES.md)**

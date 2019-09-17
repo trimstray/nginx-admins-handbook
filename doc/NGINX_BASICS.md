@@ -1,15 +1,6 @@
-# Welcome to the Nginx Admins Handbook!
-
-You can [file an issue](https://github.com/trimstray/nginx-admins-handbook/issues) about it and ask that it be added.
-
-  > <sup>**Nginx Admins Handbook** provides a high-level overview of the NGINX http server. It is not an official standard or handbook.</sup>
-
----
-
 # NGINX Basics
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - NGINX Basics](../README.md#toc-nginx-basics)**
+- **[⬆ NGINX Basics](../README.md#toc-nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)

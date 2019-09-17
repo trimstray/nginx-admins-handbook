@@ -1,15 +1,6 @@
-# Welcome to the Nginx Admins Handbook!
-
-You can [file an issue](https://github.com/trimstray/nginx-admins-handbook/issues) about it and ask that it be added.
-
-  > <sup>**Nginx Admins Handbook** provides a high-level overview of the NGINX http server. It is not an official standard or handbook.</sup>
-
----
-
 # Base Rules
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Base Rules](../README.md#toc-base-rules)**
+- **[⬆ Base Rules](../README.md#toc-base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
