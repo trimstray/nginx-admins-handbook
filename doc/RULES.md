@@ -884,8 +884,7 @@ http {
 
 # Debugging
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Debugging](#toc-debugging)**
+- **[⬆ Debugging](../README.md#toc-debugging)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
@@ -1072,8 +1071,7 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Performance](#toc-performance)**
+- **[⬆ Performance](../README.md#toc-performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
@@ -1542,8 +1540,7 @@ location /videos {
 
 # Hardening
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Hardening](#toc-hardening)**
+- **[⬆ Hardening](../README.md#toc-hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -2710,8 +2707,7 @@ send_timeout 10s;
 
 # Reverse Proxy
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Reverse Proxy](#toc-reverse-proxy)**
+- **[⬆ Reverse Proxy](../README.md#toc-reverse-proxy)**
   * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
@@ -3021,8 +3017,7 @@ add_header Backend-Server   $hostname;
 
 # Load Balancing
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Load Balancing](#toc-load-balancing)**
+- **[⬆ Load Balancing](../README.md#toc-load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 
@@ -3080,8 +3075,7 @@ upstream backend {
 
 # Others
 
-- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
-- **[⬆ Table of Contents - Others](#toc-others)**
+- **[⬆ Others](../README.md#toc-others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
 
