@@ -84,7 +84,7 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 
 #### Commands
 
-  > **:bookmark: [Use reload option to change configurations on the fly](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
+  > **:bookmark: [Use reload option to change configurations on the fly - Base Rules](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
 - `nginx -h` - shows the help
 - `nginx -v` - shows the NGINX version
@@ -149,8 +149,8 @@ Some useful snippets for management of the NGINX daemon:
 
 #### Configuration syntax
 
-  > **:bookmark: [Organising Nginx configuration](RULES.md#beginner-organising-nginx-configuration)**<br>
-  > **:bookmark: [Format, prettify and indent your Nginx code](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
+  > **:bookmark: [Organising Nginx configuration - Base Rules](RULES.md#beginner-organising-nginx-configuration)**<br>
+  > **:bookmark: [Format, prettify and indent your Nginx code - Base Rules](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
 
 NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX configuration has a simple and very transparent structure.
 
@@ -323,7 +323,7 @@ proxy_read_timeout 20s;
 
 ##### Regular expressions with PCRE
 
-  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
+  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions - Performance](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
 
 Before start reading next chapters you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
@@ -406,6 +406,9 @@ cabal update
   Bring up the _Command Palette_ and type `install`. Among the commands you should see _Package Control: Install Package_. Type `nginx` to install [sublime-nginx](https://github.com/brandonwamboldt/sublime-nginx) and after that do the above again for install [SublimeLinter-contrib-nginx-lint](https://github.com/irvinlim/SublimeLinter-contrib-nginx-lint): type `SublimeLinter-contrib-nginx-lint`.
 
 #### Processes
+
+  > **:bookmark: [Adjust worker processes - Performance](doc/RULES.md#beginner-adjust-worker-processes)**
+  > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
 
 NGINX has **one master process** and **one or more worker processes**.
 
@@ -1039,8 +1042,9 @@ http {
 
 ##### Handle incoming connections
 
-  > **:bookmark: [Separate listen directives for 80 and 443](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
-  > **:bookmark: [Define the listen directives explicitly with address:port pair](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**
+  > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
+  > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**
+  > **:bookmark: [Use exact names in a server_name directive where possible - Performance](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
@@ -1125,6 +1129,8 @@ direct to the first server with a `listen` directive that satisfies first step
 <sup><i>This list is based on [Mastering Nginx - The virtual server section](../README.md#mastering-nginx).</i></sup>
 
 ##### Matching location
+
+  > **:bookmark: [Make an exact location match to speed up the selection process - Performance](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)**
 
   > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
@@ -1400,8 +1406,8 @@ Finally, look at difference between `last` and `break` flags in action:
 
 ###### `return` directive
 
-  > **:bookmark: [Use return directive instead of rewrite for redirects](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
-  > **:bookmark: [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
+  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
+  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
 
@@ -1832,7 +1838,7 @@ request URI
 
 #### Log files
 
-  > **:bookmark: [Use custom log formats](RULES.md#beginner-use-custom-log-formats)**
+  > **:bookmark: [Use custom log formats - Debugging](RULES.md#beginner-use-custom-log-formats)**
 
 Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the last phase: `NGX_HTTP_LOG_PHASE`).
 
@@ -1888,7 +1894,7 @@ http {
 
 ##### Manually log rotation
 
-  > **:bookmark: [Configure log rotation policy](RULES.md#beginner-configure-log-rotation-policy)**
+  > **:bookmark: [Configure log rotation policy - Base Rules](RULES.md#beginner-configure-log-rotation-policy)**
 
 NGINX will re-open its logs in response to the `USR1` signal:
 
@@ -1962,7 +1968,7 @@ In my opinion, the two most important things related to the reverse proxy are:
 
 ##### Passing requests
 
-  > **:bookmark: [Use pass directive compatible with backend protocol](RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)**
+  > **:bookmark: [Use pass directive compatible with backend protocol - Reverse Proxy](RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)**
 
 When NGINX proxies a request, it sends the request to a specified proxied server, fetches the response, and sends it back to the client.
 
@@ -2136,7 +2142,7 @@ However, more complex apps may need additional directives:
 
 ##### Trailing slashes
 
-  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive](RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
+  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive - Reverse Proxy](RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
 
 If you have something like:
 
