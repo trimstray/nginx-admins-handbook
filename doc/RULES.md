@@ -1,3 +1,11 @@
+# Welcome to the Nginx Admins Handbook!
+
+You can [file an issue](https://github.com/trimstray/nginx-admins-handbook/issues) about it and ask that it be added.
+
+  > <sup>**Nginx Admins Handbook** provides a high-level overview of the NGINX http server. It is not an official standard or handbook.</sup>
+
+---
+
 # Base Rules
 
 - **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
