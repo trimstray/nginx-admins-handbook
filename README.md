@@ -1712,7 +1712,7 @@ What is an accepted maximum allowed size for HTTP headers? Read [this](https://s
 
 Request (message) body is the part of the HTTP request where additional content can be sent to the server.
 
-It is optional. Most of the HTTP requests are GET requests without bodies. However, simulating requests with bodies is important to properly stress the proxy code and to test various hooks working with such requests. Most HTTP requests with bodies use POST or PUT request method.
+It is optional. Most of the HTTP requests are `GET` requests without bodies. However, simulating requests with bodies is important to properly stress the proxy code and to test various hooks working with such requests. Most HTTP requests with bodies use `POST` or `PUT` request method.
 
 ##### Generate requests
 
@@ -1821,9 +1821,9 @@ Contains the resource data that was requested by the client.
 
 </details>
 
-TLS stands for "Transport Layer Security". It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
+TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
-TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1 and 1.0.
+TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1, and 1.0.
 
 I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/).
 
@@ -1875,10 +1875,14 @@ To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher
 
 There are essentially 4 different parts of a TLS 1.2 cipher suite:
 
-- **Key exchange** - what asymmetric crypto is used to exchange keys? (`RSA`, `DH`, `ECDH`, `DHE`, `ECDHE`, `PSK`)
-- **Authentication/Digital Signature Algorithm** - what crypto is used to verify the authenticity of the server? (`RSA`, `ECDSA`, `DSA`)
-- **Cipher/Bulk Encryption Algorithms** - what symmetric crypto is used to encrypt the data? (`AES`, `CHACHA20`, `Camellia`, `ARIA`)
-- **MAC** - what hash function is used to ensure message integrity? (`SHA-256`, `POLY1305`)
+- **Key exchange** - what asymmetric crypto is used to exchange keys?<br>
+  Examples: `RSA`, `DH`, `ECDH`, `DHE`, `ECDHE`, `PSK`
+- **Authentication/Digital Signature Algorithm** - what crypto is used to verify the authenticity of the server?<br>
+  Examples: `RSA`, `ECDSA`, `DSA`
+- **Cipher/Bulk Encryption Algorithms** - what symmetric crypto is used to encrypt the data?<br>
+  Examples: `AES`, `CHACHA20`, `Camellia`, `ARIA`
+- **MAC** - what hash function is used to ensure message integrity?<br>
+  Examples: `SHA-256`, `POLY1305`
 
 For example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
 
@@ -1888,11 +1892,11 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 | :---:        | :---:        | :---:        | :---:        | :---:        |
 | `TLS` | `ECDHE` | `ECDSA` | `AES_128_GCM` | `SHA256` |
 
-`TLS` is the protocol. Starting with `ECDHE` we can see that during the handshake the keys will be exchanged via ephemeral Elliptic Curve Diffie Hellman (`ECDHE`). `ECDSA` is the authentication algorithm. `AES_128_GCM` is the bulk encryption algorithm: AES running Galois Counter Mode with 128-bit key size. Finally, `SHA-256` is the hashing algorithm.
+`TLS` is the protocol. Starting with `ECDHE` we can see that during the handshake the keys will be exchanged via ephemeral Elliptic Curve Diffie Hellman (`ECDHE`). `ECDSA` is the authentication algorithm. `AES_128_GCM` is the bulk encryption algorithm: `AES` running Galois Counter Mode with `128-bit` key size. Finally, `SHA-256` is the hashing algorithm.
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
-Look also at this great table with [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm).
+Look also at this table with [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm).
 
 #### Diffie-Hellman key exchange
 
@@ -1920,7 +1924,7 @@ Forward Secrecy is the prime feature of the ephemeral version of Diffie-Hellman 
 
 The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curve cryptography to lower computational, storage and memory requirements. The perfect forward secrecy offered by `DHE` comes at a price: more computation. The `ECDHE` variants uses elliptic curve cryptography to reduce this computational cost.
 
-Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any DH exchange, you can only use RSA in encryption mode.
+Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any DH exchange, you can only use `RSA` in encryption mode.
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
 
@@ -2255,6 +2259,8 @@ proxy_read_timeout 20s;
 
 ##### Regular expressions with PCRE
 
+  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
+
 Before start reading next chapters you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
 - [Regex tutorial — A quick cheatsheet by examples](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
@@ -2439,6 +2445,7 @@ Now you see why NGINX can handle a large amount of requests perfectly well (and 
 For more information take a look at following resources:
 
 - [Asynchronous, Non-Blocking I/O](https://medium.com/@entzik/on-asynchronous-non-blocking-i-o-4a2ac0af5c50)
+- [Asynchronous programming. Blocking I/O and non-blocking I/O](https://luminousmen.com/post/asynchronous-programming-blocking-and-non-blocking)
 - [About High Concurrency, NGINX architecture and internals](http://www.aosabook.org/en/nginx.html)
 - [A little holiday present: 10,000 reqs/sec with Nginx!](https://blog.webfaction.com/2008/12/a-little-holiday-present-10000-reqssec-with-nginx-2/)
 - [Nginx vs Apache: Is it fast, if yes, why?](http://planetunknown.blogspot.com/2011/02/why-nginx-is-faster-than-apache.html)
@@ -2447,7 +2454,7 @@ For more information take a look at following resources:
 
 ##### Multiple processes
 
-NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of symmetric multiprocessing (SMP).
+NGINX uses only asynchronous I/O, which makes blocking a non-issue. The only reason NGINX uses multiple processes is to make full use of multi-core, multi-CPU, and hyper-threading systems. NGINX requires only enough worker processes to get the full benefit of symmetric multiprocessing (SMP).
 
 From NGINX documentation:
 
