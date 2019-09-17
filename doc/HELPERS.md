@@ -1,10 +1,7 @@
 # Helpers
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
-- **[⬆ Table of Contents - Helpers](#toc-helpers)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
+- **[⬆ Table of Contents - Helpers](../README.md#toc-helpers)**
   * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
@@ -154,8 +151,6 @@
     * [Verification of the certificate](#verification-of-the-certificate)
     * [Verification of the CSR](#verification-of-the-csr)
     * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
-
-</details>
 
 #### Installing from prebuilt packages
 
@@ -360,7 +355,7 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed o
 
   > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release.
 
-  > Before installing external modules please read [Event-Driven architecture](#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
+  > Before installing external modules please read [Event-Driven architecture](NGINX_BASICS.md#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
 
 Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
 
@@ -3574,7 +3569,7 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
 #### Debugging
 
-  > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](#beginner-use-debug-mode-for-debugging) and [log formats](#beginner-use-custom-log-formats-for-debugging).
+  > You can change combinations and parameters of these commands. When carrying out the analysis, remember about [debug log](RULES.md#beginner-use-debug-mode-for-debugging) and [log formats](RULES.md#beginner-use-custom-log-formats-for-debugging).
 
 ##### Show information about processes
 
@@ -4417,7 +4412,7 @@ location = /404.html {
 }
 ```
 
-Read also this: [Static error pages generator](#static-error-pages-generator).
+Read also this: [Static error pages generator](../README.md#static-error-pages-generator).
 
 ##### Blocking/allowing IP addresses
 
@@ -5000,7 +4995,7 @@ server {
 }
 ```
 
-  > Look also at [HTTP Strict Transport Security (from this handbook)](#beginner-http-strict-transport-security).
+  > Look also at [HTTP Strict Transport Security (from this handbook)](RULES.md#beginner-http-strict-transport-security).
 
 ##### Proxy/rewrite and keep the original URL
 

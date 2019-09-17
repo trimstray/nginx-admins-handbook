@@ -1,10 +1,7 @@
 # Base Rules
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
-- **[⬆ Table of Contents - Base Rules](#toc-base-rules)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
+- **[⬆ Table of Contents - Base Rules](../README.md#toc-base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -19,8 +16,6 @@
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
   * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
-
-</details>
 
 These are the basic set of rules to keep NGINX in good condition.
 
@@ -195,7 +190,7 @@ kill -HUP $(pgrep -f "nginx: master")
 ###### External resources
 
 - [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
-- [Commands (from this handbook)](#commands)
+- [Commands (from this handbook)](NGINX_BASICS.md#commands)
 
 #### :beginner: Separate `listen` directives for 80 and 443
 
@@ -568,7 +563,7 @@ geo $globals_internal_geo_acl {
 ###### External resources
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
-- [Blocking/allowing IP addresses (from this handbook)](#blockingallowing-ip-addresses)
+- [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
 
 #### :beginner: Map all the things...
 
@@ -685,7 +680,7 @@ server {
 
 - [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/)
 - [How to do an Nginx redirect](https://bjornjohansen.no/nginx-redirect)
-- [Adding and removing the www prefix (from this handbook)](#adding-and-removing-the-www-prefix)
+- [Adding and removing the www prefix (from this handbook)](HELPERS.md#adding-and-removing-the-www-prefix)
 - [Avoid checks server_name with if directive (from this handbook)](#beginner-avoid-checks-server_name-with-if-directive)
 
 #### :beginner: Configure log rotation policy
@@ -890,17 +885,12 @@ http {
 
 # Debugging
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
 - **[⬆ Table of Contents - Debugging](#toc-debugging)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
-
-</details>
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
@@ -945,7 +935,7 @@ log_format debug-level-0
 - [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 - [Nginx: Custom access log format and error levels](https://fabianlee.org/2017/02/14/nginx-custom-access-log-format-and-error-levels/)
 - [nginx: Log complete request/response with all headers?](https://serverfault.com/questions/636790/nginx-log-complete-request-response-with-all-headers)
-- [Custom log formats (from this handbook)](#custom-log-formats)
+- [Custom log formats (from this handbook)](HELPERS.md#custom-log-formats)
 
 #### :beginner: Use debug mode to track down unexpected behaviour
 
@@ -985,7 +975,7 @@ error_log /var/log/nginx/error-debug.log debug;
   error_log memory:32m debug;
   ```
 
-  > You can read more about that in the [Show debug log in memory](#show-debug-log-in-memory) chapter.
+  > You can read more about that in the [Show debug log in memory](HELPERS.md#show-debug-log-in-memory) chapter.
 
 - Debugging log for a IP address/range:
 
@@ -1064,7 +1054,7 @@ worker_processes  1;
 
   > NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
 
-  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this handbook)](#dump-a-processs-memory).
+  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory).
 
   > You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
 
@@ -1079,14 +1069,11 @@ working_directory     /var/dump/nginx;
 ###### External resources
 
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
-- [Dump a process's memory (from this handbook)](#dump-a-processs-memory)
+- [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory)
 
 # Performance
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
 - **[⬆ Table of Contents - Performance](#toc-performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
@@ -1099,8 +1086,6 @@ working_directory     /var/dump/nginx;
   * [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
-
-</details>
 
 NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
@@ -1240,7 +1225,7 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
-- [Virtual server logic](#virtual-server-logic)
+- [Virtual server logic](NGINX_BASICS.md#virtual-server-logic)
 
 #### :beginner: Avoid checks `server_name` with `if` directive
 
@@ -1304,7 +1289,7 @@ server {
 ###### External resources
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
-- [if, break, and set (from this handbook)](#if-break-and-set)
+- [if, break, and set (from this handbook)](NGINX_BASICS.md#if-break-and-set)
 
 #### :beginner: Use `$request_uri` to avoid using regular expressions
 
@@ -1452,7 +1437,7 @@ server {
 
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [NGINX - rewrite vs redirect](http://think-devops.com/blogs/nginx-rewrite-redirect.html)
-- [rewrite vs return (from this handbook)](#rewrite-vs-return)
+- [rewrite vs return (from this handbook)](NGINX_BASICS.md#rewrite-vs-return)
 
 #### :beginner: Enable PCRE JIT to speed up processing of regular expressions
 
@@ -1558,10 +1543,7 @@ location /videos {
 
 # Hardening
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
 - **[⬆ Table of Contents - Hardening](#toc-hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
@@ -1592,8 +1574,6 @@ location /videos {
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 
-</details>
-
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
 #### :beginner: Always keep NGINX up-to-date
@@ -1610,8 +1590,8 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 
 ###### External resources
 
-- [Installing from prebuilt packages (from this handbook)](#installing-from-prebuilt-packages)
-- [Installing from source (from this handbook)](#installing-from-source)
+- [Installing from prebuilt packages (from this handbook)](HELPERS.md#installing-from-prebuilt-packages)
+- [Installing from source (from this handbook)](HELPERS.md#installing-from-source)
 
 #### :beginner: Run as an unprivileged user
 
@@ -2731,10 +2711,7 @@ send_timeout 10s;
 
 # Reverse Proxy
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
 - **[⬆ Table of Contents - Reverse Proxy](#toc-reverse-proxy)**
   * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
@@ -2743,8 +2720,6 @@ send_timeout 10s;
   * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
-
-</details>
 
 One of the frequent uses of the NGINX is setting it up as a proxy server.
 
@@ -2808,7 +2783,7 @@ server {
 ###### External resources
 
 - [Passing a Request to a Proxied Server](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server)
-- [Reverse proxy (from this handbook)](#reverse-proxy)
+- [Reverse proxy (from this handbook)](NGINX_BASICS.md#reverse-proxy)
 
 #### :beginner: Be careful with trailing slashes in `proxy_pass` directive
 
@@ -2946,7 +2921,7 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 
 ###### External resources
 
-- [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
+- [Reverse Proxy - Passing headers (from this handbook)](NGINX_BASICS.md#passing-headers)
 
 #### :beginner: Always pass `Host`, `X-Real-IP`, and `X-Forwarded` stack headers to the backend
 
@@ -3010,7 +2985,7 @@ location / {
 
 - [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
 - [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
-- [Reverse Proxy - Passing headers (from this handbook)](#passing-headers)
+- [Reverse Proxy - Passing headers (from this handbook)](NGINX_BASICS.md#passing-headers)
 - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
 - [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
@@ -3047,15 +3022,10 @@ add_header Backend-Server   $hostname;
 
 # Load Balancing
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
 - **[⬆ Table of Contents - Load Balancing](#toc-load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
-
-</details>
 
 Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
@@ -3111,15 +3081,10 @@ upstream backend {
 
 # Others
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
 - **[⬆ Table of Contents - Others](#toc-others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
-
-</details>
 
 This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
 

@@ -1,10 +1,7 @@
 # Configuration Examples
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
-- **[⬆ Table of Contents - Configuration Examples](#toc-configuration-examples)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
+- **[⬆ Table of Contents - Configuration Examples](../README.md#toc-configuration-examples)**
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
     * [Configuration](#configuration)
@@ -17,15 +14,13 @@
     * [Add new domain](#add-new-domain)
     * [Test your configuration](#test-your-configuration)
 
-</details>
-
   > Remember to make a copy of the current configuration and all files/directories.
 
 This chapter is still work in progress.
 
 ## Installation
 
-I used step-by-step tutorial from this handbook [Installing from source](#installing-from-source).
+I used step-by-step tutorial from this handbook [Installing from source](HELPERS.md#installing-from-source).
 
 ## Configuration
 
@@ -43,7 +38,7 @@ I used Google Cloud instance with following parameters:
 
 This chapter describes the basic configuration of my proxy server (for [blkcipher.info](https://blkcipher.info) domain).
 
-  > Configuration is based on the [installation from source](#installing-from-source) chapter. If you go through the installation process step by step you can use the following configuration (minor adjustments may be required).
+  > Configuration is based on the [installation from source](HELPERS.md#installing-from-source) chapter. If you go through the installation process step by step you can use the following configuration (minor adjustments may be required).
 
 #### Import configuration
 

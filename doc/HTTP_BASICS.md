@@ -1,10 +1,7 @@
 # HTTP Basics
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
-- **[⬆ Table of Contents - HTTP Basics](#toc-http-basics)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
+- **[⬆ Table of Contents - HTTP Basics](../README.md#toc-http-basics)**
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
   * [Request](#request)
@@ -21,8 +18,6 @@
       * [Status codes and reason phrase](#status-codes-and-reason-phrase)
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
-
-</details>
 
 HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
@@ -295,7 +290,7 @@ How to generate a request?
   Host: example.com
   ```
 
-For more examples, see [Testing](#testing) chapter.
+For more examples, see [Testing](HELPERS.md#testing) chapter.
 
 #### Response
 

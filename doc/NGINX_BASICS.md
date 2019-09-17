@@ -1,10 +1,7 @@
 # NGINX Basics
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
-- **[⬆ Table of Contents - NGINX Basics](#toc-nginx-basics)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
+- **[⬆ Table of Contents - NGINX Basics](../README.md#toc-nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
@@ -59,8 +56,6 @@
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
 
-</details>
-
 #### Directories and files
 
   > If you compile NGINX with default parameters all files and directories are available from `/usr/local/nginx` location.
@@ -90,7 +85,7 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 
 #### Commands
 
-  > **:bookmark: [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)**
+  > **:bookmark: [Use reload option to change configurations on the fly](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
 - `nginx -h` - shows the help
 - `nginx -v` - shows the NGINX version
@@ -155,8 +150,8 @@ Some useful snippets for management of the NGINX daemon:
 
 #### Configuration syntax
 
-  > **:bookmark: [Organising Nginx configuration](#beginner-organising-nginx-configuration)**<br>
-  > **:bookmark: [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)**
+  > **:bookmark: [Organising Nginx configuration](RULES.md#beginner-organising-nginx-configuration)**<br>
+  > **:bookmark: [Format, prettify and indent your Nginx code](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
 
 NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX configuration has a simple and very transparent structure.
 
@@ -329,7 +324,7 @@ proxy_read_timeout 20s;
 
 ##### Regular expressions with PCRE
 
-  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
+  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
 
 Before start reading next chapters you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
@@ -347,7 +342,7 @@ NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipula
 - [Regular expressions in Perl](http://jkorpela.fi/perl/regexp.html)
 - [Regexp Security Cheatsheet](https://github.com/attackercan/regexp-security-cheatsheet)
 
-You can also use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
+You can also use external tools for testing regular expressions. For more please see [online tools](../README.md#online-tools) chapter.
 
 If you're good at it, check these very nice and brainstorming regex challenges:
 
@@ -1045,8 +1040,8 @@ http {
 
 ##### Handle incoming connections
 
-  > **:bookmark: [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)**<br>
-  > **:bookmark: [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**
+  > **:bookmark: [Separate listen directives for 80 and 443](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
+  > **:bookmark: [Define the listen directives explicitly with address:port pair](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
@@ -1128,7 +1123,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
 8. Finally, NGINX goes to the `location` context
 
-<sup><i>This list is based on [Mastering Nginx - The virtual server section](#mastering-nginx).</i></sup>
+<sup><i>This list is based on [Mastering Nginx - The virtual server section](../README.md#mastering-nginx).</i></sup>
 
 ##### Matching location
 
@@ -1221,7 +1216,7 @@ In order to better understand how this process work please see this short cheats
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_location_cheatsheet.png" alt="nginx-location-cheatsheet">
 </p>
 
-  > I recommend to use external tools for testing regular expressions. For more please see [online tools](#online-tools) chapter.
+  > I recommend to use external tools for testing regular expressions. For more please see [online tools](../README.md#online-tools) chapter.
 
 Ok, so here's a more complicated configuration:
 
@@ -1835,7 +1830,7 @@ request URI
 
 #### Log files
 
-  > **:bookmark: [Use custom log formats](#beginner-use-custom-log-formats)**
+  > **:bookmark: [Use custom log formats](RULES.md#beginner-use-custom-log-formats)**
 
 Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the last phase: `NGX_HTTP_LOG_PHASE`).
 
@@ -1891,7 +1886,7 @@ http {
 
 ##### Manually log rotation
 
-  > **:bookmark: [Configure log rotation policy](#beginner-configure-log-rotation-policy)**
+  > **:bookmark: [Configure log rotation policy](RULES.md#beginner-configure-log-rotation-policy)**
 
 NGINX will re-open its logs in response to the `USR1` signal:
 
@@ -1929,7 +1924,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Reverse proxy
 
-  > After reading this chapter, please see: [Rules: Reverse Proxy)](#reverse-proxy-1).
+  > After reading this chapter, please see: [Rules: Reverse Proxy)](RULES.md#reverse-proxy-1).
 
 This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 
@@ -1965,7 +1960,7 @@ In my opinion, the two most important things related to the reverse proxy are:
 
 ##### Passing requests
 
-  > **:bookmark: [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)**
+  > **:bookmark: [Use pass directive compatible with backend protocol](RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)**
 
 When NGINX proxies a request, it sends the request to a specified proxied server, fetches the response, and sends it back to the client.
 
@@ -2139,7 +2134,7 @@ However, more complex apps may need additional directives:
 
 ##### Trailing slashes
 
-  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
+  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive](RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
 
 If you have something like:
 
@@ -2208,7 +2203,7 @@ NGINX use the `proxy_set_header` directive to sets headers that sends to the bac
 
 It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
 
-Ok, so look at following short explanation about proxy directives (for more information about valid header values please see [this](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend) rule):
+Ok, so look at following short explanation about proxy directives (for more information about valid header values please see [this](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend) rule):
 
 - `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1:
 
@@ -2302,8 +2297,8 @@ In step 6 above, the Proxy is setting the HTTP header `X-Forwarded-Proto: https`
 
 You can read about how to set it up correctly here:
 
-- [Set correct scheme passed in X-Forwarded-Proto](#set-correct-scheme-passed-in-x-forwarded-proto)
-- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
+- [Set correct scheme passed in X-Forwarded-Proto](RULES.md#set-correct-scheme-passed-in-x-forwarded-proto)
+- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
 ###### A warning about the `X-Forwarded-For`
 
@@ -2313,7 +2308,7 @@ Where a connection passes through a chain of proxy servers, `X-Forwarded-For` ca
 
 `X-Forwarded-For` should not be used for any Access Control List (ACL) checks because it can be spoofed by attackers. Use the real IP address for this type of restrictions. HTTP request headers such as `X-Forwarded-For`, `True-Client-IP`, and `X-Real-IP` are not a robust foundation on which to build any security measures, such as access controls.
 
-[Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header) - see this for more detailed information on how to set properly values of the `X-Forwarded-For` header.
+[Set properly values of the X-Forwarded-For header (from this handbook)](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header) - see this for more detailed information on how to set properly values of the `X-Forwarded-For` header.
 
 But that's not all. Behind a reverse proxy, the user IP we get is often the reverse proxy IP itself. If you use other HTTP server working between proxy and app server you should also set the correct mechanism for interpreting values of this header.
 
@@ -2321,8 +2316,8 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
 1) Pass headers from proxy to the backend layer
 
-    - [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
-    - [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+    - [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+    - [Set properly values of the X-Forwarded-For header (from this handbook)](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)
 
 2) NGINX - modify the `set_real_ip_from` and `real_ip_header` directives:
 

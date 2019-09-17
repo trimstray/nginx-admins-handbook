@@ -1,16 +1,11 @@
 # SSL/TLS Basics
 
-<details>
-<summary><b>Chapter TOC</b></summary><br>
-
-- **[⬆ Table of Contents - Main](#table-of-contents)**
-- **[⬆ Table of Contents - SSL/TLS Basics](#toc-ssltls-basics)**
+- **[⬆ Table of Contents - Main](../README.md#table-of-contents)**
+- **[⬆ Table of Contents - SSL/TLS Basics](../README.md#toc-ssltls-basics)**
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
   * [Cipher suites](#cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
-
-</details>
 
 TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
@@ -20,7 +15,7 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 
 #### TLS versions
 
-  > **:bookmark: [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)**
+  > **:bookmark: [Keep only TLS 1.3 and TLS 1.2](RULES.md#beginner-keep-only-tls-13-and-tls-12)**
 
 | <b>PROTOCOL</b> | <b>RFC</b> | <b>PUBLISHED</b> | <b>STATUS</b> |
 | :---:        | :---:        | :---:        | :---         |
@@ -59,8 +54,8 @@ By the way, the [How SSL-TLS Works](https://ldapwiki.com/wiki/How%20SSL-TLS%20Wo
 
 #### Cipher suites
 
-  > **:bookmark: [Use only strong ciphers](#beginner-use-only-strong-ciphers)**<br>
-  > **:bookmark: [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)**
+  > **:bookmark: [Use only strong ciphers](RULES.md#beginner-use-only-strong-ciphers)**<br>
+  > **:bookmark: [Use more secure ECDH Curve](RULES.md#beginner-use-more-secure-ecdh-curve)**
 
 To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher suite is a combination of authentication, encryption, and message authentication code (MAC) algorithms. They are used during the negotiation of security settings for a TLS/SSL connection as well as for the transfer of data.
 
@@ -91,7 +86,7 @@ Look also at this table with [cipher suite definitions](https://www.ibm.com/supp
 
 #### Diffie-Hellman key exchange
 
-  > **:bookmark: [Use strong Key Exchange with Perfect Forward Secrecy](#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)**
+  > **:bookmark: [Use strong Key Exchange with Perfect Forward Secrecy](RULES.md#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)**
 
 The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shared secret key, without any other users knowing that key. The exchange is performed over a public network, i.e. all messages sent between the two users can be intercepted and read by any other user.
 
