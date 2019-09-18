@@ -1966,6 +1966,31 @@ In my opinion, the two most important things related to the reverse proxy are:
 - the way of requests forwarded to the backend
 - the type of headers forwarded to the backend
 
+If we talking about security of the proxy server look at this recommendations of the National Institute of Standards and Technology about [Guidelines on Securing Public Web Servers](https://www.nist.gov/publications/guidelines-securing-public-web-servers). This document is a good starting point. Is old but still has interesting solutions and suggestions.
+
+There is a [great explanation](https://serverfault.com/a/25095) about the benefits of improving security through the use of a reverse proxy server.
+
+  > A reverse proxy gives you a couple things that may make your server more secure:
+  >
+  > - a place to monitor and log what is going on separate from the web server
+  > - a place to filter separate from your web server if you know that some area of your system is vulnerable. Depending on the proxy you may be able to filter at the application level
+  > - another place to implement ACLs and rules if you cannot be expressive enough for some reason on your web server
+  > - a separate network stack that will not be vulnerable in the same ways as your web server. This is particularly true if your proxy is from a different vendor
+  > - a reverse proxy with no filtering does not automatically protect you against everything, but if the system you need to protect is high-value then adding a reverse proxy may be worth the costs support and performance costs
+
+Another [great answer](https://security.stackexchange.com/questions/48347/documented-best-practices-for-reverse-proxy-implementation) about best practices for reverse proxy implementation:
+
+  > In my experience some of the most important requirements and mitigations, in no particular order, are:
+  >
+  > - make sure that your proxy, back-end web (and DB) servers cannot establish direct outbound (internet) connections (including DNS and SMTP, and particularly HTTP). This means (forward) proxies/relays for required outbound access, if required
+  > - make sure your logging is useful (§9.1 in the above), and coherent. You may have logs from multiple devices (router, firewall/IPS/WAF, proxy, web/app servers, DB servers). If you can't quickly, reliably and deterministically link records across each device together, you're doing it wrong. This means NTP, and logging any or all of: PIDs, TIDs, session-IDs, ports, headers, cookies, usernames, IP addresses and maybe more (and may mean some logs contain confidential information)
+  > - understand the protocols, and make deliberate, informed decisions: including cipher/TLS version choice, HTTP header sizes, URL lengths, cookies. Limits should be implemented on the reverse-proxy. If you're migrating to a tiered architecture, make sure the dev team are in the loop so that problems are caught as early as possible
+  > - run vulnerability scans from the outside, or get someone to do it for you. Make sure you know your footprint and that the reports highlight deltas, as well as the theoretical TLS SNAFU du-jour
+  > - understand the modes of failure. Sending users a bare default "HTTP 500 - the wheels came off" when you have load or stability problems is sloppy
+  > - monitoring, metrics and graphs: having normal and historic data is invaluable when investigating anomalies, and for capacity planning
+  > - tuning: from TCP time-wait to listen backlog to SYN-cookies, again you need to make make deliberate, informed decisions
+  > - follow basic OS hardening guidelines, consider the use of chroot/jails, host-based IDS, and other measures, where available
+
 ##### Passing requests
 
   > **:bookmark: [Use pass directive compatible with backend protocol - Reverse Proxy](RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)**
