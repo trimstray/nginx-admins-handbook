@@ -1398,15 +1398,29 @@ _In this ebook you will learn:_
 
 # What's next?
 
+Go to the [Table of Contents](#table-of-contents) or read the next chapters:
+
 - **[HTTP Basics](doc/HTTP_BASICS.md)**
+  > Something about HTTP.
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md)**
+  > Something about SSL/TLS.
 - **[NGINX Basics](doc/NGINX_BASICS.md)**
+  > Explanation of the NGINX mechanisms.
 - **[Helpers](doc/HELPERS.md)**
+  > One-liners, commands, utilities for building NGINX, and more
 - **[Base Rules (14)](doc/RULES.md#base-rules)**
+  > The basic set of rules to keep NGINX in good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**
+  > Many methods for troubleshooting configuration problems.
 - **[Performance (11)](doc/RULES.md#performance)**
+  > A few things to make sure the NGINX as fast as possible.
 - **[Hardening (28)](doc/RULES.md#hardening)**
+  > Hardening approaches and security standards.
 - **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**
+  > A few rules about the NGINX proxy server.
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**
+  > You may improve of some rules about the NGINX working as a load balancer.
 - **[Others (2)](doc/RULES.md#others)**
+  > Something about other interesting rules.
 - **[Configuration Examples](doc/EXAMPLES.md)**
+  > Here are some configuration examples.

@@ -2716,7 +2716,7 @@ send_timeout 10s;
   * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
 
-One of the frequent uses of the NGINX is setting it up as a proxy server.
+One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
 
 #### :beginner: Use pass directive compatible with backend protocol
 
