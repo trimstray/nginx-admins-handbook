@@ -407,7 +407,7 @@ cabal update
 
 #### Processes
 
-  > **:bookmark: [Adjust worker processes - Performance](doc/RULES.md#beginner-adjust-worker-processes)**
+  > **:bookmark: [Adjust worker processes - Performance](doc/RULES.md#beginner-adjust-worker-processes)**<br>
   > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
 
 NGINX has **one master process** and **one or more worker processes**.
@@ -1043,7 +1043,7 @@ http {
 ##### Handle incoming connections
 
   > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
-  > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**
+  > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
   > **:bookmark: [Use exact names in a server_name directive where possible - Performance](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
@@ -1406,7 +1406,7 @@ Finally, look at difference between `last` and `break` flags in action:
 
 ###### `return` directive
 
-  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
+  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**<br>
   > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.

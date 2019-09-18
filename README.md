@@ -1264,6 +1264,7 @@ _In this ebook you will learn:_
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/"><b>Mozilla SSL Configuration Generator</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/linkedin/nginx-config-builder"><b>nginx-config-builder</b></a> - is a python library for constructing nginx configuration files.<br>
 </p>
 
 ##### Static analyzers
