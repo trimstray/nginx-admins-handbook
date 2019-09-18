@@ -1411,9 +1411,9 @@ Go to the [Table of Contents](#table-of-contents) or read the next chapters:
 - **[Base Rules (14)](doc/RULES.md#base-rules)**
   > The basic set of rules to keep NGINX in good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**
-  > Many methods for troubleshooting configuration problems.
+  > A few things for troubleshooting configuration problems.
 - **[Performance (11)](doc/RULES.md#performance)**
-  > A few things to make sure the NGINX as fast as possible.
+  > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (28)](doc/RULES.md#hardening)**
   > Hardening approaches and security standards.
 - **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**
