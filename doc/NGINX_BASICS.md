@@ -1044,7 +1044,9 @@ http {
 
   > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
   > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
-  > **:bookmark: [Use exact names in a server_name directive where possible - Performance](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
+  > **:bookmark: [Use exact names in a server_name directive where possible - Performance](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
+  > **:bookmark: [Prevent processing requests with undefined server names - Base Rules](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
+  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
