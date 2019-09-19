@@ -156,6 +156,7 @@
       * [Improve extensibility with Forwarded](doc/NGINX_BASICS.md#improve-extensibility-with-forwarded)
   * [Load balancing algorithms](doc/NGINX_BASICS.md#load-balancing-algorithms)
     * [Backend parameters](doc/NGINX_BASICS.md#backend-parameters)
+    * [Upstream servers with SSL](doc/NGINX_BASICS.md#upstream-servers-with-ssl)
     * [Round Robin](doc/NGINX_BASICS.md#round-robin)
     * [Weighted Round Robin](doc/NGINX_BASICS.md#weighted-round-robin)
     * [Least Connections](doc/NGINX_BASICS.md#least-connections)
@@ -680,6 +681,7 @@ Existing chapters:
       - [x] _Improve extensibility with Forwarded_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
+    - [x] _Upstream servers with SSL_
     - [x] _Round Robin_
     - [x] _Weighted Round Robin_
     - [x] _Least Connections_

@@ -43,6 +43,7 @@
       * [Improve extensibility with Forwarded](#improve-extensibility-with-forwarded)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
+    * [Upstream servers with SSL](#upstream-servers-with-ssl)
     * [Round Robin](#round-robin)
     * [Weighted Round Robin](#weighted-round-robin)
     * [Least Connections](#least-connections)
