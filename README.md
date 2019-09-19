@@ -91,6 +91,11 @@
   * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
+- **[What's next?](#whats-next)**
+
+<details>
+<summary><b>Other chapters</b></summary><br>
+
 - **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics"></a>
   * [Features and architecture](doc/HTTP_BASICS.md#features-and-architecture)
   * [URI vs URL](doc/HTTP_BASICS.md#uri-vs-url)
@@ -405,6 +410,8 @@
     * [Generating the necessary error pages](doc/EXAMPLES.md#generating-the-necessary-error-pages)
     * [Add new domain](doc/EXAMPLES.md#add-new-domain)
     * [Test your configuration](doc/EXAMPLES.md#test-your-configuration)
+
+</details>
 
 # Introduction
 
@@ -1405,13 +1412,13 @@ _In this ebook you will learn:_
 
 Go to the [Table of Contents](#table-of-contents) or read the next chapters:
 
-- **[HTTP Basics](doc/HTTP_BASICS.md)**
+- **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**
   > Something about HTTP.
-- **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md)**
+- **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**
   > Something about SSL/TLS.
-- **[NGINX Basics](doc/NGINX_BASICS.md)**
+- **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**
   > Explanation of the NGINX mechanisms.
-- **[Helpers](doc/HELPERS.md)**
+- **[Helpers](doc/HELPERS.md#helpers)**
   > One-liners, commands, utilities for building NGINX, and more
 - **[Base Rules (14)](doc/RULES.md#base-rules)**
   > The basic set of rules to keep NGINX in good condition.
@@ -1427,5 +1434,5 @@ Go to the [Table of Contents](#table-of-contents) or read the next chapters:
   > You may improve of some rules about the NGINX working as a load balancer.
 - **[Others (2)](doc/RULES.md#others)**
   > Something about other interesting rules.
-- **[Configuration Examples](doc/EXAMPLES.md)**
+- **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**
   > Here are some configuration examples.

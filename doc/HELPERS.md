@@ -1,6 +1,6 @@
 # Helpers
 
-- **[⬆ Helpers](../README.md#toc-helpers)**
+- **[⬆ Helpers](https://github.com/trimstray/nginx-admins-handbook#toc-helpers)**
   * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
@@ -4415,7 +4415,7 @@ location = /404.html {
 }
 ```
 
-Read also this: [Static error pages generator](../README.md#static-error-pages-generator).
+Read also this: [Static error pages generator](https://github.com/trimstray/nginx-admins-handbook#static-error-pages-generator).
 
 ##### Blocking/allowing IP addresses
 

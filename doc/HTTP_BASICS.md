@@ -1,6 +1,6 @@
 # HTTP Basics
 
-- **[⬆ HTTP Basics](../README.md#toc-http-basics)**
+- **[⬆ HTTP Basics](https://github.com/trimstray/nginx-admins-handbook#toc-http-basics)**
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
   * [Request](#request)

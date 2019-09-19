@@ -1,6 +1,6 @@
 # SSL/TLS Basics
 
-- **[⬆ SSL/TLS Basics](../README.md#toc-ssltls-basics)**
+- **[⬆ SSL/TLS Basics](https://github.com/trimstray/nginx-admins-handbook#toc-ssltls-basics)**
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
   * [Cipher suites](#cipher-suites)

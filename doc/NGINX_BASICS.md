@@ -1,6 +1,6 @@
 # NGINX Basics
 
-- **[⬆ NGINX Basics](../README.md#toc-nginx-basics)**
+- **[⬆ NGINX Basics](https://github.com/trimstray/nginx-admins-handbook#toc-nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
@@ -342,7 +342,7 @@ NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipula
 - [Regular expressions in Perl](http://jkorpela.fi/perl/regexp.html)
 - [Regexp Security Cheatsheet](https://github.com/attackercan/regexp-security-cheatsheet)
 
-You can also use external tools for testing regular expressions. For more please see [online tools](../README.md#online-tools) chapter.
+You can also use external tools for testing regular expressions. For more please see [online tools](https://github.com/trimstray/nginx-admins-handbook#online-tools) chapter.
 
 If you're good at it, check these very nice and brainstorming regex challenges:
 
@@ -1130,7 +1130,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
 8. Finally, NGINX goes to the `location` context
 
-<sup><i>This list is based on [Mastering Nginx - The virtual server section](../README.md#mastering-nginx).</i></sup>
+<sup><i>This list is based on [Mastering Nginx - The virtual server section](https://github.com/trimstray/nginx-admins-handbook#mastering-nginx).</i></sup>
 
 ##### Matching location
 
@@ -1225,7 +1225,7 @@ In order to better understand how this process work please see this short cheats
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_location_cheatsheet.png" alt="nginx-location-cheatsheet">
 </p>
 
-  > I recommend to use external tools for testing regular expressions. For more please see [online tools](../README.md#online-tools) chapter.
+  > I recommend to use external tools for testing regular expressions. For more please see [online tools](https://github.com/trimstray/nginx-admins-handbook#online-tools) chapter.
 
 Ok, so here's a more complicated configuration:
 
