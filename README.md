@@ -794,6 +794,7 @@ Existing chapters:
       - [ ] _The memcached backend server_
       - [ ] _The Redis backend server_
     - [ ] _HTTPS traffic to upstream servers_
+    - [ ] _TCP and UDP load balancing_
     - [ ] _Lua snippets_
     - [ ] _nginscripts snippets_
   - _Other snippets_
