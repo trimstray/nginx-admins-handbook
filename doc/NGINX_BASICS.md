@@ -2462,6 +2462,14 @@ This directive accepts the following options:
 
 - `down` - marks the server as permanently unavailable
 
+##### Upstream servers with SSL
+
+Setting up SSL termination on NGINX is also very simple using the SSL module. For this you need to use upstream module, and proxy module also.
+
+A very good case study is also given [here](https://www.nginx.com/resources/wiki/start/topics/examples/SSL-Offloader/).
+
+For more information please read [Securing HTTP Traffic to Upstream Servers](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/) from the official documentation.
+
 ##### Round Robin
 
 It's the simpliest load balancing technique. Round Robin has the list of servers and forwards each request to each server from the list in order. Once it reaches the last server, the loop again jumps to the first server and start again.
