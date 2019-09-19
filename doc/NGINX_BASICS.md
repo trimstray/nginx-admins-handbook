@@ -85,7 +85,7 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 
 #### Commands
 
-  > **:bookmark: [Use reload option to change configurations on the fly - Base Rules](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
+  > **:bookmark: [Use reload option to change configurations on the fly - Base Rules - P2](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
 - `nginx -h` - shows the help
 - `nginx -v` - shows the NGINX version
@@ -150,8 +150,8 @@ Some useful snippets for management of the NGINX daemon:
 
 #### Configuration syntax
 
-  > **:bookmark: [Organising Nginx configuration - Base Rules](RULES.md#beginner-organising-nginx-configuration)**<br>
-  > **:bookmark: [Format, prettify and indent your Nginx code - Base Rules](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
+  > **:bookmark: [Organising Nginx configuration - Base Rules - P2](RULES.md#beginner-organising-nginx-configuration)**<br>
+  > **:bookmark: [Format, prettify and indent your Nginx code - Base Rules - P2](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
 
 NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX configuration has a simple and very transparent structure.
 
@@ -324,7 +324,7 @@ proxy_read_timeout 20s;
 
 ##### Regular expressions with PCRE
 
-  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions - Performance](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
+  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions - Performance - P1](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
 
 Before start reading next chapters you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
@@ -408,8 +408,8 @@ cabal update
 
 #### Processes
 
-  > **:bookmark: [Adjust worker processes - Performance](doc/RULES.md#beginner-adjust-worker-processes)**<br>
-  > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
+  > **:bookmark: [Adjust worker processes - Performance - P3](doc/RULES.md#beginner-adjust-worker-processes)**<br>
+  > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging - P4](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
 
 NGINX has **one master process** and **one or more worker processes**.
 
@@ -1043,11 +1043,12 @@ http {
 
 ##### Handle incoming connections
 
-  > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
-  > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
-  > **:bookmark: [Use exact names in a server_name directive where possible - Performance](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
-  > **:bookmark: [Prevent processing requests with undefined server names - Base Rules](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
-  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**
+  > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
+  > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
+  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
+  > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
+  > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
+  > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](#beginner-use-only-one-ssl-config-for-the-listen-directive)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
@@ -1133,7 +1134,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
 ##### Matching location
 
-  > **:bookmark: [Make an exact location match to speed up the selection process - Performance](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)**
+  > **:bookmark: [Make an exact location match to speed up the selection process - Performance - P3](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)**
 
   > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
@@ -1409,8 +1410,8 @@ Finally, look at difference between `last` and `break` flags in action:
 
 ###### `return` directive
 
-  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**<br>
-  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
+  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
+  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance - P2](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
 
@@ -1577,6 +1578,8 @@ server {
 On the other hand, `try_files` is relatively primitive. When encountered, NGINX will look for any of the specified files physically in the directory matched by the location block. If they don’t exist, NGINX does an internal redirect to the last entry in the directive.
 
 ##### `if`, `break` and `set`
+
+  > **:bookmark: [Avoid checks server_name with if directive - Performance - P2](#beginner-avoid-checks-server_name-with-if-directive)**
 
 The `ngx_http_rewrite_module` also provides additional directives:
 
@@ -1841,7 +1844,7 @@ request URI
 
 #### Log files
 
-  > **:bookmark: [Use custom log formats - Debugging](RULES.md#beginner-use-custom-log-formats)**
+  > **:bookmark: [Use custom log formats - Debugging - P4](RULES.md#beginner-use-custom-log-formats)**
 
 Log files are a critical part of the NGINX management. It writes information about client requests in the access log right after the request is processed (in the last phase: `NGX_HTTP_LOG_PHASE`).
 
@@ -1897,7 +1900,7 @@ http {
 
 ##### Manually log rotation
 
-  > **:bookmark: [Configure log rotation policy - Base Rules](RULES.md#beginner-configure-log-rotation-policy)**
+  > **:bookmark: [Configure log rotation policy - Base Rules - P1](RULES.md#beginner-configure-log-rotation-policy)**
 
 NGINX will re-open its logs in response to the `USR1` signal:
 
@@ -1996,7 +1999,7 @@ Another [great answer](https://security.stackexchange.com/questions/48347/docume
 
 ##### Passing requests
 
-  > **:bookmark: [Use pass directive compatible with backend protocol - Reverse Proxy](RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)**
+  > **:bookmark: [Use pass directive compatible with backend protocol - Reverse Proxy - P1](RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)**
 
 When NGINX proxies a request, it sends the request to a specified proxied server, fetches the response, and sends it back to the client.
 
@@ -2170,7 +2173,7 @@ However, more complex apps may need additional directives:
 
 ##### Trailing slashes
 
-  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive - Reverse Proxy](RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
+  > **:bookmark: [Be careful with trailing slashes in proxy_pass directive - Reverse Proxy - P3](RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)**
 
 If you have something like:
 
@@ -2216,6 +2219,9 @@ As stated in NGINX documentation if `proxy_pass` used without URI (i.e. without 
 Look also at the configuration snippets: [Using trailing slashes](#using-trailing-slashes).
 
 ##### Passing headers
+
+  > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend - Reverse Proxy - P2](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)**<br>
+  > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
 By default, NGINX redefines two header fields in proxied requests:
 
@@ -2305,7 +2311,11 @@ Ok, so look at following short explanation about proxy directives (for more info
     proxy_set_header X-Forwarded-Port $server_port;
     ```
 
+If you want to read about custom headers, take a look at [Why we need to deprecate x prefix for HTTP headers?](https://tonyxu.io/posts/2018/http-deprecate-x-prefix/) and [this](https://stackoverflow.com/a/3561399) great answer by [BalusC](https://stackoverflow.com/users/157882/balusc).
+
 ###### Importancy of the `Host` header
+
+  > **:bookmark: [Set and pass Host header only with $host variable - Reverse Proxy - P2](#beginner-set-and-pass-host-header-only-with-host-variable)**
 
 The `Host` header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
 
@@ -2314,6 +2324,8 @@ In NGINX, `$host` equals `$http_host`, lowercase and without the port number (if
 For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be `MASTER:8080` as it just reflects the whole header).
 
 ###### Redirects and `X-Forwarded-Proto`
+
+  > **:bookmark: [Don't use X-Forwarded-Proto with $scheme behind reverse proxy - Reverse Proxy - P1](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)**
 
 This header is very important because it prevent a redirect loop. When used inside HTTPS server block each HTTP response from the proxied server will be rewritten to HTTPS. Look at the following example:
 
@@ -2337,6 +2349,8 @@ You can read about how to set it up correctly here:
 - [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
 ###### A warning about the `X-Forwarded-For`
+
+  > **:bookmark: [Set properly values of the X-Forwarded-For header - Reverse Proxy - P1](#beginner-set-properly-values-of-the-x-forwarded-for-header)**
 
 I think, we should just maybe stop for a second. `X-Forwarded-For` is a one of the most important header that has the security implications.
 
@@ -2442,6 +2456,9 @@ The configuration is very simple. NGINX includes a `ngx_http_upstream_module` to
 
 ##### Backend parameters
 
+  > **:bookmark: [Tweak passive health checks - Load Balancing - P3](#beginner-tweak-passive-health-checks)**<br>
+  > **:bookmark: [Don't disable backends by comments, use down parameter - Load Balancing - P4](#beginner-dont-disable-backends-by-comments-use-down-parameter)**
+
 Before we start talking about the load balancing techniques you should know something about `server` directive. It defines the address and other parameters of a backend servers.
 
 This directive accepts the following options:
@@ -2465,9 +2482,7 @@ This directive accepts the following options:
 
 ##### Upstream servers with SSL
 
-Setting up SSL termination on NGINX is also very simple using the SSL module. For this you need to use upstream module, and proxy module also.
-
-A very good case study is also given [here](https://www.nginx.com/resources/wiki/start/topics/examples/SSL-Offloader/).
+Setting up SSL termination on NGINX is also very simple using the SSL module. For this you need to use upstream module, and proxy module also. A very good case study is also given [here](https://www.nginx.com/resources/wiki/start/topics/examples/SSL-Offloader/).
 
 For more information please read [Securing HTTP Traffic to Upstream Servers](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/) from the official documentation.
 

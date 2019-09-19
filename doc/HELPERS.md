@@ -153,7 +153,7 @@
 
 #### Installing from prebuilt packages
 
-  > **:bookmark: [Always keep NGINX up-to-date - Hardening](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
+  > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
 
 ##### RHEL7 or CentOS 7
 
@@ -236,7 +236,7 @@ apt-get install nginx
 
 #### Installing from source
 
-  > **:bookmark: [Always keep NGINX up-to-date - Hardening](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
+  > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
 
 The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
 
