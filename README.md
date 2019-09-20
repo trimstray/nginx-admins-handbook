@@ -722,6 +722,7 @@ Existing chapters:
     - [ ] _CollectD, InfluxDB, and Grafana_
     - [ ] _Telegraf, InfluxDB, and Grafana_
   - _Testing_
+    - [ ] _Build OpenSSL 1.0.2-chacha version_
     - [x] _Send request and show response headers_
     - [x] _Send request with http method, user-agent, follow redirects and show response headers_
     - [x] _Send multiple requests_
