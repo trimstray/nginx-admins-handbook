@@ -281,6 +281,8 @@ server {
 
   > The server name `_` is not required in modern versions of NGINX. If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
 
+  > NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed.
+
   > It is a simple procedure for all non defined server names:
   >
   > - one `server` block, with...
@@ -297,7 +299,8 @@ server {
 # Place it at the beginning of the configuration file to prevent mistakes:
 server {
 
-  # Add default_server to your listen directive in the server that you want to act as the default:
+  # For ssl option remember about SSL parameters (private key, certs, cipher suites, etc.);
+  # add default_server to your listen directive in the server that you want to act as the default:
   listen 10.240.20.2:443 default_server ssl;
 
   # We catch:
