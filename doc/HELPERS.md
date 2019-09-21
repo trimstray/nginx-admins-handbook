@@ -35,6 +35,7 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](#analyse-log-file-remotely-1)
   * [Testing](#testing)
+    * [Build OpenSSL 1.0.2-chacha version](doc/HELPERS.md#build-openssl-1.0.2-chacha-version)
     * [Send request and show response headers](#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
@@ -539,7 +540,7 @@ ngx_modules="${ngx_base}/modules"
 Create directories:
 
 ```bash
-for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
 
   mkdir "$i"
 
@@ -1122,7 +1123,7 @@ ngx_modules="${ngx_base}/modules"
 Create directories:
 
 ```bash
-for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
 
   mkdir "$i"
 
@@ -1898,7 +1899,7 @@ ngx_modules="${ngx_base}/modules"
 Create directories:
 
 ```bash
-for i in "$ngx_base" "${ngx_master}" "$ngx_modules" ; do
+for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
 
   mkdir "$i"
 
@@ -2366,6 +2367,64 @@ ssh user@remote_host tail -f access.log | ngxtop -f combined
 #### Testing
 
   > You can change combinations and parameters of these commands.
+
+###### Build OpenSSL 1.0.2-chacha version
+
+OpenSSL [1.0.2-chacha](https://github.com/PeterMosmans/openssl) fork is used as standard OpenSSL distribution for numerous SSL/TLS pentesting tools. It includes default support for ciphers that are deemed insecure, and has extensive starttls support.
+
+See also [Rebase OpenSSL 1.0.2-chacha to use TLS 1.3](https://www.onwebsecurity.com/announcements/rebase-openssl-1-0-2-chacha-to-use-tls-1-3.html).
+
+Set temporary variables:
+
+```bash
+export OPENSSL_SRC=/usr/local/src/openssl-1.0.2-chacha
+export OPENSSL_DIR=/usr/local/openssl-1.0.2-chacha
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+```
+
+Create directories:
+
+```bash
+for i in "${OPENSSL_SRC}" "${OPENSSL_DIR}" ; do mkdir "$i" ; done
+```
+
+Clone repository:
+
+```bash
+git clone https://github.com/PeterMosmans/openssl.git "${OPENSSL_SRC}"
+```
+
+Build and install:
+
+```bash
+cd "${OPENSSL_SRC}"
+
+# Please run this and add as a compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+# Add to compile with debugging symbols:
+#   ./config -d ...
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+make depend
+make -j2
+make install
+```
 
 ###### Send request and show response headers
 

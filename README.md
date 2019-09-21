@@ -208,6 +208,7 @@
       * [Analyse log file and print requests with 4xx and 5xx](doc/HELPERS.md#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](doc/HELPERS.md#analyse-log-file-remotely-1)
   * [Testing](doc/HELPERS.md#testing)
+    * [Build OpenSSL 1.0.2-chacha version](doc/HELPERS.md#build-openssl-1.0.2-chacha-version)
     * [Send request and show response headers](doc/HELPERS.md#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](doc/HELPERS.md#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](doc/HELPERS.md#send-multiple-requests)
@@ -722,7 +723,7 @@ Existing chapters:
     - [ ] _CollectD, InfluxDB, and Grafana_
     - [ ] _Telegraf, InfluxDB, and Grafana_
   - _Testing_
-    - [ ] _Build OpenSSL 1.0.2-chacha version_
+    - [x] _Build OpenSSL 1.0.2-chacha version_
     - [x] _Send request and show response headers_
     - [x] _Send request with http method, user-agent, follow redirects and show response headers_
     - [x] _Send multiple requests_
@@ -905,10 +906,6 @@ Existing chapters:
   - [x] _Define security policies with security.txt_
 
 </details>
-
-Other stuff:
-
-  - [x] _Add static error pages generator to the NGINX snippets directory_
 
 If you have an idea, send it back to me or add a pull request.
 
