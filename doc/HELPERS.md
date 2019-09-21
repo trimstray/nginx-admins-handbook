@@ -35,7 +35,7 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](#analyse-log-file-remotely-1)
   * [Testing](#testing)
-    * [Build OpenSSL 1.0.2-chacha version](doc/HELPERS.md#build-openssl-1.0.2-chacha-version)
+    * [Build OpenSSL 1.0.2-chacha version](doc/HELPERS.md#build-openssl-102-chacha-version)
     * [Send request and show response headers](#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
