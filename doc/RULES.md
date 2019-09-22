@@ -417,15 +417,13 @@ server {
 
 ###### Rationale
 
-  > For sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves) because changes will affect only the default server.
+  > For me, this rule making it easier to debug and maintain.
 
   > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address).
 
-  > Another good idea is to move common server settings into a separate file, i.e. `common/example.com.conf` and then include it in separate `server` blocks.
+  > For sharing a single IP address between several HTTPS servers in my opinion you should use one SSL config (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
 
-  > If you want to set up different SSL configurations for the same IP address then it will fail. It's important because SSL configuration is presented for default server - if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address. It's also to prevent mistakes and configuration mismatch.
-
-  > For me, this rule making it easier to debug and maintain.
+  > Also remember about configuration for default server. It's important because if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address.
 
   From NGINX documentation:
 
@@ -434,6 +432,8 @@ server {
   Also take a look at this:
 
   > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, RFC 6066), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+
+  > Another good idea is to move common server settings into a separate file, i.e. `common/example.com.conf` and then include it in separate `server` blocks.
 
 ###### Example
 
