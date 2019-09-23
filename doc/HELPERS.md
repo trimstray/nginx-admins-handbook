@@ -356,26 +356,26 @@ If you download and compile above sources the good point is to install additiona
 | `wget` | `wget` | `wget` | for `ngx_installer.sh` |
 
 
-<sup><i>* If you don't use from sources.</i></sup>
+<sup><i>* If you don't use from sources.</i></sup><br>
 <sup><i>** The package list for FreeBSD may be incomplete.</i></sup>
 
 Shell one-liners example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
+apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
 
-apt-get install git wget
+apt-get install jq git wget
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf
 
-yum install git wget
+yum install jq git wget
 
 # FreeBSD (not tested)
-pkg install gcc gmake bison perl5-5.28.2 perl5-devel pcre luajit libxslt libgd libxml2 expat autoconf jq
+pkg install gcc gmake bison perl5-5.28.2 perl5-devel pcre luajit libxslt libgd libxml2 expat autoconf
 
-pkg install git wget
+pkg install jq git wget
 ```
 
 ##### 3rd party modules
