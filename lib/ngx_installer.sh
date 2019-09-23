@@ -55,9 +55,16 @@ if [[ "$OSTYPE" == "linux-gnu" ]] ; then
   # shellcheck disable=SC2001,SC2005
   readonly _init_directory=$(dirname "$(readlink -f "$0" || echo "$(echo "$0" | sed -e 's,\\,/,g')")")
 
+  # shellcheck disable=SC2155
+  export _vcpu=$(nproc)
+  # shellcheck disable=SC2155
+  export _pmem=$(awk -F":" '$1~/MemTotal/{print $2}' /proc/meminfo | tr -d ' ')
+  # shellcheck disable=SC2155
+  export _openssl_gcc=""
+
 else
 
-  printf "Unsupported GNU/Linux distribution.\\n"
+  printf "Unsupported system/distribution.\\n"
   exit 1
 
 fi
@@ -88,13 +95,6 @@ trgb_bground_dark="1;37;40"
 
 trgb_ttime="1;1;39"
 
-# shellcheck disable=SC2155
-export _vcpu=$(nproc)
-# shellcheck disable=SC2155
-export _pmem=$(awk -F":" '$1~/MemTotal/{print $2}' /proc/meminfo | tr -d ' ')
-# shellcheck disable=SC2155
-export _openssl_gcc=""
-
 # shellcheck disable=SC1090
 if [[ -e "${_cfg}" ]] ; then
 
@@ -121,7 +121,7 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
   if [[ -z "$OPENSSL_LIBRARY" ]] ; then
 
-    export _openssl_version="1.1.1b"
+    export _openssl_version="1.1.1c"
 
   else
 
@@ -295,7 +295,9 @@ function _inst_base_packages() {
             libgoogle-perftools-dev \
             libgoogle-perftools4 \
             autoconf \
-            jq"
+            jq \
+            git \
+            wget"
 
   elif [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
@@ -317,7 +319,9 @@ function _inst_base_packages() {
         cpio \
         gettext-devel \
         autoconf \
-        jq"
+        jq \
+        git \
+        wget"
 
   fi
 
