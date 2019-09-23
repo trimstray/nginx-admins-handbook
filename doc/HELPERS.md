@@ -4,6 +4,7 @@
   * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)
+    * [FreeBSD](#freebsd)
   * [Installing from source](#installing-from-source)
     * [Automatic installation](#automatic-installation)
     * [Nginx package](#nginx-package)
@@ -235,6 +236,15 @@ apt-get update
 apt-get install nginx
 ```
 
+##### FreeBSD
+
+###### From FreeBSD Repository
+
+```bash
+# Install NGINX:
+pkg install nginx
+```
+
 #### Installing from source
 
   > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
@@ -247,7 +257,7 @@ Before the beginning installation process please read these important articles w
 - [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
 - [Building nginx from Sources](https://nginx.org/en/docs/configure.html)
 
-In this chapter I'll present three (very similar) methods of installation. They relate to:
+In this chapter I'll present three (very similar) methods of installation:
 
 - the [NGINX on CentOS 7](#installation-nginx-on-centos-7)
 - the [OpenResty on CentOS 7](#installation-openresty-on-centos-7)
@@ -322,28 +332,32 @@ I also use Cloudflare Zlib version due to performance. See below articles:
 
 If you download and compile above sources the good point is to install additional packages (dependent on the system version) before building NGINX:
 
-| <b>Debian Like</b> | <b>RedHat Like</b> | <b>Comment</b> |
-| :---         | :---         | :---         |
-| `gcc`<br>`make`<br>`build-essential`<br>`linux-headers*`<br>`bison` | `gcc`<br>`gcc-c++`<br>`kernel-devel`<br>`bison` | |
-| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | |
-| `libssl-dev`* | `openssl-devel`* | |
-| `zlib1g-dev`* | `zlib-devel`* | |
-| `libpcre2-dev`* | `pcre-devel`* | |
-| `libluajit-5.1-dev`* | `luajit-devel`* | |
-| `libxslt-dev` | `libxslt libxslt-devel` | |
-| `libgd-dev` | `gd gd-devel` | |
-| `libgeoip-dev` | `GeoIP-devel` | |
-| `libxml2-dev` | `libxml2-devel` | |
-| `libexpat-dev` | `expat-devel` | |
-| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | |
-| | `cpio` | |
-| | `gettext-devel` | |
-| `autoconf` | `autoconf` | for `jemalloc` from sources |
-| `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | for `jemalloc` |
-| `libpam0g-dev` | `pam-devel` | for `ngx_http_auth_pam_module` |
-| `jq` | `jq` | for [http error pages](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages) generator |
+| <b>Debian Like</b> | <b>RedHat Like</b> | <b>FreeBSD\*\*</b> | <b>Comment</b> |
+| :---         | :---         | :---         | :---         |
+| `gcc`<br>`make`<br>`build-essential`<br>`linux-headers*`<br>`bison` | `gcc`<br>`gcc-c++`<br>`kernel-devel`<br>`bison` | `gcc`<br>`gmake`<br>`bison` | |
+| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | `perl5-5.28.2`<br>`perl5-devel` | |
+| `libssl-dev`* | `openssl-devel`* | | |
+| `zlib1g-dev`* | `zlib-devel`* | | |
+| `libpcre2-dev`* | `pcre-devel`* | `pcre`* | |
+| `libluajit-5.1-dev`* | `luajit-devel`* | `luajit`* | |
+| `libxslt-dev` | `libxslt libxslt-devel` | `libxslt` | |
+| `libgd-dev` | `gd gd-devel` | `libgd` | |
+| `libgeoip-dev` | `GeoIP-devel` | | |
+| `libxml2-dev` | `libxml2-devel` | `libxml2` | |
+| `libexpat-dev` | `expat-devel` | `expat` | |
+| `libgoogle-perftools-dev`<br>`libgoogle-perftools4` | `gperftools-devel` | | |
+| | `cpio` | | |
+| | `gettext-devel` | | |
+| `autoconf` | `autoconf` | `autoconf` | for `jemalloc` from sources |
+| `libjemalloc1`<br>`libjemalloc-dev`* | `jemalloc`<br>`jemalloc-devel`* | | for `jemalloc` |
+| `libpam0g-dev` | `pam-devel` | | for `ngx_http_auth_pam_module` |
+| `jq` | `jq` | `jq` | for [http error pages](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages) generator |
+| `git` | `git` | `git` | for `ngx_installer.sh` |
+| `wget` | `wget` | `wget` | for `ngx_installer.sh` |
+
 
 <sup><i>* If you don't use from sources.</i></sup>
+<sup><i>** The package list for FreeBSD may be incomplete.</i></sup>
 
 Shell one-liners example:
 
@@ -351,8 +365,17 @@ Shell one-liners example:
 # Ubuntu/Debian
 apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
 
+apt-get install git wget
+
 # RedHat/CentOS
 yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+
+yum install git wget
+
+# FreeBSD (not tested)
+pkg install gcc gmake bison perl5-5.28.2 perl5-devel pcre luajit libxslt libgd libxml2 expat autoconf jq
+
+pkg install git wget
 ```
 
 ##### 3rd party modules

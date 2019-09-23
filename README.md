@@ -177,6 +177,7 @@
   * [Installing from prebuilt packages](doc/HELPERS.md#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](doc/HELPERS.md#rhel7-or-centos-7)
     * [Debian or Ubuntu](doc/HELPERS.md#debian-or-ubuntu)
+    * [FreeBSD](#freebsd)
   * [Installing from source](doc/HELPERS.md#installing-from-source)
     * [Automatic installation](doc/HELPERS.md#automatic-installation)
     * [Nginx package](doc/HELPERS.md#nginx-package)
