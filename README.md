@@ -177,7 +177,7 @@
   * [Installing from prebuilt packages](doc/HELPERS.md#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](doc/HELPERS.md#rhel7-or-centos-7)
     * [Debian or Ubuntu](doc/HELPERS.md#debian-or-ubuntu)
-    * [FreeBSD](#freebsd)
+    * [FreeBSD](doc/HELPERS.md#freebsd)
   * [Installing from source](doc/HELPERS.md#installing-from-source)
     * [Automatic installation](doc/HELPERS.md#automatic-installation)
     * [Nginx package](doc/HELPERS.md#nginx-package)
@@ -718,6 +718,7 @@ Existing chapters:
     - [x] _Add installation process on CentOS 7 for NGINX_
     - [x] _Add installation process on CentOS 7 for OpenResty_
     - [ ] _Add installation process on FreeBSD 11.2_
+    - [ ] _Add installation process on FreeBSD 11.2 from ports_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
