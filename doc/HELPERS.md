@@ -335,7 +335,7 @@ If you download and compile above sources the good point is to install additiona
 | <b>Debian Like</b> | <b>RedHat Like</b> | <b>FreeBSD\*\*</b> | <b>Comment</b> |
 | :---         | :---         | :---         | :---         |
 | `gcc`<br>`make`<br>`build-essential`<br>`linux-headers*`<br>`bison` | `gcc`<br>`gcc-c++`<br>`kernel-devel`<br>`bison` | `gcc`<br>`gmake`<br>`bison` | |
-| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | `perl5-5.28.2`<br>`perl5-devel` | |
+| `perl`<br>`libperl-dev`<br>`libphp-embed` | `perl`<br>`perl-devel`<br>`perl-ExtUtils-Embed` | `perl5-devel` | |
 | `libssl-dev`* | `openssl-devel`* | | |
 | `zlib1g-dev`* | `zlib-devel`* | | |
 | `libpcre2-dev`* | `pcre-devel`* | `pcre`* | |
