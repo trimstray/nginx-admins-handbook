@@ -440,7 +440,6 @@ function _inst_base_packages() {
             gcc \
             gmake \
             bison \
-            perl5-5.28.2 \
             perl5-devel \
             pcre \
             luajit \
@@ -735,18 +734,30 @@ __EOF__
 
     echo
 
-    # if [[ -e "/usr/bin/openssl" ]] && \
-    #    [[ ! -e "/usr/bin/openssl-old" ]] ; then
-    #
-    #   _f "1" "mv /usr/bin/openssl /usr/bin/openssl-old"
-    #
-    # fi
+    if [[ -e "/usr/bin/openssl" ]] ; then
 
-    # echo
+      _openssl_version=$(openssl version | awk '{print $2}')
+      _openssl_date=$(date '+%Y%m%d%H%M%S')
+      _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
 
-    # _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
+      _f "1" "mv /usr/bin/openssl /usr/bin/${_openssl_str}"
 
-    # echo
+    fi
+
+    echo
+
+    if [[ -L "/usr/bin/openssl" ]] && \
+       [[ -e "/usr/bin/openssl" ]] ; then
+
+      _f "1" "unlink /usr/bin/openssl"
+
+    else
+
+      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
+
+    fi
+
+    echo
 
     cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 ${OPENSSL_DIR}/lib
@@ -822,7 +833,16 @@ function _inst_luajit() {
 
     _f "1" "make install"
 
-    # _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so"
+    if [[ -L "/usr/local/lib/liblua.so" ]] && \
+       [[ -e "/usr/local/lib/liblua.so" ]] ; then
+
+    _f "1" "unlink /usr/local/lib/liblua.so"
+
+    else
+
+      _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so"
+
+    fi
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
@@ -1053,8 +1073,8 @@ function _build_nginx() {
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
-    _f "1" "make -j${_vcpu}"
-    _f "1" "make install"
+    _f "1" "gmake -j${_vcpu}"
+    _f "1" "gmake install"
 
   else
 
@@ -1507,14 +1527,22 @@ function __main__() {
     if [[ -z "$OPENSSL_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+      # OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+      OPENSSL_OPTIONS=""
 
     fi
 
     if [[ -z "$NGINX_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      NGINX_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      # NGINX_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      NGINX_COMPILER_OPTIONS=""
+
+    fi
+
+    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      NGINX_COMPILER_OPTIONS=""
 
     fi
 
@@ -1523,13 +1551,42 @@ function __main__() {
     if [[ -z "$NGINX_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      NGINX_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+      # NGINX_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+      NGINX_LINKER_OPTIONS=""
+
+    fi
+
+    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      NGINX_LINKER_OPTIONS=""
 
     fi
 
     LINKER_OPTIONS="$NGINX_LINKER_OPTIONS"
 
-    __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
+    if [[ "$OSTYPE" == "linux-gnu" ]] ; then
+
+      __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
+
+    elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      for _mod in "--with-http_geoip_module" \
+                  "--with-google_perftools_module" \
+                  "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
+
+        NGINX_BUILD_PARAMS_HELPER=($_mod)
+        NGINX_BUILD_PARAMS=( "${NGINX_BUILD_PARAMS[@]/$NGINX_BUILD_PARAMS_HELPER}" )
+
+        __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
+
+      done
+
+    else
+
+      printf '\e['${trgb_err}'m%s\e[m\n' \
+             "Unsupported system/distribution"
+
+    fi
 
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
@@ -1543,14 +1600,22 @@ function __main__() {
     if [[ -z "$OPENSSL_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+      # OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+      OPENSSL_OPTIONS=""
 
     fi
 
     if [[ -z "$OPENRESTY_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      OPENRESTY_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      # OPENRESTY_COMPILER_OPTIONS="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+      OPENRESTY_COMPILER_OPTIONS=""
+
+    fi
+
+    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      OPENRESTY_COMPILER_OPTIONS=""
 
     fi
 
@@ -1559,13 +1624,43 @@ function __main__() {
     if [[ -z "$OPENRESTY_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      OPENRESTY_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+      # OPENRESTY_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+      OPENRESTY_LINKER_OPTIONS=""
+
+    fi
+
+    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      OPENRESTY_LINKER_OPTIONS=""
 
     fi
 
     LINKER_OPTIONS="$OPENRESTY_LINKER_OPTIONS"
 
-    __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
+    if [[ "$OSTYPE" == "linux-gnu" ]] ; then
+
+      __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
+
+    elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      for _mod in "--with-stream_geoip_module" \
+                  "--with-http_geoip_module" \
+                  "--with-google_perftools_module" \
+                  "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
+
+        OPENRESTY_BUILD_PARAMS_HELPER=($_mod)
+        OPENRESTY_BUILD_PARAMS=( "${OPENRESTY_BUILD_PARAMS[@]/$OPENRESTY_BUILD_PARAMS_HELPER}" )
+
+        __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
+
+      done
+
+    else
+
+      printf '\e['${trgb_err}'m%s\e[m\n' \
+             "Unsupported system/distribution"
+
+    fi
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
@@ -1579,14 +1674,22 @@ function __main__() {
     if [[ -z "$OPENSSL_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+      # OPENSSL_OPTIONS="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong"
+      OPENSSL_OPTIONS=""
 
     fi
 
     if [[ -z "$TENGINE_COMPILER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      TENGINE_COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+      # TENGINE_COMPILER_OPTIONS="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_SRC} -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
+      TENGINE_COMPILER_OPTIONS=""
+
+    fi
+
+    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      TENGINE_COMPILER_OPTIONS=""
 
     fi
 
@@ -1595,13 +1698,43 @@ function __main__() {
     if [[ -z "$TENGINE_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
-      TENGINE_LINKER_OPTIONS="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+      # TENGINE_LINKER_OPTIONS="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
+      TENGINE_LINKER_OPTIONS=""
+
+    fi
+
+    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      TENGINE_LINKER_OPTIONS=""
 
     fi
 
     LINKER_OPTIONS="$TENGINE_LINKER_OPTIONS"
 
-    __BUILD_PARAMS=$(eval echo ${TENGINE_BUILD_PARAMS[@]})
+    if [[ "$OSTYPE" == "linux-gnu" ]] ; then
+
+      __BUILD_PARAMS=$(eval echo ${TENGINE_BUILD_PARAMS[@]})
+
+    elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+      for _mod in "--with-stream_geoip_module" \
+                  "--with-http_geoip_module" \
+                  "--with-google_perftools_module" \
+                  "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
+
+        TENGINE_BUILD_PARAMS_HELPER=($_mod)
+        TENGINE_BUILD_PARAMS=( "${TENGINE_BUILD_PARAMS[@]/$TENGINE_BUILD_PARAMS_HELPER}" )
+
+        __BUILD_PARAMS=$(eval echo ${TENGINE_BUILD_PARAMS[@]})
+
+      done
+
+    else
+
+      printf '\e['${trgb_err}'m%s\e[m\n' \
+             "Unsupported system/distribution"
+
+    fi
 
   fi
 
