@@ -6,7 +6,7 @@
     * [Debian or Ubuntu](#debian-or-ubuntu)
     * [FreeBSD](#freebsd)
   * [Installing from source](#installing-from-source)
-    * [Automatic installation](#automatic-installation)
+    * [Automatic installation for RHEL/Debian/BSD](#automatic-installation-for-rheldebianbsd)
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
@@ -23,6 +23,7 @@
       * [Post installation tasks](#post-installation-tasks)
     * [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
     * [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
+    * [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -284,11 +285,11 @@ Look also on this short note about the system locations. That can be useful too:
   - `/usr/local/lib` - shared libraries
   - `/usr/local/share` - manual pages, data
 
-##### Automatic installation
+##### Automatic installation for RHEL/Debian/BSD
 
 Installing from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
 
-  > It supports Debian and RHEL like distributions.
+  > It supports Debian and RHEL like distributions, and FreeBSD system.
 
 This tool is located in `lib/ngx_installer.sh`. Configuration file is in `lib/ngx_installer.conf`. By default, it show prompt to confirm steps but you can disable it if you want:
 
@@ -354,10 +355,10 @@ If you download and compile above sources the good point is to install additiona
 | `jq` | `jq` | `jq` | for [http error pages](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages) generator |
 | `git` | `git` | `git` | for `ngx_installer.sh` |
 | `wget` | `wget` | `wget` | for `ngx_installer.sh` |
-
+| | | `ncurses` | for `ngx_installer.sh` |
 
 <sup><i>* If you don't use from sources.</i></sup><br>
-<sup><i>** The package list for FreeBSD may be incomplete.</i></sup>
+<sup><i>\*\*The package list for FreeBSD may be incomplete.</i></sup>
 
 Shell one-liners example:
 
@@ -373,9 +374,9 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed o
 yum install jq git wget
 
 # FreeBSD (not tested)
-pkg install gcc gmake bison perl5-5.28.2 perl5-devel pcre luajit libxslt libgd libxml2 expat autoconf
+pkg install gcc gmake bison perl5-devel pcre luajit libxslt libgd libxml2 expat autoconf
 
-pkg install jq git wget
+pkg install jq git wget ncurses
 ```
 
 ##### 3rd party modules
@@ -483,6 +484,10 @@ There are examples:
 --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
 # 2)
 --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+
+# For installation on FreeBSD:
+--with-cc-opt=""
+--with-ld-opt=""
 ```
 
 ###### Debugging Symbols
@@ -558,6 +563,9 @@ ngx_src="/usr/local/src"
 ngx_base="${ngx_src}/nginx-${ngx_version}"
 ngx_master="${ngx_base}/master"
 ngx_modules="${ngx_base}/modules"
+
+NGX_PREFIX="/etc/nginx"
+NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -568,6 +576,15 @@ for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
   mkdir "$i"
 
 done
+```
+
+Set user/group variables:
+
+```bash
+NGINX_USER="nginx"
+NGINX_GROUP="nginx"
+NGINX_UID="920"
+NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -584,8 +601,8 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed l
 yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
 # For LuaJIT (libluajit-5.1-dev):
-export LUAJIT_LIB="/usr/local/x86_64-linux-gnu"
-export LUAJIT_INC="/usr/include/luajit-2.1"
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
 ```
@@ -693,8 +710,27 @@ __EOF__
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+if [[ -e "/usr/bin/openssl" ]] ; then
+
+  _openssl_version=$(openssl version | awk '{print $2}')
+  _openssl_date=$(date '+%Y%m%d%H%M%S')
+  _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+  mv /usr/bin/openssl /usr/bin/${_openssl_str}
+
+fi
+
+if [[ -L "/usr/bin/openssl" ]] && \
+   [[ -e "/usr/bin/openssl" ]] ; then
+
+  unlink /usr/bin/openssl
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+else
+
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+fi
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 ${OPENSSL_DIR}/lib
@@ -785,20 +821,20 @@ tar zxvf nginx-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
 cd "${ngx_modules}"
 
 for i in \
-https://github.com/simplresty/ngx_devel_kit \
-https://github.com/openresty/lua-nginx-module \
-https://github.com/openresty/set-misc-nginx-module \
-https://github.com/openresty/echo-nginx-module \
-https://github.com/openresty/headers-more-nginx-module \
-https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/openresty/array-var-nginx-module \
-https://github.com/openresty/encrypted-session-nginx-module \
-https://github.com/vozlt/nginx-module-sysguard \
-https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
-https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
-https://github.com/vozlt/nginx-module-vts \
-https://github.com/google/ngx_brotli ; do
+  https://github.com/simplresty/ngx_devel_kit \
+  https://github.com/openresty/lua-nginx-module \
+  https://github.com/openresty/set-misc-nginx-module \
+  https://github.com/openresty/echo-nginx-module \
+  https://github.com/openresty/headers-more-nginx-module \
+  https://github.com/openresty/replace-filter-nginx-module \
+  https://github.com/openresty/array-var-nginx-module \
+  https://github.com/openresty/encrypted-session-nginx-module \
+  https://github.com/vozlt/nginx-module-sysguard \
+  https://github.com/nginx-clojure/nginx-access-plus \
+  https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+  https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
+  https://github.com/vozlt/nginx-module-vts \
+  https://github.com/google/ngx_brotli ; do
 
   git clone --depth 1 "$i"
 
@@ -848,14 +884,14 @@ cd "${ngx_master}"
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 # - add to compile with debugging symbols: -O0 -g
 #   - and remove -D_FORTIFY_SOURCE=2 if you use above
-./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
+./configure --prefix=$NGX_PREFIX \
+            --conf-path=$NGX_CONF \
             --sbin-path=/usr/sbin/nginx \
             --pid-path=/var/run/nginx.pid \
             --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
+            --user=$NGINX_USER \
+            --group=$NGINX_GROUP \
+            --modules-path=${NGX_PREFIX}/modules \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
             --http-client-body-temp-path=/var/cache/nginx/client_temp \
@@ -935,7 +971,7 @@ Check NGINX version:
 
 ```bash
 nginx -v
-nginx version: nginx/1.16.0
+nginx version: nginx/1.17.0
 ```
 
 And list all files in `/etc/nginx`:
@@ -979,15 +1015,17 @@ And list all files in `/etc/nginx`:
 Create a system user/group:
 
 ```bash
-# Ubuntu/Debian
-adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos "nginx user" --group nginx
+# Debian/Ubuntu
+groupadd -r -g $NGINX_GID $NGINX_GROUP
+
+adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos \'nginx user\' --uid $NGINX_UID --group $NGINX_GROUP $NGINX_USER
 
 # RedHat/CentOS
-groupadd -r -g 920 nginx
+groupadd -r -g $NGINX_GID $NGINX_GROUP
 
-useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --uid 920 --gid nginx nginx
+useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --comment \'nginx user\' --uid $NGINX_UID --gid $NGINX_GROUP $NGINX_USER
 
-passwd -l nginx
+passwd -l $NGINX_USER
 ```
 
 Create required directories:
@@ -998,7 +1036,7 @@ for i in \
 /var/log/nginx \
 /var/cache/nginx ; do
 
-  mkdir -p "$i" && chown -R nginx:nginx "$i"
+  mkdir -p "$i" && chown -R ${NGINX_USER}:${NGINX_GROUP} "$i"
 
 done
 ```
@@ -1015,18 +1053,23 @@ Include the necessary error pages:
 Update modules list and include `modules.conf` to your configuration:
 
 ```bash
-_mod_dir="/etc/nginx/modules"
-_mod_conf="/etc/nginx/modules.conf"
+_mod_dir="${NGX_PREFIX}/modules"
 
-:>"${_mod_conf}"
+:>"${_mod_dir}.conf"
 
-for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "$_mod_conf" ; done
+for _module in $(ls "${_mod_dir}/") ; do
+
+  echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
+
+done
 ```
 
 Create `logrotate` configuration:
 
 ```bash
-cat > /etc/logrotate.d/nginx << __EOF__
+_logrotate_path="/etc/logrotate.d"
+
+cat > "${_logrotate_path}/nginx" << __EOF__
 /var/log/nginx/*.log {
   daily
   missingok
@@ -1034,11 +1077,11 @@ cat > /etc/logrotate.d/nginx << __EOF__
   compress
   delaycompress
   notifempty
-  create 0640 nginx nginx
+  create 0640 $NGINX_USER $NGINX_GROUP
   sharedscripts
   prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
+    if [ -d ${_logrotate_path}/httpd-prerotate ]; then \
+      run-parts ${_logrotate_path}/httpd-prerotate; \
     fi \
   endscript
   postrotate
@@ -1096,10 +1139,16 @@ Enable NGINX service:
 systemctl enable nginx
 ```
 
+Show NGINX version and parameters:
+
+```bash
+nginx -V
+```
+
 Test NGINX configuration:
 
 ```bash
-nginx -t -c /etc/nginx/nginx.conf
+nginx -t -c $NGX_CONF
 ```
 
 #### Installation OpenResty on CentOS 7
@@ -1138,9 +1187,12 @@ Set temporary variables:
 
 ```bash
 ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/openresty-${ngx_version}"
+ngx_base="${ngx_src}/nginx-${ngx_version}"
 ngx_master="${ngx_base}/master"
 ngx_modules="${ngx_base}/modules"
+
+NGX_PREFIX="/etc/nginx"
+NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -1151,6 +1203,15 @@ for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
   mkdir "$i"
 
 done
+```
+
+Set user/group variables:
+
+```bash
+NGINX_USER="nginx"
+NGINX_GROUP="nginx"
+NGINX_UID="920"
+NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -1270,8 +1331,27 @@ __EOF__
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+if [[ -e "/usr/bin/openssl" ]] ; then
+
+  _openssl_version=$(openssl version | awk '{print $2}')
+  _openssl_date=$(date '+%Y%m%d%H%M%S')
+  _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+  mv /usr/bin/openssl /usr/bin/${_openssl_str}
+
+fi
+
+if [[ -L "/usr/bin/openssl" ]] && \
+   [[ -e "/usr/bin/openssl" ]] ; then
+
+  unlink /usr/bin/openssl
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+else
+
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+fi
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 ${OPENSSL_DIR}/lib
@@ -1333,13 +1413,13 @@ tar zxvf openresty-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
 cd "${ngx_modules}"
 
 for i in \
-https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/vozlt/nginx-module-sysguard \
-https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
-https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
-https://github.com/vozlt/nginx-module-vts \
-https://github.com/google/ngx_brotli ; do
+  https://github.com/openresty/replace-filter-nginx-module \
+  https://github.com/vozlt/nginx-module-sysguard \
+  https://github.com/nginx-clojure/nginx-access-plus \
+  https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+  https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
+  https://github.com/vozlt/nginx-module-vts \
+  https://github.com/google/ngx_brotli ; do
 
   git clone --depth 1 "$i"
 
@@ -1389,14 +1469,14 @@ cd "${ngx_master}"
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 # - add to compile with debugging symbols: -O0 -g
 #   - and remove -D_FORTIFY_SOURCE=2 if you use above
-./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
+./configure --prefix=$NGX_PREFIX \
+            --conf-path=$NGX_CONF \
             --sbin-path=/usr/sbin/nginx \
             --pid-path=/var/run/nginx.pid \
             --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
+            --user=$NGINX_USER \
+            --group=$NGINX_GROUP \
+            --modules-path=${NGX_PREFIX}/modules \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
             --http-client-body-temp-path=/var/cache/nginx/client_temp \
@@ -1914,9 +1994,12 @@ Set temporary variables:
 
 ```bash
 ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/tengine-${ngx_version}"
+ngx_base="${ngx_src}/nginx-${ngx_version}"
 ngx_master="${ngx_base}/master"
 ngx_modules="${ngx_base}/modules"
+
+NGX_PREFIX="/etc/nginx"
+NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -1927,6 +2010,15 @@ for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
   mkdir "$i"
 
 done
+```
+
+Set user/group variables:
+
+```bash
+NGINX_USER="nginx"
+NGINX_GROUP="nginx"
+NGINX_UID="920"
+NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -2013,8 +2105,27 @@ __EOF__
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
 # To make the OpenSSL 1.1.1b version visible globally first:
-mv /usr/bin/openssl /usr/bin/openssl-old
-ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+if [[ -e "/usr/bin/openssl" ]] ; then
+
+  _openssl_version=$(openssl version | awk '{print $2}')
+  _openssl_date=$(date '+%Y%m%d%H%M%S')
+  _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+  mv /usr/bin/openssl /usr/bin/${_openssl_str}
+
+fi
+
+if [[ -L "/usr/bin/openssl" ]] && \
+   [[ -e "/usr/bin/openssl" ]] ; then
+
+  unlink /usr/bin/openssl
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+else
+
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+fi
 
 cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 ${OPENSSL_DIR}/lib
@@ -2107,13 +2218,13 @@ tar zxvf tengine-${ngx_version}.tar.gz -C "${ngx_master}"
 cd "${ngx_modules}"
 
 for i in \
-https://github.com/openresty/echo-nginx-module \
-https://github.com/openresty/headers-more-nginx-module \
-https://github.com/openresty/replace-filter-nginx-module \
-https://github.com/nginx-clojure/nginx-access-plus \
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
-https://github.com/vozlt/nginx-module-vts \
-https://github.com/google/ngx_brotli ; do
+  https://github.com/openresty/echo-nginx-module \
+  https://github.com/openresty/headers-more-nginx-module \
+  https://github.com/openresty/replace-filter-nginx-module \
+  https://github.com/nginx-clojure/nginx-access-plus \
+  https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+  https://github.com/vozlt/nginx-module-vts \
+  https://github.com/google/ngx_brotli ; do
 
   git clone --depth 1 "$i"
 
@@ -2149,14 +2260,14 @@ cd "${ngx_master}"
 # - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
 # - add to compile with debugging symbols: -O0 -g
 #   - and remove -D_FORTIFY_SOURCE=2 if you use above
-./configure --prefix=/etc/nginx \
-            --conf-path=/etc/nginx/nginx.conf \
+./configure --prefix=$NGX_PREFIX \
+            --conf-path=$NGX_CONF \
             --sbin-path=/usr/sbin/nginx \
             --pid-path=/var/run/nginx.pid \
             --lock-path=/var/run/nginx.lock \
-            --user=nginx \
-            --group=nginx \
-            --modules-path=/etc/nginx/modules \
+            --user=$NGINX_USER \
+            --group=$NGINX_GROUP \
+            --modules-path=${NGX_PREFIX}/modules \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
             --http-client-body-temp-path=/var/cache/nginx/client_temp \
@@ -2299,6 +2410,576 @@ An external tool for analyse NGINX configuration is `gixy`. The main goal of thi
 ```bash
 gixy /etc/nginx/nginx.conf
 ```
+
+#### Installation Nginx on FreeBSD 11.3
+
+  > This method is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). On FreeBSD you can also build NGINX from ports.
+
+<details>
+<summary><b>Show step-by-step NGINX installation</b></summary><br>
+
+* [Pre installation tasks](#pre-installation-tasks-3)
+* [Dependencies](#dependencies-3)
+* [Get OpenResty sources](#get-openresty-sources-3)
+* [Download 3rd party modules](#download-3rd-party-modules-3)
+* [Build Nginx](#build-nginx-1)
+* [Post installation tasks](#post-installation-tasks-3)
+
+###### Pre installation tasks
+
+Set NGINX version (I use stable release):
+
+```bash
+export ngx_version="1.17.0"
+```
+
+Set temporary variables:
+
+```bash
+ngx_src="/usr/local/src"
+ngx_base="${ngx_src}/nginx-${ngx_version}"
+ngx_master="${ngx_base}/master"
+ngx_modules="${ngx_base}/modules"
+
+NGX_PREFIX="/etc/nginx"
+NGX_CONF="${NGX_PREFIX}/nginx.conf"
+```
+
+Create directories:
+
+```bash
+for i in "${ngx_base}" "${ngx_master}" "${ngx_modules}" ; do
+
+  mkdir "$i"
+
+done
+```
+
+Set user/group variables:
+
+```bash
+NGINX_USER="nginx"
+NGINX_GROUP="nginx"
+NGINX_UID="920"
+NGINX_GID="920"
+```
+
+###### Dependencies
+
+  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, `luajit` and `pcre` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
+
+**Install prebuilt packages, export variables and set symbolic link:**
+
+```bash
+# It's important and required, regardless of chosen sources:
+pkg install gcc gmake bison perl5-devel libxslt libgd libxml2 expat autoconf jq git wget ncurses
+
+# In this example we use sources for all below packages so we do not install them:
+yum install pcre luajit
+
+# For LuaJIT:
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/include/luajit-2.1"
+```
+
+  > Remember to build [`sregex`](#sregex) also if you use above steps.
+
+**Or download and compile them:**
+
+PCRE:
+
+```bash
+cd "${ngx_src}"
+
+export pcre_version="8.42"
+
+export PCRE_SRC="${ngx_src}/pcre-${pcre_version}"
+export PCRE_LIB="/usr/local/lib"
+export PCRE_INC="/usr/local/include"
+
+wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+
+cd "$PCRE_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-O0 -g' ./configure
+./configure
+
+make -j2 && make test
+make install
+```
+
+Zlib:
+
+```bash
+# I recommend to use Cloudflare Zlib version (cloudflare/zlib) instead an original Zlib (zlib.net), but both installation methods are similar:
+cd "${ngx_src}"
+
+export ZLIB_SRC="${ngx_src}/zlib"
+export ZLIB_LIB="/usr/local/lib"
+export ZLIB_INC="/usr/local/include"
+
+# For original Zlib:
+#   export zlib_version="1.2.11"
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   cd "${ZLIB_SRC}-${zlib_version}"
+
+# For Cloudflare Zlib:
+git clone --depth 1 https://github.com/cloudflare/zlib
+
+cd "$ZLIB_SRC"
+
+./configure
+
+gmake -j2 && gmake test
+gmake install
+```
+
+OpenSSL:
+
+```bash
+cd "${ngx_src}"
+
+export openssl_version="1.1.1b"
+
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+
+wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+# Please run this and add as a compiler param:
+export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+# Add to compile with debugging symbols:
+#   ./config -d ...
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+# To use/link openssl from your system (world):
+if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf) ]] ; then
+
+  echo -en "DEFAULT_VERSIONS+=ssl=openssl\n" >> /etc/make.conf
+
+fi
+
+make -j2 && make test
+make install
+
+if [[ -e "/usr/bin/openssl" ]] ; then
+
+  _openssl_version=$(openssl version | awk '{print $2}')
+  _openssl_date=$(date '+%Y%m%d%H%M%S')
+  _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+  mv /usr/bin/openssl /usr/bin/${_openssl_str}
+
+fi
+
+if [[ -L "/usr/bin/openssl" ]] && \
+   [[ -e "/usr/bin/openssl" ]] ; then
+
+  unlink /usr/bin/openssl
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+else
+
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+fi
+```
+
+LuaJIT:
+
+```bash
+# I recommend to use OpenResty's branch (openresty/luajit2) instead of LuaJIT (LuaJIT/LuaJIT), but both installation methods are similar:
+cd "${ngx_src}"
+
+export LUAJIT_SRC="${ngx_src}/luajit2"
+export LUAJIT_LIB="/usr/local/lib"
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
+
+# For original LuaJIT:
+#   git clone http://luajit.org/git/luajit-2.0 luajit2
+#   cd "$LUAJIT_SRC"
+
+# For OpenResty's LuaJIT:
+git clone --depth 1 https://github.com/openresty/luajit2
+
+cd "$LUAJIT_SRC"
+
+# Add to compile with debugging symbols:
+#   CFLAGS='-g' make ...
+gmake && gmake install
+```
+
+<a id="sregex"></a>sregex:
+
+  > Required for `replace-filter-nginx-module` module.
+
+```bash
+cd "${ngx_src}"
+
+git clone --depth 1 https://github.com/openresty/sregex
+
+cd "${ngx_src}/sregex"
+
+gmake && gmake install
+```
+
+jemalloc:
+
+  > To verify `jemalloc` in use: `lsof -n | grep jemalloc`.
+
+```bash
+cd "${ngx_src}"
+
+export JEMALLOC_SRC="${ngx_src}/jemalloc"
+export JEMALLOC_INC="/usr/local/include/jemalloc"
+
+git clone --depth 1 https://github.com/jemalloc/jemalloc
+
+cd "$JEMALLOC_SRC"
+
+./autogen.sh
+
+gmake && gmake install
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
+```
+
+###### Get Nginx sources
+
+```bash
+cd "${ngx_base}"
+
+wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
+
+# or alternative:
+#   git clone --depth 1 https://github.com/nginx/nginx master
+
+tar zxvf nginx-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
+```
+
+###### Download 3rd party modules
+
+```bash
+cd "${ngx_modules}"
+
+for i in \
+  https://github.com/simplresty/ngx_devel_kit \
+  https://github.com/openresty/lua-nginx-module \
+  https://github.com/openresty/set-misc-nginx-module \
+  https://github.com/openresty/echo-nginx-module \
+  https://github.com/openresty/headers-more-nginx-module \
+  https://github.com/openresty/replace-filter-nginx-module \
+  https://github.com/openresty/array-var-nginx-module \
+  https://github.com/openresty/encrypted-session-nginx-module \
+  https://github.com/vozlt/nginx-module-sysguard \
+  https://github.com/nginx-clojure/nginx-access-plus \
+  https://github.com/yaoweibin/ngx_http_substitutions_filter_module \
+  https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng \
+  https://github.com/vozlt/nginx-module-vts \
+  https://github.com/google/ngx_brotli ; do
+
+  git clone --depth 1 "$i"
+
+done
+
+wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
+```
+
+For `ngx_brotli`:
+
+```bash
+cd "${ngx_modules}/ngx_brotli"
+
+git submodule update --init
+```
+
+I also use some modules from Tengine:
+
+- `ngx_backtrace_module` (build error)
+- `ngx_debug_pool`
+- `ngx_debug_timer`
+- `ngx_http_upstream_check_module`
+- `ngx_http_footer_filter_module`
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/alibaba/tengine
+```
+
+If you use NAXSI:
+
+```bash
+cd "${ngx_modules}"
+
+git clone --depth 1 https://github.com/nbs-system/naxsi
+```
+
+###### Build Nginx
+
+```bash
+cd "${ngx_master}"
+
+# - you can also build NGINX without 3rd party modules
+# - remember about compiler and linker options
+# - don't set values for --with-openssl, --with-pcre, and --with-zlib if you select prebuilt packages for them
+# - add to compile with debugging symbols: -O0 -g
+#   - and remove -D_FORTIFY_SOURCE=2 if you use above
+./configure --prefix=$NGX_PREFIX \
+            --conf-path=$NGX_CONF \
+            --sbin-path=/usr/sbin/nginx \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --user=$NGINX_USER \
+            --group=$NGINX_GROUP \
+            --modules-path=${NGX_PREFIX}/modules \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+            --with-compat \
+            --with-debug \
+            --with-file-aio \
+            --with-threads \
+            --with-stream \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_degradation_module \
+            # --with-http_geoip_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_image_filter_module \
+            --with-http_perl_module \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_secure_link_module \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-http_sub_module \
+            --with-http_v2_module \
+            # --with-google_perftools_module \
+            --with-openssl=${OPENSSL_SRC} \
+            --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
+            --with-pcre=${PCRE_SRC} \
+            --with-pcre-jit \
+            --with-zlib=${ZLIB_SRC} \
+            --without-http-cache \
+            --without-http_memcached_module \
+            --without-mail_pop3_module \
+            --without-mail_imap_module \
+            --without-mail_smtp_module \
+            --without-http_fastcgi_module \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --add-module=${ngx_modules}/ngx_devel_kit \
+            --add-module=${ngx_modules}/encrypted-session-nginx-module \
+            --add-module=${ngx_modules}/nginx-access-plus/src/c \
+            --add-module=${ngx_modules}/ngx_http_substitutions_filter_module \
+            --add-module=${ngx_modules}/nginx-sticky-module-ng \
+            --add-module=${ngx_modules}/nginx-module-vts \
+            --add-module=${ngx_modules}/ngx_brotli \
+            # --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
+            --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_http_upstream_check_module \
+            --add-module=${ngx_modules}/tengine/modules/ngx_slab_stat \
+            --add-dynamic-module=${ngx_modules}/lua-nginx-module \
+            --add-dynamic-module=${ngx_modules}/set-misc-nginx-module \
+            --add-dynamic-module=${ngx_modules}/echo-nginx-module \
+            --add-dynamic-module=${ngx_modules}/headers-more-nginx-module \
+            --add-dynamic-module=${ngx_modules}/replace-filter-nginx-module \
+            --add-dynamic-module=${ngx_modules}/array-var-nginx-module \
+            --add-dynamic-module=${ngx_modules}/nginx-module-sysguard \
+            --add-dynamic-module=${ngx_modules}/delay-module \
+            --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
+            --with-cc-opt="" \
+            --with-ld-opt=""
+
+gmake -j2 && gmake test
+gmake install
+
+ldconfig
+```
+
+Check NGINX version:
+
+```bash
+nginx -v
+nginx version: nginx/1.17.0
+```
+
+And list all files in `/etc/nginx`:
+
+```bash
+.
+|-- fastcgi.conf
+|-- fastcgi.conf.default
+|-- fastcgi_params
+|-- fastcgi_params.default
+|-- html
+|   |-- 50x.html
+|   `-- index.html
+|-- koi-utf
+|-- koi-win
+|-- mime.types
+|-- mime.types.default
+|-- modules
+|   |-- ngx_http_array_var_module.so
+|   |-- ngx_http_delay_module.so
+|   |-- ngx_http_echo_module.so
+|   |-- ngx_http_headers_more_filter_module.so
+|   |-- ngx_http_lua_module.so
+|   |-- ngx_http_naxsi_module.so
+|   |-- ngx_http_replace_filter_module.so
+|   |-- ngx_http_set_misc_module.so
+|   `-- ngx_http_sysguard_module.so
+|-- nginx.conf
+|-- nginx.conf.default
+|-- scgi_params
+|-- scgi_params.default
+|-- uwsgi_params
+|-- uwsgi_params.default
+`-- win-utf
+
+2 directories, 26 files
+```
+
+###### Post installation tasks
+
+Create a system user/group:
+
+```bash
+# Debian/Ubuntu
+groupadd -r -g $NGINX_GID $NGINX_GROUP
+
+adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos \'nginx user\' --uid $NGINX_UID --group $NGINX_GROUP $NGINX_USER
+
+# RedHat/CentOS
+groupadd -r -g $NGINX_GID $NGINX_GROUP
+
+useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --comment \'nginx user\' --uid $NGINX_UID --gid $NGINX_GROUP $NGINX_USER
+
+passwd -l $NGINX_USER
+```
+
+Create required directories:
+
+```bash
+for i in \
+/var/www \
+/var/log/nginx \
+/var/cache/nginx ; do
+
+  mkdir -p "$i" && chown -R ${NGINX_USER}:${NGINX_GROUP} "$i"
+
+done
+```
+
+Include the necessary error pages:
+
+  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+
+- default location: `/etc/nginx/html`
+  ```bash
+  50x.html  index.html
+  ```
+
+Update modules list and include `modules.conf` to your configuration:
+
+```bash
+_mod_dir="${NGX_PREFIX}/modules"
+
+:>"${_mod_dir}.conf"
+
+for _module in $(ls "${_mod_dir}/") ; do
+
+  echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
+
+done
+```
+
+Create `logrotate` configuration:
+
+```bash
+_logrotate_path="/usr/local/etc/logrotate.d"
+
+cat > "${_logrotate_path}/nginx" << __EOF__
+/var/log/nginx/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 $NGINX_USER $NGINX_GROUP
+  sharedscripts
+  prerotate
+    if [ -d ${_logrotate_path}/httpd-prerotate ]; then \
+      run-parts ${_logrotate_path}/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+__EOF__
+```
+
+Enable NGINX service:
+
+```bash
+if ! grep -q nginx_enable=\"YES\" /etc/rc.conf ; then
+
+  echo -en "nginx_enable=\"YES\"\\n" >> /etc/rc.conf
+
+fi
+```
+
+Show NGINX version and parameters:
+
+```bash
+nginx -V
+```
+
+Test NGINX configuration:
+
+```bash
+nginx -t -c $NGX_CONF
+```
+
+</details>
 
 #### Monitoring
 

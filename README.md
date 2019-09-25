@@ -179,7 +179,7 @@
     * [Debian or Ubuntu](doc/HELPERS.md#debian-or-ubuntu)
     * [FreeBSD](doc/HELPERS.md#freebsd)
   * [Installing from source](doc/HELPERS.md#installing-from-source)
-    * [Automatic installation](doc/HELPERS.md#automatic-installation)
+    * [Automatic installation for RHEL/Debian/BSD](doc/HELPERS.md#automatic-installation-for-rheldebianbsd)
     * [Nginx package](doc/HELPERS.md#nginx-package)
     * [Dependencies](doc/HELPERS.md#dependencies)
     * [3rd party modules](doc/HELPERS.md#3rd-party-modules)
@@ -196,6 +196,7 @@
       * [Post installation tasks](doc/HELPERS.md#post-installation-tasks)
     * [Installation OpenResty on CentOS 7](doc/HELPERS.md#installation-openresty-on-centos-7)
     * [Installation Tengine on Ubuntu 18.04](doc/HELPERS.md#installation-tengine-on-ubuntu-1804)
+    * [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
   * [Analyse configuration](doc/HELPERS.md#analyse-configuration)
   * [Monitoring](doc/HELPERS.md#monitoring)
     * [GoAccess](doc/HELPERS.md#goaccess)
@@ -710,15 +711,17 @@ Existing chapters:
 <summary><b>Helpers</b></summary><br>
 
   - _Installing from source_
-    - [x] _Add autoinstaller for RHEL/Debian like distributions_
-    - [x] _Add compiler and linker options_
+    - [x] _Automatic installation for RHEL/Debian/BSD_
+    - [x] _Compiler and linker_
       - [x] _Debugging Symbols_
-    - [x] _Add SystemTap - Real-time analysis and diagnoistcs tools_
+    - [x] _SystemTap_
+      - [x] _stapxx_
     - [x] _Separation and improvement of installation methods_
-    - [x] _Add installation process on CentOS 7 for NGINX_
-    - [x] _Add installation process on CentOS 7 for OpenResty_
-    - [ ] _Add installation process on FreeBSD 11.2_
-    - [ ] _Add installation process on FreeBSD 11.2 from ports_
+    - [x] _Installation Nginx on CentOS 7_
+    - [x] _Installation OpenResty on CentOS 7_
+    - [x] _Installation Tengine on Ubuntu 18.04_
+    - [x] _Installation NGINX on FreeBSD 11.3_
+    - [ ] _Installation NGINX on FreeBSD 11.3 (ports)_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_

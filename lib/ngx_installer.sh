@@ -750,6 +750,7 @@ __EOF__
        [[ -e "/usr/bin/openssl" ]] ; then
 
       _f "1" "unlink /usr/bin/openssl"
+      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
 
     else
 
@@ -771,7 +772,7 @@ __EOF__
 
     _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
 
-    if [[ $(grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf) ]] ; then
+    if ! grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf ; then
 
       _f "1" "echo -en DEFAULT_VERSIONS+=ssl=openssl\n >> /etc/make.conf"
 
@@ -779,6 +780,30 @@ __EOF__
 
     _f "1" "make -j${_vcpu}"
     _f "1" "make install"
+
+    if [[ -e "/usr/bin/openssl" ]] ; then
+
+      _openssl_version=$(openssl version | awk '{print $2}')
+      _openssl_date=$(date '+%Y%m%d%H%M%S')
+      _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+      _f "1" "mv /usr/bin/openssl /usr/bin/${_openssl_str}"
+
+    fi
+
+    echo
+
+    if [[ -L "/usr/bin/openssl" ]] && \
+       [[ -e "/usr/bin/openssl" ]] ; then
+
+      _f "1" "unlink /usr/bin/openssl"
+      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
+
+    else
+
+      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
+
+    fi
 
   else
 
@@ -836,7 +861,8 @@ function _inst_luajit() {
     if [[ -L "/usr/local/lib/liblua.so" ]] && \
        [[ -e "/usr/local/lib/liblua.so" ]] ; then
 
-    _f "1" "unlink /usr/local/lib/liblua.so"
+      _f "1" "unlink /usr/local/lib/liblua.so"
+      _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so"
 
     else
 
@@ -1101,7 +1127,7 @@ function _create_user() {
 
     if [[ "$_DIST_VERSION" == "debian" ]] ; then
 
-      if [[ $(grep -q $NGINX_GROUP /etc/group) ]] ; then
+      if ! grep -q $NGINX_GROUP /etc/group ; then
 
         _f "1" "groupadd -r -g $NGINX_GID $NGINX_GROUP"
 
@@ -1111,7 +1137,7 @@ function _create_user() {
 
     elif [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
-      if [[ $(grep -q $NGINX_GROUP /etc/group) ]] ; then
+      if ! grep -q $NGINX_GROUP /etc/group ; then
 
         _f "1" "groupadd -r -g $NGINX_GID $NGINX_GROUP"
 
@@ -1123,7 +1149,7 @@ function _create_user() {
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
-      if [[ $(grep -q $NGINX_GROUP /etc/group) ]] ; then
+      if ! grep -q $NGINX_GROUP /etc/group ; then
 
         _f "1" "pw group add -g $NGINX_GID $NGINX_GROUP"
 
@@ -1180,7 +1206,19 @@ function _init_logrotate() {
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
-    cat > /etc/logrotate.d/nginx << __EOF__
+    _logrotate_path="/etc/logrotate.d"
+
+  elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+    _logrotate_path="/usr/local/etc/logrotate.d"
+
+  else
+
+    printf '\e['${trgb_err}'m%s\e[m\n' \
+           "Unsupported system/distribution"
+
+  fi
+    cat > "${_logrotate_path}/nginx" << __EOF__
 /var/log/nginx/*.log {
   daily
   missingok
@@ -1188,11 +1226,11 @@ function _init_logrotate() {
   compress
   delaycompress
   notifempty
-  create 0640 nginx nginx
+  create 0640 $NGINX_USER $NGINX_GROUP
   sharedscripts
   prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
+    if [ -d ${_logrotate_path}/httpd-prerotate ]; then \
+      run-parts ${_logrotate_path}/httpd-prerotate; \
     fi \
   endscript
   postrotate
@@ -1253,6 +1291,14 @@ __EOF__
 
     _f "1" "systemctl daemon-reload"
     _f "1" "systemctl enable nginx"
+
+  elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+    if ! grep -q nginx_enable=\"YES\" /etc/rc.conf ; then
+
+      echo -en "nginx_enable=\"YES\"\\n" >> /etc/rc.conf
+
+    fi
 
   else
 
