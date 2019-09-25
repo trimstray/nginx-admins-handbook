@@ -616,7 +616,7 @@ yum install openssl-devel zlib-devel pcre-devel luajit-devel
 export LUAJIT_LIB="/usr/local/lib"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
-ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 /usr/local/lib/liblua.so
+ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
 ```
 
   > Remember to build [`sregex`](#sregex) also if you use above steps.
@@ -772,7 +772,7 @@ cd "$LUAJIT_SRC"
 #   CFLAGS='-g' make ...
 make && make install
 
-ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
+ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
 ```
 
 <a id="sregex"></a>sregex:
@@ -2167,7 +2167,7 @@ cd "$LUAJIT_SRC"
 #   CFLAGS='-g' make ...
 make && make install
 
-ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/liblua.so
+ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
 ```
 
 sregex:
