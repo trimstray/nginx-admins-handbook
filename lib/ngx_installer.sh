@@ -1485,9 +1485,9 @@ function __main__() {
 
       if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-        printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.0"
+        printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.1"
         printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
-        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
+        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.1, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
         printf '   - %s\n' "press any key to set default"
 
         _ngx_distr_str="NGINX"
@@ -1496,7 +1496,7 @@ function __main__() {
 
         printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
         printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
-        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
+        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.2, 1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
         printf '   - %s\n' "press any key to set default"
 
         _ngx_distr_str="OpenResty"
@@ -1505,7 +1505,7 @@ function __main__() {
 
         printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
         printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
-        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
+        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.2, 2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
         printf '   - %s\n' "press any key to set default"
 
         _ngx_distr_str="Tengine"
@@ -1557,7 +1557,7 @@ function __main__() {
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="1.16.0" ; fi
+    if [[ -z "$ngx_version" ]] ; then ngx_version="1.16.1" ; fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/nginx-${ngx_version}"
