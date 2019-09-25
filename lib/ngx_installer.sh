@@ -1586,24 +1586,12 @@ function __main__() {
 
     fi
 
-    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
-      NGINX_COMPILER_OPTIONS=""
-
-    fi
-
     COMPILER_OPTIONS="$NGINX_COMPILER_OPTIONS"
 
     if [[ -z "$NGINX_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
       # NGINX_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-      NGINX_LINKER_OPTIONS=""
-
-    fi
-
-    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
       NGINX_LINKER_OPTIONS=""
 
     fi
@@ -1659,24 +1647,12 @@ function __main__() {
 
     fi
 
-    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
-      OPENRESTY_COMPILER_OPTIONS=""
-
-    fi
-
     COMPILER_OPTIONS="$OPENRESTY_COMPILER_OPTIONS"
 
     if [[ -z "$OPENRESTY_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
       # OPENRESTY_LINKER_OPTIONS="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
-      OPENRESTY_LINKER_OPTIONS=""
-
-    fi
-
-    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
       OPENRESTY_LINKER_OPTIONS=""
 
     fi
@@ -1733,24 +1709,12 @@ function __main__() {
 
     fi
 
-    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
-      TENGINE_COMPILER_OPTIONS=""
-
-    fi
-
     COMPILER_OPTIONS="$TENGINE_COMPILER_OPTIONS"
 
     if [[ -z "$TENGINE_LINKER_OPTIONS" ]] ; then
 
       # shellcheck disable=SC2178
       # TENGINE_LINKER_OPTIONS="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib/,-z,relro -Wl,-z,now -pie"
-      TENGINE_LINKER_OPTIONS=""
-
-    fi
-
-    if [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
       TENGINE_LINKER_OPTIONS=""
 
     fi
