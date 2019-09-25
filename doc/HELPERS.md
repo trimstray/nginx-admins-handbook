@@ -23,7 +23,7 @@
       * [Post installation tasks](#post-installation-tasks)
     * [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
     * [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
-    * [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
+    * [Installation Nginx on FreeBSD 11.3](#installation-nginx-on-freebsd-113)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -263,7 +263,7 @@ In this chapter I'll present three (very similar) methods of installation:
 - the [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7)
 - the [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
 - the [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
-- the [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
+- the [Installation Nginx on FreeBSD 11.3](#installation-nginx-on-freebsd-113)
 
 Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
 
