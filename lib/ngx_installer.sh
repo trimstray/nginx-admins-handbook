@@ -1792,27 +1792,23 @@ function __main__() {
 
     else
 
-      COMPILER_OPTIONS
+      COMPILER_OPTIONS="${COMPILER_OPTIONS}"
+
     fi
 
+  else
 
-  if [[ ! -z "$OPENSSL_OPTIONS" ]] ; then
+    if [[ ! -z "$__NGINX_DSYM" ]] ; then
 
-      if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
-
-        OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
-
-      else
-
-        OPENSSL_OPTIONS="${__OPENSSL_DSYM}"
-
-      fi
+      COMPILER_OPTIONS="${__NGINX_DSYM}"
 
     else
 
-      OPENSSL_OPTIONS=""
+      COMPILER_OPTIONS=""
 
     fi
+
+  fi
 
   # shellcheck disable=SC2178
   export __CC_PARAMS=("\'${COMPILER_OPTIONS}\'")
