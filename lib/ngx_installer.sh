@@ -1218,7 +1218,8 @@ function _init_logrotate() {
            "Unsupported system/distribution"
 
   fi
-    cat > "${_logrotate_path}/nginx" << __EOF__
+
+  cat > "${_logrotate_path}/nginx" << __EOF__
 /var/log/nginx/*.log {
   daily
   missingok
@@ -1238,13 +1239,6 @@ function _init_logrotate() {
   endscript
 }
 __EOF__
-
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-
-  fi
 
   return "$_STATE"
 
