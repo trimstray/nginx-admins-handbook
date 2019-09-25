@@ -677,7 +677,7 @@ OpenSSL:
 ```bash
 cd "${ngx_src}"
 
-export openssl_version="1.1.1b"
+export openssl_version="1.1.1c"
 
 export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
 export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
@@ -1298,7 +1298,7 @@ OpenSSL:
 ```bash
 cd "${ngx_src}"
 
-export openssl_version="1.1.1b"
+export openssl_version="1.1.1c"
 
 export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
 export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
@@ -2072,7 +2072,7 @@ OpenSSL:
 ```bash
 cd "${ngx_src}"
 
-export openssl_version="1.1.1b"
+export openssl_version="1.1.1c"
 
 export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
 export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
@@ -2552,7 +2552,7 @@ OpenSSL:
 ```bash
 cd "${ngx_src}"
 
-export openssl_version="1.1.1b"
+export openssl_version="1.1.1c"
 
 export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
 export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
