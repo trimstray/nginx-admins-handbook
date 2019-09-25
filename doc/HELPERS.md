@@ -260,9 +260,10 @@ Before the beginning installation process please read these important articles w
 
 In this chapter I'll present three (very similar) methods of installation:
 
-- the [NGINX on CentOS 7](#installation-nginx-on-centos-7)
-- the [OpenResty on CentOS 7](#installation-openresty-on-centos-7)
-- the [Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
+- the [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7)
+- the [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
+- the [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
+- the [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
 
 Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
 
@@ -1970,7 +1971,7 @@ And list all files in `/etc/nginx`:
 
 Generally, Tengine is a great solution, including many patches, improvements, additional modules, and most importantly it is very actively maintained.
 
-The build and installation process is very similar to [Install Nginx on Centos 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes.
+The build and installation process is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes.
 
 <details>
 <summary><b>Show step-by-step Tengine installation</b></summary><br>
@@ -2413,7 +2414,7 @@ gixy /etc/nginx/nginx.conf
 
 #### Installation Nginx on FreeBSD 11.3
 
-  > This method is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). On FreeBSD you can also build NGINX from ports.
+  > The build and installation process is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes. On FreeBSD you can also build NGINX from ports.
 
 <details>
 <summary><b>Show step-by-step NGINX installation</b></summary><br>
