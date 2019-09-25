@@ -2,7 +2,7 @@
 
 # shellcheck shell=bash
 
-# shellcheck -s bash -e 1072,1083,1094,1107,2145,2191,2206 -x ngx_installer.conf ngx_installer.sh
+# shellcheck -s bash -e 1072,1094,1107,2145 -x ngx_installer.conf ngx_installer.sh
 
 ### BEG SCRIPT INFO
 #
@@ -43,10 +43,6 @@
 __init_params=()
 __script_params=("$@")
 
-# Catch the listed SIGNALS, which may be signal names with or without the SIG
-# prefix, or signal numbers. By default, only the signal 0 or EXIT is supported.
-trap "_get_trap_SIG EXIT" EXIT
-
 
 # Console colors.
 trgb_bold="1;1;38"
@@ -65,9 +61,6 @@ trgb_wrn="1;30;43"
 trgb_err="1;37;41"
 
 trgb_ttime="1;1;39"
-
-# Variables.
-export _fd_tasks="/tmp/ngx_installer.task"
 
 
 # Tasks for specific system version.
@@ -208,78 +201,6 @@ export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 
 # Global functions.
-function _exit_() {
-
-  local _FUNCTION_ID="_exit_"
-  local _STATE="0"
-
-  _STATUS="$1"
-
-  # Remember that for it a trap is executed that intercepts
-  # the exit command (at the end of this function).
-  if [[ "$_STATUS" -eq 0 ]] ; then
-
-    # Add tasks when exiting the code is equal 0.
-    true
-
-  else
-
-    # Add tasks when exiting the code is non equal 0.
-    echo -en "_TASK_EXIT=\"${_key_id}\"\\n" > "$_fd_tasks"
-    echo -en "ngx_version=\"${ngx_version}\"\\n" >> "$_fd_tasks"
-    echo -en "_ngx_distr=\"${_ngx_distr}\"\\n" >> "$_fd_tasks"
-    echo -en "_ngx_distr_str=\"${_ngx_distr_str}\"\\n" >> "$_fd_tasks"
-
-  fi
-
-  exit "$_STATUS"
-
-}
-
-function _get_trap_SIG() {
-
-  local _FUNCTION_ID="_get_trap_SIG"
-  local _STATE="${_STATUS:-}"
-
-  local _SIG_type="$1"
-
-  # Remember not to duplicate tasks in the _exit_() and _get_trap_SIG()
-  # functions. Tasks for the _exit_() function only work within it
-  # and refer to the exit mechanism. Tasks in the _get_trap_SIG() function
-  # can refer to specific signal or all signals.
-
-  if [ -z "$_STATE" ] ; then _STATE=254
-
-  # Performs specific actions for the EXIT signal.
-  elif [[ "$_SIG_type" == "EXIT" ]] ; then
-
-    # You can cover the code supplied from the _exit_() function
-    # (in this case) or set a new one.
-    _STATE="${_STATUS:-}"
-
-  # Performs specific actions fot the other signals.
-  # In this example, using the SIGS string, we mark several output signals
-  # (see the second example in the description of the function).
-  elif [[ "$_SIG_type" == "SIGS" ]] ; then
-
-    # You can cover the code supplied from the function
-    # or set a new one.
-    _STATE="${_STATUS:-}"
-
-  else
-
-    # In this block the kill command was originally used,
-    # however, it suspended the operation of dracnmap.
-    # The lack of this command terminates the process
-    # and does not cause the above problems.
-    _STATE="255"
-
-  fi
-
-  return "$_STATE"
-
-}
-
 function _f() {
 
   local _STATE="0"
@@ -369,7 +290,7 @@ function _f() {
     # printf '\e['${trgb_dark}'m%s\e[m\n' "$_cmd"
     printf "\n%s\n" "$_cmd"
 
-    _exit_ 1
+    exit 1
 
   else
 
@@ -452,12 +373,6 @@ function _inst_base_packages() {
             git \
             wget"
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-    _exit_ 1
-
   fi
 
   return "$_STATE"
@@ -469,37 +384,16 @@ function _inst_nginx_dist() {
   local _FUNCTION_ID="_inst_nginx_dist"
   local _STATE="0"
 
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
-
   if [[ "$ngx_distr" -eq 1 ]] ; then
 
     for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
-
-      if [[ -d "$i" ]] && \
-         [[ "$_TASK_EXIT" -eq 0 ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
 
       _f "1" "mkdir -p $i"
 
     done
 
     cd "${_ngx_base}" || \
-    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; _exit_ 1 )
+    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; exit 1 )
 
     _f "5" "wget -c --no-check-certificate https://nginx.org/download/nginx-${ngx_version}.tar.gz"
 
@@ -509,18 +403,12 @@ function _inst_nginx_dist() {
 
     for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
 
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
       _f "1" "mkdir -p $i"
 
     done
 
     cd "${_ngx_base}" || \
-    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; _exit_ 1 )
+    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; exit 1 )
 
     _f "5" "wget -c --no-check-certificate https://openresty.org/download/openresty-${ngx_version}.tar.gz"
 
@@ -530,18 +418,12 @@ function _inst_nginx_dist() {
 
     for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
 
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
       _f "1" "mkdir -p $i"
 
     done
 
     cd "${_ngx_base}" || \
-    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; _exit_ 1 )
+    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; exit 1 )
 
     _f "5" "git clone --depth 1 https://github.com/alibaba/tengine master"
 
@@ -549,7 +431,7 @@ function _inst_nginx_dist() {
 
     printf '\e['${trgb_err}'m%s\e[m\n' \
            "Unsupported NGINX distribution"
-    _exit_ 1
+    exit 1
 
   fi
 
@@ -563,28 +445,14 @@ function _inst_pcre() {
   local _STATE="0"
 
   cd "$_src" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; _exit_ 1 )
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "pcre-${_pcre_version}.tar.gz" "$PCRE_SRC" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   _f "5" "wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${_pcre_version}.tar.gz"
 
   _f "1" "tar xzvf pcre-${_pcre_version}.tar.gz"
 
   cd "$PCRE_SRC" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$PCRE_SRC" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$PCRE_SRC" ; exit 1 )
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -616,12 +484,6 @@ function _inst_pcre() {
     _f "1" "make -j${_vcpu}"
     _f "1" "make install"
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-    _exit_ 1
-
   fi
 
   return "$_STATE"
@@ -634,26 +496,12 @@ function _inst_zlib() {
   local _STATE="0"
 
   cd "$_src" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; _exit_ 1 )
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "$ZLIB_SRC" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   _f "5" "git clone --depth 1 https://github.com/cloudflare/zlib"
 
   cd "$ZLIB_SRC" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$ZLIB_SRC" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$ZLIB_SRC" ; exit 1 )
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -669,12 +517,6 @@ function _inst_zlib() {
     _f "1" "gmake -j${_vcpu}"
     _f "1" "gmake install"
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-    _exit_ 1
-
   fi
 
   return "$_STATE"
@@ -687,29 +529,14 @@ function _inst_openssl() {
   local _STATE="0"
 
   cd "$_src" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; _exit_ 1 )
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "openssl-${_openssl_version}.tar.gz" "$OPENSSL_SRC" \
-             "/etc/profile.d/openssl.sh" "/etc/ld.so.conf.d/openssl.conf" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   _f "5" "wget -c --no-check-certificate https://www.openssl.org/source/openssl-${_openssl_version}.tar.gz"
 
   _f "1" "tar xzvf openssl-${_openssl_version}.tar.gz"
 
   cd "$OPENSSL_SRC" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$OPENSSL_SRC" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$OPENSSL_SRC" ; exit 1 )
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -805,13 +632,9 @@ __EOF__
 
     fi
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-    _exit_ 1
-
   fi
+
+  echo
 
   return "$_STATE"
 
@@ -823,26 +646,12 @@ function _inst_luajit() {
   local _STATE="0"
 
   cd "$_src" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; _exit_ 1 )
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "$LUAJIT_SRC" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   _f "5" "git clone --depth 1 https://github.com/openresty/luajit2"
 
   cd "$LUAJIT_SRC" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$LUAJIT_SRC" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$LUAJIT_SRC" ; exit 1 )
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -884,11 +693,6 @@ function _inst_luajit() {
 
     _f "1" "gmake install"
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-
   fi
 
   return "$_STATE"
@@ -901,12 +705,12 @@ function _inst_sregex() {
   local _STATE="0"
 
   cd "$_src" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   _f "5" "git clone --depth 1 https://github.com/openresty/sregex"
 
   cd "${_src}/sregex" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "${_src}/sregex" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "${_src}/sregex" ; exit 1 )
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -917,11 +721,6 @@ function _inst_sregex() {
 
     _f "1" "gmake"
     _f "1" "gmake install"
-
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
 
   fi
 
@@ -935,7 +734,7 @@ function _inst_jemalloc() {
   local _STATE="0"
 
   cd "$_src" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   export JEMALLOC_SRC="${_src}/jemalloc"
 
@@ -956,7 +755,7 @@ function _inst_jemalloc() {
   _f "5" "git clone --depth 1 https://github.com/jemalloc/jemalloc"
 
   cd "$JEMALLOC_SRC" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$JEMALLOC_SRC" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$JEMALLOC_SRC" ; exit 1 )
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -972,11 +771,6 @@ function _inst_jemalloc() {
     _f "1" "gmake"
     _f "1" "gmake install"
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-
   fi
 
   return "$_STATE"
@@ -989,21 +783,7 @@ function _inst_3_modules() {
   local _STATE="0"
 
   cd "$_ngx_modules" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_modules" ; _exit_ 1 )
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "$_ngx_modules" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "${i}"/* >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_modules" ; exit 1 )
 
   for i in \
     https://github.com/simplresty/ngx_devel_kit \
@@ -1032,12 +812,12 @@ function _inst_3_modules() {
   _f "1" "tar xzvf delay-module.tar.gz -C delay-module --strip 1"
 
   cd "${_ngx_modules}/ngx_brotli" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "${_ngx_modules}/ngx_brotli" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "${_ngx_modules}/ngx_brotli" ; exit 1 )
 
   _f "1" "git submodule update --init"
 
   cd "$_ngx_modules" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_modules" ; _exit_ 1 )
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_modules" ; exit 1 )
 
   _f "5" "git clone --depth 1 https://github.com/alibaba/tengine"
 
@@ -1053,23 +833,7 @@ function _build_nginx() {
   local _STATE="0"
 
   cd "${_ngx_master}" || \
-  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_master" ; _exit_ 1 )
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "$_ngx_master" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "${i}"/* >/dev/null 2>&1
-
-      fi
-
-    done
-
-    _inst_nginx_dist
-
-  fi
+  ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_master" ; exit 1 )
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
@@ -1104,11 +868,6 @@ function _build_nginx() {
     _f "1" "gmake -j${_vcpu}"
     _f "1" "gmake install"
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-
   fi
 
   return "$_STATE"
@@ -1125,7 +884,7 @@ function _create_user() {
 
   id nginx >/dev/null 2>&1 ; _id_state="$?"
 
-  if [[ "$_id_state" -eq 1 ]] ; then
+  if [[ "$_id_state" -ne 0 ]] ; then
 
     if [[ "$_DIST_VERSION" == "debian" ]] ; then
 
@@ -1159,17 +918,7 @@ function _create_user() {
 
       _f "1" "pw user add -d /non-existent -n $NGINX_USER -g $NGINX_GROUP -s /usr/sbin/nologin -c \'nginx user\' -u $NGINX_UID -g $NGINX_GID -w no"
 
-    else
-
-      printf '\e['${trgb_err}'m%s\e[m\n' \
-             "Unsupported system/distribution"
-
     fi
-
-  else
-
-    printf '\e['${trgb_wrn}'m%s\e[m\n' \
-           "user '${NGINX_USER}' and group '${NGINX_GROUP}' exist"
 
   fi
 
@@ -1213,11 +962,6 @@ function _init_logrotate() {
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
     _logrotate_path="/usr/local/etc/logrotate.d"
-
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
 
   fi
 
@@ -1296,11 +1040,6 @@ __EOF__
 
     fi
 
-  else
-
-    printf '\e['${trgb_err}'m%s\e[m\n' \
-           "Unsupported system/distribution"
-
   fi
 
   return "$_STATE"
@@ -1326,6 +1065,7 @@ function _post_tasks() {
 
 }
 
+
 function _test_config() {
 
   local _FUNCTION_ID="_test_config"
@@ -1350,18 +1090,6 @@ function __main__() {
 
   clear
 
-  if [[ -e "$_fd_tasks" ]] ; then
-
-    source "$_fd_tasks" && rm -fr "$_fd_tasks"
-
-    _TASK_EXIT=$(expr "$_TASK_EXIT" - 1)
-
-  else
-
-    _TASK_EXIT=0
-
-  fi
-
   _t_rst="0"
   _c_rst="6"
 
@@ -1369,197 +1097,190 @@ function __main__() {
 
   _t_bar="2;39"
 
-  if [[ "$_TASK_EXIT" -eq 0 ]] ; then
+  # ----------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst"
+  printf "\\e[${_t_bar}m%s\\e[m" \
+         "┌─────────────────────────────────────────────────────────────────┐"
 
-    printf "\\e[${_t_bar}m%s\\e[m" \
-           "┌─────────────────────────────────────────────────────────────────┐"
+  # ----------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  printf "%s\\e[1;31m%s\\e[m \\e[2;32m%s\\e[m \\e[1;37m%s\\e[m" \
+         "          " \
+         "Φ"  \
+         "ngx_installer.sh" \
+         "(NGINX/OpenResty/Tengine)"
 
-    printf "%s\\e[1;31m%s\\e[m \\e[2;32m%s\\e[m \\e[1;37m%s\\e[m" \
-           "          " \
-           "Φ"  \
-           "ngx_installer.sh" \
-           "(NGINX/OpenResty/Tengine)"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst"; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst"; printf "\\e[${_t_bar}m%s\\e[m" "│"
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  printf "%s\\e[1;37m%s\\e[m \\e[2;37m%s\\e[m" \
+         "   " \
+         "Project:"  \
+         "https://github.com/trimstray/nginx-admins-handbook"
 
-    printf "%s\\e[1;37m%s\\e[m \\e[2;37m%s\\e[m" \
-           "   " \
-           "Project:"  \
-           "https://github.com/trimstray/nginx-admins-handbook"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  printf "%s\\e[0;36m%s\\e[m" \
+         "               " \
+         "Debian - Ubuntu - RHEL - CentOS"
 
-    printf "%s\\e[0;36m%s\\e[m" \
-           "           " \
-           "Debian · Ubuntu · RHEL · CentOS · FreeBSD"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
-    $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 1))
+  $_tput cup "$_t_rst" "$_c_rst" ;
 
-    _t_rst=$((_t_rst + 1))
-    $_tput cup "$_t_rst" "$_c_rst" ;
+  printf "\\e[${_t_bar}m%s\\e[m" \
+         "└─────────────────────────────────────────────────────────────────┘"
 
-    printf "\\e[${_t_bar}m%s\\e[m" \
-           "└─────────────────────────────────────────────────────────────────┘"
+  # ----------------------------------------------------------------------------
 
-    # ----------------------------------------------------------------------------
+  _t_rst=$((_t_rst + 2))
+  $_tput cup "$_t_rst" "$_c_rst"
 
-    _t_rst=$((_t_rst + 2))
-    $_tput cup "$_t_rst" "$_c_rst"
+  printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
 
-    printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
+  printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "1" "NGINX" "https://www.nginx.com/"
+  printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "2" "OpenResty" "https://openresty.org/"
+  printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "3" "The Tengine Web Server" "https://tengine.taobao.org/"
 
-    printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "1" "NGINX" "https://www.nginx.com/"
-    printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "2" "OpenResty" "https://openresty.org/"
-    printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "3" "The Tengine Web Server" "https://tengine.taobao.org/"
+  printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
+  read -r ngx_distr
 
-    printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
-    read -r ngx_distr
+  _ngx_distr=$(echo "$ngx_distr" | tr -d '[:alpha:]' | cut -c1)
 
-    _ngx_distr=$(echo "$ngx_distr" | tr -d '[:alpha:]' | cut -c1)
+  if [[ -z "$_ngx_distr" ]] ; then
 
-    if [[ -z "$_ngx_distr" ]] ; then
+    printf '\n\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
+    exit 1
+
+  else
+
+    if [[ "$_ngx_distr" -ne 1 ]] && \
+       [[ "$_ngx_distr" -ne 2 ]] && \
+       [[ "$_ngx_distr" -ne 3 ]] ; then
 
       printf '\n\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
-      _exit_ 1
-
-    else
-
-      if [[ "$_ngx_distr" -ne 1 ]] && \
-         [[ "$_ngx_distr" -ne 2 ]] && \
-         [[ "$_ngx_distr" -ne 3 ]] ; then
-
-        printf '\n\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
-        _exit_ 1
-
-      fi
-
-    fi
-
-    printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set version of source package"
-
-    if [[ "$LATEST_PKGS" -eq 0 ]] ; then
-
-      if [[ "$_ngx_distr" -eq 1 ]] ; then
-
-        printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.1"
-        printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
-        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.1, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
-        printf '   - %s\n' "press any key to set default"
-
-        _ngx_distr_str="NGINX"
-
-      elif [[ "$_ngx_distr" -eq 2 ]] ; then
-
-        printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
-        printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
-        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.2, 1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
-        printf '   - %s\n' "press any key to set default"
-
-        _ngx_distr_str="OpenResty"
-
-      elif [[ "$_ngx_distr" -eq 3 ]] ; then
-
-        printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
-        printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
-        printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.2, 2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
-        printf '   - %s\n' "press any key to set default"
-
-        _ngx_distr_str="Tengine"
-
-      fi
-
-      printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
-      read -r ngx_version
-
-    else
-
-      if [[ "$_ngx_distr" -eq 1 ]] ; then
-
-        ngx_version=$(curl -sL https://nginx.org/download/ | \
-                      grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
-                      sort -V | \
-                      tail -n 1 | \
-                      cut -d '-' -f2-)
-
-        _ngx_distr_str="NGINX"
-
-      elif [[ "$_ngx_distr" -eq 2 ]] ; then
-
-        ngx_version=$(curl -sL https://openresty.org/en/download.html | \
-                      grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+\.[0-9]+' | \
-                      sort -V | \
-                      tail -n 1 | \
-                      cut -d '-' -f2-)
-
-        _ngx_distr_str="OpenResty"
-
-      elif [[ "$_ngx_distr" -eq 3 ]] ; then
-
-        ngx_version=$(curl -sL https://tengine.taobao.org/download.html | \
-                      grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
-                      sort -V | \
-                      tail -n 1 | \
-                      cut -d '-' -f2-)
-
-        _ngx_distr_str="Tengine"
-
-      fi
-
-      printf '  Latest for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "$_ngx_distr_str" "$ngx_version"
+      exit 1
 
     fi
 
   fi
 
+  printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set version of source package"
+
+  if [[ "$LATEST_PKGS" -eq 0 ]] ; then
+
+    if [[ "$_ngx_distr" -eq 1 ]] ; then
+
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.0"
+      printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
+
+      _ngx_distr_str="NGINX"
+
+    elif [[ "$_ngx_distr" -eq 2 ]] ; then
+
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
+      printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
+
+      _ngx_distr_str="OpenResty"
+
+    elif [[ "$_ngx_distr" -eq 3 ]] ; then
+
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
+      printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
+
+      _ngx_distr_str="Tengine"
+
+    fi
+
+    printf '  \n\e['${trgb_light}'m%s\e[m ' ">>"
+    read -r ngx_version
+
+  else
+
+    if [[ "$_ngx_distr" -eq 1 ]] ; then
+
+      ngx_version=$(curl -sL https://nginx.org/download/ | \
+                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
+                    sort -V | \
+                    tail -n 1 | \
+                    cut -d '-' -f2-)
+
+      _ngx_distr_str="NGINX"
+
+    elif [[ "$_ngx_distr" -eq 2 ]] ; then
+
+      ngx_version=$(curl -sL https://openresty.org/en/download.html | \
+                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+\.[0-9]+' | \
+                    sort -V | \
+                    tail -n 1 | \
+                    cut -d '-' -f2-)
+
+      _ngx_distr_str="OpenResty"
+
+    elif [[ "$_ngx_distr" -eq 3 ]] ; then
+
+      ngx_version=$(curl -sL https://tengine.taobao.org/download.html | \
+                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
+                    sort -V | \
+                    tail -n 1 | \
+                    cut -d '-' -f2-)
+
+      _ngx_distr_str="Tengine"
+
+    fi
+
+    printf '  Latest for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "$_ngx_distr_str" "$ngx_version"
+
+  fi
+
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="1.16.1" ; fi
+    if [[ -z "$ngx_version" ]] ; then ngx_version="1.16.0" ; fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/nginx-${ngx_version}"
@@ -1610,11 +1331,6 @@ function __main__() {
         __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
 
       done
-
-    else
-
-      printf '\e['${trgb_err}'m%s\e[m\n' \
-             "Unsupported system/distribution"
 
     fi
 
@@ -1672,11 +1388,6 @@ function __main__() {
         __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
 
       done
-
-    else
-
-      printf '\e['${trgb_err}'m%s\e[m\n' \
-             "Unsupported system/distribution"
 
     fi
 
@@ -1903,14 +1614,6 @@ function __main__() {
 
   local _iter="1"
 
-  local _cln_init="0"
-
-  if [[ "$_TASK_EXIT" -ne 0 ]] ; then
-
-    _cln_init=1
-
-  fi
-
   for _i in "${_f_tasks[@]:${_TASK_EXIT}}" ; do
 
     _key_id=$(echo "$_i" | awk -v FS="(:|:)" '{print $1}')
@@ -1918,17 +1621,7 @@ function __main__() {
 
     printf '\n\e['${trgb_task}'m%s: %s\e[m\n' "TASK" "{ id:${_key_id}, name:${_key_task} }"
 
-    if [[ "$_cln_init" -eq 1 ]] ; then
-
-      $_key_task clean
-
-      _cln_init=0
-
-    else
-
-      $_key_task
-
-    fi
+    $_key_task
 
     _iter=$((_iter + 1))
 
