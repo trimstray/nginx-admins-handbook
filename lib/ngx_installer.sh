@@ -997,7 +997,7 @@ function _inst_3_modules() {
 
       if [[ -d "$i" ]] ; then
 
-        rm -fr "${i}/*" >/dev/null 2>&1
+        rm -fr "${i}"/* >/dev/null 2>&1
 
       fi
 
@@ -1052,6 +1052,8 @@ function _build_nginx() {
   local _FUNCTION_ID="_build_nginx"
   local _STATE="0"
 
+  _inst_nginx_dist
+
   cd "${_ngx_master}" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_master" ; _exit_ 1 )
 
@@ -1061,7 +1063,7 @@ function _build_nginx() {
 
       if [[ -d "$i" ]] ; then
 
-        rm -fr "${i}/*" >/dev/null 2>&1
+        rm -fr "${i}"/* >/dev/null 2>&1
 
       fi
 
@@ -1742,11 +1744,23 @@ function __main__() {
 
   fi
 
-  __ZLIB_DSYM="$ZLIB_DSYM"
-  __PCRE_DSYM="$PCRE_DSYM"
-  __LUAJIT_DSYM="$LUAJIT_DSYM"
-  __OPENSSL_DSYM="$OPENSSL_DSYM"
-  __NGINX_DSYM="$NGINX_DSYM"
+  if [[ ! -z "$COMPILER_OPTIONS" ]] ; then
+
+    __ZLIB_DSYM="$ZLIB_DSYM"
+    __PCRE_DSYM="$PCRE_DSYM"
+    __LUAJIT_DSYM="$LUAJIT_DSYM"
+    __OPENSSL_DSYM="$OPENSSL_DSYM"
+    __NGINX_DSYM="$NGINX_DSYM"
+
+  else
+
+    __ZLIB_DSYM=""
+    __PCRE_DSYM=""
+    __LUAJIT_DSYM=""
+    __OPENSSL_DSYM=""
+    __NGINX_DSYM=""
+
+  fi
 
   if [[ ! -z "$OPENSSL_OPTIONS" ]] ; then
 
@@ -1762,15 +1776,7 @@ function __main__() {
 
   else
 
-    if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
-
-      OPENSSL_OPTIONS="${__OPENSSL_DSYM}"
-
-    else
-
       OPENSSL_OPTIONS=""
-
-    fi
 
   fi
 
@@ -1798,15 +1804,13 @@ function __main__() {
 
   else
 
-    if [[ ! -z "$__NGINX_DSYM" ]] ; then
-
-      COMPILER_OPTIONS="${__NGINX_DSYM}"
-
-    else
-
       COMPILER_OPTIONS=""
 
-    fi
+      __ZLIB_DSYM=""
+      __PCRE_DSYM=""
+      __LUAJIT_DSYM=""
+      __OPENSSL_DSYM=""
+      __NGINX_DSYM=""
 
   fi
 
