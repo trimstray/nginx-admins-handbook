@@ -4911,6 +4911,8 @@ alias ng.restart='ng.test && kill -QUIT $(cat /var/run/nginx.pid) && /usr/sbin/n
 #                        ... kill -QUIT $(ps auxw | grep [n]ginx | grep master | awk '{print $2}') ...
 ```
 
+For more examples please see [Commands](NGINX_BASICS.md#commands) section.
+
 #### Configuration snippets
 
 ##### Nginx server header removal

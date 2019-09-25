@@ -119,6 +119,8 @@ Some useful snippets for management of the NGINX daemon:
   service nginx start
   systemctl start nginx
 
+  /usr/local/etc/rc.d/nginx start
+
   # You can also start NGINX from start-stop-daemon script:
   /sbin/start-stop-daemon --quiet --start --exec /usr/sbin/nginx --background --retry QUIT/5 --pidfile /run/nginx.pid
   ```
@@ -131,6 +133,8 @@ Some useful snippets for management of the NGINX daemon:
 
   service nginx stop
   systemctl stop nginx
+
+  /usr/local/etc/rc.d/nginx stop
 
   # You can also stop NGINX from start-stop-daemon script:
   /sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
@@ -146,6 +150,15 @@ Some useful snippets for management of the NGINX daemon:
 
   kill -HUP $(cat /var/run/nginx.pid)
   kill -HUP $(pgrep -f "nginx: master")
+  ```
+
+- restarting daemon:
+
+  ```bash
+  service nginx restart
+  systemctl restart nginx
+
+  /usr/local/etc/rc.d/nginx restart
   ```
 
 #### Configuration syntax
