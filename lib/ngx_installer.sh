@@ -1052,8 +1052,6 @@ function _build_nginx() {
   local _FUNCTION_ID="_build_nginx"
   local _STATE="0"
 
-  _inst_nginx_dist
-
   cd "${_ngx_master}" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_master" ; _exit_ 1 )
 
@@ -1068,6 +1066,8 @@ function _build_nginx() {
       fi
 
     done
+
+    _inst_nginx_dist
 
   fi
 
