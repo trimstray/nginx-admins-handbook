@@ -183,6 +183,7 @@
     * [Nginx package](doc/HELPERS.md#nginx-package)
     * [Dependencies](doc/HELPERS.md#dependencies)
     * [3rd party modules](doc/HELPERS.md#3rd-party-modules)
+    * [Configure options](doc/HELPERS.md#cconfigure-options)
     * [Compiler and linker](doc/HELPERS.md#compiler-and-linker)
       * [Debugging Symbols](doc/HELPERS.md#debugging-symbols)
     * [SystemTap](doc/HELPERS.md#systemtap)

@@ -10,6 +10,7 @@
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [3rd party modules](#3rd-party-modules)
+    * [Configure options](#configure-options)
     * [Compiler and linker](#compiler-and-linker)
       * [Debugging Symbols](#debugging-symbols)
     * [SystemTap](#systemtap)
@@ -464,6 +465,16 @@ A short description of the modules that I used in this step-by-step tutorial:
 
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
+
+##### Configure options
+
+Out of the box you probably do not need to provide any flags yourself, the configure script should detect automatically some reasonable defaults.
+
+However, in order to optimize for speed and/or security, you should probably provide a few compiler flags. Red Hat published an article about the flag collections they consider good - see [Compiler and linker](#compiler-and-linker) chapter for more information.
+
+Another reasonable way to do it would be to copy the options used by your distribution provided packages. The maintainer probably knows what he was doing, and you at least know it works for your use case.
+
+There are some of the NGINX configuration options, for more information please see [Building nginx from Sources](http://nginx.org/en/docs/configure.html).
 
 ##### Compiler and linker
 
