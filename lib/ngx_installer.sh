@@ -1463,7 +1463,7 @@ function __main__() {
 
     if [[ -z "$_ngx_distr" ]] ; then
 
-      printf '\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
+      printf '\n\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
       _exit_ 1
 
     else
@@ -1472,7 +1472,7 @@ function __main__() {
          [[ "$_ngx_distr" -ne 2 ]] && \
          [[ "$_ngx_distr" -ne 3 ]] ; then
 
-        printf '\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
+        printf '\n\e['${trgb_err}'m%s\e[m\n\n' "incorrect value => [1-3]"
         _exit_ 1
 
       fi
