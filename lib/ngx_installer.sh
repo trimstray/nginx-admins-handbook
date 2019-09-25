@@ -1748,35 +1748,71 @@ function __main__() {
   __OPENSSL_DSYM="$OPENSSL_DSYM"
   __NGINX_DSYM="$NGINX_DSYM"
 
-  if [[ "${#__GCC_SSL[@]}" -eq 0 ]] ; then
+  if [[ ! -z "$OPENSSL_OPTIONS" ]] ; then
 
     if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
 
       OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
 
-    fi
+    else
 
-    # shellcheck disable=SC2178
-    export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
+      OPENSSL_OPTIONS="${OPENSSL_OPTIONS}"
+
+    fi
 
   else
 
     if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
 
-      OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
+      OPENSSL_OPTIONS="${__OPENSSL_DSYM}"
+
+    else
+
+      OPENSSL_OPTIONS=""
 
     fi
+
+  fi
+
+  # shellcheck disable=SC2178
+  export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS}\'")
+
+  if [[ "${#__GCC_SSL[@]}" -ne 0 ]] ; then
 
     # shellcheck disable=SC2178
     export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
 
   fi
 
-  if [[ ! -z "$__NGINX_DSYM" ]] ; then
+  if [[ ! -z "$COMPILER_OPTIONS" ]] ; then
 
-    COMPILER_OPTIONS="${COMPILER_OPTIONS} ${__NGINX_DSYM}"
+    if [[ ! -z "$__NGINX_DSYM" ]] ; then
 
-  fi
+      COMPILER_OPTIONS="${COMPILER_OPTIONS} ${__NGINX_DSYM}"
+
+    else
+
+      COMPILER_OPTIONS
+    fi
+
+
+  if [[ ! -z "$OPENSSL_OPTIONS" ]] ; then
+
+      if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
+
+        OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
+
+      else
+
+        OPENSSL_OPTIONS="${__OPENSSL_DSYM}"
+
+      fi
+
+    else
+
+      OPENSSL_OPTIONS=""
+
+    fi
 
   # shellcheck disable=SC2178
   export __CC_PARAMS=("\'${COMPILER_OPTIONS}\'")
