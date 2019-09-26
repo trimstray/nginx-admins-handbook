@@ -979,11 +979,10 @@ make install
 ldconfig
 ```
 
-Check NGINX version:
+Show NGINX version and parameters:
 
 ```bash
-nginx -v
-nginx version: nginx/1.17.0
+nginx -V
 ```
 
 And list all files in `/etc/nginx`:
@@ -1569,11 +1568,10 @@ make install
 ldconfig
 ```
 
-Check OpenResty version:
+Show OpenResty version and parameters:
 
 ```bash
-nginx -v
-nginx version: openresty/1.15.8.1
+nginx -V
 ```
 
 And list all files in `/etc/nginx`:
@@ -2362,12 +2360,10 @@ make install
 ldconfig
 ```
 
-Check Tengine version:
+Show Tengine version and parameters:
 
 ```bash
-nginx -v
-Tengine version: Tengine/2.3.0
-nginx version: nginx/1.15.9
+nginx -V
 ```
 
 And list all files in `/etc/nginx`:
@@ -2845,11 +2841,10 @@ gmake install
 ldconfig
 ```
 
-Check NGINX version:
+Show NGINX version and parameters:
 
 ```bash
-nginx -v
-nginx version: nginx/1.17.0
+nginx -V
 ```
 
 And list all files in `/etc/nginx`:

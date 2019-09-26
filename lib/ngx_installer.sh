@@ -1065,7 +1065,6 @@ function _post_tasks() {
 
 }
 
-
 function _test_config() {
 
   local _FUNCTION_ID="_test_config"
@@ -1073,7 +1072,7 @@ function _test_config() {
 
   echo
 
-  _f "1" "nginx -v"
+  _f "1" "nginx -V"
 
   echo
 
