@@ -657,7 +657,7 @@ function _inst_luajit() {
 
     if [[ ! -z "$__LUAJIT_DSYM" ]] ; then
 
-      _f "1" "CFLAGS='-g' make"
+      _f "1" "CFLAGS='$__LUAJIT_DSYM' make"
 
     else
 
@@ -683,7 +683,7 @@ function _inst_luajit() {
 
     if [[ ! -z "$__LUAJIT_DSYM" ]] ; then
 
-      _f "1" "CFLAGS='-g' gmake"
+      _f "1" "CFLAGS='$__LUAJIT_DSYM' gmake"
 
     else
 
@@ -1153,8 +1153,8 @@ function __main__() {
   $_tput cup "$_t_rst" "$_c_rst" ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
   printf "%s\\e[0;36m%s\\e[m" \
-         "               " \
-         "Debian - Ubuntu - RHEL - CentOS"
+         "           " \
+         "Debian · Ubuntu · RHEL · CentOS · FreeBSD"
 
   $_tput cup "$_t_rst" $((_t_sst + _c_rst)) ; printf "\\e[${_t_bar}m%s\\e[m" "│"
 
@@ -1212,7 +1212,7 @@ function __main__() {
 
     if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "1.16.1"
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "$NGINX_DEF_VER"
       printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
       printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.1, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
       printf '   - %s\n' "press any key to set default"
@@ -1221,7 +1221,7 @@ function __main__() {
 
     elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "1.15.8.1"
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "OpenResty" "$OPENRESTY_DEF_VER"
       printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://openresty.org/download"
       printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.15.8.2, 1.15.8.1, 1.13.6.2, 1.13.6.1, 1.11.2.4"
       printf '   - %s\n' "press any key to set default"
@@ -1230,7 +1230,7 @@ function __main__() {
 
     elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "2.3.0"
+      printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "Tengine" "$TENGINE_DEF_VER"
       printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://tengine.taobao.org/download.html"
       printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "2.3.2, 2.3.0, 2.2.3, 2.2.0, 2.1.2, 2.0.1"
       printf '   - %s\n' "press any key to set default"
@@ -1282,7 +1282,7 @@ function __main__() {
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="1.16.0" ; fi
+    if [[ -z "$ngx_version" ]] ; then ngx_version="$NGINX_DEF_VER" ; fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/nginx-${ngx_version}"
@@ -1338,7 +1338,7 @@ function __main__() {
 
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="1.15.8.1" ; fi
+    if [[ -z "$ngx_version" ]] ; then ngx_version="$OPENRESTY_DEF_VER" ; fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/openresty-${ngx_version}"
@@ -1395,7 +1395,7 @@ function __main__() {
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="2.3.0" ; fi
+    if [[ -z "$ngx_version" ]] ; then ngx_version="$TENGINE_DEF_VER" ; fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/tengine-${ngx_version}"
