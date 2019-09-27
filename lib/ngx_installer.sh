@@ -63,6 +63,15 @@ trgb_err="1;37;41"
 trgb_ttime="1;1;39"
 
 
+# We check if we are a root user.
+if [[ "$EUID" -ne 0 ]] ; then
+
+  printf '\e['${trgb_err}'m%s\e[m\n' \
+         "EUID is not equal 0 (no root user)"
+  exit 1
+
+fi
+
 # Tasks for specific system version.
 if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
@@ -106,16 +115,7 @@ elif [[ "$OSTYPE" == *"bsd"* ]] ; then
 else
 
   printf '\e['${trgb_err}'m%s\e[m\n' \
-         "Unsupported system/distribution"
-  exit 1
-
-fi
-
-# We check if we are a root user.
-if [[ "$EUID" -ne 0 ]] ; then
-
-  printf '\e['${trgb_err}'m%s\e[m\n' \
-         "EUID is not equal 0 (no root user)"
+         "Unsupported system"
   exit 1
 
 fi
@@ -329,7 +329,8 @@ function _inst_base_packages() {
             autoconf \
             jq \
             git \
-            wget"
+            wget \
+            logrotate"
 
   elif [[ "$_DIST_VERSION" == "rhel" ]] ; then
 
@@ -353,7 +354,8 @@ function _inst_base_packages() {
             autoconf \
             jq \
             git \
-            wget"
+            wget \
+            logrotate"
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
@@ -371,7 +373,49 @@ function _inst_base_packages() {
             autoconf \
             jq \
             git \
-            wget"
+            wget \
+            logrotate"
+
+  fi
+
+  return "$_STATE"
+
+}
+
+function _init_dirs() {
+
+  local _FUNCTION_ID="_inst_nginx_dist"
+  local _STATE="0"
+
+  if [[ "$ngx_distr" -eq 1 ]] ; then
+
+    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
+
+      _f "1" "mkdir -p $i"
+
+    done
+
+  elif [[ "$ngx_distr" -eq 2 ]] ; then
+
+    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
+
+      _f "1" "mkdir -p $i"
+
+    done
+
+  elif [[ "$ngx_distr" -eq 3 ]] ; then
+
+    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
+
+      _f "1" "mkdir -p $i"
+
+    done
+
+  else
+
+    printf '\e['${trgb_err}'m%s\e[m\n' \
+           "Unsupported NGINX distribution"
+    exit 1
 
   fi
 
@@ -386,12 +430,6 @@ function _inst_nginx_dist() {
 
   if [[ "$ngx_distr" -eq 1 ]] ; then
 
-    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
-
-      _f "1" "mkdir -p $i"
-
-    done
-
     cd "${_ngx_base}" || \
     ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; exit 1 )
 
@@ -401,12 +439,6 @@ function _inst_nginx_dist() {
 
   elif [[ "$ngx_distr" -eq 2 ]] ; then
 
-    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
-
-      _f "1" "mkdir -p $i"
-
-    done
-
     cd "${_ngx_base}" || \
     ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; exit 1 )
 
@@ -415,12 +447,6 @@ function _inst_nginx_dist() {
     _f "1" "tar zxvf openresty-${ngx_version}.tar.gz -C ${_ngx_master} --strip 1"
 
   elif [[ "$ngx_distr" -eq 3 ]] ; then
-
-    for i in "$_ngx_base" "$_ngx_master" "$_ngx_modules" ; do
-
-      _f "1" "mkdir -p $i"
-
-    done
 
     cd "${_ngx_base}" || \
     ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_ngx_base" ; exit 1 )
@@ -538,11 +564,11 @@ function _inst_openssl() {
   cd "$OPENSSL_SRC" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$OPENSSL_SRC" ; exit 1 )
 
+  export __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
+
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
-    __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
-
-    _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
+    _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[*]}"
 
     _f "1" "make -j${_vcpu}"
     _f "1" "make install"
@@ -561,32 +587,6 @@ __EOF__
 
     echo
 
-    if [[ -e "/usr/bin/openssl" ]] ; then
-
-      _openssl_version=$(openssl version | awk '{print $2}')
-      _openssl_date=$(date '+%Y%m%d%H%M%S')
-      _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
-
-      _f "1" "mv /usr/bin/openssl /usr/bin/${_openssl_str}"
-
-    fi
-
-    echo
-
-    if [[ -L "/usr/bin/openssl" ]] && \
-       [[ -e "/usr/bin/openssl" ]] ; then
-
-      _f "1" "unlink /usr/bin/openssl"
-      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
-
-    else
-
-      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
-
-    fi
-
-    echo
-
     cat > /etc/ld.so.conf.d/openssl.conf << __EOF__
 ${OPENSSL_DIR}/lib
 __EOF__
@@ -595,9 +595,7 @@ __EOF__
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
-    __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
-
-    _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[@]}"
+    _f "1" "./config --prefix=$OPENSSL_DIR --openssldir=$OPENSSL_DIR ${__OPENSSL_PARAMS_T[*]}"
 
     if ! grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf ; then
 
@@ -608,33 +606,23 @@ __EOF__
     _f "1" "make -j${_vcpu}"
     _f "1" "make install"
 
-    if [[ -e "/usr/bin/openssl" ]] ; then
+  fi
 
-      _openssl_version=$(openssl version | awk '{print $2}')
-      _openssl_date=$(date '+%Y%m%d%H%M%S')
-      _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+  if [[ -e "/usr/bin/openssl" ]] ; then
 
-      _f "1" "mv /usr/bin/openssl /usr/bin/${_openssl_str}"
+    _openssl_version=$(openssl version | awk '{print $2}')
+    _openssl_date=$(date '+%Y%m%d%H%M%S')
+    _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
 
-    fi
+    _f "1" "mv /usr/bin/openssl /usr/bin/${_openssl_str}"
 
     echo
 
-    if [[ -L "/usr/bin/openssl" ]] && \
-       [[ -e "/usr/bin/openssl" ]] ; then
+    _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
 
-      _f "1" "unlink /usr/bin/openssl"
-      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
-
-    else
-
-      _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
-
-    fi
+    echo
 
   fi
-
-  echo
 
   return "$_STATE"
 
@@ -657,7 +645,7 @@ function _inst_luajit() {
 
     if [[ ! -z "$__LUAJIT_DSYM" ]] ; then
 
-      _f "1" "CFLAGS='$__LUAJIT_DSYM' make"
+      _f "1" "CFLAGS='-g' make"
 
     else
 
@@ -667,17 +655,7 @@ function _inst_luajit() {
 
     _f "1" "make install"
 
-    if [[ -L "${LUAJIT_LIB}/liblua.so" ]] && \
-       [[ -e "${LUAJIT_LIB}/liblua.so" ]] ; then
-
-      _f "1" "unlink ${LUAJIT_LIB}/liblua.so"
-      _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
-
-    else
-
-      _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
-
-    fi
+    _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
@@ -737,20 +715,6 @@ function _inst_jemalloc() {
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
   export JEMALLOC_SRC="${_src}/jemalloc"
-
-  if [[ "$1" == "clean" ]] ; then
-
-    for i in "$JEMALLOC_SRC" ; do
-
-      if [[ -d "$i" ]] ; then
-
-        rm -fr "$i" >/dev/null 2>&1
-
-      fi
-
-    done
-
-  fi
 
   _f "5" "git clone --depth 1 https://github.com/jemalloc/jemalloc"
 
@@ -839,6 +803,7 @@ function _build_nginx() {
 
     _f "1" "./configure \
             ${__BUILD_PARAMS[@]} \
+            --with-openssl-opt=${__OPENSSL_PARAMS[@]} \
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
@@ -846,6 +811,7 @@ function _build_nginx() {
 
     _f "1" "./configure \
             ${__BUILD_PARAMS[@]} \
+            --with-openssl-opt=${__OPENSSL_PARAMS[@]} \
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
@@ -853,6 +819,7 @@ function _build_nginx() {
 
     _f "1" "./configure \
             ${__BUILD_PARAMS[@]} \
+            --with-openssl-opt=${__OPENSSL_PARAMS[@]} \
             --with-cc-opt=${__CC_PARAMS[@]} \
             --with-ld-opt=${__LD_PARAMS[@]}"
 
@@ -919,6 +886,10 @@ function _create_user() {
       _f "1" "pw user add -d /non-existent -n $NGINX_USER -g $NGINX_GROUP -s /usr/sbin/nologin -c \'nginx user\' -u $NGINX_UID -g $NGINX_GID -w no"
 
     fi
+
+  else
+
+    _f "1" "false"
 
   fi
 
@@ -1214,7 +1185,7 @@ function __main__() {
 
       printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "$NGINX_DEF_VER"
       printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
-      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.1, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
       printf '   - %s\n' "press any key to set default"
 
       _ngx_distr_str="NGINX"
@@ -1280,7 +1251,7 @@ function __main__() {
 
   fi
 
-  if [[ "$_ngx_distr" -eq 1 ]] ; then
+    if [[ "$_ngx_distr" -eq 1 ]] ; then
 
     if [[ -z "$ngx_version" ]] ; then ngx_version="$NGINX_DEF_VER" ; fi
 
@@ -1448,32 +1419,15 @@ function __main__() {
 
       done
 
-    else
-
-      printf '\e['${trgb_err}'m%s\e[m\n' \
-             "Unsupported system/distribution"
-
     fi
 
   fi
 
-  if [[ ! -z "$COMPILER_OPTIONS" ]] ; then
-
-    __ZLIB_DSYM="$ZLIB_DSYM"
-    __PCRE_DSYM="$PCRE_DSYM"
-    __LUAJIT_DSYM="$LUAJIT_DSYM"
-    __OPENSSL_DSYM="$OPENSSL_DSYM"
-    __NGINX_DSYM="$NGINX_DSYM"
-
-  else
-
-    __ZLIB_DSYM=""
-    __PCRE_DSYM=""
-    __LUAJIT_DSYM=""
-    __OPENSSL_DSYM=""
-    __NGINX_DSYM=""
-
-  fi
+  __ZLIB_DSYM="$ZLIB_DSYM"
+  __PCRE_DSYM="$PCRE_DSYM"
+  __LUAJIT_DSYM="$LUAJIT_DSYM"
+  __OPENSSL_DSYM="$OPENSSL_DSYM"
+  __NGINX_DSYM="$NGINX_DSYM"
 
   if [[ ! -z "$OPENSSL_OPTIONS" ]] ; then
 
@@ -1489,7 +1443,16 @@ function __main__() {
 
   else
 
+    if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
+
+      # OPENSSL_OPTIONS="${__OPENSSL_DSYM}"
       OPENSSL_OPTIONS=""
+
+    else
+
+      OPENSSL_OPTIONS=""
+
+    fi
 
   fi
 
@@ -1499,7 +1462,7 @@ function __main__() {
   if [[ "${#__GCC_SSL[@]}" -ne 0 ]] ; then
 
     # shellcheck disable=SC2178
-    export __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
+    __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
 
   fi
 
@@ -1517,13 +1480,15 @@ function __main__() {
 
   else
 
+    if [[ ! -z "$__NGINX_DSYM" ]] ; then
+
+      COMPILER_OPTIONS="${__NGINX_DSYM}"
+
+    else
+
       COMPILER_OPTIONS=""
 
-      __ZLIB_DSYM=""
-      __PCRE_DSYM=""
-      __LUAJIT_DSYM=""
-      __OPENSSL_DSYM=""
-      __NGINX_DSYM=""
+    fi
 
   fi
 
@@ -1531,6 +1496,8 @@ function __main__() {
   export __CC_PARAMS=("\'${COMPILER_OPTIONS}\'")
   # shellcheck disable=SC2178
   export __LD_PARAMS=("\'${LINKER_OPTIONS}\'")
+
+  printf "%s" ""
 
   printf '\n             \e['${trgb_bold}'m%s\e[m\n' "SYSTEM"
   printf '            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
@@ -1595,23 +1562,24 @@ function __main__() {
 
   _f_tasks=(\
     "1:_inst_base_packages" \
-    "2:_inst_nginx_dist" \
-    "3:_inst_pcre" \
-    "4:_inst_zlib" \
-    "5:_inst_openssl" \
-    "6:_inst_luajit" \
-    "7:_inst_sregex" \
-    "8:_inst_jemalloc" \
-    "9:ldconfig" \
-    "10:_inst_3_modules" \
-    "11:_build_nginx" \
-    "12:ldconfig" \
-    "13:_create_user" \
-    "14:_gen_modules" \
-    "15:_init_logrotate" \
-    "16:_init_startup" \
-    "17:_post_tasks" \
-    "18:_test_config" \
+    "2:_init_dirs" \
+    "3:_inst_nginx_dist" \
+    "4:_inst_pcre" \
+    "5:_inst_zlib" \
+    "6:_inst_openssl" \
+    "7:_inst_luajit" \
+    "8:_inst_sregex" \
+    "9:_inst_jemalloc" \
+    "10:ldconfig" \
+    "11:_inst_3_modules" \
+    "12:_build_nginx" \
+    "13:ldconfig" \
+    "14:_create_user" \
+    "15:_gen_modules" \
+    "16:_init_logrotate" \
+    "17:_init_startup" \
+    "18:_post_tasks" \
+    "19:_test_config" \
   )
 
   local _iter="1"
