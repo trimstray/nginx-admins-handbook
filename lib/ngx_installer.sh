@@ -671,6 +671,8 @@ function _inst_luajit() {
 
     _f "1" "gmake install"
 
+    _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
+
   fi
 
   return "$_STATE"
@@ -1589,7 +1591,7 @@ function __main__() {
     _key_id=$(echo "$_i" | awk -v FS="(:|:)" '{print $1}')
     _key_task=$(echo "$_i" | awk -v FS="(:|:)" '{print $2}')
 
-    printf '\n\e['${trgb_task}'m%s: %s\e[m\n' "TASK" "{ id:${_key_id}, name:${_key_task} }"
+    printf '\n\e['${trgb_task}'m%s %s\e[m\n' "TASK" "{ id:${_key_id}, function:${_key_task} }"
 
     $_key_task
 
