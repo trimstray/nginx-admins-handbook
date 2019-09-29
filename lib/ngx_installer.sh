@@ -1251,7 +1251,7 @@ function __main__() {
 
   fi
 
-    if [[ "$_ngx_distr" -eq 1 ]] ; then
+  if [[ "$_ngx_distr" -eq 1 ]] ; then
 
     if [[ -z "$ngx_version" ]] ; then ngx_version="$NGINX_DEF_VER" ; fi
 
@@ -1482,7 +1482,7 @@ function __main__() {
 
     if [[ ! -z "$__NGINX_DSYM" ]] ; then
 
-      COMPILER_OPTIONS="${__NGINX_DSYM}"
+      COMPILER_OPTIONS=""
 
     else
 
