@@ -524,7 +524,7 @@ function _inst_zlib() {
   cd "$_src" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
-  _f "5" "git clone --depth 1 https://github.com/cloudflare/zlib"
+  _f "5" "git clone --depth 1 https://github.com/${ZLIB_LIBRARY}/zlib"
 
   cd "$ZLIB_SRC" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$ZLIB_SRC" ; exit 1 )
