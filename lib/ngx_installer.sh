@@ -838,15 +838,15 @@ function _inst_luajit() {
 
     if [[ -n "$__LUAJIT_DSYM" ]] ; then
 
-      _f "1" "CFLAGS='$__LUAJIT_DSYM' make"
+      _f "1" "CFLAGS='$__LUAJIT_DSYM' gmake"
 
     else
 
-      _f "1" "make"
+      _f "1" "gmake"
 
     fi
 
-    _f "1" "make install"
+    _f "1" "gmake install"
 
     _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
