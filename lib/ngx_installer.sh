@@ -574,7 +574,7 @@ function _inst_zlib() {
 
     _zlib_str="Cloudflare fork of Zlib"
 
-  elif [[ "$ZLIB_LIBRARY" ]] == "madler" ; then
+  elif [[ "$ZLIB_LIBRARY" == "madler" ]] ; then
 
     _zlib_str="Original Zlib version (madler)"
 
