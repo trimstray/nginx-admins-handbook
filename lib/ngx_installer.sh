@@ -125,6 +125,7 @@ fi
 readonly _rel="${_init_directory}"
 readonly _src="/usr/local/src"
 readonly _cfg="${_rel}/ngx_installer.conf"
+readonly _var="${_rel}/ngx_installer.vars"
 
 export _pcre_version=""
 export _openssl_version=""
@@ -165,7 +166,7 @@ _f_tasks=(\
 )
 _f_tasks_tmp=()
 
-if [[ "$PCRE_INST" != "yes" ]] ;
+if [[ "$PCRE_INST" != "yes" ]] ; then
 
   PCRE_LIBRARY=""
   PCRE_DSYM=""
@@ -180,7 +181,7 @@ if [[ "$PCRE_INST" != "yes" ]] ;
 
 fi
 
-if [[ "$ZLIB_INST" != "yes" ]] ;
+if [[ "$ZLIB_INST" != "yes" ]] ; then
 
   ZLIB_LIBRARY=""
   ZLIB_DSYM=""
@@ -195,7 +196,7 @@ if [[ "$ZLIB_INST" != "yes" ]] ;
 
 fi
 
-if [[ "$OPENSSL_INST" != "yes" ]] ;
+if [[ "$OPENSSL_INST" != "yes" ]] ; then
 
   OPENSSL_LIBRARY=""
   OPENSSL_DSYM=""
@@ -211,7 +212,7 @@ if [[ "$OPENSSL_INST" != "yes" ]] ;
 
 fi
 
-if [[ "$LUAJIT_INST" != "yes" ]] ;
+if [[ "$LUAJIT_INST" != "yes" ]] ; then
 
   LUAJIT_DSYM=""
 
@@ -225,7 +226,7 @@ if [[ "$LUAJIT_INST" != "yes" ]] ;
 
 fi
 
-if [[ "$SREGEX_INST" != "yes" ]] ;
+if [[ "$SREGEX_INST" != "yes" ]] ; then
 
   for _pkg in "_inst_sregex" ; do
 
@@ -237,7 +238,7 @@ if [[ "$SREGEX_INST" != "yes" ]] ;
 
 fi
 
-if [[ "$JEMALLOC_INST" != "yes" ]] ;
+if [[ "$JEMALLOC_INST" != "yes" ]] ; then
 
   for _pkg in "_inst_jemalloc" ; do
 
@@ -336,26 +337,18 @@ else
 
 fi
 
-export ngx_distr=""
-export ngx_version=""
+# shellcheck disable=SC1090
+if [[ -e "${_var}" ]] ; then
 
-export PCRE_SRC="${_src}/pcre-${_pcre_version}"
-export PCRE_LIB="/usr/local/lib"
-export PCRE_INC="/usr/local/include"
+  source "${_var}"
 
-export ZLIB_SRC="${_src}/zlib"
-export ZLIB_LIB="/usr/local/lib"
-export ZLIB_INC="/usr/local/include"
+else
 
-export OPENSSL_SRC="${_src}/openssl-${_openssl_version}"
-export OPENSSL_DIR="/usr/local/openssl-${_openssl_version}"
-export OPENSSL_LIB="${OPENSSL_DIR}/lib"
-export OPENSSL_INC="${OPENSSL_DIR}/include"
+  printf '\e['${trgb_err}'m%s %s\e[m\n' \
+         "Not found file with variables:" "$_var"
+  exit 1
 
-export LUAJIT_SRC="${_src}/luajit2"
-export LUAJIT_LIB="/usr/local/lib"
-export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
+fi
 
 # Global functions.
 function _f() {
@@ -1734,14 +1727,6 @@ function __main__() {
 
   printf "%s" ""
 
-  printf '\n             \e['${trgb_bold}'m%s\e[m\n' "SUMMARY"
-  printf '        pcre enable : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INST"
-  printf '        zlib enable : \e['${trgb_dark}'m%s\e[m\n' "$ZLIB_INST"
-  printf '     openssl enable : \e['${trgb_dark}'m%s\e[m\n' "$OPENSSL_INST"
-  printf '      luajit enable : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_INST"
-  printf '      sregex enable : \e['${trgb_dark}'m%s\e[m\n' "$SREGEX_INST"
-  printf '    jemalloc enable : \e['${trgb_dark}'m%s\e[m\n' "$JEMALLOC_INST"
-
   printf '\n             \e['${trgb_bold}'m%s\e[m\n' "SYSTEM"
   printf '            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
   printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "${_DIST_VERSION} like"
@@ -1763,6 +1748,12 @@ function __main__() {
   printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "$_luajit_str"
 
   printf '\n          \e['${trgb_bold}'m%s\e[m\n' "LIBRARIES"
+  printf '        pcre enable : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INST"
+  printf '        zlib enable : \e['${trgb_dark}'m%s\e[m\n' "$ZLIB_INST"
+  printf '     openssl enable : \e['${trgb_dark}'m%s\e[m\n' "$OPENSSL_INST"
+  printf '      luajit enable : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_INST"
+  printf '      sregex enable : \e['${trgb_dark}'m%s\e[m\n' "$SREGEX_INST"
+  printf '    jemalloc enable : \e['${trgb_dark}'m%s\e[m\n' "$JEMALLOC_INST"
   printf '           PCRE_SRC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_SRC"
   printf '           PCRE_LIB : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_LIB"
   printf '           PCRE_INC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INC"
@@ -1788,6 +1779,8 @@ function __main__() {
   printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
   printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
   printf '     __BUILD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__BUILD_PARAMS[@]}"
+
+  printf '\e['${trgb_red}'m%s\e[m\n\n' "You should set the correct variables for disabled packages."
 
   printf '\e['${trgb_light}'m%s\e[m ' "(press any key to init) >>"
   read -r
