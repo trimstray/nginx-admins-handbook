@@ -1805,8 +1805,9 @@ function __main__() {
 
     # _key_id=$(echo "$_i" | awk -v FS="(:|:)" '{print $1}')
     # _key_task=$(echo "$_i" | awk -v FS="(:|:)" '{print $2}')
+    _key_task="$_i"
 
-    printf '\n\e['${trgb_task}'m%s %s\e[m\n' "TASK" "{ id:${_iter}, function:${_i} }"
+    printf '\n\e['${trgb_task}'m%s %s\e[m\n' "TASK" "{ id:${_iter}, function:${_key_task} }"
 
     $_key_task
 
