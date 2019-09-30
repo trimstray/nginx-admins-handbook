@@ -2,7 +2,7 @@
 
 # shellcheck shell=bash
 
-# shellcheck -s bash -e 1072,1094,1107,2145 -x ngx_installer.conf ngx_installer.sh
+# Check syntax: shellcheck -s bash -e 1072,1094,1107,2145 -x ngx_installer.conf ngx_installer.sh
 
 ### BEG SCRIPT INFO
 #
@@ -75,8 +75,8 @@ fi
 # Tasks for specific system version.
 if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
-  which yum > /dev/null 2>&1      && _DIST_VERSION="rhel"
-  which apt-get > /dev/null 2>&1  && _DIST_VERSION="debian"
+  command -v yum > /dev/null 2>&1      && _DIST_VERSION="rhel"
+  command -v apt-get > /dev/null 2>&1  && _DIST_VERSION="debian"
 
   # Store the name of the script and directory call.
   readonly _init_name="$(basename "$0")"
@@ -94,7 +94,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
 elif [[ "$OSTYPE" == *"bsd"* ]] ; then
 
-  which pkg > /dev/null 2>&1      && _DIST_VERSION="bsd"
+  command -v pkg > /dev/null 2>&1      && _DIST_VERSION="bsd"
 
   # Store the name of the script and directory call.
   readonly _init_name="$(basename "$0")"
@@ -121,10 +121,13 @@ else
 fi
 
 
-# Global variables.
+# Global variables, default values.
 readonly _rel="${_init_directory}"
 readonly _src="/usr/local/src"
 readonly _cfg="${_rel}/ngx_installer.conf"
+
+export _pcre_version=""
+export _openssl_version=""
 
 # shellcheck disable=SC1090
 if [[ -e "${_cfg}" ]] ; then
@@ -139,43 +142,86 @@ else
 
 fi
 
+# Default versions of packages.
+if [[ -z "$NGINX_USER" ]] ; then
+
+  NGINX_USER="nginx"
+
+fi
+
+if [[ -z "$NGINX_GROUP" ]] ; then
+
+  NGINX_GROUP="nginx"
+
+fi
+
+if [[ -z "$NGINX_UID" ]] ; then
+
+  NGINX_UID="920"
+
+fi
+
+if [[ -z "$NGINX_GID" ]] ; then
+
+  NGINX_GID="920"
+
+fi
+
+if [[ -z "$NGX_PREFIX" ]] ; then
+
+  NGX_PREFIX="/etc/nginx"
+
+fi
+
+if [[ -z "$NGX_CONF" ]] ; then
+
+  NGX_CONF="${NGX_PREFIX}/nginx.conf"
+
+fi
+
+if [[ -z "$ZLIB_LIBRARY" ]] ; then
+
+  ZLIB_LIBRARY="cloudflare"
+
+fi
+
 if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
   if [[ -z "$PCRE_LIBRARY" ]] ; then
 
-    export _pcre_version="8.42"
+    _pcre_version="8.42"
 
   else
 
-    export _pcre_version="$PCRE_LIBRARY"
+    _pcre_version="$PCRE_LIBRARY"
 
   fi
 
   if [[ -z "$OPENSSL_LIBRARY" ]] ; then
 
-    export _openssl_version="1.1.1c"
+    _openssl_version="1.1.1c"
 
   else
 
-    export _openssl_version="$OPENSSL_LIBRARY"
+    _openssl_version="$OPENSSL_LIBRARY"
 
   fi
 
 else
 
   # shellcheck disable=SC2034
-  export _pcre_version=$(curl -skL https://ftp.pcre.org/pub/pcre/ |
-                         grep -Eo 'pcre\-[0-9.]+[0-9]' | \
-                         sort -V | \
-                         tail -n 1| \
-                         cut -d '-' -f2-)
+  _pcre_version=$(curl -skL https://ftp.pcre.org/pub/pcre/ |
+                     grep -Eo 'pcre\-[0-9.]+[0-9]' | \
+                     sort -V | \
+                     tail -n 1| \
+                     cut -d '-' -f2-)
 
   # shellcheck disable=SC2034
-  export _openssl_version=$(curl -skL https://www.openssl.org/source/ |
-                         grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
-                         sort -V | \
-                         tail -n 1| \
-                         cut -d '-' -f2-)
+  _openssl_version=$(curl -skL https://www.openssl.org/source/ |
+                     grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
+                     sort -V | \
+                     tail -n 1| \
+                     cut -d '-' -f2-)
 
 fi
 
@@ -482,7 +528,7 @@ function _inst_pcre() {
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
-    if [[ ! -z "$__PCRE_DSYM" ]] ; then
+    if [[ -n "$__PCRE_DSYM" ]] ; then
 
       _f "1" "CFLAGS='$__PCRE_DSYM' ./configure"
 
@@ -497,7 +543,7 @@ function _inst_pcre() {
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
-    if [[ ! -z "$__PCRE_DSYM" ]] ; then
+    if [[ -n "$__PCRE_DSYM" ]] ; then
 
       _f "1" "CFLAGS='$__PCRE_DSYM' ./configure"
 
@@ -523,6 +569,20 @@ function _inst_zlib() {
 
   cd "$_src" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
+
+  if [[ "$ZLIB_LIBRARY" == "cloudflare" ]] ; then
+
+    _zlib_str="Cloudflare fork of Zlib"
+
+  elif [[ "$ZLIB_LIBRARY" ]] == "madler" ; then
+
+    _zlib_str="Original Zlib version (madler)"
+
+  else
+
+    _zlib_str="Unknown Zlib version"
+
+  fi
 
   _f "5" "git clone --depth 1 https://github.com/${ZLIB_LIBRARY}/zlib"
 
@@ -564,6 +624,7 @@ function _inst_openssl() {
   cd "$OPENSSL_SRC" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$OPENSSL_SRC" ; exit 1 )
 
+  # shellcheck disable=SC2068,SC2207
   export __OPENSSL_PARAMS_T=( $(echo ${__OPENSSL_PARAMS[@]} | tr -d "\\\'"))
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
@@ -643,7 +704,10 @@ function _inst_luajit() {
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
-    if [[ ! -z "$__LUAJIT_DSYM" ]] ; then
+    # shellcheck disable=SC2034
+    _luajit_str="OpenResty's branch of LuaJIT 2"
+
+    if [[ -n "$__LUAJIT_DSYM" ]] ; then
 
       _f "1" "CFLAGS='-g' make"
 
@@ -659,19 +723,25 @@ function _inst_luajit() {
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
-    if [[ ! -z "$__LUAJIT_DSYM" ]] ; then
+    # shellcheck disable=SC2034
+    _luajit_str="OpenResty's branch of LuaJIT 2 (from ports)"
 
-      _f "1" "CFLAGS='$__LUAJIT_DSYM' gmake"
+    cd "/usr/ports/lang/luajit" || \
+    ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$LUAJIT_SRC" ; exit 1 )
+
+    if [[ -n "$__LUAJIT_DSYM" ]] ; then
+
+      _f "1" "CFLAGS='$__LUAJIT_DSYM' make"
 
     else
 
-      _f "1" "gmake"
+      _f "1" "make"
 
     fi
 
-    _f "1" "gmake install"
+    _f "1" "make install"
 
-    _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
+    # _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
   fi
 
@@ -1255,7 +1325,19 @@ function __main__() {
 
   if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="$NGINX_DEF_VER" ; fi
+    if [[ -z "$ngx_version" ]] ; then
+
+      if [[ -z "$NGINX_DEF_VER" ]] ; then
+
+        ngx_version="1.16.0"
+
+      else
+
+        ngx_version="$NGINX_DEF_VER"
+
+      fi
+
+    fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/nginx-${ngx_version}"
@@ -1292,6 +1374,7 @@ function __main__() {
 
     if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
+      # shellcheck disable=SC2068
       __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
@@ -1301,8 +1384,10 @@ function __main__() {
                   "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
 
         NGINX_BUILD_PARAMS_HELPER=($_mod)
+        # shellcheck disable=SC2128
         NGINX_BUILD_PARAMS=( "${NGINX_BUILD_PARAMS[@]/$NGINX_BUILD_PARAMS_HELPER}" )
 
+        # shellcheck disable=SC2068
         __BUILD_PARAMS=$(eval echo ${NGINX_BUILD_PARAMS[@]})
 
       done
@@ -1311,7 +1396,19 @@ function __main__() {
 
   elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="$OPENRESTY_DEF_VER" ; fi
+    if [[ -z "$ngx_version" ]] ; then
+
+      if [[ -z "$OPENRESTY_DEF_VER" ]] ; then
+
+        ngx_version="1.15.8.1"
+
+      else
+
+        ngx_version="$OPENRESTY_DEF_VER"
+
+      fi
+
+    fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/openresty-${ngx_version}"
@@ -1348,6 +1445,7 @@ function __main__() {
 
     if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
+      # shellcheck disable=SC2068
       __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
@@ -1358,8 +1456,10 @@ function __main__() {
                   "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
 
         OPENRESTY_BUILD_PARAMS_HELPER=($_mod)
+        # shellcheck disable=SC2128
         OPENRESTY_BUILD_PARAMS=( "${OPENRESTY_BUILD_PARAMS[@]/$OPENRESTY_BUILD_PARAMS_HELPER}" )
 
+        # shellcheck disable=SC2068
         __BUILD_PARAMS=$(eval echo ${OPENRESTY_BUILD_PARAMS[@]})
 
       done
@@ -1368,7 +1468,19 @@ function __main__() {
 
   elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-    if [[ -z "$ngx_version" ]] ; then ngx_version="$TENGINE_DEF_VER" ; fi
+    if [[ -z "$ngx_version" ]] ; then
+
+      if [[ -z "$TENGINE_DEF_VER" ]] ; then
+
+        ngx_version="2.3.0"
+
+      else
+
+        ngx_version="$TENGINE_DEF_VER"
+
+      fi
+
+    fi
 
     _ngx_src="/usr/local/src"
     _ngx_base="${_ngx_src}/tengine-${ngx_version}"
@@ -1405,6 +1517,7 @@ function __main__() {
 
     if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
+      # shellcheck disable=SC2068
       __BUILD_PARAMS=$(eval echo ${TENGINE_BUILD_PARAMS[@]})
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
@@ -1415,8 +1528,10 @@ function __main__() {
                   "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
 
         TENGINE_BUILD_PARAMS_HELPER=($_mod)
+        # shellcheck disable=SC2128
         TENGINE_BUILD_PARAMS=( "${TENGINE_BUILD_PARAMS[@]/$TENGINE_BUILD_PARAMS_HELPER}" )
 
+        # shellcheck disable=SC2068
         __BUILD_PARAMS=$(eval echo ${TENGINE_BUILD_PARAMS[@]})
 
       done
@@ -1425,15 +1540,20 @@ function __main__() {
 
   fi
 
+  # shellcheck disable=SC2153
   __ZLIB_DSYM="$ZLIB_DSYM"
+  # shellcheck disable=SC2153
   __PCRE_DSYM="$PCRE_DSYM"
+  # shellcheck disable=SC2153
   __LUAJIT_DSYM="$LUAJIT_DSYM"
+  # shellcheck disable=SC2153
   __OPENSSL_DSYM="$OPENSSL_DSYM"
+  # shellcheck disable=SC2153
   __NGINX_DSYM="$NGINX_DSYM"
 
-  if [[ ! -z "$OPENSSL_OPTIONS" ]] ; then
+  if [[ -n "$OPENSSL_OPTIONS" ]] ; then
 
-    if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
+    if [[ -n "$__OPENSSL_DSYM" ]] ; then
 
       OPENSSL_OPTIONS="${OPENSSL_OPTIONS} ${__OPENSSL_DSYM}"
 
@@ -1445,7 +1565,7 @@ function __main__() {
 
   else
 
-    if [[ ! -z "$__OPENSSL_DSYM" ]] ; then
+    if [[ -n "$__OPENSSL_DSYM" ]] ; then
 
       # OPENSSL_OPTIONS="${__OPENSSL_DSYM}"
       OPENSSL_OPTIONS=""
@@ -1468,9 +1588,9 @@ function __main__() {
 
   fi
 
-  if [[ ! -z "$COMPILER_OPTIONS" ]] ; then
+  if [[ -n "$COMPILER_OPTIONS" ]] ; then
 
-    if [[ ! -z "$__NGINX_DSYM" ]] ; then
+    if [[ -n "$__NGINX_DSYM" ]] ; then
 
       COMPILER_OPTIONS="${COMPILER_OPTIONS} ${__NGINX_DSYM}"
 
@@ -1482,7 +1602,7 @@ function __main__() {
 
   else
 
-    if [[ ! -z "$__NGINX_DSYM" ]] ; then
+    if [[ -n "$__NGINX_DSYM" ]] ; then
 
       COMPILER_OPTIONS=""
 
@@ -1519,7 +1639,7 @@ function __main__() {
   printf '       pcre version : \e['${trgb_dark}'m%s\e[m\n' "$_pcre_version"
   printf '    openssl version : \e['${trgb_dark}'m%s\e[m\n' "$_openssl_version"
   printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "Cloudflare fork of zlib"
-  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "OpenResty's branch of LuaJIT 2"
+  printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "$_luajit_str"
 
   printf '\n          \e['${trgb_bold}'m%s\e[m\n' "LIBRARIES"
   printf '           PCRE_SRC : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_SRC"
