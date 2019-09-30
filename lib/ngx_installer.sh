@@ -1780,7 +1780,9 @@ function __main__() {
   printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
   printf '     __BUILD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__BUILD_PARAMS[@]}"
 
-  printf '\e['${trgb_red}'m%s\e[m\n\n' "You should set the correct variables for disabled packages."
+  printf '\e['${trgb_red}'m%s\n%s\e[m\n\n' \
+         "You should set the correct values of variables for disabled packages." \
+         "For this, please check 'LIBRARIES' summary."
 
   printf '\e['${trgb_light}'m%s\e[m ' "(press any key to init) >>"
   read -r
