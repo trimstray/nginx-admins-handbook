@@ -828,12 +828,13 @@ function _inst_luajit() {
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
     # shellcheck disable=SC2034
-    _luajit_str="OpenResty's branch of LuaJIT 2 (from ports)"
+    _luajit_str="OpenResty's branch of LuaJIT 2"
 
-    cd "/usr/ports/lang/luajit" || \
+    # cd "/usr/ports/lang/luajit" || \
+    cd "$LUAJIT_SRC" || \
     ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$LUAJIT_SRC" ; exit 1 )
 
-    _f "1" "make deinstall"
+    # _f "1" "make deinstall"
 
     if [[ -n "$__LUAJIT_DSYM" ]] ; then
 
@@ -847,7 +848,7 @@ function _inst_luajit() {
 
     _f "1" "make install"
 
-    # _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
+    _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
   fi
 
