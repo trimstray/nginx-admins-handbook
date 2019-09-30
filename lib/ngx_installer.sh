@@ -1364,7 +1364,7 @@ function __main__() {
 
       printf '  Default for \e['${trgb_bold}'m%s\e[m: \e['${trgb_bold_green}'m%s\e[m\n' "NGINX" "$NGINX_DEF_VER"
       printf '   - for more please see: \e['${trgb_dark}'m%s\e[m\n' "https://nginx.org/download"
-      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.0, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
+      printf '   - examples of versions: \e['${trgb_dark}'m%s\e[m\n' "1.17.4, 1.16.0, 1.15.8, 1.15.2, 1.14.0, 1.13.5"
       printf '   - %s\n' "press any key to set default"
 
       _ngx_distr_str="NGINX"
@@ -1396,7 +1396,7 @@ function __main__() {
 
     if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-      ngx_version=$(curl -sL https://nginx.org/download/ | \
+      ngx_version=$(timeout 15 curl -sL https://nginx.org/download/ | \
                     grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
                     sort -V | \
                     tail -n 1 | \
@@ -1406,8 +1406,8 @@ function __main__() {
 
     elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-      ngx_version=$(curl -sL https://openresty.org/en/download.html | \
-                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+\.[0-9]+' | \
+      ngx_version=$(timeout 15 curl -sL https://openresty.org/en/download.html | \
+                    grep -Eo 'openresty\-[0-9.]+[123456789]\.[0-9]+\.[0-9]+' | \
                     sort -V | \
                     tail -n 1 | \
                     cut -d '-' -f2-)
@@ -1416,8 +1416,8 @@ function __main__() {
 
     elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-      ngx_version=$(curl -sL https://tengine.taobao.org/download.html | \
-                    grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
+      ngx_version=$(timeout 15 curl -sL https://tengine.taobao.org/download.html | \
+                    grep -Eo 'Tengine\-[0-9.]+[123456789]\.[0-9]+' | \
                     sort -V | \
                     tail -n 1 | \
                     cut -d '-' -f2-)
