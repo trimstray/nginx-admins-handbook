@@ -1402,7 +1402,7 @@ function __main__() {
 
     if [[ "$_ngx_distr" -eq 1 ]] ; then
 
-      ngx_version=$(timeout 15 curl -sL https://nginx.org/download/ | \
+      ngx_version=$(timeout 15 curl -ksL https://nginx.org/download/ | \
                     grep -Eo 'nginx\-[0-9.]+[123456789]\.[0-9]+' | \
                     sort -V | \
                     tail -n 1 | \
@@ -1412,7 +1412,7 @@ function __main__() {
 
     elif [[ "$_ngx_distr" -eq 2 ]] ; then
 
-      ngx_version=$(timeout 15 curl -sL https://openresty.org/en/download.html | \
+      ngx_version=$(timeout 15 curl -ksL https://openresty.org/en/download.html | \
                     grep -Eo 'openresty\-[0-9.]+[123456789]\.[0-9]+\.[0-9]+' | \
                     sort -V | \
                     tail -n 1 | \
@@ -1422,7 +1422,7 @@ function __main__() {
 
     elif [[ "$_ngx_distr" -eq 3 ]] ; then
 
-      ngx_version=$(timeout 15 curl -sL https://tengine.taobao.org/download.html | \
+      ngx_version=$(timeout 15 curl -ksL https://tengine.taobao.org/download.html | \
                     grep -Eo 'Tengine\-[0-9.]+[123456789]\.[0-9]+' | \
                     sort -V | \
                     tail -n 1 | \
