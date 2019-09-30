@@ -1333,6 +1333,8 @@ function __main__() {
   _t_rst=$((_t_rst + 2))
   $_tput cup "$_t_rst" "$_c_rst"
 
+  printf '\n  \e['${trgb_red}'m%s\e[m\n' "Please set correct date, time / NTP and timezone before starting."
+
   printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
 
   printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "1" "NGINX" "https://www.nginx.com/"
