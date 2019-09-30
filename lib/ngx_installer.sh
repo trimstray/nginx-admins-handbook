@@ -143,6 +143,12 @@ else
 
 fi
 
+if [[ -z "$LATEST_PKGS" ]] ; then
+
+  LATEST_PKGS=0
+
+fi
+
 _f_tasks=(\
   "_inst_base_packages" \
   "_init_dirs" \
