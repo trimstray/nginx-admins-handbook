@@ -142,6 +142,113 @@ else
 
 fi
 
+_f_tasks=(\
+  "_inst_base_packages" \
+  "_init_dirs" \
+  "_inst_nginx_dist" \
+  "_inst_pcre" \
+  "_inst_zlib" \
+  "_inst_openssl" \
+  "_inst_luajit" \
+  "_inst_sregex" \
+  "_inst_jemalloc" \
+  "ldconfig" \
+  "_inst_3_modules" \
+  "_build_nginx" \
+  "ldconfig" \
+  "_create_user" \
+  "_gen_modules" \
+  "_init_logrotate" \
+  "_init_startup" \
+  "_post_tasks" \
+  "_test_config" \
+)
+_f_tasks_tmp=()
+
+if [[ "$PCRE_INST" != "yes" ]] ;
+
+  PCRE_LIBRARY=""
+  PCRE_DSYM=""
+
+  for _pkg in "_inst_pcre" ; do
+
+    _f_tasks_tmp=($_pkg)
+    # shellcheck disable=SC2128
+    _f_tasks=( "${_f_tasks[@]/$_f_tasks_tmp}" )
+
+  done
+
+fi
+
+if [[ "$ZLIB_INST" != "yes" ]] ;
+
+  ZLIB_LIBRARY=""
+  ZLIB_DSYM=""
+
+  for _pkg in "_inst_zlib" ; do
+
+    _f_tasks_tmp=($_pkg)
+    # shellcheck disable=SC2128
+    _f_tasks=( "${_f_tasks[@]/$_f_tasks_tmp}" )
+
+  done
+
+fi
+
+if [[ "$OPENSSL_INST" != "yes" ]] ;
+
+  OPENSSL_LIBRARY=""
+  OPENSSL_DSYM=""
+  OPENSSL_OPTIONS=""
+
+  for _pkg in "_inst_openssl" ; do
+
+    _f_tasks_tmp=($_pkg)
+    # shellcheck disable=SC2128
+    _f_tasks=( "${_f_tasks[@]/$_f_tasks_tmp}" )
+
+  done
+
+fi
+
+if [[ "$LUAJIT_INST" != "yes" ]] ;
+
+  LUAJIT_DSYM=""
+
+  for _pkg in "_inst_luajit" ; do
+
+    _f_tasks_tmp=($_pkg)
+    # shellcheck disable=SC2128
+    _f_tasks=( "${_f_tasks[@]/$_f_tasks_tmp}" )
+
+  done
+
+fi
+
+if [[ "$SREGEX_INST" != "yes" ]] ;
+
+  for _pkg in "_inst_sregex" ; do
+
+    _f_tasks_tmp=($_pkg)
+    # shellcheck disable=SC2128
+    _f_tasks=( "${_f_tasks[@]/$_f_tasks_tmp}" )
+
+  done
+
+fi
+
+if [[ "$JEMALLOC_INST" != "yes" ]] ;
+
+  for _pkg in "_inst_jemalloc" ; do
+
+    _f_tasks_tmp=($_pkg)
+    # shellcheck disable=SC2128
+    _f_tasks=( "${_f_tasks[@]/$_f_tasks_tmp}" )
+
+  done
+
+fi
+
 # Default versions of packages.
 if [[ -z "$NGINX_USER" ]] ; then
 
@@ -179,15 +286,10 @@ if [[ -z "$NGX_CONF" ]] ; then
 
 fi
 
-if [[ -z "$ZLIB_LIBRARY" ]] ; then
-
-  ZLIB_LIBRARY="cloudflare"
-
-fi
-
 if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
-  if [[ -z "$PCRE_LIBRARY" ]] ; then
+  if [[ -z "$PCRE_LIBRARY" ]] && \
+     [[ "$PCRE_INST" == "yes" ]] ; then
 
     _pcre_version="8.42"
 
@@ -197,7 +299,8 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
   fi
 
-  if [[ -z "$OPENSSL_LIBRARY" ]] ; then
+  if [[ -z "$OPENSSL_LIBRARY" ]] && \
+     [[ "$OPENSSL_INST" == "yes" ]] ; then
 
     _openssl_version="1.1.1c"
 
@@ -209,19 +312,27 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
 else
 
-  # shellcheck disable=SC2034
-  _pcre_version=$(curl -skL https://ftp.pcre.org/pub/pcre/ |
-                     grep -Eo 'pcre\-[0-9.]+[0-9]' | \
-                     sort -V | \
-                     tail -n 1| \
-                     cut -d '-' -f2-)
+  if [[ "$PCRE_INST" == "yes" ]] ; then
 
-  # shellcheck disable=SC2034
-  _openssl_version=$(curl -skL https://www.openssl.org/source/ |
-                     grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
-                     sort -V | \
-                     tail -n 1| \
-                     cut -d '-' -f2-)
+    # shellcheck disable=SC2034
+    _pcre_version=$(curl -skL https://ftp.pcre.org/pub/pcre/ |
+                       grep -Eo 'pcre\-[0-9.]+[0-9]' | \
+                       sort -V | \
+                       tail -n 1| \
+                       cut -d '-' -f2-)
+
+  fi
+
+  if [[ "$OPENSSL_INST" == "yes" ]] ; then
+
+    # shellcheck disable=SC2034
+    _openssl_version=$(curl -skL https://www.openssl.org/source/ |
+                       grep -Eo 'openssl\-[0-9.]+[a-z]?' | \
+                       sort -V | \
+                       tail -n 1| \
+                       cut -d '-' -f2-)
+
+  fi
 
 fi
 
@@ -580,7 +691,7 @@ function _inst_zlib() {
 
   else
 
-    _zlib_str="Unknown Zlib version"
+    _zlib_str=""
 
   fi
 
@@ -728,6 +839,8 @@ function _inst_luajit() {
 
     cd "/usr/ports/lang/luajit" || \
     ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$LUAJIT_SRC" ; exit 1 )
+
+    _f "1" "make deinstall"
 
     if [[ -n "$__LUAJIT_DSYM" ]] ; then
 
@@ -1621,6 +1734,14 @@ function __main__() {
 
   printf "%s" ""
 
+  printf '\n             \e['${trgb_bold}'m%s\e[m\n' "SUMMARY"
+  printf '        pcre enable : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INST"
+  printf '        zlib enable : \e['${trgb_dark}'m%s\e[m\n' "$ZLIB_INST"
+  printf '     openssl enable : \e['${trgb_dark}'m%s\e[m\n' "$OPENSSL_INST"
+  printf '      luajit enable : \e['${trgb_dark}'m%s\e[m\n' "$LUAJIT_INST"
+  printf '      sregex enable : \e['${trgb_dark}'m%s\e[m\n' "$SREGEX_INST"
+  printf '    jemalloc enable : \e['${trgb_dark}'m%s\e[m\n' "$JEMALLOC_INST"
+
   printf '\n             \e['${trgb_bold}'m%s\e[m\n' "SYSTEM"
   printf '            os type : \e['${trgb_dark}'m%s\e[m\n' "$OSTYPE"
   printf '       distribution : \e['${trgb_dark}'m%s\e[m\n' "${_DIST_VERSION} like"
@@ -1682,36 +1803,15 @@ function __main__() {
 
   fi
 
-  _f_tasks=(\
-    "1:_inst_base_packages" \
-    "2:_init_dirs" \
-    "3:_inst_nginx_dist" \
-    "4:_inst_pcre" \
-    "5:_inst_zlib" \
-    "6:_inst_openssl" \
-    "7:_inst_luajit" \
-    "8:_inst_sregex" \
-    "9:_inst_jemalloc" \
-    "10:ldconfig" \
-    "11:_inst_3_modules" \
-    "12:_build_nginx" \
-    "13:ldconfig" \
-    "14:_create_user" \
-    "15:_gen_modules" \
-    "16:_init_logrotate" \
-    "17:_init_startup" \
-    "18:_post_tasks" \
-    "19:_test_config" \
-  )
-
   local _iter="1"
 
-  for _i in "${_f_tasks[@]:${_TASK_EXIT}}" ; do
+  # for _i in "${_f_tasks[@]:${_TASK_EXIT}}" ; do
+  for _i in "${_f_tasks[@]}" ; do
 
-    _key_id=$(echo "$_i" | awk -v FS="(:|:)" '{print $1}')
-    _key_task=$(echo "$_i" | awk -v FS="(:|:)" '{print $2}')
+    # _key_id=$(echo "$_i" | awk -v FS="(:|:)" '{print $1}')
+    # _key_task=$(echo "$_i" | awk -v FS="(:|:)" '{print $2}')
 
-    printf '\n\e['${trgb_task}'m%s %s\e[m\n' "TASK" "{ id:${_key_id}, function:${_key_task} }"
+    printf '\n\e['${trgb_task}'m%s %s\e[m\n' "TASK" "{ id:${_iter}, function:${_i} }"
 
     $_key_task
 
