@@ -1782,7 +1782,7 @@ function __main__() {
 
   printf '\e['${trgb_red}'m%s\n%s\e[m\n\n' \
          "You should set the correct values of variables for disabled packages." \
-         "For this, please check 'LIBRARIES' summary."
+         "For this, please check 'LIBRARIES' summary and lib/ngx_installer.vars file."
 
   printf '\e['${trgb_light}'m%s\e[m ' "(press any key to init) >>"
   read -r
