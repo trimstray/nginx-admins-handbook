@@ -1477,7 +1477,7 @@ function __main__() {
 
   printf '\n  \e['${trgb_bold_cyan}'m%s\e[m\n' "Press CTRL + C to terminate the autoinstaller."
 
-  printf '\n  \e['${trgb_red}'m%s\e[m\n' "Please set correct date, time/NTP, and timezone before starting."
+  printf '\n  \e['${trgb_bold_yellow}'m%s\e[m\n' "Please set correct date, time/NTP, and timezone before starting."
 
   printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
 
@@ -1935,7 +1935,7 @@ function __main__() {
   printf '        __LD_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__LD_PARAMS[@]}" | tr -d "\\\'"
   printf '     __BUILD_PARAMS : \e['${trgb_dark}'m%s\e[m\n\n' "${__BUILD_PARAMS[@]}"
 
-  printf '\e['${trgb_red}'m%s\n%s\e[m\n\n' \
+  printf '\e['${trgb_bold_yellow}'m%s\n%s\e[m\n\n' \
          "You should set the correct values of variables for disabled packages." \
          "For this, please check 'LIBRARIES' summary and lib/ngx_installer.vars file."
 
