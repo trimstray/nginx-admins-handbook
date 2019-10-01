@@ -52,6 +52,7 @@ trgb_dark="2;2;38"
 trgb_light="1;1;36"
 trgb_bold_green="1;2;32"
 trgb_bold_yellow="1;33;40"
+trgb_bold_cyan="1;36;40"
 trgb_bground_blue="1;37;44"
 trgb_bground_dark="1;37;40"
 
@@ -177,8 +178,8 @@ else
   if [[ "$DEBUG" -ne "0" ]] && \
      [[ "$DEBUG" -ne "1" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'DEBUG' param value:" "$DEBUG"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'DEBUG' param value:" "$DEBUG" "=> [0, 1]"
     exit 1
 
   fi
@@ -194,8 +195,8 @@ else
   if [[ "$LATEST_PKGS" -ne "0" ]] && \
      [[ "$LATEST_PKGS" -ne "1" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'LATEST_PKGS' param value:" "$LATEST_PKGS"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'LATEST_PKGS' param value:" "$LATEST_PKGS" "=> [0, 1]"
     exit 1
 
   fi
@@ -206,8 +207,8 @@ if [[ "$PCRE_INST" != "yes" ]] ; then
 
   if [[ "$PCRE_INST" != "no" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'PCRE_INST' param value:" "$PCRE_INST"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'PCRE_INST' param value:" "$PCRE_INST" "=> [yes, no]"
     exit 1
 
   fi
@@ -229,9 +230,10 @@ if [[ "$ZLIB_INST" != "yes" ]] ; then
 
   if [[ "$ZLIB_INST" != "no" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'ZLIB_INST' param value:" "$ZLIB_INST"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'ZLIB_INST' param value:" "$ZLIB_INST" "=> [yes, no]"
     exit 1
+
 
   fi
 
@@ -252,8 +254,8 @@ if [[ "$OPENSSL_INST" != "yes" ]] ; then
 
   if [[ "$OPENSSL_INST" != "no" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'OPENSSL_INST' param value:" "$OPENSSL_INST"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'OPENSSL_INST' param value:" "$OPENSSL_INST" "=> [yes, no]"
     exit 1
 
   fi
@@ -277,8 +279,8 @@ if [[ "$LUAJIT_INST" != "yes" ]] ; then
 
   if [[ "$LUAJIT_INST" != "no" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'LUAJIT_INST' param value:" "$LUAJIT_INST"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'LUAJIT_INST' param value:" "$LUAJIT_INST" "=> [yes, no]"
     exit 1
 
   fi
@@ -299,8 +301,8 @@ if [[ "$SREGEX_INST" != "yes" ]] ; then
 
   if [[ "$SREGEX_INST" != "no" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'SREGEX_INST' param value:" "$SREGEX_INST"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'SREGEX_INST' param value:" "$SREGEX_INST" "=> [yes, no]"
     exit 1
 
   fi
@@ -319,8 +321,8 @@ if [[ "$JEMALLOC_INST" != "yes" ]] ; then
 
   if [[ "$JEMALLOC_INST" != "no" ]] ; then
 
-    printf '\e['${trgb_err}'m%s %s\e[m\n' \
-           "Bad 'JEMALLOC_INST' param value:" "$JEMALLOC_INST"
+    printf '\e['${trgb_err}'m%s %s %s\e[m\n' \
+           "Bad 'JEMALLOC_INST' param value:" "$JEMALLOC_INST" "=> [yes, no]"
     exit 1
 
   fi
@@ -1406,7 +1408,9 @@ function __main__() {
   _t_rst=$((_t_rst + 2))
   $_tput cup "$_t_rst" "$_c_rst"
 
-  printf '\n  \e['${trgb_red}'m%s\e[m\n' "Please set correct date, time / NTP and timezone before starting."
+  printf '\n  \e['${trgb_bold_cyan}'m%s\e[m\n' "Press CTRL + C to terminate the autoinstaller."
+
+  printf '\n  \e['${trgb_red}'m%s\e[m\n' "Please set correct date, time/NTP, and timezone before starting."
 
   printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
 
