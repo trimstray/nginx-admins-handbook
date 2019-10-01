@@ -1479,7 +1479,7 @@ function __main__() {
 
   printf '\n  \e['${trgb_bold_yellow}'m%s\e[m\n' "Please set correct date, time/NTP, and timezone before starting."
 
-  printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set NGINX flavour"
+  printf '\n  \e['${trgb_bground_blue}'m %s \e[m\n\n' "Set NGINX flavour"
 
   printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "1" "NGINX" "https://www.nginx.com/"
   printf '  \e['${trgb_bground_dark}'m %s \e[m - \e['${trgb_bold}'m%s\e[m (\e['${trgb_dark}'m%s\e[m)\n' "2" "OpenResty" "https://openresty.org/"
@@ -1508,7 +1508,7 @@ function __main__() {
 
   fi
 
-  printf '\n  \e['${trgb_bground_blue}'m%s\e[m\n\n' "Set version of source package"
+  printf '\n  \e['${trgb_bground_blue}'m %s \e[m\n\n' "Set version of source package"
 
   if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
