@@ -293,7 +293,7 @@ Installing from source consists of multiple steps. If you don't want to pass thr
 
   > It supports Debian and RHEL like distributions, and FreeBSD system.
 
-This tool is located in `lib/ngx_installer.sh`. Configuration file is in `lib/ngx_installer.conf`. By default, it show prompt to confirm steps but you can disable it if you want:
+This tool is located in `lib/ngx_installer.sh`. Configuration file is in `lib/ngx_installer.conf`, variables is in `lib/ngx_installer.vars`. By default, it show prompt to confirm steps but you can disable it if you want:
 
 ```bash
 cd lib/
@@ -490,12 +490,16 @@ There are examples:
 --with-cc-opt="-I/usr/local/include -I${OPENSSL_INC} -I${LUAJIT_INC} -I${JEMALLOC_INC} -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC"
 # 2)
 --with-cc-opt="-I/usr/local/include -m64 -march=native -DTCP_FASTOPEN=23 -O3 -g -fstack-protector-strong -flto -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf"
+# 3)
+--with-cc-opt="-I/usr/local/include"
 
 # Example of use linker options:
 # 1)
 --with-ld-opt="-Wl,-E -L/usr/local/lib -ljemalloc -lpcre -Wl,-rpath,/usr/local/lib,-z,relro -Wl,-z,now -pie"
 # 2)
 --with-ld-opt="-L/usr/local/lib -ljemalloc -Wl,-lpcre -Wl,-z,relro -Wl,-rpath,/usr/local/lib"
+# 3)
+--with-ld-opt="-L/usr/local/lib"
 
 # For installation on FreeBSD:
 --with-cc-opt=""
@@ -565,7 +569,7 @@ The author of OpenResty created great and simple macro language extensions to th
 Set NGINX version (I use stable release):
 
 ```bash
-export ngx_version="1.17.0"
+export ngx_version="1.16.0"
 ```
 
 Set temporary variables:
@@ -658,7 +662,7 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
 #   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
@@ -721,7 +725,7 @@ __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
-# To make the OpenSSL 1.1.1b version visible globally first:
+# To make the OpenSSL version visible globally first:
 if [[ -e "/usr/bin/openssl" ]] ; then
 
   _openssl_version=$(openssl version | awk '{print $2}')
@@ -730,12 +734,6 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-fi
-
-if [[ -L "/usr/bin/openssl" ]] && \
-   [[ -e "/usr/bin/openssl" ]] ; then
-
-  unlink /usr/bin/openssl
   ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
@@ -1278,7 +1276,7 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
 #   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
@@ -1341,7 +1339,7 @@ __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
-# To make the OpenSSL 1.1.1b version visible globally first:
+# To make the OpenSSL version visible globally first:
 if [[ -e "/usr/bin/openssl" ]] ; then
 
   _openssl_version=$(openssl version | awk '{print $2}')
@@ -1350,12 +1348,6 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-fi
-
-if [[ -L "/usr/bin/openssl" ]] && \
-   [[ -e "/usr/bin/openssl" ]] ; then
-
-  unlink /usr/bin/openssl
   ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
@@ -2114,7 +2106,7 @@ __EOF__
 
 chmod +x /etc/profile.d/openssl.sh && source /etc/profile.d/openssl.sh
 
-# To make the OpenSSL 1.1.1b version visible globally first:
+# To make the OpenSSL version visible globally first:
 if [[ -e "/usr/bin/openssl" ]] ; then
 
   _openssl_version=$(openssl version | awk '{print $2}')
@@ -2123,12 +2115,6 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-fi
-
-if [[ -L "/usr/bin/openssl" ]] && \
-   [[ -e "/usr/bin/openssl" ]] ; then
-
-  unlink /usr/bin/openssl
   ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
@@ -2529,7 +2515,7 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz
+#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
 #   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
