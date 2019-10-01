@@ -401,10 +401,64 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
   if [[ -z "$ZLIB_LIBRARY" ]] && \
      [[ "$ZLIB_INST" == "yes" ]] ; then
 
+    _zlib_str="Cloudflare fork of Zlib"
+    ZLIB_LIBRARY="cloudflare"
+
+  else
+
+    if [[ "$ZLIB_LIBRARY" == "cloudflare" ]] ; then
+
       _zlib_str="Cloudflare fork of Zlib"
-      ZLIB_LIBRARY="cloudflare"
+
+
+    elif [[ "$ZLIB_LIBRARY" == "madler" ]] ; then
+
+      _zlib_str="Original version of Zlib"
+
+    else
+
+      _zlib_str=""
+      ZLIB_LIBRARY=""
 
     fi
+
+  fi
+
+  if [[ "$LUAJIT_INST" == "yes" ]] ; then
+
+    # shellcheck disable=SC2034
+    _luajit_str="OpenResty's branch of LuaJIT 2"
+
+  else
+
+    # shellcheck disable=SC2034
+    _luajit_str=""
+
+  fi
+
+  if [[ "$SREGEX_INST" == "yes" ]] ; then
+
+    # shellcheck disable=SC2034
+    _sregex_str="OpenResty's branch of sregex"
+
+  else
+
+    # shellcheck disable=SC2034
+    _sregex_str=""
+
+  fi
+
+  if [[ "$JEMALLOC_INST" == "yes" ]] ; then
+
+    # shellcheck disable=SC2034
+    _jemalloc_str="Original version of jemalloc"
+
+  else
+
+    # shellcheck disable=SC2034
+    _jemalloc_str=""
+
+  fi
 
 else
 
@@ -427,6 +481,25 @@ else
                        sort -V | \
                        tail -n 1| \
                        cut -d '-' -f2-)
+
+  fi
+
+  if [[ "$ZLIB_INST" == "yes" ]] ; then
+
+    _zlib_str="Cloudflare fork of Zlib"
+    ZLIB_LIBRARY="cloudflare"
+
+  fi
+
+  if [[ "$LUAJIT_INST" == "yes" ]] ; then
+
+    # shellcheck disable=SC2034
+    _luajit_str="OpenResty's branch of LuaJIT 2"
+
+  else
+
+    # shellcheck disable=SC2034
+    _luajit_str=""
 
   fi
 
@@ -889,9 +962,6 @@ function _inst_luajit() {
 
   if [[ "$OSTYPE" == "linux-gnu" ]] ; then
 
-    # shellcheck disable=SC2034
-    _luajit_str="OpenResty's branch of LuaJIT 2"
-
     if [[ -n "$__LUAJIT_DSYM" ]] ; then
 
       _f "1" "CFLAGS='-g' make"
@@ -907,9 +977,6 @@ function _inst_luajit() {
     _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
-    # shellcheck disable=SC2034
-    _luajit_str="OpenResty's branch of LuaJIT 2"
 
     # cd "/usr/ports/lang/luajit" || \
     cd "$LUAJIT_SRC" || \
@@ -1830,8 +1897,10 @@ function __main__() {
   printf '    package version : \e['${trgb_dark}'m%s, %s\e[m\n' "$_ngx_distr_str" "$ngx_version"
   printf '       pcre version : \e['${trgb_dark}'m%s\e[m\n' "$_pcre_version"
   printf '    openssl version : \e['${trgb_dark}'m%s\e[m\n' "$_openssl_version"
-  printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "Cloudflare fork of zlib"
+  printf '       zlib version : \e['${trgb_dark}'m%s\e[m\n' "$_zlib_str"
   printf '     luajit version : \e['${trgb_dark}'m%s\e[m\n' "$_luajit_str"
+  printf '     sregex version : \e['${trgb_dark}'m%s\e[m\n' "$_sregex_str"
+  printf '   jemalloc version : \e['${trgb_dark}'m%s\e[m\n' "$_jemalloc_str"
 
   printf '\n          \e['${trgb_bold}'m%s\e[m\n' "LIBRARIES"
   printf '        pcre enable : \e['${trgb_dark}'m%s\e[m\n' "$PCRE_INST"
@@ -1859,7 +1928,7 @@ function __main__() {
   printf '       __NGINX_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__NGINX_DSYM}"
   printf '     __OPENSSL_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_DSYM}"
   printf '        __PCRE_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__PCRE_DSYM}"
-  # printf '        __ZLIB_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__ZLIB_DSYM}"
+  printf '        __ZLIB_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__ZLIB_DSYM}"
   printf '      __LUAJIT_DSYM : \e['${trgb_dark}'m%s\e[m\n' "${__LUAJIT_DSYM}"
   printf '   __OPENSSL_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__OPENSSL_PARAMS[@]}" | tr -d "\\\'"
   printf '        __CC_PARAMS : \e['${trgb_dark}'m%s\e[m\n' "${__CC_PARAMS[@]}" | tr -d "\\\'"
