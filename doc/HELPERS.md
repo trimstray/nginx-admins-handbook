@@ -167,7 +167,7 @@
 # Install epel repository:
 yum install epel-release
 # or alternative:
-#   wget -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#   wget -c --no-check-certificate -c https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 #   yum install epel-release-latest-7.noarch.rpm
 
 # Install NGINX:
@@ -575,13 +575,13 @@ export ngx_version="1.16.0"
 Set temporary variables:
 
 ```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/nginx-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
+export ngx_src="/usr/local/src"
+export ngx_base="${ngx_src}/nginx-${ngx_version}"
+export ngx_master="${ngx_base}/master"
+export ngx_modules="${ngx_base}/modules"
 
-NGX_PREFIX="/etc/nginx"
-NGX_CONF="${NGX_PREFIX}/nginx.conf"
+export NGX_PREFIX="/etc/nginx"
+export NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -597,10 +597,10 @@ done
 Set user/group variables:
 
 ```bash
-NGINX_USER="nginx"
-NGINX_GROUP="nginx"
-NGINX_UID="920"
-NGINX_GID="920"
+export NGINX_USER="nginx"
+export NGINX_GROUP="nginx"
+export NGINX_UID="920"
+export NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -638,7 +638,7 @@ export PCRE_SRC="${ngx_src}/pcre-${pcre_version}"
 export PCRE_LIB="/usr/local/lib"
 export PCRE_INC="/usr/local/include"
 
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
 
 cd "$PCRE_SRC"
 
@@ -662,7 +662,7 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
+#   wget -c --no-check-certificate http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
 #   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
@@ -688,7 +688,7 @@ export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
 export OPENSSL_LIB="${OPENSSL_DIR}/lib"
 export OPENSSL_INC="${OPENSSL_DIR}/include"
 
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+wget -c --no-check-certificate https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
@@ -817,7 +817,7 @@ ldconfig
 ```bash
 cd "${ngx_base}"
 
-wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
+wget -c --no-check-certificate https://nginx.org/download/nginx-${ngx_version}.tar.gz
 
 # or alternative:
 #   git clone --depth 1 https://github.com/nginx/nginx master
@@ -850,7 +850,7 @@ for i in \
 
 done
 
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+wget -c --no-check-certificate http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 ```
 
@@ -1195,13 +1195,13 @@ export ngx_version="1.15.8.1"
 Set temporary variables:
 
 ```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/nginx-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
+export ngx_src="/usr/local/src"
+export ngx_base="${ngx_src}/nginx-${ngx_version}"
+export ngx_master="${ngx_base}/master"
+export ngx_modules="${ngx_base}/modules"
 
-NGX_PREFIX="/etc/nginx"
-NGX_CONF="${NGX_PREFIX}/nginx.conf"
+export NGX_PREFIX="/etc/nginx"
+export NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -1217,10 +1217,10 @@ done
 Set user/group variables:
 
 ```bash
-NGINX_USER="nginx"
-NGINX_GROUP="nginx"
-NGINX_UID="920"
-NGINX_GID="920"
+export NGINX_USER="nginx"
+export NGINX_GROUP="nginx"
+export NGINX_UID="920"
+export NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -1252,7 +1252,7 @@ export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
 export PCRE_LIB="/usr/local/lib"
 export PCRE_INC="/usr/local/include"
 
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
 
 cd "$PCRE_SRC"
 
@@ -1276,7 +1276,7 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
+#   wget -c --no-check-certificate http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
 #   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
@@ -1302,7 +1302,7 @@ export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
 export OPENSSL_LIB="${OPENSSL_DIR}/lib"
 export OPENSSL_INC="${OPENSSL_DIR}/include"
 
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+wget -c --no-check-certificate https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
@@ -1405,7 +1405,7 @@ ldconfig
 ```bash
 cd "${ngx_base}"
 
-wget https://openresty.org/download/openresty-${ngx_version}.tar.gz
+wget -c --no-check-certificate https://openresty.org/download/openresty-${ngx_version}.tar.gz
 
 tar zxvf openresty-${ngx_version}.tar.gz -C "${ngx_master}" --strip 1
 ```
@@ -1428,7 +1428,7 @@ for i in \
 
 done
 
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+wget -c --no-check-certificate http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 ```
 
@@ -1995,13 +1995,13 @@ export ngx_version="2.3.0"
 Set temporary variables:
 
 ```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/nginx-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
+export ngx_src="/usr/local/src"
+export ngx_base="${ngx_src}/nginx-${ngx_version}"
+export ngx_master="${ngx_base}/master"
+export ngx_modules="${ngx_base}/modules"
 
-NGX_PREFIX="/etc/nginx"
-NGX_CONF="${NGX_PREFIX}/nginx.conf"
+export NGX_PREFIX="/etc/nginx"
+export NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -2017,10 +2017,10 @@ done
 Set user/group variables:
 
 ```bash
-NGINX_USER="nginx"
-NGINX_GROUP="nginx"
-NGINX_UID="920"
-NGINX_GID="920"
+export NGINX_USER="nginx"
+export NGINX_GROUP="nginx"
+export NGINX_UID="920"
+export NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -2045,7 +2045,7 @@ export PCRE_SRC="${ngx_base}/pcre-${pcre_version}"
 export PCRE_LIB="/usr/local/lib"
 export PCRE_INC="/usr/local/include"
 
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
 
 cd "$PCRE_SRC"
 
@@ -2069,7 +2069,7 @@ export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
 export OPENSSL_LIB="${OPENSSL_DIR}/lib"
 export OPENSSL_INC="${OPENSSL_DIR}/include"
 
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+wget -c --no-check-certificate https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
@@ -2198,7 +2198,7 @@ ldconfig
 ```bash
 cd "${ngx_base}"
 
-wget https://tengine.taobao.org/download/tengine-${ngx_version}.tar.gz
+wget -c --no-check-certificate https://tengine.taobao.org/download/tengine-${ngx_version}.tar.gz
 
 # or alternative:
 #   git clone --depth 1 https://github.com/alibaba/tengine master
@@ -2226,7 +2226,7 @@ for i in \
 
 done
 
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+wget -c --no-check-certificate http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 ```
 
@@ -2424,19 +2424,19 @@ gixy /etc/nginx/nginx.conf
 Set NGINX version (I use stable release):
 
 ```bash
-export ngx_version="1.17.0"
+export ngx_version="1.16.0"
 ```
 
 Set temporary variables:
 
 ```bash
-ngx_src="/usr/local/src"
-ngx_base="${ngx_src}/nginx-${ngx_version}"
-ngx_master="${ngx_base}/master"
-ngx_modules="${ngx_base}/modules"
+export ngx_src="/usr/local/src"
+export ngx_base="${ngx_src}/nginx-${ngx_version}"
+export ngx_master="${ngx_base}/master"
+export ngx_modules="${ngx_base}/modules"
 
-NGX_PREFIX="/etc/nginx"
-NGX_CONF="${NGX_PREFIX}/nginx.conf"
+export NGX_PREFIX="/etc/nginx"
+export NGX_CONF="${NGX_PREFIX}/nginx.conf"
 ```
 
 Create directories:
@@ -2452,10 +2452,10 @@ done
 Set user/group variables:
 
 ```bash
-NGINX_USER="nginx"
-NGINX_GROUP="nginx"
-NGINX_UID="920"
-NGINX_GID="920"
+export NGINX_USER="nginx"
+export NGINX_GROUP="nginx"
+export NGINX_UID="920"
+export NGINX_GID="920"
 ```
 
 ###### Dependencies
@@ -2491,7 +2491,7 @@ export PCRE_SRC="${ngx_src}/pcre-${pcre_version}"
 export PCRE_LIB="/usr/local/lib"
 export PCRE_INC="/usr/local/include"
 
-wget https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
+wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz && tar xzvf pcre-${pcre_version}.tar.gz
 
 cd "$PCRE_SRC"
 
@@ -2515,7 +2515,7 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
+#   wget -c --no-check-certificate http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
 #   cd "${ZLIB_SRC}-${zlib_version}"
 
 # For Cloudflare Zlib:
@@ -2541,7 +2541,7 @@ export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
 export OPENSSL_LIB="${OPENSSL_DIR}/lib"
 export OPENSSL_INC="${OPENSSL_DIR}/include"
 
-wget https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+wget -c --no-check-certificate https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
 
 cd "${ngx_src}/openssl-${openssl_version}"
 
@@ -2667,7 +2667,7 @@ ldconfig
 ```bash
 cd "${ngx_base}"
 
-wget https://nginx.org/download/nginx-${ngx_version}.tar.gz
+wget -c --no-check-certificate https://nginx.org/download/nginx-${ngx_version}.tar.gz
 
 # or alternative:
 #   git clone --depth 1 https://github.com/nginx/nginx master
@@ -2700,7 +2700,7 @@ for i in \
 
 done
 
-wget http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
+wget -c --no-check-certificate http://mdounin.ru/hg/ngx_http_delay_module/archive/tip.tar.gz -O delay-module.tar.gz
 mkdir delay-module && tar xzvf delay-module.tar.gz -C delay-module --strip 1
 ```
 
@@ -3003,7 +3003,7 @@ yum install gcc ncurses-devel geoip-devel tokyocabinet-devel
 
 cd /usr/local/src/
 
-wget -c https://tar.goaccess.io/goaccess-1.3.tar.gz && \
+wget -c --no-check-certificate -c https://tar.goaccess.io/goaccess-1.3.tar.gz && \
 tar xzvfp goaccess-1.3.tar.gz
 
 cd goaccess-1.3
