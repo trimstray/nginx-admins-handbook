@@ -127,27 +127,10 @@ readonly _src="/usr/local/src"
 readonly _cfg="${_rel}/ngx_installer.conf"
 readonly _var="${_rel}/ngx_installer.vars"
 
+export ngx_distr=""
+export ngx_version=""
 export _pcre_version=""
 export _openssl_version=""
-
-# shellcheck disable=SC1090
-if [[ -e "${_cfg}" ]] ; then
-
-  source "${_cfg}"
-
-else
-
-  printf '\e['${trgb_err}'m%s %s\e[m\n' \
-         "Not found configuration file:" "$_cfg"
-  exit 1
-
-fi
-
-if [[ -z "$LATEST_PKGS" ]] ; then
-
-  LATEST_PKGS=0
-
-fi
 
 _f_tasks=(\
   "_inst_base_packages" \
@@ -172,7 +155,62 @@ _f_tasks=(\
 )
 _f_tasks_tmp=()
 
+# shellcheck disable=SC1090
+if [[ -e "${_cfg}" ]] ; then
+
+  source "${_cfg}"
+
+else
+
+  printf '\e['${trgb_err}'m%s %s\e[m\n' \
+         "Not found configuration file:" "$_cfg"
+  exit 1
+
+fi
+
+if [[ -z "$DEBUG" ]] ; then
+
+  DEBUG=1
+
+else
+
+  if [[ "$DEBUG" -ne "0" ]] && \
+     [[ "$DEBUG" -ne "1" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'DEBUG' param value:" "$DEBUG"
+    exit 1
+
+  fi
+
+fi
+
+if [[ -z "$LATEST_PKGS" ]] ; then
+
+  LATEST_PKGS=0
+
+else
+
+  if [[ "$LATEST_PKGS" -ne "0" ]] && \
+     [[ "$LATEST_PKGS" -ne "1" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'LATEST_PKGS' param value:" "$LATEST_PKGS"
+    exit 1
+
+  fi
+
+fi
+
 if [[ "$PCRE_INST" != "yes" ]] ; then
+
+  if [[ "$PCRE_INST" != "no" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'PCRE_INST' param value:" "$PCRE_INST"
+    exit 1
+
+  fi
 
   PCRE_LIBRARY=""
   PCRE_DSYM=""
@@ -189,6 +227,14 @@ fi
 
 if [[ "$ZLIB_INST" != "yes" ]] ; then
 
+  if [[ "$ZLIB_INST" != "no" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'ZLIB_INST' param value:" "$ZLIB_INST"
+    exit 1
+
+  fi
+
   ZLIB_LIBRARY=""
   ZLIB_DSYM=""
 
@@ -204,9 +250,18 @@ fi
 
 if [[ "$OPENSSL_INST" != "yes" ]] ; then
 
+  if [[ "$OPENSSL_INST" != "no" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'OPENSSL_INST' param value:" "$OPENSSL_INST"
+    exit 1
+
+  fi
+
   OPENSSL_LIBRARY=""
   OPENSSL_DSYM=""
   OPENSSL_OPTIONS=""
+  __GCC_SSL=""
 
   for _pkg in "_inst_openssl" ; do
 
@@ -219,6 +274,14 @@ if [[ "$OPENSSL_INST" != "yes" ]] ; then
 fi
 
 if [[ "$LUAJIT_INST" != "yes" ]] ; then
+
+  if [[ "$LUAJIT_INST" != "no" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'LUAJIT_INST' param value:" "$LUAJIT_INST"
+    exit 1
+
+  fi
 
   LUAJIT_DSYM=""
 
@@ -234,6 +297,14 @@ fi
 
 if [[ "$SREGEX_INST" != "yes" ]] ; then
 
+  if [[ "$SREGEX_INST" != "no" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'SREGEX_INST' param value:" "$SREGEX_INST"
+    exit 1
+
+  fi
+
   for _pkg in "_inst_sregex" ; do
 
     _f_tasks_tmp=($_pkg)
@@ -246,6 +317,14 @@ fi
 
 if [[ "$JEMALLOC_INST" != "yes" ]] ; then
 
+  if [[ "$JEMALLOC_INST" != "no" ]] ; then
+
+    printf '\e['${trgb_err}'m%s %s\e[m\n' \
+           "Bad 'JEMALLOC_INST' param value:" "$JEMALLOC_INST"
+    exit 1
+
+  fi
+
   for _pkg in "_inst_jemalloc" ; do
 
     _f_tasks_tmp=($_pkg)
@@ -256,7 +335,7 @@ if [[ "$JEMALLOC_INST" != "yes" ]] ; then
 
 fi
 
-# Default versions of packages.
+# Default user and group.
 if [[ -z "$NGINX_USER" ]] ; then
 
   NGINX_USER="nginx"
@@ -316,6 +395,14 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
     _openssl_version="$OPENSSL_LIBRARY"
 
   fi
+
+  if [[ -z "$ZLIB_LIBRARY" ]] && \
+     [[ "$ZLIB_INST" == "yes" ]] ; then
+
+      _zlib_str="Cloudflare fork of Zlib"
+      ZLIB_LIBRARY="cloudflare"
+
+    fi
 
 else
 
@@ -679,20 +766,6 @@ function _inst_zlib() {
 
   cd "$_src" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
-
-  if [[ "$ZLIB_LIBRARY" == "cloudflare" ]] ; then
-
-    _zlib_str="Cloudflare fork of Zlib"
-
-  elif [[ "$ZLIB_LIBRARY" == "madler" ]] ; then
-
-    _zlib_str="Original Zlib version (madler)"
-
-  else
-
-    _zlib_str=""
-
-  fi
 
   _f "5" "git clone --depth 1 https://github.com/${ZLIB_LIBRARY}/zlib"
 
