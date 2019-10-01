@@ -1888,6 +1888,7 @@ function __main__() {
 
   printf '\n              \e['${trgb_bold}'m%s\e[m\n' "PATHS"
   printf '        config file : \e['${trgb_dark}'m%s\e[m\n' "$_cfg"
+  printf '          vars file : \e['${trgb_dark}'m%s\e[m\n' "$_var"
   printf '     init directory : \e['${trgb_dark}'m%s\e[m\n' "$_init_directory"
   printf '   source directory : \e['${trgb_dark}'m%s\e[m\n' "$_src"
   printf '    nginx directory : \e['${trgb_dark}'m%s\e[m\n' "$_ngx_master"
