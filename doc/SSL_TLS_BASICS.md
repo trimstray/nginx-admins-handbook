@@ -28,7 +28,7 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 
 Useful resources:
 
-- [OpenSSL 1.1.1 and SNI](https://github.com/drwetter/testssl.sh/issues/772)
+- [OpenSSL 1.1.1 (command) and SNI](https://github.com/drwetter/testssl.sh/issues/772)
 
 #### TLS handshake
 

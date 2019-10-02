@@ -2776,7 +2776,6 @@ cd "${ngx_master}"
             --with-http_addition_module \
             --with-http_auth_request_module \
             --with-http_degradation_module \
-            # --with-http_geoip_module \
             --with-http_gunzip_module \
             --with-http_gzip_static_module \
             --with-http_image_filter_module \
@@ -2788,7 +2787,6 @@ cd "${ngx_master}"
             --with-http_stub_status_module \
             --with-http_sub_module \
             --with-http_v2_module \
-            # --with-google_perftools_module \
             --with-openssl=${OPENSSL_SRC} \
             --with-openssl-opt="shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong ${_openssl_gcc}" \
             --with-pcre=${PCRE_SRC} \
@@ -2809,7 +2807,6 @@ cd "${ngx_master}"
             --add-module=${ngx_modules}/nginx-sticky-module-ng \
             --add-module=${ngx_modules}/nginx-module-vts \
             --add-module=${ngx_modules}/ngx_brotli \
-            # --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_pool \
             --add-module=${ngx_modules}/tengine/modules/ngx_debug_timer \
             --add-module=${ngx_modules}/tengine/modules/ngx_http_footer_filter_module \
@@ -2826,6 +2823,11 @@ cd "${ngx_master}"
             --add-dynamic-module=${ngx_modules}/naxsi/naxsi_src \
             --with-cc-opt="" \
             --with-ld-opt=""
+
+# Not used modules:
+# --with-http_geoip_module \
+# --with-google_perftools_module \
+# --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
 
 gmake -j2 && gmake test
 gmake install
