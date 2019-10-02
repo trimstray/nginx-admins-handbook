@@ -26,6 +26,10 @@ I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/b
 | TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) | 2008 | Still secure |
 | TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) | 2018 | Still secure |
 
+Useful resources:
+
+- [OpenSSL 1.1.1 and SNI](https://github.com/drwetter/testssl.sh/issues/772)
+
 #### TLS handshake
 
 The differences between TLS 1.2 and TLS 1.3 are presented in the following illustrations (every byte explained and reproduced):

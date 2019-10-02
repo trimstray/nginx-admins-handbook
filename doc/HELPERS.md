@@ -2469,7 +2469,7 @@ export NGINX_GID="920"
 pkg install gcc gmake bison perl5-devel libxslt libgd libxml2 expat autoconf jq git wget ncurses
 
 # In this example we use sources for all below packages so we do not install them:
-yum install pcre luajit
+pkg install pcre luajit
 
 # For LuaJIT:
 export LUAJIT_LIB="/usr/local/lib"
@@ -2584,12 +2584,6 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-fi
-
-if [[ -L "/usr/bin/openssl" ]] && \
-   [[ -e "/usr/bin/openssl" ]] ; then
-
-  unlink /usr/bin/openssl
   ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
@@ -2597,6 +2591,18 @@ else
   ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 fi
+
+for i in libssl.so.1.1 libcrypto.so.1.1 ; do
+
+  ln -s ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/
+
+done
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
 ```
 
 LuaJIT:

@@ -140,6 +140,7 @@ _f_tasks=(\
   "_inst_pcre" \
   "_inst_zlib" \
   "_inst_openssl" \
+  "ldconfig" \
   "_inst_luajit" \
   "_inst_sregex" \
   "_inst_jemalloc" \
@@ -942,6 +943,12 @@ __EOF__
     echo
 
   fi
+
+  for i in libssl.so.1.1 libcrypto.so.1.1 ; do
+
+    _f "1" "ln -s ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/"
+
+  done
 
   return "$_STATE"
 
