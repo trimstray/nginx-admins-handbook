@@ -636,6 +636,7 @@ function _inst_base_packages() {
             linux-headers-$(uname -r) \
             bison \
             perl \
+            lua5.1 \
             libperl-dev \
             libphp-embed \
             libxslt-dev \
@@ -660,6 +661,7 @@ function _inst_base_packages() {
             bison perl \
             perl-devel \
             perl-ExtUtils-Embed \
+            lua \
             libxslt \
             libxslt-devel \
             gd \
@@ -684,7 +686,7 @@ function _inst_base_packages() {
             bison \
             perl5-devel \
             pcre \
-            luajit \
+            lua51 \
             libxslt \
             libgd \
             libxml2 \

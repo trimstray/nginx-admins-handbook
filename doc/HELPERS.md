@@ -342,7 +342,7 @@ If you download and compile above sources the good point is to install additiona
 | `libssl-dev`* | `openssl-devel`* | | |
 | `zlib1g-dev`* | `zlib-devel`* | | |
 | `libpcre2-dev`* | `pcre-devel`* | `pcre`* | |
-| `libluajit-5.1-dev`* | `luajit-devel`* | `luajit`* | |
+| `lua5.1`<br>`libluajit-5.1-dev`* | `lua`<br>`luajit-devel`* | `lua51`<br>`luajit`* | |
 | `libxslt-dev` | `libxslt libxslt-devel` | `libxslt` | |
 | `libgd-dev` | `gd gd-devel` | `libgd` | |
 | `libgeoip-dev` | `GeoIP-devel` | | |
@@ -366,17 +366,23 @@ Shell one-liners example:
 
 ```bash
 # Ubuntu/Debian
-apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+apt-get install gcc make build-essential bison perl libperl-dev lua5.1 libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf
+
+apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
 
 apt-get install jq git wget
 
 # RedHat/CentOS
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed openssl-devel zlib-devel pcre-devel luajit-devel libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf
+
+yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
 yum install jq git wget
 
-# FreeBSD (not tested)
-pkg install gcc gmake bison perl5-devel pcre luajit libxslt libgd libxml2 expat autoconf
+# FreeBSD
+pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf
+
+pkg install pcre luajit
 
 pkg install jq git wget ncurses
 ```
@@ -611,10 +617,10 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 
 # In this example we use sources for all below packages so we do not install them:
-yum install openssl-devel zlib-devel pcre-devel luajit-devel
+# yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
 # For LuaJIT (libluajit-5.1-dev):
 export LUAJIT_LIB="/usr/local/lib"
@@ -1231,10 +1237,10 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
 
 # In this example we use sources for all below packages so we do not install them:
-yum install openssl-devel zlib-devel pcre-devel
+# yum install openssl-devel zlib-devel pcre-devel
 ```
 
   > Remember to build [`sregex`](#sregex) also if you use above steps.
@@ -2028,7 +2034,7 @@ export NGINX_GID="920"
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential bison perl libperl-dev libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
+apt-get install gcc make build-essential bison perl lua5.1 libperl-dev libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
 
 # In this example we don't use zlib sources:
 apt-get install zlib1g-dev
@@ -2466,10 +2472,10 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-pkg install gcc gmake bison perl5-devel libxslt libgd libxml2 expat autoconf jq git wget ncurses
+pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
 
 # In this example we use sources for all below packages so we do not install them:
-pkg install pcre luajit
+# pkg install pcre luajit
 
 # For LuaJIT:
 export LUAJIT_LIB="/usr/local/lib"
@@ -2824,7 +2830,7 @@ cd "${ngx_master}"
             --with-cc-opt="" \
             --with-ld-opt=""
 
-# Not used modules:
+# Unused modules (build errors):
 # --with-http_geoip_module \
 # --with-google_perftools_module \
 # --add-module=${ngx_modules}/tengine/modules/ngx_backtrace_module \
@@ -3763,6 +3769,10 @@ apt-get install lua5.1 libluajit-5.1-dev luarocks
 
 # RedHat like:
 yum install lua luajit-devel luarocks
+
+# FreeBSD:
+pkg install lua51 luajit
+cd /usr/ports/devel/lua-luarocks && make install clean
 
 # cjson:
 luarocks install lua-cjson
