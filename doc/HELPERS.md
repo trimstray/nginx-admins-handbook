@@ -342,7 +342,7 @@ If you download and compile above sources the good point is to install additiona
 | `libssl-dev`* | `openssl-devel`* | | |
 | `zlib1g-dev`* | `zlib-devel`* | | |
 | `libpcre2-dev`* | `pcre-devel`* | `pcre`* | |
-| `lua5.1`<br>`libluajit-5.1-dev`* | `lua`<br>`luajit-devel`* | `lua51`<br>`luajit`* | |
+| `lua5.1`<br>`libluajit-5.1-dev`* | `lua`<br>`luajit-devel`* | `lua51`<br>`luajit` | |
 | `libxslt-dev` | `libxslt libxslt-devel` | `libxslt` | |
 | `libgd-dev` | `gd gd-devel` | `libgd` | |
 | `libgeoip-dev` | `GeoIP-devel` | | |
@@ -380,9 +380,9 @@ yum install openssl-devel zlib-devel pcre-devel luajit-devel
 yum install jq git wget
 
 # FreeBSD
-pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf
+pkg install gcc gmake bison perl5-devel lua51 luajit libxslt libgd libxml2 expat autoconf
 
-pkg install pcre luajit
+pkg install pcre
 
 pkg install jq git wget ncurses
 ```
@@ -2472,10 +2472,10 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
+pkg install gcc gmake bison perl5-devel lua51 luajit libxslt libgd libxml2 expat autoconf jq git wget ncurses
 
 # In this example we use sources for all below packages so we do not install them:
-# pkg install pcre luajit
+# pkg install pcre
 
 # For LuaJIT:
 export LUAJIT_LIB="/usr/local/lib"

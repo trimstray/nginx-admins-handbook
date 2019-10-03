@@ -687,6 +687,7 @@ function _inst_base_packages() {
             perl5-devel \
             pcre \
             lua51 \
+            luajit \
             libxslt \
             libgd \
             libxml2 \
