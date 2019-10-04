@@ -140,14 +140,11 @@ _f_tasks=(\
   "_inst_pcre" \
   "_inst_zlib" \
   "_inst_openssl" \
-  "ldconfig" \
   "_inst_luajit" \
   "_inst_sregex" \
   "_inst_jemalloc" \
-  "ldconfig" \
   "_inst_3_modules" \
   "_build_nginx" \
-  "ldconfig" \
   "_create_user" \
   "_gen_modules" \
   "_init_logrotate" \
@@ -834,6 +831,8 @@ function _inst_pcre() {
 
   fi
 
+  _f "1" "ldconfig"
+
   return "$_STATE"
 
 }
@@ -866,6 +865,8 @@ function _inst_zlib() {
     _f "1" "gmake install"
 
   fi
+
+  _f "1" "ldconfig"
 
   return "$_STATE"
 
@@ -953,6 +954,8 @@ __EOF__
 
   done
 
+  _f "1" "ldconfig"
+
   return "$_STATE"
 
 }
@@ -1010,6 +1013,8 @@ function _inst_luajit() {
 
   fi
 
+  _f "1" "ldconfig"
+
   return "$_STATE"
 
 }
@@ -1038,6 +1043,8 @@ function _inst_sregex() {
     _f "1" "gmake install"
 
   fi
+
+  _f "1" "ldconfig"
 
   return "$_STATE"
 
@@ -1073,6 +1080,8 @@ function _inst_jemalloc() {
     _f "1" "gmake install"
 
   fi
+
+  _f "1" "ldconfig"
 
   return "$_STATE"
 
@@ -1173,6 +1182,8 @@ function _build_nginx() {
     _f "1" "gmake install"
 
   fi
+
+  _f "1" "ldconfig"
 
   return "$_STATE"
 
@@ -1980,6 +1991,8 @@ function __main__() {
     _iter=$((_iter + 1))
 
   done
+
+  _f "1" "ldconfig"
 
   if [[ "$NGX_PROMPT" -eq 0 ]] ; then
 
