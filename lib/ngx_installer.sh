@@ -986,7 +986,7 @@ function _inst_luajit() {
 
   else
 
-    _f "5" "git clone --depth 1 http://luajit.org/git/luajit-2.0 luajit2"
+    _f "5" "git clone http://luajit.org/git/luajit-2.0.git luajit2"
 
   fi
 

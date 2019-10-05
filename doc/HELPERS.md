@@ -774,7 +774,7 @@ export LUAJIT_INC="/usr/local/include/luajit-2.0"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For original LuaJIT:
-# git clone http://luajit.org/git/luajit-2.0 luajit2
+# git clone http://luajit.org/git/luajit-2.0.git luajit2
 
 # For OpenResty's LuaJIT:
 git clone --depth 1 https://github.com/openresty/luajit2
@@ -2159,7 +2159,7 @@ export LUAJIT_INC="/usr/local/include/luajit-2.0"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For original LuaJIT:
-# git clone http://luajit.org/git/luajit-2.0 luajit2
+# git clone http://luajit.org/git/luajit-2.0.git luajit2
 
 # For OpenResty's LuaJIT:
 git clone --depth 1 https://github.com/openresty/luajit2
@@ -2646,7 +2646,7 @@ export LUAJIT_INC="/usr/local/include/luajit-2.0"
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For original LuaJIT:
-git clone http://luajit.org/git/luajit-2.0 luajit2
+git clone http://luajit.org/git/luajit-2.0.git luajit2
 
 # For OpenResty's LuaJIT:
 # git clone --depth 1 https://github.com/openresty/luajit2
