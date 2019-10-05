@@ -380,9 +380,9 @@ yum install openssl-devel zlib-devel pcre-devel luajit-devel
 yum install jq git wget
 
 # FreeBSD
-pkg install gcc gmake bison perl5-devel lua51 luajit libxslt libgd libxml2 expat autoconf
+pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf
 
-pkg install pcre
+pkg install pcre luajit
 
 pkg install jq git wget ncurses
 ```
@@ -2472,7 +2472,7 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-pkg install gcc gmake bison perl5-devel lua51 luajit libxslt libgd libxml2 expat autoconf jq git wget ncurses
+pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
 
 # In this example we use sources for all below packages so we do not install them:
 # pkg install pcre
@@ -2552,7 +2552,7 @@ wget -c --no-check-certificate https://www.openssl.org/source/openssl-${openssl_
 cd "${ngx_src}/openssl-${openssl_version}"
 
 # Please run this and add as a compiler param:
-export __GCC_SSL=("__SIZEOF_INT128__:enable-ec_nistp_64_gcc_128")
+export __GCC_SSL=("")
 
 for _cc_opt in "${__GCC_SSL[@]}" ; do
 

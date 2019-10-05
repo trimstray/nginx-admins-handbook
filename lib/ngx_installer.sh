@@ -684,7 +684,6 @@ function _inst_base_packages() {
             perl5-devel \
             pcre \
             lua51 \
-            luajit \
             libxslt \
             libgd \
             libxml2 \
@@ -1863,8 +1862,12 @@ function __main__() {
 
   if [[ "${#__GCC_SSL[@]}" -ne 0 ]] ; then
 
-    # shellcheck disable=SC2178
-    __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
+    if [[ "$OSTYPE" == "linux-gnu" ]] ; then
+
+      # shellcheck disable=SC2178
+      __OPENSSL_PARAMS=("\'${OPENSSL_OPTIONS} ${_openssl_gcc}\'")
+
+    fi
 
   fi
 
