@@ -25,6 +25,7 @@
     * [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
     * [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
     * [Installation Nginx on FreeBSD 11.3](#installation-nginx-on-freebsd-113)
+    * [Installation Nginx on FreeBSD 11.3 from ports](#installation-nginx-on-freebsd-113-from-ports)
   * [Analyse configuration](#analyse-configuration)
   * [Monitoring](#monitoring)
     * [GoAccess](#goaccess)
@@ -265,6 +266,7 @@ In this chapter I'll present three (very similar) methods of installation:
 - the [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
 - the [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
 - the [Installation Nginx on FreeBSD 11.3](#installation-nginx-on-freebsd-113)
+- the [Installation Nginx on FreeBSD 11.3 from ports](#installation-nginx-on-freebsd-113-from-ports)
 
 Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
 
@@ -2428,13 +2430,14 @@ gixy /etc/nginx/nginx.conf
 
   > The build and installation process is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes. On FreeBSD you can also build NGINX from ports.
 
-  > At this moment auto installer not working properly:
-  ```
-  /usr/bin/ld: /usr/local/lib/libluajit-5.1.a(lj_err.o): relocation R_X86_64_32S against `a local symbol' can not be used when making a shared object; recompile with -fPIC
-  /usr/local/lib/libluajit-5.1.a: could not read symbols: Bad value
-  cc: error: linker command failed with exit code 1 (use -v to see invocation)
-  gmake[1]: *** [objs/Makefile:2165: objs/ngx_http_lua_module.so] Error 1
-  ```
+At this moment this recipe not working properly (please see [Installation Nginx on FreeBSD 11.3 from ports](#installation-nginx-on-freebsd-113-from-ports):
+
+```bash
+/usr/bin/ld: /usr/local/lib/libluajit-5.1.a(lj_err.o): relocation R_X86_64_32S against `a local symbol' can not be used when making a shared object; recompile with -fPIC
+/usr/local/lib/libluajit-5.1.a: could not read symbols: Bad value
+cc: error: linker command failed with exit code 1 (use -v to see invocation)
+gmake[1]: *** [objs/Makefile:2165: objs/ngx_http_lua_module.so] Error 1
+```
 
 <details>
 <summary><b>Show step-by-step NGINX installation</b></summary><br>
@@ -2995,7 +2998,7 @@ cat > "${_logrotate_path}/nginx" << __EOF__
 __EOF__
 ```
 
-Enable NGINX service:
+Turn on NGINX service:
 
 ```bash
 if ! grep -q nginx_enable=\"YES\" /etc/rc.conf ; then
@@ -3003,6 +3006,9 @@ if ! grep -q nginx_enable=\"YES\" /etc/rc.conf ; then
   echo -en "nginx_enable=\"YES\"\\n" >> /etc/rc.conf
 
 fi
+
+# or:
+sysrc nginx_enable="YES"
 ```
 
 Show NGINX version and parameters:
@@ -3015,6 +3021,231 @@ Test NGINX configuration:
 
 ```bash
 nginx -t -c $NGX_CONF
+```
+
+</details>
+
+#### Installation Nginx on FreeBSD 11.3 from ports
+
+  > The installation process is different from the previous ones, in my opinion is much simpler, however, has some limitations. This method is still work in progress.
+
+For more information please see:
+
+- [The FreeBSD ports system](https://www.lpthe.jussieu.fr/~talon/freebsdports.html)
+- [Exploring FreeBSD (3/3) – a tutorial from the Linux user’s perspective](https://eerielinux.wordpress.com/2015/10/25/exploring-freebsd-33-a-tutorial-from-the-linux-users-perspective/)
+- [Non-interactive customization of FreeBSD ports AND saving config to /var/db/ports/\*/options](https://stackoverflow.com/questions/50293239/non-interactive-customization-of-freebsd-ports-and-saving-config-to-var-db-port)
+- [Upgrading FreeBSD Ports](http://www.wonkity.com/~wblock/docs/html/portupgrade.html)
+
+<details>
+<summary><b>Show step-by-step NGINX installation</b></summary><br>
+
+* [Pre installation tasks](#pre-installation-tasks-4)
+* [Dependencies](#dependencies)
+* [Update FreeBSD ports tree](#update-freebsd-ports-tree)
+* [Searches ports for Nginx](#searches-ports-for-nginx)
+* [Download 3rd party modules](#download-3rd-party-modules-4)
+* [Build Nginx](#build-nginx-2)
+* [Post installation tasks](#post-installation-tasks-4)
+
+###### Pre installation tasks
+
+```bash
+# Default for NGINX port version:
+export NGX_PREFIX="/usr/local/etc/nginx"
+export NGX_CONF="${NGX_PREFIX}/nginx.conf"
+```
+
+Set user/group variables:
+
+```bash
+# Default for NGINX port version:
+export NGINX_USER="www"
+export NGINX_GROUP="www"
+```
+
+###### Dependencies
+
+  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, `luajit` and `pcre` because I compiled them manually (also from ports).
+
+**Install prebuilt packages, export variables and set symbolic link:**
+
+```bash
+# It's important and required, regardless of chosen sources:
+pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
+```
+
+OpenSSL:
+
+```bash
+psearch openssl
+
+cd /usr/ports/security/openssl111
+
+# Parameters:
+
+
+make config-recursive
+make install clean
+
+# To use/link openssl from your system (world):
+if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf) ]] ; then
+
+  echo -en "DEFAULT_VERSIONS+=ssl=openssl\n" >> /etc/make.conf
+
+fi
+
+if [[ -e "/usr/bin/openssl" ]] ; then
+
+  _openssl_version=$(openssl version | awk '{print $2}')
+  _openssl_date=$(date '+%Y%m%d%H%M%S')
+  _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+  mv /usr/bin/openssl /usr/bin/${_openssl_str}
+
+  # ln -s /usr/ports/security/openssl /usr/bin/openssl
+
+else
+
+  # ln -s /usr/ports/security/openssl /usr/bin/openssl
+
+fi
+```
+
+Update links and cache to the shared libraries for both types of installation:
+
+```bash
+ldconfig
+```
+
+###### Update FreeBSD ports tree
+
+```bash
+portsnap fetch
+portsnap extract
+portsnap update
+```
+
+###### Searches ports for Nginx
+
+```bash
+psearch nginx
+```
+
+###### Download 3rd party modules
+
+Work in progress.
+
+###### Build Nginx
+
+Go to the main NGINX port directory:
+
+```bash
+cd /usr/ports/www/nginx
+```
+
+The simplest way:
+
+```bash
+make install clean
+```
+
+or with pre-install configuration:
+
+```bash
+make config-recursive
+make install clean
+```
+
+During configuration process I chose the following parameters (work in progress).
+
+###### Post installation tasks
+
+Create required directories:
+
+```bash
+for i in \
+/var/www \
+/var/log/nginx \
+/var/cache/nginx ; do
+
+  mkdir -p "$i" && chown -R ${NGINX_USER}:${NGINX_GROUP} "$i"
+
+done
+```
+
+Include the necessary error pages:
+
+  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+
+- default location: `/etc/nginx/html`
+  ```bash
+  50x.html  index.html
+  ```
+
+Update modules list and include `modules.conf` to your configuration:
+
+```bash
+_mod_dir="${NGX_PREFIX}/modules"
+
+:>"${_mod_dir}.conf"
+
+for _module in $(ls "${_mod_dir}/") ; do
+
+  echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
+
+done
+```
+
+Create `logrotate` configuration:
+
+```bash
+_logrotate_path="/usr/local/etc/logrotate.d"
+
+cat > "${_logrotate_path}/nginx" << __EOF__
+/var/log/nginx/*.log {
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  create 0640 $NGINX_USER $NGINX_GROUP
+  sharedscripts
+  prerotate
+    if [ -d ${_logrotate_path}/httpd-prerotate ]; then \
+      run-parts ${_logrotate_path}/httpd-prerotate; \
+    fi \
+  endscript
+  postrotate
+    invoke-rc.d nginx reload >/dev/null 2>&1
+  endscript
+}
+__EOF__
+```
+
+Turn on NGINX service:
+
+```bash
+if ! grep -q nginx_enable=\"YES\" /etc/rc.conf ; then
+
+  echo -en "nginx_enable=\"YES\"\\n" >> /etc/rc.conf
+
+fi
+
+# or:
+sysrc nginx_enable="YES"
+```
+
+Show NGINX version and parameters:
+
+```bash
+nginx -V
+```
+
+Test NGINX configuration:
+
+```bash
+nginx -t -c /path/to/the/nginx.conf
 ```
 
 </details>

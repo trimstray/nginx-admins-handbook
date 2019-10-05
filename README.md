@@ -198,6 +198,7 @@
     * [Installation OpenResty on CentOS 7](doc/HELPERS.md#installation-openresty-on-centos-7)
     * [Installation Tengine on Ubuntu 18.04](doc/HELPERS.md#installation-tengine-on-ubuntu-1804)
     * [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
+    * [Installation Nginx on FreeBSD 11.3 from ports](doc/HELPERS.md#installation-nginx-on-freebsd-113-from-ports)
   * [Analyse configuration](doc/HELPERS.md#analyse-configuration)
   * [Monitoring](doc/HELPERS.md#monitoring)
     * [GoAccess](doc/HELPERS.md#goaccess)
@@ -721,8 +722,8 @@ Existing chapters:
     - [x] _Installation Nginx on CentOS 7_
     - [x] _Installation OpenResty on CentOS 7_
     - [x] _Installation Tengine on Ubuntu 18.04_
-    - [x] _Installation NGINX on FreeBSD 11.3_
-    - [ ] _Installation NGINX on FreeBSD 11.3 (ports)_
+    - [x] _Installation Nginx on FreeBSD 11.3_
+    - [x] _Installation Nginx on FreeBSD 11.3 from ports_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
