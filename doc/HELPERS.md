@@ -2428,6 +2428,14 @@ gixy /etc/nginx/nginx.conf
 
   > The build and installation process is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes. On FreeBSD you can also build NGINX from ports.
 
+  > At this moment auto installer not working properly:
+  ```
+  /usr/bin/ld: /usr/local/lib/libluajit-5.1.a(lj_err.o): relocation R_X86_64_32S against `a local symbol' can not be used when making a shared object; recompile with -fPIC
+  /usr/local/lib/libluajit-5.1.a: could not read symbols: Bad value
+  cc: error: linker command failed with exit code 1 (use -v to see invocation)
+  gmake[1]: *** [objs/Makefile:2165: objs/ngx_http_lua_module.so] Error 1
+  ```
+
 <details>
 <summary><b>Show step-by-step NGINX installation</b></summary><br>
 
