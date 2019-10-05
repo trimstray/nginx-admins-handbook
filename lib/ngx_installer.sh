@@ -422,15 +422,28 @@ if [[ "$LATEST_PKGS" -eq 0 ]] ; then
 
   fi
 
-  if [[ "$LUAJIT_INST" == "yes" ]] ; then
+  if [[ -z "$LUAJIT_LIBRARY" ]] && \
+     [[ "$LUAJIT_INST" == "yes" ]] ; then
 
-    # shellcheck disable=SC2034
     _luajit_str="OpenResty's branch of LuaJIT 2"
+    LUAJIT_LIBRARY="openresty"
 
   else
 
-    # shellcheck disable=SC2034
-    _luajit_str=""
+    if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+
+      _luajit_str="OpenResty's branch of LuaJIT 2"
+
+    elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
+
+      _luajit_str="Original version of LuaJIT 2"
+
+    else
+
+      _luajit_str=""
+      LUAJIT_LIBRARY=""
+
+    fi
 
   fi
 
@@ -967,7 +980,15 @@ function _inst_luajit() {
   cd "$_src" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$_src" ; exit 1 )
 
-  _f "5" "git clone --depth 1 https://github.com/openresty/luajit2"
+  if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+
+    _f "5" "git clone --depth 1 https://github.com/openresty/luajit2 luajit2"
+
+  else
+
+    _f "5" "git clone --depth 1 http://luajit.org/git/luajit-2.0 luajit2"
+
+  fi
 
   cd "$LUAJIT_SRC" || \
   ( printf '\e['${trgb_err}'m%s %s\e[m\n' "directory not exist:" "$LUAJIT_SRC" ; exit 1 )

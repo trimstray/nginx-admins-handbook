@@ -508,8 +508,8 @@ There are examples:
 --with-ld-opt="-L/usr/local/lib"
 
 # For installation on FreeBSD:
---with-cc-opt=""
---with-ld-opt=""
+--with-cc-opt="-I/usr/local/include"
+--with-ld-opt="-L/usr/local/lib"
 ```
 
 ###### Debugging Symbols
@@ -622,8 +622,13 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed l
 # In this example we use sources for all below packages so we do not install them:
 # yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
-# For LuaJIT (libluajit-5.1-dev):
+# For LuaJIT (luajit-devel):
 export LUAJIT_LIB="/usr/local/lib"
+
+# For original:
+export LUAJIT_INC="/usr/local/include/luajit-2.0"
+
+# For OpenResty's:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
@@ -761,11 +766,15 @@ cd "${ngx_src}"
 
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
+
+# For original:
+export LUAJIT_INC="/usr/local/include/luajit-2.0"
+
+# For OpenResty's:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For original LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0 luajit2
-#   cd "$LUAJIT_SRC"
+# git clone http://luajit.org/git/luajit-2.0 luajit2
 
 # For OpenResty's LuaJIT:
 git clone --depth 1 https://github.com/openresty/luajit2
@@ -2142,11 +2151,15 @@ cd "${ngx_src}"
 
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
+
+# For original:
+export LUAJIT_INC="/usr/local/include/luajit-2.0"
+
+# For OpenResty's:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For original LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0 luajit2
-#   cd "$LUAJIT_SRC"
+# git clone http://luajit.org/git/luajit-2.0 luajit2
 
 # For OpenResty's LuaJIT:
 git clone --depth 1 https://github.com/openresty/luajit2
@@ -2475,11 +2488,17 @@ export NGINX_GID="920"
 pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
 
 # In this example we use sources for all below packages so we do not install them:
-# pkg install pcre
+# pkg install pcre luajit
 
-# For LuaJIT:
+# For LuaJIT (luajit):
+export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
-export LUAJIT_INC="/usr/include/luajit-2.1"
+
+# For original:
+export LUAJIT_INC="/usr/local/include/luajit-2.0"
+
+# For OpenResty's:
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
 ```
 
   > Remember to build [`sregex`](#sregex) also if you use above steps.
@@ -2619,14 +2638,18 @@ cd "${ngx_src}"
 
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
+
+# For original:
+export LUAJIT_INC="/usr/local/include/luajit-2.0"
+
+# For OpenResty's:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
 # For original LuaJIT:
-#   git clone http://luajit.org/git/luajit-2.0 luajit2
-#   cd "$LUAJIT_SRC"
+git clone http://luajit.org/git/luajit-2.0 luajit2
 
 # For OpenResty's LuaJIT:
-git clone --depth 1 https://github.com/openresty/luajit2
+# git clone --depth 1 https://github.com/openresty/luajit2
 
 cd "$LUAJIT_SRC"
 
