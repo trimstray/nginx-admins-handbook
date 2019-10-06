@@ -613,7 +613,7 @@ export NGINX_GID="920"
 
 ###### Dependencies
 
-  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, `libluajit-5.1-dev` and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
+  > In my configuration I used all prebuilt dependencies without `libssl-dev`, `zlib1g-dev`, `libluajit-5.1-dev`, and `libpcre2-dev` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
 
 **Install prebuilt packages, export variables and set symbolic link:**
 
@@ -2490,7 +2490,7 @@ export NGINX_GID="920"
 
 ###### Dependencies
 
-  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, `luajit` and `pcre` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
+  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, `luajit`, and `pcre` because I compiled them manually - for TLS 1.3 support and with OpenResty recommendation for LuaJIT.
 
 **Install prebuilt packages, export variables and set symbolic link:**
 
@@ -2603,9 +2603,9 @@ done
 ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
 
 # To use/link openssl from your system (world):
-if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf) ]] ; then
+if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
-  echo -en "DEFAULT_VERSIONS+=ssl=openssl\n" >> /etc/make.conf
+  echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
 
 fi
 
@@ -2922,17 +2922,9 @@ And list all files in `/etc/nginx`:
 Create a system user/group:
 
 ```bash
-# Debian/Ubuntu
-groupadd -r -g $NGINX_GID $NGINX_GROUP
+pw group add -g $NGINX_GID $NGINX_GROUP
 
-adduser --system --home /non-existent --no-create-home --shell /usr/sbin/nologin --disabled-login --disabled-password --gecos \'nginx user\' --uid $NGINX_UID --group $NGINX_GROUP $NGINX_USER
-
-# RedHat/CentOS
-groupadd -r -g $NGINX_GID $NGINX_GROUP
-
-useradd --system --home-dir /non-existent --no-create-home --shell /usr/sbin/nologin --comment \'nginx user\' --uid $NGINX_UID --gid $NGINX_GROUP $NGINX_USER
-
-passwd -l $NGINX_USER
+pw user add -d /non-existent -n $NGINX_USER -g $NGINX_GROUP -s /usr/sbin/nologin -c \'nginx user\' -u $NGINX_UID -g $NGINX_GID -w no
 ```
 
 Create required directories:
@@ -2950,9 +2942,9 @@ done
 
 Include the necessary error pages:
 
-  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+  > You can also define them e.g. in `${NGX_PREFIX}/errors.conf` or other file and attach it as needed in server contexts.
 
-- default location: `/etc/nginx/html`
+- default location: `${NGX_PREFIX}/html`
   ```bash
   50x.html  index.html
   ```
@@ -2971,30 +2963,12 @@ for _module in $(ls "${_mod_dir}/") ; do
 done
 ```
 
-Create `logrotate` configuration:
+Create `newsyslog` configuration:
 
 ```bash
-_logrotate_path="/usr/local/etc/logrotate.d"
-
-cat > "${_logrotate_path}/nginx" << __EOF__
-/var/log/nginx/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 $NGINX_USER $NGINX_GROUP
-  sharedscripts
-  prerotate
-    if [ -d ${_logrotate_path}/httpd-prerotate ]; then \
-      run-parts ${_logrotate_path}/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
+cat > "/etc/newsyslog.conf.d/nginx.conf" << __EOF__
+/var/log/access.log               644  7     1024 *     JC /var/run/nginx.pid
+/var/log/error.log                644  7     1024 *     JC /var/run/nginx.pid
 __EOF__
 ```
 
@@ -3040,16 +3014,21 @@ For more information please see:
 <summary><b>Show step-by-step NGINX installation</b></summary><br>
 
 * [Pre installation tasks](#pre-installation-tasks-4)
-* [Dependencies](#dependencies)
 * [Update FreeBSD ports tree](#update-freebsd-ports-tree)
-* [Searches ports for Nginx](#searches-ports-for-nginx)
+* [Dependencies](#dependencies)
 * [Download 3rd party modules](#download-3rd-party-modules-4)
 * [Build Nginx](#build-nginx-2)
 * [Post installation tasks](#post-installation-tasks-4)
 
 ###### Pre installation tasks
 
+The following variables should be the same as the NGINX configuration (and compilation) options.
+
+  > They do not affect the settings of the `configure` command.
+
 ```bash
+export ngx_src="/usr/local/src"
+
 # Default for NGINX port version:
 export NGX_PREFIX="/usr/local/etc/nginx"
 export NGX_CONF="${NGX_PREFIX}/nginx.conf"
@@ -3063,34 +3042,67 @@ export NGINX_USER="www"
 export NGINX_GROUP="www"
 ```
 
+###### Update FreeBSD ports tree
+
+```bash
+portsnap fetch
+portsnap extract
+portsnap update
+```
+
 ###### Dependencies
 
-  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, `luajit` and `pcre` because I compiled them manually (also from ports).
+  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, and `luajit` because I compiled them manually (also from ports).
 
 **Install prebuilt packages, export variables and set symbolic link:**
 
 ```bash
 # It's important and required, regardless of chosen sources:
-pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
+pkg install gcc gmake bison perl5-devel pcre lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
 ```
 
-OpenSSL:
+OpenSSL (example 1):
 
 ```bash
+# Searches ports for NGINX:
 psearch openssl
 
 cd /usr/ports/security/openssl111
 
 # Parameters:
-
+OPTIONS_FILE_SET+=ZLIB
+OPTIONS_FILE_UNSET+=ARIA
+OPTIONS_FILE_UNSET+=DES
+OPTIONS_FILE_UNSET+=GOST
+OPTIONS_FILE_UNSET+=IDEA
+OPTIONS_FILE_UNSET+=SM2
+OPTIONS_FILE_UNSET+=SM3
+OPTIONS_FILE_UNSET+=SM4
+OPTIONS_FILE_UNSET+=RC2
+OPTIONS_FILE_UNSET+=RC4
+OPTIONS_FILE_UNSET+=RC5
+OPTIONS_FILE_UNSET+=MD2
+OPTIONS_FILE_UNSET+=MD4
+OPTIONS_FILE_UNSET+=MDC2
+OPTIONS_FILE_SET+=RMD160
+OPTIONS_FILE_SET+=ASM
+OPTIONS_FILE_SET+=SSE2
+OPTIONS_FILE_SET+=THREADS
+OPTIONS_FILE_SET+=EC
+OPTIONS_FILE_SET+=NEXTPROTONEG
+OPTIONS_FILE_SET+=SCTP
+OPTIONS_FILE_UNSET+=SSL3
+OPTIONS_FILE_UNSET+=TLS1
+OPTIONS_FILE_UNSET+=TLS1_1
+OPTIONS_FILE_SET+=TLS1_2
 
 make config-recursive
-make install clean
+make install
 
 # To use/link openssl from your system (world):
-if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl" /etc/make.conf) ]] ; then
+if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
-  echo -en "DEFAULT_VERSIONS+=ssl=openssl\n" >> /etc/make.conf
+  echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
 
 fi
 
@@ -3102,13 +3114,83 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  # ln -s /usr/ports/security/openssl /usr/bin/openssl
+  ln -s /usr/ports/security/openssl111/work/stage/usr/local/bin/openssl /usr/bin/openssl
 
 else
 
-  # ln -s /usr/ports/security/openssl /usr/bin/openssl
+  ln -s /usr/ports/security/openssl111/work/stage/usr/local/bin/openssl /usr/bin/openssl
 
 fi
+```
+
+OpenSSL (example 2):
+
+```bash
+cd "${ngx_src}"
+
+export openssl_version="1.1.1c"
+
+export OPENSSL_SRC="${ngx_src}/openssl-${openssl_version}"
+export OPENSSL_DIR="/usr/local/openssl-${openssl_version}"
+export OPENSSL_LIB="${OPENSSL_DIR}/lib"
+export OPENSSL_INC="${OPENSSL_DIR}/include"
+
+wget -c --no-check-certificate https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && tar xzvf openssl-${openssl_version}.tar.gz
+
+cd "${ngx_src}/openssl-${openssl_version}"
+
+# Please run this and add as a compiler param:
+export __GCC_SSL=("")
+
+for _cc_opt in "${__GCC_SSL[@]}" ; do
+
+    _cc_key=$(echo "$_cc_opt" | cut -d ":" -f1)
+    _cc_value=$(echo "$_cc_opt" | cut -d ":" -f2)
+
+  if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
+
+    echo -en "$_cc_value is supported on this machine\n"
+    _openssl_gcc+="$_cc_value "
+
+  fi
+
+done
+
+# Add to compile with debugging symbols:
+#   ./config -d ...
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+# To use/link openssl from your system (world):
+if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
+
+  echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
+
+fi
+
+make -j2 && make test
+make install
+
+if [[ -e "/usr/bin/openssl" ]] ; then
+
+  _openssl_version=$(openssl version | awk '{print $2}')
+  _openssl_date=$(date '+%Y%m%d%H%M%S')
+  _openssl_str="openssl-${_openssl_version}-${_openssl_date}"
+
+  mv /usr/bin/openssl /usr/bin/${_openssl_str}
+
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+else
+
+  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+
+fi
+
+for i in libssl.so.1.1 libcrypto.so.1.1 ; do
+
+  ln -s ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/
+
+done
 ```
 
 Update links and cache to the shared libraries for both types of installation:
@@ -3117,25 +3199,17 @@ Update links and cache to the shared libraries for both types of installation:
 ldconfig
 ```
 
-###### Update FreeBSD ports tree
-
-```bash
-portsnap fetch
-portsnap extract
-portsnap update
-```
-
-###### Searches ports for Nginx
-
-```bash
-psearch nginx
-```
-
 ###### Download 3rd party modules
 
 Work in progress.
 
 ###### Build Nginx
+
+Searches ports for NGINX:
+
+```bash
+psearch nginx
+```
 
 Go to the main NGINX port directory:
 
@@ -3143,83 +3217,152 @@ Go to the main NGINX port directory:
 cd /usr/ports/www/nginx
 ```
 
+Parameters:
+
+```bash
+OPTIONS_FILE_SET+=DEBUG
+OPTIONS_FILE_SET+=DEBUGLOG
+OPTIONS_FILE_SET+=DSO
+OPTIONS_FILE_SET+=FILE_AIO
+OPTIONS_FILE_UNSET+=IPV6
+OPTIONS_FILE_SET+=THREADS
+OPTIONS_FILE_SET+=WWW
+OPTIONS_FILE_UNSET+=GSSAPI_BASE
+OPTIONS_FILE_UNSET+=GSSAPI_HEIMDAL
+OPTIONS_FILE_UNSET+=GSSAPI_MIT
+OPTIONS_FILE_UNSET+=MAIL
+OPTIONS_FILE_UNSET+=MAIL_IMAP
+OPTIONS_FILE_UNSET+=MAIL_POP3
+OPTIONS_FILE_UNSET+=MAIL_SMTP
+OPTIONS_FILE_UNSET+=MAIL_SSL
+OPTIONS_FILE_SET+=GOOGLE_PERFTOOLS
+OPTIONS_FILE_SET+=HTTP
+OPTIONS_FILE_SET+=HTTP_ADDITION
+OPTIONS_FILE_SET+=HTTP_AUTH_REQ
+OPTIONS_FILE_UNSET+=HTTP_CACHE
+OPTIONS_FILE_UNSET+=HTTP_DAV
+OPTIONS_FILE_UNSET+=HTTP_FLV
+OPTIONS_FILE_SET+=HTTP_GUNZIP_FILTER
+OPTIONS_FILE_SET+=HTTP_GZIP_STATIC
+OPTIONS_FILE_UNSET+=HTTP_IMAGE_FILTER
+OPTIONS_FILE_UNSET+=HTTP_MP4
+OPTIONS_FILE_UNSET+=HTTP_PERL
+OPTIONS_FILE_SET+=HTTP_RANDOM_INDEX
+OPTIONS_FILE_SET+=HTTP_REALIP
+OPTIONS_FILE_SET+=HTTP_REWRITE
+OPTIONS_FILE_SET+=HTTP_SECURE_LINK
+OPTIONS_FILE_SET+=HTTP_SLICE
+OPTIONS_FILE_SET+=HTTP_SSL
+OPTIONS_FILE_SET+=HTTP_STATUS
+OPTIONS_FILE_SET+=HTTP_SUB
+OPTIONS_FILE_UNSET+=HTTP_XSLT
+OPTIONS_FILE_SET+=HTTPV2
+OPTIONS_FILE_SET+=STREAM
+OPTIONS_FILE_SET+=STREAM_SSL
+OPTIONS_FILE_SET+=STREAM_SSL_PREREAD
+OPTIONS_FILE_UNSET+=AJP
+OPTIONS_FILE_UNSET+=AWS_AUTH
+OPTIONS_FILE_UNSET+=BROTLI
+OPTIONS_FILE_UNSET+=CACHE_PURGE
+OPTIONS_FILE_UNSET+=CLOJURE
+OPTIONS_FILE_SET+=CT
+OPTIONS_FILE_SET+=DEVEL_KIT
+OPTIONS_FILE_SET+=ARRAYVAR
+OPTIONS_FILE_UNSET+=DRIZZLE
+OPTIONS_FILE_SET+=DYNAMIC_UPSTREAM
+OPTIONS_FILE_SET+=ECHO
+OPTIONS_FILE_SET+=ENCRYPTSESSION
+OPTIONS_FILE_UNSET+=FASTDFS
+OPTIONS_FILE_UNSET+=FORMINPUT
+OPTIONS_FILE_UNSET+=GRIDFS
+OPTIONS_FILE_SET+=HEADERS_MORE
+OPTIONS_FILE_SET+=HTTP_ACCEPT_LANGUAGE
+OPTIONS_FILE_UNSET+=HTTP_AUTH_DIGEST
+OPTIONS_FILE_UNSET+=HTTP_AUTH_KRB5
+OPTIONS_FILE_UNSET+=HTTP_AUTH_LDAP
+OPTIONS_FILE_UNSET+=HTTP_AUTH_PAM
+OPTIONS_FILE_UNSET+=HTTP_DAV_EXT
+OPTIONS_FILE_SET+=HTTP_EVAL
+OPTIONS_FILE_SET+=HTTP_FANCYINDEX
+OPTIONS_FILE_SET+=HTTP_FOOTER
+OPTIONS_FILE_UNSET+=HTTP_GEOIP2
+OPTIONS_FILE_SET+=HTTP_JSON_STATUS
+OPTIONS_FILE_UNSET+=HTTP_MOGILEFS
+OPTIONS_FILE_UNSET+=HTTP_MP4_H264
+OPTIONS_FILE_SET+=HTTP_NOTICE
+OPTIONS_FILE_UNSET+=HTTP_PUSH
+OPTIONS_FILE_UNSET+=HTTP_PUSH_STREAM
+OPTIONS_FILE_UNSET+=HTTP_REDIS
+OPTIONS_FILE_SET+=HTTP_RESPONSE
+OPTIONS_FILE_SET+=HTTP_SUBS_FILTER
+OPTIONS_FILE_UNSET+=HTTP_TARANTOOL
+OPTIONS_FILE_UNSET+=HTTP_UPLOAD
+OPTIONS_FILE_UNSET+=HTTP_UPLOAD_PROGRESS
+OPTIONS_FILE_SET+=HTTP_UPSTREAM_CHECK
+OPTIONS_FILE_SET+=HTTP_UPSTREAM_FAIR
+OPTIONS_FILE_SET+=HTTP_UPSTREAM_STICKY
+OPTIONS_FILE_UNSET+=HTTP_VIDEO_THUMBEXTRACTOR
+OPTIONS_FILE_UNSET+=HTTP_ZIP
+OPTIONS_FILE_UNSET+=ICONV
+OPTIONS_FILE_UNSET+=LET
+OPTIONS_FILE_SET+=LUA
+OPTIONS_FILE_SET+=MEMC
+OPTIONS_FILE_UNSET+=MODSECURITY
+OPTIONS_FILE_UNSET+=MODSECURITY3
+OPTIONS_FILE_SET+=NAXSI
+OPTIONS_FILE_UNSET+=NJS
+OPTIONS_FILE_UNSET+=PASSENGER
+OPTIONS_FILE_UNSET+=POSTGRES
+OPTIONS_FILE_UNSET+=RDS_CSV
+OPTIONS_FILE_UNSET+=RDS_JSON
+OPTIONS_FILE_UNSET+=REDIS2
+OPTIONS_FILE_UNSET+=RTMP
+OPTIONS_FILE_SET+=SET_MISC
+OPTIONS_FILE_UNSET+=SFLOW
+OPTIONS_FILE_UNSET+=SHIBBOLETH
+OPTIONS_FILE_UNSET+=SLOWFS_CACHE
+OPTIONS_FILE_UNSET+=SMALL_LIGHT
+OPTIONS_FILE_UNSET+=SRCACHE
+OPTIONS_FILE_UNSET+=VOD
+OPTIONS_FILE_SET+=VTS
+OPTIONS_FILE_SET+=XSS
+OPTIONS_FILE_UNSET+=WEBSOCKIFY
+```
+
 The simplest way:
 
 ```bash
-make install clean
+make install
+make clean
 ```
 
 or with pre-install configuration:
 
 ```bash
 make config-recursive
-make install clean
+make install
+make clean
 ```
 
 During configuration process I chose the following parameters (work in progress).
 
 ###### Post installation tasks
 
-Create required directories:
-
-```bash
-for i in \
-/var/www \
-/var/log/nginx \
-/var/cache/nginx ; do
-
-  mkdir -p "$i" && chown -R ${NGINX_USER}:${NGINX_GROUP} "$i"
-
-done
-```
-
 Include the necessary error pages:
 
-  > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
+  > You can also define them e.g. in `${NGX_PREFIX}/errors.conf` or other file and attach it as needed in server contexts.
 
-- default location: `/etc/nginx/html`
+- default location: `${NGX_PREFIX}/html`
   ```bash
   50x.html  index.html
   ```
 
-Update modules list and include `modules.conf` to your configuration:
+Create `newsyslog` configuration:
 
 ```bash
-_mod_dir="${NGX_PREFIX}/modules"
-
-:>"${_mod_dir}.conf"
-
-for _module in $(ls "${_mod_dir}/") ; do
-
-  echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
-
-done
-```
-
-Create `logrotate` configuration:
-
-```bash
-_logrotate_path="/usr/local/etc/logrotate.d"
-
-cat > "${_logrotate_path}/nginx" << __EOF__
-/var/log/nginx/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 $NGINX_USER $NGINX_GROUP
-  sharedscripts
-  prerotate
-    if [ -d ${_logrotate_path}/httpd-prerotate ]; then \
-      run-parts ${_logrotate_path}/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
+cat > "/etc/newsyslog.conf.d/nginx.conf" << __EOF__
+/var/log/access.log               644  7     1024 *     JC /var/run/nginx.pid
+/var/log/error.log                644  7     1024 *     JC /var/run/nginx.pid
 __EOF__
 ```
 
@@ -3245,7 +3388,7 @@ nginx -V
 Test NGINX configuration:
 
 ```bash
-nginx -t -c /path/to/the/nginx.conf
+nginx -t -c $NGX_CONF
 ```
 
 </details>
