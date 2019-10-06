@@ -372,14 +372,14 @@ apt-get install gcc make build-essential bison perl libperl-dev lua5.1 libphp-em
 
 apt-get install libssl-dev zlib1g-dev libpcre2-dev libluajit-5.1-dev
 
-apt-get install jq git wget
+apt-get install jq git wget logrotate
 
 # RedHat/CentOS
 yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf
 
 yum install openssl-devel zlib-devel pcre-devel luajit-devel
 
-yum install jq git wget
+yum install jq git wget logrotate
 
 # FreeBSD
 pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf
@@ -619,7 +619,7 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq git wget logrotate
 
 # In this example we use sources for all below packages so we do not install them:
 # yum install openssl-devel zlib-devel pcre-devel luajit-devel
@@ -1248,7 +1248,7 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq
+yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed lua libxslt libxslt-devel gd gd-devel GeoIP-devel libxml2-devel expat-devel gperftools-devel cpio gettext-devel autoconf jq git wget logrotate
 
 # In this example we use sources for all below packages so we do not install them:
 # yum install openssl-devel zlib-devel pcre-devel
@@ -2045,7 +2045,7 @@ export NGINX_GID="920"
 Install prebuilt packages, export variables and set symbolic link:
 
 ```bash
-apt-get install gcc make build-essential bison perl lua5.1 libperl-dev libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq
+apt-get install gcc make build-essential bison perl libperl-dev lua5.1 libphp-embed libxslt-dev libgd-dev libgeoip-dev libxml2-dev libexpat-dev libgoogle-perftools-dev libgoogle-perftools4 autoconf jq git wget logrotate
 
 # In this example we don't use zlib sources:
 apt-get install zlib1g-dev
