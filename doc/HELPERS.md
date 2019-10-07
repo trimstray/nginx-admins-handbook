@@ -675,8 +675,10 @@ export ZLIB_INC="/usr/local/include"
 
 # For original Zlib:
 #   export zlib_version="1.2.11"
-#   wget -c --no-check-certificate http://www.zlib.net/zlib-${zlib_version}.tar.gz && tar xzvf zlib-${zlib_version}.tar.gz or git clone --depth 1 https://github.com/madler/zlib
-#   cd "${ZLIB_SRC}-${zlib_version}"
+#   wget -c --no-check-certificate http://www.zlib.net/zlib-${zlib_version}.tar.gz
+#   mkdir -p zlib && tar xzvf zlib-${zlib_version}.tar.gz -C zlib
+# or:
+#   git clone --depth 1 https://github.com/madler/zlib
 
 # For Cloudflare Zlib:
 git clone --depth 1 https://github.com/cloudflare/zlib
@@ -715,8 +717,17 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
   if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
 
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
+    if [[ -n "$_cc_key" ]] && [[ -n "$_cc_value" ]] ; then
+
+      echo -en "$_cc_value is supported on this machine\n"
+
+      _openssl_gcc+="$_cc_value "
+
+    else
+
+      _openssl_gcc=""
+
+    fi
 
   fi
 
@@ -724,7 +735,15 @@ done
 
 # Add to compile with debugging symbols:
 #   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+if [[ -z "$_openssl_gcc" ]] ; then
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong
+
+else
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+fi
 
 make -j2 && make test
 make install
@@ -769,16 +788,12 @@ cd "${ngx_src}"
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 
-# For original:
-export LUAJIT_INC="/usr/local/include/luajit-2.0"
-
-# For OpenResty's:
-export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
 # For original LuaJIT:
+# export LUAJIT_INC="/usr/local/include/luajit-2.0"
 # git clone http://luajit.org/git/luajit-2.0.git luajit2
 
 # For OpenResty's LuaJIT:
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
 git clone --depth 1 https://github.com/openresty/luajit2
 
 cd "$LUAJIT_SRC"
@@ -1333,8 +1348,17 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
   if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
 
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
+    if [[ -n "$_cc_key" ]] && [[ -n "$_cc_value" ]] ; then
+
+      echo -en "$_cc_value is supported on this machine\n"
+
+      _openssl_gcc+="$_cc_value "
+
+    else
+
+      _openssl_gcc=""
+
+    fi
 
   fi
 
@@ -1342,7 +1366,15 @@ done
 
 # Add to compile with debugging symbols:
 #   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+if [[ -z "$_openssl_gcc" ]] ; then
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong
+
+else
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+fi
 
 make -j2 && make test
 make install
@@ -2100,8 +2132,17 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
   if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
 
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
+    if [[ -n "$_cc_key" ]] && [[ -n "$_cc_value" ]] ; then
+
+      echo -en "$_cc_value is supported on this machine\n"
+
+      _openssl_gcc+="$_cc_value "
+
+    else
+
+      _openssl_gcc=""
+
+    fi
 
   fi
 
@@ -2109,7 +2150,15 @@ done
 
 # Add to compile with debugging symbols:
 #   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+if [[ -z "$_openssl_gcc" ]] ; then
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong
+
+else
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+fi
 
 make -j2 && make test
 make install
@@ -2154,16 +2203,12 @@ cd "${ngx_src}"
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 
-# For original:
-export LUAJIT_INC="/usr/local/include/luajit-2.0"
-
-# For OpenResty's:
-export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
 # For original LuaJIT:
+# export LUAJIT_INC="/usr/local/include/luajit-2.0"
 # git clone http://luajit.org/git/luajit-2.0.git luajit2
 
 # For OpenResty's LuaJIT:
+export LUAJIT_INC="/usr/local/include/luajit-2.1"
 git clone --depth 1 https://github.com/openresty/luajit2
 
 cd "$LUAJIT_SRC"
@@ -2505,11 +2550,13 @@ pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoco
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 
-# For original:
-export LUAJIT_INC="/usr/local/include/luajit-2.0"
+# For original LuaJIT:
+# export LUAJIT_INC="/usr/local/include/luajit-2.0"
+# git clone http://luajit.org/git/luajit-2.0.git luajit2
 
-# For OpenResty's:
+# For OpenResty's LuaJIT:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
+git clone --depth 1 https://github.com/openresty/luajit2
 ```
 
   > Remember to build [`sregex`](#sregex) also if you use above steps.
@@ -2591,8 +2638,17 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
   if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
 
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
+    if [[ -n "$_cc_key" ]] && [[ -n "$_cc_value" ]] ; then
+
+      echo -en "$_cc_value is supported on this machine\n"
+
+      _openssl_gcc+="$_cc_value "
+
+    else
+
+      _openssl_gcc=""
+
+    fi
 
   fi
 
@@ -2600,7 +2656,15 @@ done
 
 # Add to compile with debugging symbols:
 #   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+if [[ -z "$_openssl_gcc" ]] ; then
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong
+
+else
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+fi
 
 # To use/link openssl from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
@@ -2650,16 +2714,12 @@ cd "${ngx_src}"
 export LUAJIT_SRC="${ngx_src}/luajit2"
 export LUAJIT_LIB="/usr/local/lib"
 
-# For original:
-export LUAJIT_INC="/usr/local/include/luajit-2.0"
-
-# For OpenResty's:
-export LUAJIT_INC="/usr/local/include/luajit-2.1"
-
 # For original LuaJIT:
+export LUAJIT_INC="/usr/local/include/luajit-2.0"
 git clone http://luajit.org/git/luajit-2.0.git luajit2
 
 # For OpenResty's LuaJIT:
+# export LUAJIT_INC="/usr/local/include/luajit-2.1"
 # git clone --depth 1 https://github.com/openresty/luajit2
 
 cd "$LUAJIT_SRC"
@@ -3149,8 +3209,17 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
   if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
 
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
+    if [[ -n "$_cc_key" ]] && [[ -n "$_cc_value" ]] ; then
+
+      echo -en "$_cc_value is supported on this machine\n"
+
+      _openssl_gcc+="$_cc_value "
+
+    else
+
+      _openssl_gcc=""
+
+    fi
 
   fi
 
@@ -3158,7 +3227,15 @@ done
 
 # Add to compile with debugging symbols:
 #   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+if [[ -z "$_openssl_gcc" ]] ; then
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong
+
+else
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+fi
 
 # To use/link openssl from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
@@ -3526,8 +3603,17 @@ for _cc_opt in "${__GCC_SSL[@]}" ; do
 
   if [[ ! $(gcc -dM -E - </dev/null | grep -q "$_cc_key") ]] ; then
 
-    echo -en "$_cc_value is supported on this machine\n"
-    _openssl_gcc+="$_cc_value "
+    if [[ -n "$_cc_key" ]] && [[ -n "$_cc_value" ]] ; then
+
+      echo -en "$_cc_value is supported on this machine\n"
+
+      _openssl_gcc+="$_cc_value "
+
+    else
+
+      _openssl_gcc=""
+
+    fi
 
   fi
 
@@ -3535,7 +3621,15 @@ done
 
 # Add to compile with debugging symbols:
 #   ./config -d ...
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+if [[ -z "$_openssl_gcc" ]] ; then
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong
+
+else
+
+  ./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" shared zlib no-ssl3 no-weak-ssl-ciphers -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong "$_openssl_gcc"
+
+fi
 
 make depend
 make -j2

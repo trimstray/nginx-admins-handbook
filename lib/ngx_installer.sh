@@ -1840,6 +1840,20 @@ function __main__() {
 
   fi
 
+  if [[ -z "$LUAJIT_INC" ]] ; then
+
+    if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+
+      export LUAJIT_INC="/usr/local/include/luajit-2.1"
+
+    elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
+
+      export LUAJIT_INC="/usr/local/include/luajit-2.0"
+
+    fi
+
+  fi
+
   # shellcheck disable=SC2153
   __ZLIB_DSYM="$ZLIB_DSYM"
   # shellcheck disable=SC2153
