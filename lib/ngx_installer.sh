@@ -1846,7 +1846,7 @@ function __main__() {
       for _mod in "--with-stream_geoip_module" \
                   "--with-http_geoip_module" \
                   "--with-google_perftools_module" \
-                  "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
+                  "--add-module=\${_ngx_master}/modules/ngx_backtrace_module" ; do
 
         TENGINE_BUILD_PARAMS_HELPER=($_mod)
         # shellcheck disable=SC2128
