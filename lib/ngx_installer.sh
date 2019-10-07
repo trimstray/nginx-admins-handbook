@@ -1029,7 +1029,12 @@ function _inst_luajit() {
 
     _f "1" "gmake install"
 
-    _f "1" "ln -s /usr/local/lib/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
+    # On FreeBSD you should set them manually or use the following instructions:
+    for i in libluajit-5.1.so libluajit-5.1.so ; do
+
+      _f "1" "ln -s ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}"
+
+    done
 
   fi
 
