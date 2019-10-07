@@ -1032,7 +1032,15 @@ function _inst_luajit() {
     # On FreeBSD you should set them manually or use the following instructions:
     for i in libluajit-5.1.so libluajit-5.1.so ; do
 
-      _f "1" "ln -sf ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}"
+      if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+
+        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/${i}"
+
+      elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
+
+        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}"
+
+      fi
 
     done
 

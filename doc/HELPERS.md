@@ -2722,7 +2722,15 @@ gmake && gmake install
 # On FreeBSD you should set them manually or use the following instructions:
 for i in libluajit-5.1.so libluajit-5.1.so ; do
 
-  ln -sf ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}
+  if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+
+    ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/${i}
+
+  elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
+
+    ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}
+
+  fi
 
 done
 
@@ -2731,6 +2739,15 @@ done
 /usr/local/lib/libluajit-5.1.a: could not read symbols: Bad value
 cc: error: linker command failed with exit code 1 (use -v to see invocation)
 gmake[1]: *** [objs/Makefile:2165: objs/ngx_http_lua_module.so] Error 1
+
+# Because:
+cd src && test -f libluajit.so && \
+  install -m 0755 libluajit.so /usr/local/lib/libluajit-5.1.so.2.1.0 && \
+  ldconfig -n /usr/local/lib && \
+  ln -sf libluajit-5.1.so.2.1.0 /usr/local/lib/libluajit-5.1.so && \
+  ln -sf libluajit-5.1.so.2.1.0 /usr/local/lib/libluajit-5.1.so.2 || :
+ldconfig: illegal option -- n
+usage: ldconfig [-32] [-aout | -elf] [-Rimrsv] [-f hints_file] [directory | file ...]
 ```
 
 <a id="sregex"></a>sregex:
