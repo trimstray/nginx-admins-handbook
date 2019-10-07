@@ -1311,13 +1311,7 @@ function _init_logrotate() {
 
     _logrotate_path="/etc/logrotate.d"
 
-  elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
-
-    _logrotate_path="/usr/local/etc/logrotate.d"
-
-  fi
-
-  cat > "${_logrotate_path}/nginx" << __EOF__
+    cat > "${_logrotate_path}/nginx" << __EOF__
 /var/log/nginx/*.log {
   daily
   missingok
@@ -1337,6 +1331,17 @@ function _init_logrotate() {
   endscript
 }
 __EOF__
+
+  elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
+
+    _logrotate_path="/etc/newsyslog.conf.d"
+
+    cat > "${_logrotate_path}/nginx.conf" << __EOF__
+/var/log/access.log               644  7     1024 *     JC /var/run/nginx.pid
+/var/log/error.log                644  7     1024 *     JC /var/run/nginx.pid
+__EOF__
+
+  fi
 
   return "$_STATE"
 
@@ -1692,6 +1697,7 @@ function __main__() {
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
+      # Add/remove modules:
       for _mod in "--with-http_geoip_module" \
                   "--with-google_perftools_module" \
                   "--add-module=\${_ngx_modules}/tengine/modules/ngx_backtrace_module" ; do
@@ -1763,6 +1769,7 @@ function __main__() {
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
+      # Add/remove modules:
       for _mod in "--with-stream_geoip_module" \
                   "--with-http_geoip_module" \
                   "--with-google_perftools_module" \
@@ -1835,6 +1842,7 @@ function __main__() {
 
     elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
+      # Add/remove modules:
       for _mod in "--with-stream_geoip_module" \
                   "--with-http_geoip_module" \
                   "--with-google_perftools_module" \
