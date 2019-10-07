@@ -628,12 +628,22 @@ yum install gcc gcc-c++ kernel-devel bison perl perl-devel perl-ExtUtils-Embed l
 export LUAJIT_LIB="/usr/local/lib"
 
 # For original:
-export LUAJIT_INC="/usr/local/include/luajit-2.0"
+# export LUAJIT_INC="/usr/local/include/luajit-2.0"
 
 # For OpenResty's:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
-ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
+for i in libluajit-5.1.so libluajit-5.1.so.2 liblua.so libluajit.so ; do
+
+  # For original LuaJIT:
+  # ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 ${LUAJIT_LIB}/${i}
+
+  # For OpenResty's LuaJIT:
+  ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/${i}
+
+done
+
+# ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
 ```
 
   > Remember to build [`sregex`](#sregex) also if you use above steps.
@@ -802,7 +812,17 @@ cd "$LUAJIT_SRC"
 #   CFLAGS='-g' make ...
 make && make install
 
-ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
+for i in libluajit-5.1.so libluajit-5.1.so.2 liblua.so libluajit.so ; do
+
+  # For original LuaJIT:
+  # ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 ${LUAJIT_LIB}/${i}
+
+  # For OpenResty's LuaJIT:
+  ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/${i}
+
+done
+
+# ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
 ```
 
 <a id="sregex"></a>sregex:
@@ -2217,7 +2237,17 @@ cd "$LUAJIT_SRC"
 #   CFLAGS='-g' make ...
 make && make install
 
-ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
+for i in libluajit-5.1.so libluajit-5.1.so.2 liblua.so libluajit.so ; do
+
+  # For original LuaJIT:
+  # ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 ${LUAJIT_LIB}/${i}
+
+  # For OpenResty's LuaJIT:
+  ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/${i}
+
+done
+
+# ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
 ```
 
 sregex:
@@ -2720,19 +2750,17 @@ cd "$LUAJIT_SRC"
 gmake && gmake install
 
 # On FreeBSD you should set them manually or use the following instructions:
-for i in libluajit-5.1.so libluajit-5.1.so ; do
+for i in libluajit-5.1.so libluajit-5.1.so.2 liblua.so libluajit.so ; do
 
-  if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+  # For original LuaJIT:
+  ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 ${LUAJIT_LIB}/${i}
 
-    ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/${i}
-
-  elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
-
-    ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}
-
-  fi
+  # For OpenResty's LuaJIT:
+  # ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/${i}
 
 done
+
+# ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
 
 # Without this you get:
 /usr/bin/ld: /usr/local/lib/libluajit-5.1.a(lj_err.o): relocation R_X86_64_32S against `a local symbol' can not be used when making a shared object; recompile with -fPIC

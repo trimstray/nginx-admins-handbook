@@ -1007,7 +1007,21 @@ function _inst_luajit() {
 
     _f "1" "make install"
 
-    _f "1" "ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
+    for i in libluajit-5.1.so libluajit-5.1.so.2 liblua.so libluajit.so ; do
+
+      if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
+
+        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/${i}"
+
+      elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
+
+        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 ${LUAJIT_LIB}/${i}"
+
+      fi
+
+    done
+
+    # _f "1" "ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
@@ -1030,15 +1044,15 @@ function _inst_luajit() {
     _f "1" "gmake install"
 
     # On FreeBSD you should set them manually or use the following instructions:
-    for i in libluajit-5.1.so libluajit-5.1.so ; do
+    for i in libluajit-5.1.so libluajit-5.1.so.2 ; do
 
       if [[ "$LUAJIT_LIBRARY" == "openresty" ]] ; then
 
-        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 /usr/local/lib/${i}"
+        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/${i}"
 
       elif [[ "$LUAJIT_LIBRARY" == "original" ]] ; then
 
-        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}"
+        _f "1" "ln -sf /usr/local/lib/libluajit-5.1.so.2.0.5 ${LUAJIT_LIB}/${i}"
 
       fi
 
