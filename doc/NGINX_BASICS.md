@@ -1882,7 +1882,12 @@ http {
 }
 ```
 
-For more information please see [Configuring Logging](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) and [ngx_http_log_module](http://nginx.org/en/docs/http/ngx_http_log_module.html).
+For more information please see [Configuring Logging](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/).
+
+I also recommend to read:
+
+- [ngx_http_log_module](http://nginx.org/en/docs/http/ngx_http_log_module.html)
+- [ngx_http_upstream_module](http://nginx.org/en/docs/http/ngx_http_upstream_module.html)
 
 ##### Conditional logging
 

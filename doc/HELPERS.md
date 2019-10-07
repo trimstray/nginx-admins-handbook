@@ -5531,6 +5531,18 @@ log_format geoip-level-0
                 '$status $body_bytes_sent "$http_referer" '
                 '"$http_user_agent" "$http_x_forwarded_for" '
                 '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
+
+# The following log format is very useful for debugging connection between proxy and upstream servers:
+log_format upstream_log '$remote_addr - $remote_user [$time_local] '
+                '"$request" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                'upstream_addr $upstream_addr '
+                'upstream_bytes_received $upstream_bytes_received '
+                'upstream_cache_status $upstream_cache_status '
+                'upstream_connect_time $upstream_connect_time '
+                'upstream_header_time $upstream_header_time '
+                'upstream_response_length $upstream_response_length '
+                'upstream_response_time $upstream_response_time upstream_status $upstream_status ';
 ```
 
 ##### Log only 4xx/5xx
