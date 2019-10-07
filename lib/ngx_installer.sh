@@ -1260,11 +1260,11 @@ function _create_user() {
 
       if ! grep -q $NGINX_GROUP /etc/group ; then
 
-        _f "1" "pw group add -g $NGINX_GID $NGINX_GROUP"
+        _f "1" "pw group add $NGINX_GROUP -g $NGINX_GID"
 
       fi
 
-      _f "1" "pw user add -d /non-existent -n $NGINX_USER -g $NGINX_GROUP -s /usr/sbin/nologin -c \'nginx user\' -u $NGINX_UID -g $NGINX_GID -w no"
+      _f "1" "pw user add -d /non-existent -n $NGINX_USER -u $NGINX_UID -g $NGINX_GROUP -s /usr/sbin/nologin -c \'nginx user\' -w no"
 
     fi
 
