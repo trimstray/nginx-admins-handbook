@@ -954,7 +954,7 @@ __EOF__
 
     echo
 
-    _f "1" "ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
+    _f "1" "ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl"
 
     echo
 
@@ -962,7 +962,7 @@ __EOF__
 
   for i in libssl.so.1.1 libcrypto.so.1.1 ; do
 
-    _f "1" "ln -s ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/"
+    _f "1" "ln -sf ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/"
 
   done
 
@@ -1007,7 +1007,7 @@ function _inst_luajit() {
 
     _f "1" "make install"
 
-    _f "1" "ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
+    _f "1" "ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so"
 
   elif [[ "$_DIST_VERSION" == "bsd" ]] ; then
 
@@ -1032,7 +1032,7 @@ function _inst_luajit() {
     # On FreeBSD you should set them manually or use the following instructions:
     for i in libluajit-5.1.so libluajit-5.1.so ; do
 
-      _f "1" "ln -s ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}"
+      _f "1" "ln -sf ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}"
 
     done
 

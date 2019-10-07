@@ -633,7 +633,7 @@ export LUAJIT_INC="/usr/local/include/luajit-2.0"
 # For OpenResty's:
 export LUAJIT_INC="/usr/local/include/luajit-2.1"
 
-ln -s /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
+ln -sf /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 ${LUAJIT_LIB}/liblua.so
 ```
 
   > Remember to build [`sregex`](#sregex) also if you use above steps.
@@ -766,11 +766,11 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 fi
 
@@ -802,7 +802,7 @@ cd "$LUAJIT_SRC"
 #   CFLAGS='-g' make ...
 make && make install
 
-ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
+ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
 ```
 
 <a id="sregex"></a>sregex:
@@ -1397,11 +1397,11 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 fi
 
@@ -2181,11 +2181,11 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 fi
 
@@ -2217,7 +2217,7 @@ cd "$LUAJIT_SRC"
 #   CFLAGS='-g' make ...
 make && make install
 
-ln -s /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
+ln -sf /usr/local/lib/libluajit-5.1.so.2.1.0 ${LUAJIT_LIB}/liblua.so
 ```
 
 sregex:
@@ -2675,17 +2675,17 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 fi
 
 for i in libssl.so.1.1 libcrypto.so.1.1 ; do
 
-  ln -s ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/
+  ln -sf ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/
 
 done
 ```
@@ -2722,7 +2722,7 @@ gmake && gmake install
 # On FreeBSD you should set them manually or use the following instructions:
 for i in libluajit-5.1.so libluajit-5.1.so ; do
 
-  ln -s ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}
+  ln -sf ${LUAJIT_SRC}/libluajit-5.1.so.2.0.5 /usr/local/lib/${i}
 
 done
 
@@ -3178,11 +3178,11 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  ln -s /usr/ports/security/openssl111/work/stage/usr/local/bin/openssl /usr/bin/openssl
+  ln -sf /usr/ports/security/openssl111/work/stage/usr/local/bin/openssl /usr/bin/openssl
 
 else
 
-  ln -s /usr/ports/security/openssl111/work/stage/usr/local/bin/openssl /usr/bin/openssl
+  ln -sf /usr/ports/security/openssl111/work/stage/usr/local/bin/openssl /usr/bin/openssl
 
 fi
 ```
@@ -3259,17 +3259,17 @@ if [[ -e "/usr/bin/openssl" ]] ; then
 
   mv /usr/bin/openssl /usr/bin/${_openssl_str}
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 else
 
-  ln -s ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
+  ln -sf ${OPENSSL_DIR}/bin/openssl /usr/bin/openssl
 
 fi
 
 for i in libssl.so.1.1 libcrypto.so.1.1 ; do
 
-  ln -s ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/
+  ln -sf ${ngx_src}/openssl-${openssl_version}/${i} /usr/lib/
 
 done
 ```
@@ -3512,7 +3512,7 @@ cd goaccess-1.3
 
 make -j2 && make install
 
-ln -s /usr/local/bin/goaccess /usr/bin/goaccess
+ln -sf /usr/local/bin/goaccess /usr/bin/goaccess
 ```
 
   > You can always fetch default configuration from `/usr/local/src/goaccess-<version>/config/goaccess.conf` source tree.
