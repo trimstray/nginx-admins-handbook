@@ -3072,7 +3072,39 @@ for _module in $(ls "${_mod_dir}/") ; do
 done
 ```
 
-Create `newsyslog` configuration:
+Create `logrotate` configuration:
+
+```bash
+_logrotate_path="/usr/local/etc/logrotate.d"
+
+cat > "${_logrotate_path}/nginx" << __EOF__
+/var/log/nginx/*/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+    kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}
+
+/var/log/nginx/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+    kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}
+__EOF__
+```
+
+Or `newsyslog` configuration:
 
 ```bash
 cat > "/etc/newsyslog.conf.d/nginx.conf" << __EOF__
@@ -3483,7 +3515,39 @@ Include the necessary error pages:
   50x.html  index.html
   ```
 
-Create `newsyslog` configuration:
+Create `logrotate` configuration:
+
+```bash
+_logrotate_path="/usr/local/etc/logrotate.d"
+
+cat > "${_logrotate_path}/nginx" << __EOF__
+/var/log/nginx/*/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+    kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}
+
+/var/log/nginx/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+    kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}
+__EOF__
+```
+
+Or `newsyslog` configuration:
 
 ```bash
 cat > "/etc/newsyslog.conf.d/nginx.conf" << __EOF__
