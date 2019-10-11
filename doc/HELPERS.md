@@ -9,6 +9,7 @@
     * [Automatic installation for RHEL/Debian/BSD](#automatic-installation-for-rheldebianbsd)
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
+    * [Patches](#patches)
     * [3rd party modules](#3rd-party-modules)
     * [Configure options](#configure-options)
     * [Compiler and linker](#compiler-and-linker)
@@ -388,6 +389,10 @@ pkg install pcre luajit
 
 pkg install jq git wget ncurses
 ```
+
+##### Patches
+
+- [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch) - to hide NGINX `Server` header (and more), see also rules: [Hide Nginx server signature](RULES.md#beginner-hide-nginx-server-signature)
 
 ##### 3rd party modules
 
@@ -2687,7 +2692,7 @@ else
 
 fi
 
-# To use/link openssl from your system (world):
+# To use/link openssl* port from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
   echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
@@ -3240,7 +3245,7 @@ OPTIONS_FILE_SET+=TLS1_2
 make config-recursive
 make install
 
-# To use/link openssl from your system (world):
+# To use/link openssl* port from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
   echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
@@ -3318,7 +3323,7 @@ else
 
 fi
 
-# To use/link openssl from your system (world):
+# To use/link openssl* port from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
   echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf

@@ -182,6 +182,7 @@
     * [Automatic installation for RHEL/Debian/BSD](doc/HELPERS.md#automatic-installation-for-rheldebianbsd)
     * [Nginx package](doc/HELPERS.md#nginx-package)
     * [Dependencies](doc/HELPERS.md#dependencies)
+    * [Patches](doc/HELPERS.md#patches)
     * [3rd party modules](doc/HELPERS.md#3rd-party-modules)
     * [Configure options](doc/HELPERS.md#cconfigure-options)
     * [Compiler and linker](doc/HELPERS.md#compiler-and-linker)
