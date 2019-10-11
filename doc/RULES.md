@@ -2484,6 +2484,8 @@ The Importance of a Proper HTTP Strict Transport Security Implementation on Your
   >
   > - It is not recommended to provide an HSTS policy via the http-equiv attribute of a meta tag. According to HSTS RFC 6797, user agents don’t heed `http-equiv="Strict-Transport-Security"` attribute on `<meta>` elements on the received content`
 
+  > To meet the HSTS preload list standard a root domain needs to return a `strict-transport-security` header that includes both the `includeSubDomains` and `preload` directives and has a minimum `max-age` of one year. Your site must also serve a valid SSL certificate on the root domain and all subdomains, as well as redirect all HTTP requests to HTTPS on the same host.
+
   > You had better be pretty sure that your website is indeed all HTTPS before you turn this on because HSTS adds complexity to your rollback strategy. Google recommend enabling HSTS this way:
   >
   >   1) Roll out your HTTPS pages without HSTS first
@@ -2506,11 +2508,14 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 - [HTTP Strict Transport Security](https://https.cio.gov/hsts/)
 - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
 - [HSTS Cheat Sheet](https://scotthelme.co.uk/hsts-cheat-sheet/)
+- [HSTS Preload and Subdomains](https://textslashplain.com/2018/04/09/hsts-preload-and-subdomains/)
 - [HTTP Strict Transport Security (HSTS) and NGINX](https://www.nginx.com/blog/http-strict-transport-security-hsts-and-nginx/)
 - [Is HSTS as a proper substitute for HTTP-to-HTTPS redirects?](https://www.reddit.com/r/bigseo/comments/8zw45d/is_hsts_as_a_proper_substitute_for_httptohttps/)
 - [How to configure HSTS on www and other subdomains](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
 - [HSTS: Is includeSubDomains on main domain sufficient?](https://serverfault.com/questions/927336/hsts-is-includesubdomains-on-main-domain-sufficient)
+- [The HSTS preload list eligibility](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
 - [Check HSTS preload status and eligibility](https://hstspreload.org/)
+- [HSTS Deployment Recommendations](https://hstspreload.org/#deployment-recommendations)
 - [How does HSTS handle mixed content?](https://serverfault.com/questions/927145/how-does-hsts-handle-mixed-content)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
@@ -2526,6 +2531,8 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
   > Before enable this header you should discuss with developers about it. They probably going to have to update your application to remove any inline script and style, and make some additional modifications there.
 
   > You should always validate CSP before implement with two great tools: [CSP Evaluator](https://csp-evaluator.withgoogle.com/) and [Content Security Policy (CSP) Validator](https://cspvalidator.org/).
+
+  > For generate a policy: [https://report-uri.com/home/generate](https://report-uri.com/home/generate).
 
 ###### Example
 
