@@ -2464,6 +2464,26 @@ location ^~ /assets/ {
 
   > The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
+  > When a browser knows that a domain has enabled HSTS, it does two things:
+  >
+  > - always uses an `https://` connection, even when clicking on an `http://` link or after typing a domain into the location bar without specifying a protocol
+  > - removes the ability for users to click through warnings about invalid certificates
+
+  > I recommend to set the `max-age` to a big value like `31536000` (12 months) or `63072000` (24 months).
+
+  > There are a few simple best practices for HSTS (from [
+The Importance of a Proper HTTP Strict Transport Security Implementation on Your Web Server](https://blog.qualys.com/securitylabs/2016/03/28/the-importance-of-a-proper-http-strict-transport-security-implementation-on-your-web-server)):
+  >
+  > - The strongest protection is to ensure that all requested resources use only TLS with a well-formed HSTS header. Qualys recommends providing an HSTS header on all HTTPS resources in the target domain
+  >
+  > - It is advisable to assign the max-age directive’s value to be greater than `10368000` seconds (120 days) and ideally to `31536000` (one year). Websites should aim to ramp up the max-age value to ensure heightened security for a long duration for the current domain and/or subdomains
+  >
+  > - [RFC 6797](https://tools.ietf.org/html/rfc6797), section 14.4 advocates that a web application must aim to add the `includeSubDomain` directive in the policy definition whenever possible. The directive’s presence ensures the HSTS policy is applied to the domain of the issuing host and all of its subdomains, e.g. `example.com` and `www.example.com`
+  >
+  > - The application should never send an HSTS header over a plaintext HTTP header, as doing so makes the connection vulnerable to SSL stripping attacks
+  >
+  > - It is not recommended to provide an HSTS policy via the http-equiv attribute of a meta tag. According to HSTS RFC 6797, user agents don’t heed `http-equiv="Strict-Transport-Security"` attribute on `<meta>` elements on the received content`
+
   > You had better be pretty sure that your website is indeed all HTTPS before you turn this on because HSTS adds complexity to your rollback strategy. Google recommend enabling HSTS this way:
   >
   >   1) Roll out your HTTPS pages without HSTS first
@@ -2482,11 +2502,16 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 ###### External resources
 
 - [Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
-- [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
 - [Security HTTP Headers - Strict-Transport-Security](https://zinoui.com/blog/security-http-headers#strict-transport-security)
+- [HTTP Strict Transport Security](https://https.cio.gov/hsts/)
+- [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
+- [HSTS Cheat Sheet](https://scotthelme.co.uk/hsts-cheat-sheet/)
+- [HTTP Strict Transport Security (HSTS) and NGINX](https://www.nginx.com/blog/http-strict-transport-security-hsts-and-nginx/)
 - [Is HSTS as a proper substitute for HTTP-to-HTTPS redirects?](https://www.reddit.com/r/bigseo/comments/8zw45d/is_hsts_as_a_proper_substitute_for_httptohttps/)
 - [How to configure HSTS on www and other subdomains](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
+- [HSTS: Is includeSubDomains on main domain sufficient?](https://serverfault.com/questions/927336/hsts-is-includesubdomains-on-main-domain-sufficient)
 - [Check HSTS preload status and eligibility](https://hstspreload.org/)
+- [How does HSTS handle mixed content?](https://serverfault.com/questions/927145/how-does-hsts-handle-mixed-content)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
 
@@ -2500,6 +2525,8 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
   > Before enable this header you should discuss with developers about it. They probably going to have to update your application to remove any inline script and style, and make some additional modifications there.
 
+  > You should always validate CSP before implement with two great tools: [CSP Evaluator](https://csp-evaluator.withgoogle.com/) and [Content Security Policy (CSP) Validator](https://cspvalidator.org/).
+
 ###### Example
 
 ```bash
@@ -2510,11 +2537,13 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 ###### External resources
 
 - [Content Security Policy - An Introduction - Scott Helme](https://scotthelme.co.uk/content-security-policy-an-introduction/)
-- [CSP Cheat Sheet](https://scotthelme.co.uk/csp-cheat-sheet/)
 - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
 - [Content Security Policy Cheat Sheet – OWASP](https://www.owasp.org/index.php/Content_Security_Policy_Cheat_Sheet)
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
+- [CSP Cheat Sheet](https://scotthelme.co.uk/csp-cheat-sheet/)
 - [Security HTTP Headers - Content-Security-Policy](https://zinoui.com/blog/security-http-headers#content-security-policy)
+- [CSP Evaluator](https://csp-evaluator.withgoogle.com/)
+- [Content Security Policy (CSP) Validator](https://cspvalidator.org/)
 
 #### :beginner: Control the behaviour of the Referer header (Referrer-Policy)
 
