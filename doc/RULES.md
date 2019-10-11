@@ -1152,6 +1152,7 @@ server {
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/)
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 - [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
+- [HTTP Headers (from this handbook)](HTTP_BASICS.md#http-headers)
 
 #### :beginner: Maintaining SSL sessions
 

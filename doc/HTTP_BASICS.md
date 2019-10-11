@@ -3,6 +3,7 @@
 - **[⬆ HTTP Basics](https://github.com/trimstray/nginx-admins-handbook#toc-http-basics)**
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
+  * [HTTP Headers](#http-headers)
   * [Request](#request)
     * [Request line](#request-line)
       * [Methods](#methods)
@@ -105,6 +106,32 @@ If it is still unclear to you, I would advise you to look at the following artic
 
 - [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225)
 - [The History of the URL: Path, Fragment, Query, and Auth](https://eager.io/blog/the-history-of-the-url-path-fragment-query-auth/)
+
+#### HTTP Headers
+
+When a client requests a resource from a server it uses HTTP. This request includes a set of key-value pairs giving information like the version of the browser or what file formats it understands. These key-value pairs are called request headers.
+
+The server answers with the requested resource but also sends response headers giving information on the resource or the server itself.
+
+See short explanation about HTTP headers:
+
+- [HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
+- [The HTTP Request Headers List](https://flaviocopes.com/http-request-headers/)
+- [The HTTP Response Headers List](https://flaviocopes.com/http-response-headers/)
+
+The role of header compression:
+
+  > Header compression resulted in an ~88% reduction in the size of request headers and an ~85% reduction in the size of response headers. On the lower-bandwidth DSL link, in which the upload link is only 375 Kbps, request header compression in particular, led to significant page load time improvements for certain sites (i.e. those that issued large number of resource requests). We found a reduction of 45 - 1142 ms in page load time simply due to header compression.
+
+- HTTP/2 supports a new dedicated header compression algorithm, called HPACK
+- HPACK is resilient to CRIME
+- HPACK uses three methods of compression: Static Dictionary, Dynamic Dictionary, Huffman Encoding
+
+Please see also:
+
+- [Designing Headers for HTTP Compression](https://www.mnot.net/blog/2018/11/27/header_compression)
+- [HPACK: Header Compression for HTTP/2](https://http2.github.io/http2-spec/compression.html)
+- [HPACK: the silent killer (feature) of HTTP/2](https://blog.cloudflare.com/hpack-the-silent-killer-feature-of-http-2/)
 
 #### Request
 
