@@ -2527,13 +2527,19 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
   > Whitelisting known-good resource origins, refusing to execute potentially dangerous inline scripts, and banning the use of eval are all effective mechanisms for mitigating cross-site scripting attacks.
 
+  > The inclusion of CSP policies significantly impedes successful XSS attacks, UI Redressing (Clickjacking), malicious use of frames or CSS injections.
+
   > CSP is a good defence-in-depth measure to make exploitation of an accidental lapse in that less likely.
+
+  > The default policy that starts building a header is: block everything. By modifying the CSP value, the programmer loosens restrictions for specific groups of resources (e.g. separately for scripts, images, etc.).
 
   > Before enable this header you should discuss with developers about it. They probably going to have to update your application to remove any inline script and style, and make some additional modifications there.
 
-  > You should always validate CSP before implement with two great tools: [CSP Evaluator](https://csp-evaluator.withgoogle.com/) and [Content Security Policy (CSP) Validator](https://cspvalidator.org/).
+  > Strict policies will significantly increase security, and higher code quality will reduce the overall number of errors. CSP can never replace secure code - new restrictions help reduce the effects of attacks (such as XSS), but they are not mechanisms to prevent them!
 
-  > For generate a policy: [https://report-uri.com/home/generate](https://report-uri.com/home/generate).
+  > You should always validate CSP before implement: [CSP Evaluator](https://csp-evaluator.withgoogle.com/) and [Content Security Policy (CSP) Validator](https://cspvalidator.org/).
+
+  > For generate a policy: [https://report-uri.com/home/generate](https://report-uri.com/home/generate). Remember, however, that these types of tools may become outdated or have errors.
 
 ###### Example
 
@@ -2552,6 +2558,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 - [Security HTTP Headers - Content-Security-Policy](https://zinoui.com/blog/security-http-headers#content-security-policy)
 - [CSP Evaluator](https://csp-evaluator.withgoogle.com/)
 - [Content Security Policy (CSP) Validator](https://cspvalidator.org/)
+- [Can I Use CSP](https://caniuse.com/#search=CSP)
 
 #### :beginner: Control the behaviour of the Referer header (Referrer-Policy)
 
