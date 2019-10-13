@@ -2544,21 +2544,22 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 ###### Example
 
 ```bash
-# This policy allows images, scripts, AJAX, and CSS from the same origin, and does not allow any other resources to load.
+# This policy allows images, scripts, AJAX, and CSS from the same origin, and does not allow any other resources to load:
 add_header Content-Security-Policy "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';" always;
 ```
 
 ###### External resources
 
-- [Content Security Policy - An Introduction - Scott Helme](https://scotthelme.co.uk/content-security-policy-an-introduction/)
 - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
 - [Content Security Policy Cheat Sheet – OWASP](https://www.owasp.org/index.php/Content_Security_Policy_Cheat_Sheet)
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
-- [CSP Cheat Sheet](https://scotthelme.co.uk/csp-cheat-sheet/)
+- [Content Security Policy - An Introduction - Scott Helme](https://scotthelme.co.uk/content-security-policy-an-introduction/)
+- [CSP Cheat Sheet - Scott Helme](https://scotthelme.co.uk/csp-cheat-sheet/)
 - [Security HTTP Headers - Content-Security-Policy](https://zinoui.com/blog/security-http-headers#content-security-policy)
 - [CSP Evaluator](https://csp-evaluator.withgoogle.com/)
 - [Content Security Policy (CSP) Validator](https://cspvalidator.org/)
 - [Can I Use CSP](https://caniuse.com/#search=CSP)
+- [CSP Is Dead, Long Live CSP!](https://ai.google/research/pubs/pub45542)
 
 #### :beginner: Control the behaviour of the Referer header (Referrer-Policy)
 

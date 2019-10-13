@@ -100,6 +100,7 @@
   * [Features and architecture](doc/HTTP_BASICS.md#features-and-architecture)
   * [URI vs URL](doc/HTTP_BASICS.md#uri-vs-url)
   * [HTTP Headers](doc/HTTP_BASICS.md#http-headers)
+  * [HTTP Methods](doc/HTTP_BASICS.md#http-methods)
   * [Request](doc/HTTP_BASICS.md#request)
     * [Request line](doc/HTTP_BASICS.md#request-line)
       * [Methods](doc/HTTP_BASICS.md#methods)
@@ -628,6 +629,7 @@ Existing chapters:
   - [x] _Features and architecture_
   - [x] _URI vs URL_
   - [x] _HTTP Headers_
+  - [x] _HTTP Methods_
   - [x] _Request_
     - [x] _Request line_
       - [x] _Methods_

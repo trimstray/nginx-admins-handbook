@@ -4,6 +4,7 @@
   * [Features and architecture](#features-and-architecture)
   * [URI vs URL](#uri-vs-url)
   * [HTTP Headers](#http-headers)
+  * [HTTP Methods](#http-methods)
   * [Request](#request)
     * [Request line](#request-line)
       * [Methods](#methods)
@@ -43,13 +44,21 @@ We have also some interesting books:
 
 #### Features and architecture
 
-The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server.
+The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
+
+By its nature, HTTP is stateless. Stateless means that all requests are separate from each other. So each request from your browser must contain enough information on its own for the server to fulfill the request.
 
 Here is a brief explanation:
 
+- most often the HTTP communication use the TCP protocol
+
+- HTTP protocol is stateless (all requests are separate from each other)
+
+- each transaction of the message based model of HTTP is processed separately from the others
+
 - the HTTP client, i.e., a browser initiates an HTTP request and after a request is made, the client waits for the response
 
-- the HTTP server handles and processing requests from clients, after that it sends a response to the client
+- the HTTP server handles and processing requests from clients (and continues to listen and to accept other requests), after that it sends a response to the client
 
 - any type of data can be sent by HTTP as long as both the client and the server know how to handle the data content
 
@@ -113,11 +122,13 @@ When a client requests a resource from a server it uses HTTP. This request inclu
 
 The server answers with the requested resource but also sends response headers giving information on the resource or the server itself.
 
-See short explanation about HTTP headers:
+See these explanations about HTTP headers:
 
 - [HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 - [The HTTP Request Headers List](https://flaviocopes.com/http-request-headers/)
 - [The HTTP Response Headers List](https://flaviocopes.com/http-response-headers/)
+
+HTTP headers allow the client and the server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).
 
 The role of header compression:
 
@@ -132,6 +143,28 @@ Please see also:
 - [Designing Headers for HTTP Compression](https://www.mnot.net/blog/2018/11/27/header_compression)
 - [HPACK: Header Compression for HTTP/2](https://http2.github.io/http2-spec/compression.html)
 - [HPACK: the silent killer (feature) of HTTP/2](https://blog.cloudflare.com/hpack-the-silent-killer-feature-of-http-2/)
+
+#### HTTP Methods
+
+The HTTP protocol includes a set of methods that indicate which action to be done for a resource.
+
+The most common methods are GET and POST. But there are a few others, too.
+
+- `GET` - use this method to request data from a specified resource where data is not modified it in any way. `GET` requests do not change the state of resource
+
+- `POST` - use this method to send data to a server to create a resource
+
+- `PUT` - use this method to update the existing resource on a server by using the content in the body of the request. Think of this as a way to "edit" something
+
+- `HEAD` - use this method the same way you use `GET`, but with the distinction that the return of a `HEAD` method should not contain body in the response. But the return will contain same headers as if `GET` was used. You use the `HEAD` method to check whether the resource is present prior of making a `GET` request
+
+- `TRACE` - use this method for diagnostic purposes. The response will contain in its body the exact content of the request message
+
+- `OPTIONS` - use this method to describe the communication options (HTTP methods) that are available for the target resource
+
+- `PATCH` - use this method to apply partial modifications to a resource
+
+- `DELETE` - use this method to delete the specified resource
 
 #### Request
 
