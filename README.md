@@ -175,9 +175,8 @@
     * [Variables](doc/NGINX_BASICS.md#variables)
     * [Directives, keys, and zones](doc/NGINX_BASICS.md#directives-keys-and-zones)
     * [Burst and nodelay parameters](doc/NGINX_BASICS.md#burst-and-nodelay-parameters)
-  * [External modules](doc/NGINX_BASICS.md#external-modules)
+  * [3rd party modules](doc/NGINX_BASICS.md#3rd-party-modules)
     * [GeoIP](doc/NGINX_BASICS.md#geoip)
-      * [GeoIP and performance](doc/NGINX_BASICS.md#geoip-and-performance)
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers"></a>
   * [Installing from prebuilt packages](doc/HELPERS.md#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](doc/HELPERS.md#rhel7-or-centos-7)
@@ -716,9 +715,8 @@ Existing chapters:
     - [x] _Variables_
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
-  - _External modules_
+  - _3rd party modules_
     - [x] _GeoIP_
-      - [x] _GeoIP and performance_
 
 </details>
 

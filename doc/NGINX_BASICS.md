@@ -55,9 +55,8 @@
     * [Variables](#variables)
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
-  * [External modules](#external-modules)
+  * [3rd party modules](#3rd-party-modules)
     * [GeoIP](#geoip)
-      * [GeoIP and performance](#geoip-and-performance)
 
 #### Directories and files
 
@@ -2819,17 +2818,20 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
 
-#### External modules
+#### 3rd party modules
 
 ##### GeoIP
+
+Documentation:
+
+- `[ngx_http_geoip_module](http://nginx.org/en/docs/http/ngx_http_geoip_module.html)`
+- `[ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module)`
 
 This module allows real-time queries against the Max Mind GeoIP database. It uses the old version of API, still very common on OS distributions. For using the new version of GeoIP API, see geoip2 module.
 
 The Max Mind GeoIP database is a map of IP network address assignments to geographical locales that can be useful - though approximate - in identifying the physical location with which an IP host address is associated on a relatively granular level.
 
-  > See [Restricting access by geographical location](doc/HELPERS.md#restricting-access-by-geographical-location).
-
-###### GeoIP and performance
+###### Performance
 
 The GeoIP module sets multiple variables and by default NGINX parses and loads geoip data into memory once the config file only on (re)start or SIGHUP.
 
@@ -2842,3 +2844,7 @@ More technically geo module builds in-memory radix tree when loading configs. Th
 What is a Radix Trees? See this: [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/).
 
 If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
+
+###### Examples
+
+  > See [Restricting access by geographical location](doc/HELPERS.md#restricting-access-by-geographical-location) from this handbook.
