@@ -2844,13 +2844,9 @@ The GeoIP module sets multiple variables and by default NGINX parses and loads g
 
   > GeoIP lookups come from a distributed database rather than from a dynamic server, so unlike DNS, the worst-case performance hit is minimal. Additionally, from a performance point of view, you should not worry, as geoip database are stored in memory (at the reading configuration phase) and NGINX doing lookups very fast.
 
-  > Variables in NGINX are evaluated only on demand. If `$geoip_*` variable was not used during the request processing, then geoip db was not lookuped. So, if you don't call the geoip variable on your app the geoip module wont be executed at all.
+GeoIP module creates (and assigns values to) variables based on the IP address of the request client and one of Maxmind GeoIP databases. One of the common uses is to set the country of the end-user as a NGINX variable.
 
-More technically geo module builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. The only inconvenience of using really large geobases is config reading time.
-
-What is a Radix Trees? See this: [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/).
-
-If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
+Variables in NGINX are evaluated only on demand. If `$geoip_*` variable was not used during the request processing, then geoip db was not lookuped. So, if you don't call the geoip variable on your app the geoip module wont be executed at all. The only inconvenience of using really large geobases is config reading time.
 
 ###### Examples
 

@@ -494,6 +494,8 @@ server {
 
   > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`.
 
+  > `geo` module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
+
   > I use both modules for a large lists. You should've thought about it because this rule requires to use several `if` conditions. I think that `allow/deny` directives are better solution for simple lists, after all. Take a look at the example below:
 
 ```bash
@@ -565,7 +567,11 @@ geo $globals_internal_geo_acl {
 ###### External resources
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
+- [What is the best way to redirect 57,000 URLs on nginx?](https://serverfault.com/questions/879534/what-is-the-best-way-to-redirect-57-000-urls-on-nginx)
+- [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/)
+- [Compressing Radix Trees Without (Too Many) Tears](https://medium.com/basecs/compressing-radix-trees-without-too-many-tears-a2e658adb9a0)
 - [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
+- [ngx_http_geoip_module (from this handbook)](NGINX_BASICS.md#ngx-http-geoip-module)
 
 #### :beginner: Map all the things...
 
