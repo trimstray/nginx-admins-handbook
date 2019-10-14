@@ -40,7 +40,7 @@
       * [Analyse log file and print requests with 4xx and 5xx](#analyse-log-file-and-print-requests-with-4xx-and-5xx)
       * [Analyse log file remotely](#analyse-log-file-remotely-1)
   * [Testing](#testing)
-    * [Build OpenSSL 1.0.2-chacha version](doc/HELPERS.md#build-openssl-102-chacha-version)
+    * [Build OpenSSL 1.0.2-chacha version](HELPERS.md#build-openssl-102-chacha-version)
     * [Send request and show response headers](#send-request-and-show-response-headers)
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
@@ -161,7 +161,7 @@
 
 #### Installing from prebuilt packages
 
-  > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
+  > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](RULES.md#beginner-always-keep-nginx-up-to-date)**
 
 ##### RHEL7 or CentOS 7
 
@@ -253,7 +253,7 @@ pkg install nginx
 
 #### Installing from source
 
-  > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](doc/RULES.md#beginner-always-keep-nginx-up-to-date)**
+  > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](RULES.md#beginner-always-keep-nginx-up-to-date)**
 
 The build is configured using the `configure` command. The configure shell script attempts to guess correct values for various system-dependent variables used during compilation. It uses those values to create a `Makefile`. Of course you can adjust certain environment variables to make configure able to find the packages like a `zlib` or `openssl`, and of many other options (paths, modules).
 
@@ -5723,9 +5723,9 @@ I also recommend read the following resources:
 - [Blocking Country and Continent with nginx GeoIP on Ubuntu 18.04](https://guides.wp-bullet.com/blocking-country-and-continent-with-nginx-geoip-on-ubuntu-18-04/)
 - [Using NGINX With GeoIP MaxMind Database to Fetch Geolocation Data](https://dzone.com/articles/nginx-with-geoip-maxmind-database-to-fetch-user-ge)
 
-See also [GeoIP](doc/NGINX_BASICS.md#geoip) chapter from this handbook.
+See also [ngx_http_geoip_module](NGINX_BASICS.md#ngx-http-geoip-module) chapter from this handbook.
 
-The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP database. With this module you can blocking/allowing for example:
+The NGINX must be compiled with the `ngx_http_geoip_module` or `ngx_http_geoip2_module` to use the GeoIP database. With this module you can blocking/allowing for example:
 
 - region
 - city
@@ -5797,7 +5797,7 @@ The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP dat
   }
 ```
 
-For display GeoIP data in NGINX access log see [Custom log formats](doc/HELPERS.md#custom-log-formats) chapter.
+For display GeoIP data in NGINX access log see [Custom log formats](HELPERS.md#custom-log-formats) chapter.
 
 ###### GeoIP 2 database
 

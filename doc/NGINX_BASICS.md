@@ -56,7 +56,8 @@
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
   * [3rd party modules](#3rd-party-modules)
-    * [GeoIP](#geoip)
+    * [ngx_set_misc](#ngx-set-misc)
+    * [ngx_http_geoip_module](#ngx-http-geoip-module)
 
 #### Directories and files
 
@@ -423,8 +424,8 @@ cabal update
 
 #### Processes
 
-  > **:bookmark: [Adjust worker processes - Performance - P3](doc/RULES.md#beginner-adjust-worker-processes)**<br>
-  > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging - P4](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
+  > **:bookmark: [Adjust worker processes - Performance - P3](RULES.md#beginner-adjust-worker-processes)**<br>
+  > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging - P4](RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
 
 NGINX has **one master process** and **one or more worker processes**.
 
@@ -1059,9 +1060,9 @@ http {
 ##### Handle incoming connections
 
   > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
-  > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
-  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
-  > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
+  > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
+  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
+  > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
   > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
   > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](#beginner-use-only-one-ssl-config-for-the-listen-directive)**
 
@@ -1149,7 +1150,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
 ##### Matching location
 
-  > **:bookmark: [Make an exact location match to speed up the selection process - Performance - P3](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)**
+  > **:bookmark: [Make an exact location match to speed up the selection process - Performance - P3](RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)**
 
   > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
@@ -1425,8 +1426,8 @@ Finally, look at difference between `last` and `break` flags in action:
 
 ###### `return` directive
 
-  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
-  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance - P2](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
+  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
+  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance - P2](RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
 
@@ -2820,12 +2821,18 @@ Without `nodelay` NGINX would wait (no 503 response) and handle excessive reques
 
 #### 3rd party modules
 
-##### GeoIP
+##### ngx_set_misc
 
 Documentation:
 
-- `[ngx_http_geoip_module](http://nginx.org/en/docs/http/ngx_http_geoip_module.html)`
-- `[ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module)`
+- [`ngx_set_misc`](https://github.com/openresty/set-misc-nginx-module)
+
+##### ngx_http_geoip_module
+
+Documentation:
+
+- [`ngx_http_geoip_module`](http://nginx.org/en/docs/http/ngx_http_geoip_module.html)
+- [`ngx_http_geoip2_module`](https://github.com/leev/ngx_http_geoip2_module)
 
 This module allows real-time queries against the Max Mind GeoIP database. It uses the old version of API, still very common on OS distributions. For using the new version of GeoIP API, see geoip2 module.
 
@@ -2847,4 +2854,4 @@ If you have many unique values per networks, then this long load time is caused 
 
 ###### Examples
 
-  > See [Restricting access by geographical location](doc/HELPERS.md#restricting-access-by-geographical-location) from this handbook.
+  > See [Restricting access by geographical location](HELPERS.md#restricting-access-by-geographical-location) from this handbook.

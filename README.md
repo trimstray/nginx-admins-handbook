@@ -176,7 +176,8 @@
     * [Directives, keys, and zones](doc/NGINX_BASICS.md#directives-keys-and-zones)
     * [Burst and nodelay parameters](doc/NGINX_BASICS.md#burst-and-nodelay-parameters)
   * [3rd party modules](doc/NGINX_BASICS.md#3rd-party-modules)
-    * [GeoIP](doc/NGINX_BASICS.md#geoip)
+    * [ngx_set_misc](doc/NGINX_BASICS.md#ngx-set-misc)
+    * [ngx_http_geoip_module](doc/NGINX_BASICS.md#ngx-http-geoip-module)
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers"></a>
   * [Installing from prebuilt packages](doc/HELPERS.md#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](doc/HELPERS.md#rhel7-or-centos-7)
@@ -543,7 +544,7 @@ New chapters:
 - [x] **SSL/TLS Basics**
 - [x] **Reverse Proxy**
 - [ ] **Caching**
-- [ ] **3rd party modules**
+- [x] **3rd party modules**
 - [ ] **Web Application Firewall**
 - [ ] **ModSecurity**
 - [x] **Debugging**
@@ -716,7 +717,8 @@ Existing chapters:
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
   - _3rd party modules_
-    - [x] _GeoIP_
+    - [x] _ngx_set_misc_
+    - [x] _ngx_http_geoip_module_
 
 </details>
 
