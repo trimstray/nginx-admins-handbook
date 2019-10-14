@@ -175,6 +175,9 @@
     * [Variables](doc/NGINX_BASICS.md#variables)
     * [Directives, keys, and zones](doc/NGINX_BASICS.md#directives-keys-and-zones)
     * [Burst and nodelay parameters](doc/NGINX_BASICS.md#burst-and-nodelay-parameters)
+  * [External modules](doc/NGINX_BASICS.md#external-modules)
+    * [GeoIP](doc/NGINX_BASICS.md#geoip)
+      * [GeoIP and performance](doc/NGINX_BASICS.md#geoip-and-performance)
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers"></a>
   * [Installing from prebuilt packages](doc/HELPERS.md#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](doc/HELPERS.md#rhel7-or-centos-7)
@@ -288,7 +291,6 @@
     * [Restricting access with client certificate](doc/HELPERS.md#restricting-access-with-client-certificate)
     * [Restricting access by geographical location](doc/HELPERS.md#restricting-access-by-geographical-location)
       * [GeoIP 2 database](doc/HELPERS.md#geoip-2-database)
-      * [GeoIP and performance](doc/HELPERS.md#geoip-and-performance)
     * [Dynamic error pages with SSI](doc/HELPERS.md#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](doc/HELPERS.md#blockingallowing-ip-addresses)
     * [Blocking referrer spam](doc/HELPERS.md#blocking-referrer-spam)
@@ -714,6 +716,9 @@ Existing chapters:
     - [x] _Variables_
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
+  - _External modules_
+    - [x] _GeoIP_
+      - [x] _GeoIP and performance_
 
 </details>
 
@@ -798,7 +803,6 @@ Existing chapters:
     - [x] _Restricting access with client certificate_
     - [x] _Restricting access by geographical location_
       - [x] _GeoIP 2 database_
-      - [x] _GeoIP and performance_
     - [ ] _Custom error pages_
     - [x] _Dynamic error pages with SSI_
     - [x] _Limiting the rate of requests per IP with geo and map_

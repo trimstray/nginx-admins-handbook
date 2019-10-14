@@ -55,6 +55,9 @@
     * [Variables](#variables)
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
+  * [External modules](#external-modules)
+    * [GeoIP](#geoip)
+      * [GeoIP and performance](#geoip-and-performance)
 
 #### Directories and files
 
@@ -2815,3 +2818,27 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
+
+#### External modules
+
+##### GeoIP
+
+This module allows real-time queries against the Max Mind GeoIP database. It uses the old version of API, still very common on OS distributions. For using the new version of GeoIP API, see geoip2 module.
+
+The Max Mind GeoIP database is a map of IP network address assignments to geographical locales that can be useful - though approximate - in identifying the physical location with which an IP host address is associated on a relatively granular level.
+
+  > See [Restricting access by geographical location](doc/HELPERS.md#restricting-access-by-geographical-location).
+
+###### GeoIP and performance
+
+The GeoIP module sets multiple variables and by default NGINX parses and loads geoip data into memory once the config file only on (re)start or SIGHUP.
+
+  > GeoIP lookups come from a distributed database rather than from a dynamic server, so unlike DNS, the worst-case performance hit is minimal. Additionally, from a performance point of view, you should not worry, as geoip database are stored in memory (at the reading configuration phase) and NGINX doing lookups very fast.
+
+  > Variables in NGINX are evaluated only on demand. If `$geoip_*` variable was not used during the request processing, then geoip db was not lookuped. So, if you don't call the geoip variable on your app the geoip module wont be executed at all.
+
+More technically geo module builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. The only inconvenience of using really large geobases is config reading time.
+
+What is a Radix Trees? See this: [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/).
+
+If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.

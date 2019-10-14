@@ -113,7 +113,6 @@
     * [Restricting access with client certificate](#restricting-access-with-client-certificate)
     * [Restricting access by geographical location](#restricting-access-by-geographical-location)
       * [GeoIP 2 database](#geoip-2-database)
-      * [GeoIP and performance](#geoip-and-performance)
     * [Dynamic error pages with SSI](#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
@@ -5724,6 +5723,8 @@ I also recommend read the following resources:
 - [Blocking Country and Continent with nginx GeoIP on Ubuntu 18.04](https://guides.wp-bullet.com/blocking-country-and-continent-with-nginx-geoip-on-ubuntu-18-04/)
 - [Using NGINX With GeoIP MaxMind Database to Fetch Geolocation Data](https://dzone.com/articles/nginx-with-geoip-maxmind-database-to-fetch-user-ge)
 
+See also [GeoIP](doc/NGINX_BASICS.md#geoip) chapter from this handbook.
+
 The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP database. With this module you can blocking/allowing for example:
 
 - region
@@ -5733,7 +5734,8 @@ The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP dat
 ```bash
 # 1) This allows all countries, except the three countries set to no.
 
-  # Load geoip database to determine the country depending on the client IP address (in a http context):
+  # Load geoip database to determine the country depending on the client IP address
+  # (in a http context):
   geoip_country /usr/share/GeoIP/GeoIP.dat;
 
   # Define a map:
@@ -5764,7 +5766,8 @@ The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP dat
 
 # 2) This blocks all countries, except the three countries set to yes.
 
-  # Load geoip database to determine the country depending on the client IP address (in a http context):
+  # Load geoip database to determine the country depending on the client IP address
+  # (in a http context):
   geoip_country /usr/share/GeoIP/GeoIP.dat;
 
   # Define a map:
@@ -5794,13 +5797,15 @@ The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP dat
   }
 ```
 
+For display GeoIP data in NGINX access log see [Custom log formats](doc/HELPERS.md#custom-log-formats) chapter.
+
 ###### GeoIP 2 database
 
 Why should you use GeoIP2 instead of GeoIP Legacy? See [What’s New in GeoIP2](https://dev.maxmind.com/geoip/geoip2/whats-new-in-geoip2/).
 
 GeoLite Legacy databases are discontinued as of January 2, 2019, they are not updated nor any longer available for download. Every user should move to GeoLite2 databases, a more contemporary versions of the GeoLite Legacy geolocation databases which are still available in a free version updated every month.
 
-For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module) module. It creates variables based on the client IP address, using the precompiled MaxMind GeoIP2 databases, which provide localized name information not present in the original GeoIP databases.
+For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module). It creates variables based on the client IP address, using the precompiled MaxMind GeoIP2 databases, which provide localized name information not present in the original GeoIP databases.
 
 ```bash
 # 1) This allows all countries, except the three countries set to no.
@@ -5832,7 +5837,8 @@ For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_
 
   }
 
-# 2) This allows all countries, except the three countries set to no and get source IP address from X-Forwarded-For header.
+# 2) This allows all countries, except the three countries set to no and get source IP address
+#    from X-Forwarded-For header.
 
   # First of all, you should extract the user IP address:
   map $http_x_forwarded_for $realip {
@@ -5861,7 +5867,8 @@ For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_
 
 # For both examples:
 
-  # Add IP-Country header to confirm that nginx is fetching all GeoIP information (in a server context):
+  # Add IP-Country header to confirm that NGINX is fetching all GeoIP information
+  # (in a server context):
   more_set_headers "IP-Country: $geoip2_data_country_name";
   # or:
   add_header IP-Country $geoip2_data_country_name;
@@ -5881,22 +5888,6 @@ For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_
 
   }
 ```
-
-For display GeoIP in NGINX access log see [Custom log formats](doc/HELPERS.md#custom-log-formats) chapter.
-
-###### GeoIP and performance
-
-The GeoIP module sets multiple variables and by default NGINX parses and loads geoip data into memory once the config file only on (re)start or SIGHUP.
-
-  > GeoIP lookups come from a distributed database rather than from a dynamic server, so unlike DNS, the worst-case performance hit is minimal. Additionally, from a performance point of view, you should not worry, as geoip database are stored in memory (at the reading configuration phase) and NGINX doing lookups very fast.
-
-  > Variables in NGINX are evaluated only on demand. If `$geoip_*` variable was not used during the request processing, then geoip db was not lookuped. So, if you don't call the geoip variable on your app the geoip module wont be executed at all.
-
-More technically geo module builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. The only inconvenience of using really large geobases is config reading time.
-
-What is a Radix Trees? See this: [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/).
-
-If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
 
 ##### Dynamic error pages with SSI
 
