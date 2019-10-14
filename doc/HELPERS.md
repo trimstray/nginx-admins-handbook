@@ -111,6 +111,8 @@
     * [Log only 4xx/5xx](#log-only-4xx5xx)
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Restricting access with client certificate](#restricting-access-with-client-certificate)
+    * [Restricting access by geographical location](#restricting-access-by-geographical-location)
+      * [GeoIP and performance](#geoip-and-performance)
     * [Dynamic error pages with SSI](#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
@@ -5710,6 +5712,186 @@ server {
 ```
 
 Read also this: [Nginx SSL certificate authentication signed by intermediate CA (chain)](https://stackoverflow.com/questions/8431528/nginx-ssl-certificate-authentication-signed-by-intermediate-ca-chain).
+
+##### Restricting access by geographical location
+
+  > The best explanation and technical reference is there: [Restricting Access by Geographical Location](https://docs.nginx.com/nginx/admin-guide/security-controls/controlling-access-by-geoip/). Look also at this: [ngx_http_geoip_module](http://nginx.org/en/docs/http/ngx_http_geoip_module.html).
+
+I also recommend read the following resources:
+
+- [GeoIP discontinuation; Upgrade to GeoIP2 with nginx on CentOS](https://medium.com/@karljohnson/geoip-discontinuation-upgrade-to-geoip2-with-nginxon-centos-c2a3dbcf8fd)
+- [Blocking Country and Continent with nginx GeoIP on Ubuntu 18.04](https://guides.wp-bullet.com/blocking-country-and-continent-with-nginx-geoip-on-ubuntu-18-04/)
+- [Using NGINX With GeoIP MaxMind Database to Fetch Geolocation Data](https://dzone.com/articles/nginx-with-geoip-maxmind-database-to-fetch-user-ge)
+
+The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP database. With this module you can blocking/allowing for example:
+
+- region
+- city
+- country
+
+```bash
+# 1) This allows all countries, except the three countries set to no.
+
+  # Load geoip database to determine the country depending on the client IP address (in a http context):
+  geoip_country /usr/share/GeoIP/GeoIP.dat;
+
+  # Define a map:
+  map $geoip_country_code $allowed_country {
+
+    default yes;
+
+    AM no;
+    BH no;
+    GR no;
+
+  }
+
+  # In your location block:
+  ...
+
+  location / {
+
+    if ($allowed_country = no) {
+
+      return 444;
+
+    }
+
+    ...
+
+  }
+
+# 2) This blocks all countries, except the three countries set to yes.
+
+  # Load geoip database to determine the country depending on the client IP address (in a http context):
+  geoip_country /usr/share/GeoIP/GeoIP.dat;
+
+  # Define a map:
+  map $geoip_country_code $allowed_country {
+
+    default no;
+
+    AM yes;
+    BH yes;
+    GR yes;
+
+  }
+
+  # In your location block:
+  ...
+
+  location / {
+
+    if ($allowed_country = no) {
+
+      return 444;
+
+    }
+
+    ...
+
+  }
+```
+
+  > GeoLite Legacy databases are discontinued as of January 2, 2019, they are not updated nor any longer available for download. Every user should move to GeoLite2 databases, a more contemporary versions of the GeoLite Legacy geolocation databases which are still available in a free version updated every month.
+
+Look at this module for GeoIP2: [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module). It creates variables based on the client IP address, using the precompiled MaxMind GeoIP2 databases, which provide localized name information not present in the original GeoIP databases.
+
+```bash
+# 1) This allows all countries, except the three countries set to no.
+
+  # Tell NGINX about GeoIP2 databases (in http context):
+  geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
+
+    auto_reload 5m;
+    $geoip2_metadata_country_build metadata build_epoch;
+    $geoip2_data_country_code default=US country iso_code;
+    $geoip2_data_country_name country names en;
+
+  }
+
+  geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+
+    $geoip2_data_city_name default=London city names en;
+
+  }
+
+  # Define a map:
+  map $geoip2_data_country_code $allowed_country {
+
+    default no;
+
+    AM yes;
+    BH yes;
+    GR yes;
+
+  }
+
+# 2) This allows all countries, except the three countries set to no and get source IP address from X-Forwarded-For header.
+
+  # First of all, you should extract the user IP address:
+  map $http_x_forwarded_for $realip {
+
+    ~^(\d+\.\d+\.\d+\.\d+) $1;
+    default $remote_addr;
+
+  }
+
+  # You can also set source for the IP address:
+  geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
+
+    auto_reload 5m;
+    $geoip2_metadata_country_build metadata build_epoch;
+    $geoip2_data_country_code default=US source=$realip country iso_code;
+    $geoip2_data_country_name source=$realip country names en;
+
+  }
+
+  geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+
+    $geoip2_data_city_name source=$realip city names en;
+    $geoip2_data_time_zone source=$realip location time_zone;
+
+  }
+
+# For both examples:
+
+  # Add IP-Country header to confirm that nginx is fetching all GeoIP information (in a server context):
+  more_set_headers "IP-Country: $geoip2_data_country_name";
+  # or:
+  add_header IP-Country $geoip2_data_country_name;
+
+  # In your location block:
+  ...
+
+  location / {
+
+    if ($allowed_country = no) {
+
+      return 403;
+
+    }
+
+    ...
+
+  }
+```
+
+For display GeoIP in NGINX access log see [Custom log formats](doc/HELPERS.md#custom-log-formats) chapter.
+
+###### GeoIP and performance
+
+The GeoIP module sets multiple variables and by default NGINX parses and loads geoip data into memory once the config file only on (re)start or SIGHUP.
+
+  > GeoIP lookups come from a distributed database rather than from a dynamic server, so unlike DNS, the worst-case performance hit is minimal. Additionally, from a performance point of view, you should not worry, as geoip database are stored in memory (at the reading configuration phase) and NGINX doing lookups very fast.
+
+  > Variables in NGINX are evaluated only on demand. If `$geoip_*` variable was not used during the request processing, then geoip db was not lookuped. So, if you don't call the geoip variable on your app the geoip module wont be executed at all.
+
+More technically geo module builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. The only inconvenience of using really large geobases is config reading time.
+
+What is a Radix Trees? See this: [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/).
+
+If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
 
 ##### Dynamic error pages with SSI
 

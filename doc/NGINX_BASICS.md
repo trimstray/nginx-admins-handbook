@@ -1956,7 +1956,7 @@ For example: if you set `crit` error log level, messages of `crit`, `alert`, and
 
 #### Reverse proxy
 
-  > After reading this chapter, please see: [Rules: Reverse Proxy)](RULES.md#reverse-proxy-1).
+  > After reading this chapter, please see: [Rules: Reverse Proxy](RULES.md#reverse-proxy-1).
 
 This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 

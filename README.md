@@ -286,6 +286,8 @@
     * [Log only 4xx/5xx](doc/HELPERS.md#log-only-4xx5xx)
     * [Restricting access with basic authentication](doc/HELPERS.md#restricting-access-with-basic-authentication)
     * [Restricting access with client certificate](doc/HELPERS.md#restricting-access-with-client-certificate)
+    * [Restricting access by geographical location](doc/HELPERS.md#restricting-access-by-geographical-location)
+      * [GeoIP and performance](doc/HELPERS.md#geoip-and-performance)
     * [Dynamic error pages with SSI](doc/HELPERS.md#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](doc/HELPERS.md#blockingallowing-ip-addresses)
     * [Blocking referrer spam](doc/HELPERS.md#blocking-referrer-spam)
@@ -793,6 +795,8 @@ Existing chapters:
     - [x] _Custom log formats_
     - [x] _Log only 4xx/5xx_
     - [x] _Restricting access with client certificate_
+    - [x] _Restricting access by geographical location_
+      - [x] _GeoIP and performance_
     - [ ] _Custom error pages_
     - [x] _Dynamic error pages with SSI_
     - [x] _Limiting the rate of requests per IP with geo and map_
