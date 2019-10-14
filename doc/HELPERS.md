@@ -112,6 +112,7 @@
     * [Restricting access with basic authentication](#restricting-access-with-basic-authentication)
     * [Restricting access with client certificate](#restricting-access-with-client-certificate)
     * [Restricting access by geographical location](#restricting-access-by-geographical-location)
+      * [GeoIP 2 database](#geoip-2-database)
       * [GeoIP and performance](#geoip-and-performance)
     * [Dynamic error pages with SSI](#dynamic-error-pages-with-ssi)
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
@@ -5793,9 +5794,13 @@ The NGINX must be compiled with the `ngx_http_geoip_module` to use the GeoIP dat
   }
 ```
 
-  > GeoLite Legacy databases are discontinued as of January 2, 2019, they are not updated nor any longer available for download. Every user should move to GeoLite2 databases, a more contemporary versions of the GeoLite Legacy geolocation databases which are still available in a free version updated every month.
+###### GeoIP 2 database
 
-Look at this module for GeoIP2: [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module). It creates variables based on the client IP address, using the precompiled MaxMind GeoIP2 databases, which provide localized name information not present in the original GeoIP databases.
+Why should you use GeoIP2 instead of GeoIP Legacy? See [What’s New in GeoIP2](https://dev.maxmind.com/geoip/geoip2/whats-new-in-geoip2/).
+
+GeoLite Legacy databases are discontinued as of January 2, 2019, they are not updated nor any longer available for download. Every user should move to GeoLite2 databases, a more contemporary versions of the GeoLite Legacy geolocation databases which are still available in a free version updated every month.
+
+For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module) module. It creates variables based on the client IP address, using the precompiled MaxMind GeoIP2 databases, which provide localized name information not present in the original GeoIP databases.
 
 ```bash
 # 1) This allows all countries, except the three countries set to no.
