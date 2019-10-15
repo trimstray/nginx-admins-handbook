@@ -331,19 +331,19 @@ How to generate a request?
 
 - `curl`
 
-  ```
+  ```bash
   curl -Iks -v -X GET -H "Connection: keep-alive" -H "User-Agent: X-AGENT" https://example.com
   ```
 
 - `httpie`
 
-  ```
+  ```bash
   http -p Hh GET https://example.com User-Agent:X-AGENT --follow
   ```
 
 - `telnet`
 
-  ```
+  ```bash
   telnet example.com 80
   GET /index.html HTTP/1.1
   Host: example.com
@@ -351,7 +351,7 @@ How to generate a request?
 
 - `openssl`
 
-  ```
+  ```bash
   openssl s_client -servername example.com -connect example.com:443
   ...
   ---

@@ -143,7 +143,7 @@ for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_
   > In the example (`lib/nginx`) error pages are included from `lib/nginx/master/_static/errors.conf` file.
 
 - default location: `/etc/nginx/html`:
-  ```bash
+  ```
   50x.html  index.html
   ```
 - custom location: `/usr/share/www`:
@@ -161,7 +161,7 @@ for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_
 
 ###### Updated `nginx.conf`
 
-```bash
+```nginx
 # At the end of the file (in 'IPS/DOMAINS' section):
 include /etc/nginx/master/_server/domain.com/servers.conf;
 include /etc/nginx/master/_server/domain.com/backends.conf;

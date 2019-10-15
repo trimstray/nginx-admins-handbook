@@ -187,7 +187,7 @@ Variables start with `$`. Some modules introduce variables can be used when sett
 
 To assign value to the variable you should use a `set` directive:
 
-```bash
+```nginx
 set $var "value";
 ```
 
@@ -209,7 +209,7 @@ Strings may be inputted without quotes unless they include blank spaces, semicol
 
 Quotes are required for values which are containing space(s) and/or some other special characters, otherwise NGINX will not recognize them. You can either quote or `\`-escape some special characters like `" "` or `";"` in strings (characters that would make the meaning of a statement ambiguous). So the following instructions are the same:
 
-```bash
+```nginx
 # 1)
 add_header X-Header "nginx web server;";
 
@@ -227,25 +227,25 @@ Configuration options are called directives. We have four types of directives:
 
 - standard directive - one value per context:
 
-  ```bash
+  ```nginx
   worker_connections 512;
   ```
 
 - array directive - multiple values per context:
 
-  ```bash
+  ```nginx
   error_log /var/log/nginx/localhost/localhost-error.log warn;
   ```
 
 - action directive - something which does not just configure:
 
-  ```bash
+  ```nginx
   rewrite ^(.*)$ /msie/$1 break;
   ```
 
 - `try_files` directive:
 
-  ```bash
+  ```nginx
   try_files $uri $uri/ /test/index.html;
   ```
 
@@ -307,7 +307,7 @@ NGINX lookup starts from the http block, then through one or more server blocks,
 
 `include` directive may appear inside any contexts to perform conditional inclusion. It attaching another file, or files matching the specified mask:
 
-```bash
+```nginx
 include /etc/nginx/proxy.conf;
 ```
 
@@ -319,7 +319,7 @@ Sizes can be specified in:
 - `m` or `M`: Megabytes
 - `g` or `G`: Gigabytes
 
-```bash
+```nginx
 client_max_body_size 2M;
 ```
 
@@ -334,7 +334,7 @@ Time intervals can be specified in:
 - `M`: Months (30 days)
 - `y`: Years (365 days)
 
-```bash
+```nginx
 proxy_read_timeout 20s;
 ```
 
@@ -563,7 +563,7 @@ Finally and in summary:
 
 Okay, so how many simultaneous connections can be processed by NGINX?
 
-```bash
+```
 worker_processes * worker_connections = max connections
 ```
 
@@ -685,7 +685,7 @@ So, to conclude, I think that the correct value of `worker_rlimit_nofile` per al
 
 In my opinion, the safe value of `worker_rlimit_nofile` (and system limits) is:
 
-```bash
+```
 # 1 file handler for 1 connection:
 worker_connections + (shared libs, log files, event pool etc.) = worker_rlimit_nofile
 
@@ -701,7 +701,7 @@ However, after a deeper reflection they are rational because they allow one work
 
 So, moving on, the maximum number of open files by the NGINX should be:
 
-```bash
+```
 (worker_processes * worker_connections * 2) + (shared libs, log files, event pool) = max open files
 ```
 
@@ -885,14 +885,14 @@ NGINX provides the two layers to enable Keep-Alive:
 
 - the maximum number of keepalive requests a client can make over a given connection, which means a client can make e.g. 256 successfull requests inside one keepalive connection:
 
-  ```bash
+  ```nginx
   # Default: 100
   keepalive_requests  256;
   ```
 
 - server will close connection after this time. A higher number may be required when there is a larger amount of traffic to ensure there is no frequent TCP connection re-initiated. If you set it lower, you are not utilizing keep-alives on most of your requests slowing down client:
 
-  ```bash
+  ```nginx
   # Default: 75s
   keepalive_timeout   10s;
   ```
@@ -903,7 +903,7 @@ NGINX provides the two layers to enable Keep-Alive:
 
 - the number of idle keepalive connections that remain open for each worker process. The connections parameter sets the maximum number of idle keepalive connections to upstream servers that are preserved in the cache of each worker process (when this number is exceeded, the least recently used connections are closed):
 
-  ```bash
+  ```nginx
   # Default: disable
   keepalive         32;
   ```
@@ -920,7 +920,7 @@ HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves p
 
 Update your upstream configuration to use keepalive:
 
-```bash
+```nginx
 upstream bk_x8080 {
 
   ...
@@ -932,7 +932,7 @@ upstream bk_x8080 {
 
 And enable the HTTP/1.1 protocol in all upstream requests:
 
-```bash
+```nginx
 server {
 
   ...
@@ -1012,7 +1012,7 @@ I recommend a great explanation about [HTTP request processing phases in Nginx](
 
 It's a short example of two server block contexts with several regular expressions:
 
-```bash
+```nginx
 http {
 
   index index.html;
@@ -1098,7 +1098,7 @@ NGINX uses the following logic to determining which virtual server (server block
 
     Look at this short example:
 
-    ```bash
+    ```nginx
     # From client side:
     GET / HTTP/1.0
     Host: api.random.com
@@ -1156,7 +1156,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
 The location block enables you to handle several types of URIs/routes, within a server block. Syntax looks like:
 
-```bash
+```
 location optional_modifier location_match { ... }
 ```
 
@@ -1184,7 +1184,7 @@ And now, a short introduction to determines location priority:
 
 So look at this example, it comes from the [Nginx documentation - ngx_http_core_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
 
-```bash
+```
 location = / {
   # Matches the query / only.
   [ configuration A ]
@@ -1245,7 +1245,7 @@ In order to better understand how this process work please see this short cheats
 
 Ok, so here's a more complicated configuration:
 
-```bash
+```nginx
 server {
 
  listen           80;
@@ -1348,7 +1348,7 @@ The `rewrite` directive just changes the request URI, not the response of reques
 
 I sometimes used `rewrite` to capture elementes in the original URL, change or add elements in the path, and in general when I do something more complex:
 
-```bash
+```nginx
 location / {
 
   ...
@@ -1435,7 +1435,7 @@ I use `return` directive in the following cases:
 
 - force redirect from http to https:
 
-  ```bash
+  ```nginx
   server {
 
     ...
@@ -1447,7 +1447,7 @@ I use `return` directive in the following cases:
 
 - redirect from www to non-www and vice versa:
 
-  ```bash
+  ```nginx
   server {
 
     ...
@@ -1464,7 +1464,7 @@ I use `return` directive in the following cases:
 
 - close the connection and log it internally:
 
-  ```bash
+  ```nginx
   server {
 
     ...
@@ -1476,7 +1476,7 @@ I use `return` directive in the following cases:
 
 - send 4xx HTTP response for a client without any other actions:
 
-  ```bash
+  ```nginx
   server {
 
     ...
@@ -1513,7 +1513,7 @@ I use `return` directive in the following cases:
 
 - and sometimes for reply with HTTP code without serving a file:
 
-  ```bash
+  ```nginx
   server {
 
     ...
@@ -1540,7 +1540,7 @@ Generally it may check files on disk, redirect to proxies or internal locations,
 
 Take a look at the following example:
 
-```bash
+```nginx
 server {
 
   ...
@@ -1601,7 +1601,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
 
 - `break` - stops processing, if is specified inside the `location`, further processing of the request continues in this location:
 
-  ```bash
+  ```nginx
   # It's useful for:
   if ($slow_resp) {
 
@@ -1623,7 +1623,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
 
 Example of usage `if` and `set` directives:
 
-```bash
+```nginx
 # It comes from: https://gist.github.com/jrom/1760790:
 if ($request_uri = /) {
 
@@ -1659,19 +1659,19 @@ With `alias` you can map to another file name. With `root` forces you to name yo
 
 Look at this. There is a difference, when the `alias` is for a whole directory will work:
 
-```bash
+```nginx
 location ^~ /data/ { alias /home/www/static/data/; }
 ```
 
 But the following code won't do:
 
-```bash
+```nginx
 location ^~ /data/ { root /home/www/static/data/; }
 ```
 
 This would have to be:
 
-```bash
+```nginx
 location ^~ /data/ { root /home/www/static/; }
 ```
 
@@ -1679,7 +1679,7 @@ The `root` directive is typically placed in server and location blocks. Placing 
 
 The `root` directive tells NGINX to take the request url and append it behind the specified directory. For example, with the following configuration block:
 
-```bash
+```nginx
 server {
 
   server_name example.com;
@@ -1716,7 +1716,7 @@ Like you want to forward all requests which start `/static` and your data presen
 - last path: `/static`
 - full path: `/var/www/static`
 
-```bash
+```nginx
 location <last path> {
 
   root <first path>;
@@ -1730,7 +1730,7 @@ NGINX documentation on the `alias` directive suggests that it is better to use `
 
 The `alias` directive can only be placed in a location block. The following is a set of configurations for illustrating how the `alias` directive is applied:
 
-```bash
+```nginx
 server {
 
   server_name example.com;
@@ -1778,7 +1778,7 @@ Conditions handled as internal redirections are listed in the documentation for 
 
 Example 1:
 
-```bash
+```nginx
 error_page 404 /404.html;
 
 location = /404.html {
@@ -1794,7 +1794,7 @@ The files are served from the directory `/srv/hidden-files` by the path prefix `
 
 To use this, just return an empty response which contains that header. The content of the header should be the location you want to redirect to:
 
-```bash
+```nginx
 location /hidden-files/ {
 
   internal;
@@ -1809,7 +1809,7 @@ Another use case for internal redirects in NGINX is to hide credentials. Often y
 
 An easy fix is to make an endpoint in your back end which initiates the actual request. We could make use of an HTTP client library inside the back end. However, this will again tie up workers, especially if you expect a barrage of requests and the 3rd party service is responding very slowly.
 
-```bash
+```nginx
 location /external-api/ {
 
   internal;
@@ -1871,7 +1871,7 @@ By default:
 
 It is the equivalent to the following configuration.
 
-```bash
+```nginx
 # In nginx.conf:
 http {
 
@@ -1898,7 +1898,7 @@ Sometimes certain entries are there just to fill up the logs or are cluttering t
 
 So, in this example, if the `$error_codes` variable’s value is 0 - then log nothing (default action), but if 1 (e.g. `404` or `503` from backend) - to save this request to the log:
 
-```bash
+```nginx
 # Define map in the http context:
 http {
 
@@ -2028,7 +2028,7 @@ It is possible to proxy requests to:
 
 - an HTTP servers (e.g. NGINX, Apache, or other) with `proxy_pass` directive:
 
-  ```bash
+  ```nginx
   upstream bk_front {
 
     server 192.168.252.20:8080  weight=5;
@@ -2077,7 +2077,7 @@ It is possible to proxy requests to:
 
   - `fastcgi_pass` which passes a request to a FastCGI server ([PHP FastCGI Example](https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/)):
 
-    ```bash
+    ```nginx
     server {
 
       ...
@@ -2096,7 +2096,7 @@ It is possible to proxy requests to:
 
   - `uwsgi_pass` which passes a request to a uWSGI server ([Nginx support uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html)):
 
-    ```bash
+    ```nginx
     server {
 
       location / {
@@ -2115,7 +2115,7 @@ It is possible to proxy requests to:
 
   - `scgi_pass` which passes a request to an SCGI server:
 
-    ```bash
+    ```nginx
     server {
 
       location / {
@@ -2132,7 +2132,7 @@ It is possible to proxy requests to:
 
   - `memcached_pass` which passes a request to a Memcached server:
 
-    ```bash
+    ```nginx
     server {
 
       location / {
@@ -2157,7 +2157,7 @@ It is possible to proxy requests to:
 
   - `redis_pass` which passes a request to a Redis server ([HTTP Redis](https://www.nginx.com/resources/wiki/modules/redis/)):
 
-    ```bash
+    ```nginx
     server {
 
       location / {
@@ -2198,7 +2198,7 @@ However, more complex apps may need additional directives:
 
 If you have something like:
 
-```bash
+```nginx
 location /public/ {
 
   proxy_pass http://bck_testing_01;
@@ -2210,7 +2210,7 @@ and go to `http://example.com/public`, NGINX will automatically redirect you to 
 
 Look also at this example:
 
-```bash
+```nginx
 location /foo/bar/ {
 
   # proxy_pass  http://example.com/url/;
@@ -2225,7 +2225,7 @@ If the address is specified without a URI, or it is not possible to determine th
 
 Look also at this. Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`:
 
-```bash
+```nginx
 location /foo/ {
 
   proxy_pass  http://127.0.0.1:8080/bar;
@@ -2270,19 +2270,19 @@ Ok, so look at following short explanation about proxy directives (for more info
 
 - `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1:
 
-  ```bash
+  ```nginx
   proxy_http_version  1.1;
   ```
 
 - `proxy_cache_bypass` - sets conditions under which the response will not be taken from a cache:
 
-  ```bash
+  ```nginx
   proxy_cache_bypass  $http_upgrade;
   ```
 
 - `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (overrides the error page on the backend side):
 
-  ```bash
+  ```nginx
   proxy_intercept_errors on;
   error_page 500 503 504 @debug;  # go to the @debug location
   ```
@@ -2291,44 +2291,44 @@ Ok, so look at following short explanation about proxy directives (for more info
 
   - `Upgrade` and `Connection` - these header fields are required if your application is using Websockets:
 
-    ```bash
+    ```nginx
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
     ```
 
   - `Host` - the `$host` variable in the following order of precedence contains: host name from the request line, or host name from the Host request header field, or the server name matching a request: NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed:
 
-    ```bash
+    ```nginx
     proxy_set_header Host $host;
     ```
 
   - `X-Real-IP` - forwards the real visitor remote IP address to the proxied server:
 
-    ```bash
+    ```nginx
     proxy_set_header X-Real-IP $remote_addr;
     ```
 
   - `X-Forwarded-For` - is the conventional way of identifying the originating IP address of the user connecting to the web server coming from either a HTTP proxy or load balancer:
 
-    ```bash
+    ```nginx
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     ```
 
   - `X-Forwarded-Proto` - identifies the protocol (HTTP or HTTPS) that a client used to connect to your proxy or load balancer:
 
-    ```bash
+    ```nginx
     proxy_set_header X-Forwarded-Proto $scheme;
     ```
 
   - `X-Forwarded-Host` - defines the original host requested by the client:
 
-    ```bash
+    ```nginx
     proxy_set_header X-Forwarded-Host $host;
     ```
 
   - `X-Forwarded-Port` - defines the original port requested by the client:
 
-    ```bash
+    ```nginx
     proxy_set_header X-Forwarded-Port $server_port;
     ```
 
@@ -2396,7 +2396,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
     First of all, you should add the following lines to the configuration:
 
-    ```bash
+    ```nginx
     # Add these to the set_real_ip.conf, there are the real IPs where your traffic is coming from (front proxy/lb):
     set_real_ip_from    192.168.20.10; # IP address of master
     set_real_ip_from    192.168.20.11; # IP address of slave
@@ -2422,7 +2422,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
 3) NGINX - add/modify and set log format:
 
-    ```bash
+    ```nginx
     log_format combined-1 '$remote_addr forwarded for $http_x_real_ip - $remote_user [$time_local]  '
                           '"$request" $status $body_bytes_sent '
                           '"$http_referer" "$http_user_agent"';
@@ -2437,7 +2437,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
     This way, e.g. the `$_SERVER['REMOTE_ADDR']` will be correctly filled up in PHP fastcgi. You can test it with the following script:
 
-    ```bash
+    ```php
     # tls_check.php
     <?php
 
@@ -2511,13 +2511,13 @@ For more information please read [Securing HTTP Traffic to Upstream Servers](htt
 
 It's the simpliest load balancing technique. Round Robin has the list of servers and forwards each request to each server from the list in order. Once it reaches the last server, the loop again jumps to the first server and start again.
 
-```bash
+```nginx
 upstream bck_testing_01 {
 
   # with default weight for all (weight=1)
-  server 192.168.250.220:8080
-  server 192.168.250.221:8080
-  server 192.168.250.222:8080
+  server 192.168.250.220:8080;
+  server 192.168.250.221:8080;
+  server 192.168.250.222:8080;
 
 }
 ```
@@ -2532,12 +2532,12 @@ In Weighted Round Robin load balancing algorithm, each server is allocated with 
 
 This method is similar to the Round Robin in a sense that the manner by which requests are assigned to the nodes is still cyclical, albeit with a twist. The node with the higher specs will be apportioned a greater number of requests.
 
-```bash
+```nginx
 upstream bck_testing_01 {
 
-  server 192.168.250.220:8080   weight=3
-  server 192.168.250.221:8080              # default weight=1
-  server 192.168.250.222:8080              # default weight=1
+  server 192.168.250.220:8080   weight=3;
+  server 192.168.250.221:8080;              # default weight=1
+  server 192.168.250.222:8080;              # default weight=1
 
 }
 ```
@@ -2550,15 +2550,15 @@ upstream bck_testing_01 {
 
 This method tells the load balancer to look at the connections going to each server and send the next connection to the server with the least amount of connections.
 
-```bash
+```nginx
 upstream bck_testing_01 {
 
   least_conn;
 
   # with default weight for all (weight=1)
-  server 192.168.250.220:8080
-  server 192.168.250.221:8080
-  server 192.168.250.222:8080
+  server 192.168.250.220:8080;
+  server 192.168.250.221:8080;
+  server 192.168.250.222:8080;
 
 }
 ```
@@ -2573,14 +2573,14 @@ For example: if clients D10, D11 and D12 attempts to connect after A4, C2 and C8
 
 This is, in general, a very fair distribution method, as it uses the ratio of the number of connections and the weight of a server. The server in the cluster with the lowest ratio automatically receives the next request.
 
-```bash
+```nginx
 upstream bck_testing_01 {
 
   least_conn;
 
-  server 192.168.250.220:8080   weight=3
-  server 192.168.250.221:8080              # default weight=1
-  server 192.168.250.222:8080              # default weight=1
+  server 192.168.250.220:8080   weight=3;
+  server 192.168.250.221:8080;              # default weight=1
+  server 192.168.250.222:8080;              # default weight=1
 
 }
 ```
@@ -2597,15 +2597,15 @@ The IP Hash method uses the IP of the client to create a unique hash key and ass
 
 This technique is especially helpful if actions between sessions has to be kept alive e.g. products put in the shopping cart or when the session state is of concern and not handled by shared memory of the application.
 
-```bash
+```nginx
 upstream bck_testing_01 {
 
   ip_hash;
 
   # with default weight for all (weight=1)
-  server 192.168.250.220:8080
-  server 192.168.250.221:8080
-  server 192.168.250.222:8080
+  server 192.168.250.220:8080;
+  server 192.168.250.221:8080;
+  server 192.168.250.222:8080;
 
 }
 ```
@@ -2618,15 +2618,15 @@ upstream bck_testing_01 {
 
 This technique is very similar to the IP Hash but for each request the load balancer calculates a hash that is based on the combination of a text string, variable, or a combination you specify, and associates the hash with one of the servers.
 
-```bash
+```nginx
 upstream bck_testing_01 {
 
   hash $request_uri;
 
   # with default weight for all (weight=1)
-  server 192.168.250.220:8080
-  server 192.168.250.221:8080
-  server 192.168.250.222:8080
+  server 192.168.250.220:8080;
+  server 192.168.250.221:8080;
+  server 192.168.250.222:8080;
 
 }
 ```
@@ -2645,7 +2645,7 @@ It is similar to the Generic Hash method because you can also specify a unique h
 
 First of all create a map:
 
-```bash
+```nginx
 map $request_uri $bck_testing_01 {
 
   default       "192.168.250.220:8080";
@@ -2660,7 +2660,7 @@ map $request_uri $bck_testing_01 {
 
 And add `proxy_pass` directive:
 
-```bash
+```nginx
 server {
 
   ...
@@ -2737,7 +2737,7 @@ Both keys also provides response status parameters indicating too many requests 
 
 For example, if you want to set the desired logging level for cases when the server limits the number of connections:
 
-```bash
+```nginx
 # Add this to http context:
 limit_req_status 429;
 
@@ -2767,7 +2767,7 @@ The zone has two required parts:
 
 Example:
 
-```bash
+```
 <key> <variable> zone=<name>:<size>;
 ```
 
@@ -2777,7 +2777,7 @@ The range of zones is as follows:
 
 - **http context**
 
-  ```bash
+  ```nginx
   http {
 
     ... zone=<name>;
@@ -2786,7 +2786,7 @@ The range of zones is as follows:
 
 - **server context**
 
-  ```bash
+  ```nginx
   server {
 
     ... zone=<name>;
@@ -2795,7 +2795,7 @@ The range of zones is as follows:
 
 - **location directive**
 
-  ```bash
+  ```nginx
   location /api {
 
     ... zone=<name>;

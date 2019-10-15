@@ -537,7 +537,7 @@ However, if you get the `No symbol table info available` error when you run a `(
 
 Also if you get errors similar to one of them:
 
-```bash
+```
 Missing separate debuginfo for /usr/lib64/libluajit-5.1.so.2 ...
 Reading symbols from /lib64/libcrypt.so.1...(no debugging symbols found) ...
 ```
@@ -1116,7 +1116,7 @@ Include the necessary error pages:
   > You can also define them e.g. in `/etc/nginx/errors.conf` or other file and attach it as needed in server contexts.
 
 - default location: `/etc/nginx/html`
-  ```bash
+  ```
   50x.html  index.html
   ```
 
@@ -3063,7 +3063,7 @@ Include the necessary error pages:
   > You can also define them e.g. in `${NGX_PREFIX}/errors.conf` or other file and attach it as needed in server contexts.
 
 - default location: `${NGX_PREFIX}/html`
-  ```bash
+  ```
   50x.html  index.html
   ```
 
@@ -3520,7 +3520,7 @@ Include the necessary error pages:
   > You can also define them e.g. in `${NGX_PREFIX}/errors.conf` or other file and attach it as needed in server contexts.
 
 - default location: `${NGX_PREFIX}/html`
-  ```bash
+  ```
   50x.html  index.html
   ```
 
@@ -3604,7 +3604,7 @@ Standard paths to the configuration file:
 
 Prior to start GoAccess enable these parameters:
 
-```bash
+```
 time-format %H:%M:%S
 date-format %d/%b/%Y
 log-format  %h %^[%d:%t %^] "%r" %s %b "%R" "%u"
@@ -5281,7 +5281,7 @@ strace -q -p `pidof nginx | sed -e 's/ /,/g'` 2>&1 | grep gz
 
 Example 1 (more elegant way):
 
-```bash
+```nginx
 log_format debug-req-trace
                 '$pid - "$request_method $scheme://$host$request_uri" '
                 '$remote_addr:$remote_port $server_addr:$server_port '
@@ -5417,7 +5417,7 @@ You can use GDB to extract very useful information about NGINX instances, e.g. t
 
   > The `ngx_conf_t` is a type of a structure used for configuration parsing. It only exists during configuration parsing, and obviously you can't access it after configuration parsing is complete. For dump configuration from a running process you should use `ngx_conf_dump_t`.
 
-```bash
+```gdb
 # Save gdb arguments to a file, e.g. nginx.gdb:
 set $cd = ngx_cycle->config_dump
 set $nelts = $cd.nelts
@@ -5438,7 +5438,7 @@ less nginx.conf.running
 
 or other solution:
 
-```bash
+```gdb
 # Save gdb functions to a file, e.g. nginx.gdb:
 define dump_config
   set $cd = ngx_cycle->config_dump
@@ -5466,13 +5466,13 @@ less nginx.conf.running
 
 First of all a buffer for debug logging should be enabled:
 
-```bash
+```nginx
 error_log   memory:64m debug;
 ```
 
 and:
 
-```bash
+```gdb
 # Save gdb functions to a file, e.g. nginx.gdb:
 define dump_debug_log
   set $log = ngx_cycle->log
@@ -5543,7 +5543,7 @@ This [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/maste
 
 ##### Custom log formats
 
-```bash
+```nginx
 # Default main log format from the NGINX repository:
 log_format main
                 '$remote_addr - $remote_user [$time_local] "$request" '
@@ -5620,7 +5620,7 @@ log_format upstream_log '$remote_addr - $remote_user [$time_local] '
 
 ##### Log only 4xx/5xx
 
-```bash
+```nginx
 # 1) File: /etc/nginx/map/logs.conf
 
 # Map module:
@@ -5685,9 +5685,9 @@ server_name example.com;
 
 ##### Restricting access with client certificate
 
-If the client-side certificate failed to authenticate, NGINX show a "400 No required SSL certificate was sent".
+If the client-side certificate failed to authenticate, NGINX show a _400 No required SSL certificate was sent_.
 
-```bash
+```nginx
 server {
 
   server_name example.com;
@@ -5733,7 +5733,7 @@ The NGINX must be compiled with the `ngx_http_geoip_module` or `ngx_http_geoip2_
 - city
 - country
 
-```bash
+```nginx
 # 1) This allows all countries, except the three countries set to no.
 
   # Load geoip database to determine the country depending on the client IP address
@@ -5809,7 +5809,7 @@ GeoLite Legacy databases are discontinued as of January 2, 2019, they are not up
 
 For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module). It creates variables based on the client IP address, using the precompiled MaxMind GeoIP2 databases, which provide localized name information not present in the original GeoIP databases.
 
-```bash
+```nginx
 # 1) This allows all countries, except the three countries set to no.
 
   # Tell NGINX about GeoIP2 databases (in http context):
@@ -5920,9 +5920,9 @@ Example 1:
 </html>
 ```
 
-2. Define error codes map in the http context or include it from file:
+2. Define error codes map in the http context or include it from a file:
 
-```bash
+```nginx
 map $status $status_text {
 
   default 'Something is wrong';
@@ -5945,7 +5945,7 @@ map $status $status_text {
   415 'Unsupported Media Type';
   416 'Range Not Satisfiable';
   417 'Expectation Failed';
-  418 'I\'m a teapot';
+  418 'I'm a teapot';
   421 'Misdirected Request';
   422 'Unprocessable Entity';
   423 'Locked';
@@ -5972,7 +5972,7 @@ map $status $status_text {
 
 3. Create an `error_page` in your context (e.g. server):
 
-```bash
+```nginx
 server {
 
   ...
@@ -5992,7 +5992,7 @@ server {
 
 4. Turn on the specific error page:
 
-```bash
+```nginx
 location = /404.html {
 
   return 404;
@@ -6006,7 +6006,7 @@ Read also this: [Static error pages generator](https://github.com/trimstray/ngin
 
 Example 1:
 
-```bash
+```nginx
 # 1) File: /etc/nginx/acls/allow.map.conf
 
 # Map module:
@@ -6066,7 +6066,7 @@ server_name example.com;
 
 Example 2:
 
-```bash
+```nginx
 # 1) File: /etc/nginx/acls/allow.geo.conf
 
 # Geo module:
@@ -6116,7 +6116,7 @@ server_name example.com;
 
 Example 3:
 
-```bash
+```nginx
 # 1) File: /etc/nginx/acls/allow.conf
 
 ### INTERNAL ###
@@ -6145,7 +6145,7 @@ server_name example.com;
 
 Example 1:
 
-```bash
+```nginx
 # 1) File: /etc/nginx/limits.conf
 map $http_referer $invalid_referer {
 
@@ -6173,7 +6173,7 @@ server_name example.com;
 
 Example 2:
 
-```bash
+```nginx
 # 1) Turn on in a specific context (e.g. location):
 location /check_status {
 
@@ -6211,7 +6211,7 @@ HTTP/1.1 403     0.12 secs:     124 bytes ==> GET  /storage/img/header.jpg
 
 Example 1:
 
-```bash
+```nginx
 # 1) File: /etc/nginx/limits.conf
 map $http_referer $limit_ip_key_by_referer {
 
@@ -6264,7 +6264,7 @@ HTTP/1.1 200     1.04 secs:    3174 bytes ==> GET  /storage/img/header.jpg
 
 ##### Limiting the rate of requests with burst mode
 
-```bash
+```nginx
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
 ```
 
@@ -6276,7 +6276,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:64k rate=10r/m;
 
 Example of use:
 
-```bash
+```nginx
 location ~ /stats {
 
   limit_req zone=req_for_remote_addr burst=5;
@@ -6328,7 +6328,7 @@ Shortest transaction:   0.20
 
 ##### Limiting the rate of requests with burst mode and nodelay
 
-```bash
+```nginx
 limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=2r/s;
 ```
 
@@ -6340,7 +6340,7 @@ limit_req_zone $binary_remote_addr zone=req_for_remote_addr:50m rate=2r/s;
 
 Example of use:
 
-```bash
+```nginx
 location ~ /stats {
 
   limit_req zone=req_for_remote_addr burst=5 nodelay;
@@ -6393,7 +6393,7 @@ Shortest transaction:   0.18
 
 ##### Limiting the rate of requests per IP with geo and map
 
-```bash
+```nginx
 geo $limit_per_ip {
 
   default         0;
@@ -6421,7 +6421,7 @@ limit_req_zone $limit_key zone=per_ip:10m rate=20r/m;
 
 Example of use:
 
-```bash
+```nginx
 location ~ /stats {
 
   limit_req zone=per_ip;
@@ -6431,7 +6431,7 @@ location ~ /stats {
 
 ##### Limiting the number of connections
 
-```bash
+```nginx
 limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
 ```
 
@@ -6443,7 +6443,7 @@ limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
 
 Example of use:
 
-```bash
+```nginx
 location ~ /stats {
 
   limit_conn conn_for_remote_addr 1;
@@ -6480,7 +6480,7 @@ Shortest transaction:   0.38
 
 If you have something like:
 
-```bash
+```nginx
 location /api/ {
 
   proxy_pass http://bck_testing_01;
@@ -6492,7 +6492,7 @@ And go to `http://example.com/api`, NGINX will automatically redirect you to `ht
 
 Even if you don't use one of these directives above, you could always do the redirect manually:
 
-```bash
+```nginx
 location = /api {
 
   rewrite ^ /api/ permanent;
@@ -6502,7 +6502,7 @@ location = /api {
 
 Or, if you don't want redirect you could use:
 
-```bash
+```nginx
 location = /api {
 
   proxy_pass http://bck_testing_01;
@@ -6512,7 +6512,7 @@ location = /api {
 
 If you want to rewrite/redirect the URL with trailing slash at end you could:
 
-```bash
+```nginx
 # 1. At the http level:
 
 map $request_uri $no_trailing_slash {
@@ -6551,7 +6551,7 @@ None of the standard answers are safe to use if at any point you had unsecure HT
 
 The problem occurs when a `POST` request is made to your server. If the server response with a plain 30x redirect the POST content will be lost. To prevent this situation remember about the correct redirect HTTP code for `POST` request ([Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)).
 
-```bash
+```nginx
 server {
 
   listen        192.168.200.10:80;
@@ -6589,7 +6589,7 @@ server {
 
 If you just want to mount several locations from upstreams - you do not need rewrites, just use:
 
-```bash
+```nginx
 location /v1/app1/ {
 
   proxy_pass http://localhost:9001/;
@@ -6599,7 +6599,7 @@ location /v1/app1/ {
 
 But apps should use relative links or account for their absolute location. For more complex url manipulation you can use `break`-rewrites:
 
-```bash
+```nginx
 location /v1/app1/ {
 
   rewrite ^/v1/app1/(.*) /$1 break;
@@ -6610,7 +6610,7 @@ location /v1/app1/ {
 
 Next, a few control groups:
 
-```bash
+```nginx
 location /api/ {
 
   rewrite ^ $request_uri;
@@ -6631,7 +6631,7 @@ location /bar/ {
 
 ##### Proxy/rewrite and keep the part of original URL
 
-```bash
+```nginx
 location ~ /some/path/(?<section>.+)/index.html {
 
   proxy_pass http://192.168.252.10/$section/index.html;
@@ -6642,7 +6642,7 @@ location ~ /some/path/(?<section>.+)/index.html {
 
 Or:
 
-```bash
+```nginx
 location /some/path/ {
 
   proxy_pass http://192.168.252.10/;
@@ -6660,7 +6660,7 @@ location /some/path/ {
 
 If you want to get resources from `app1.domain` and the data should comes from `app2.domain/app`:
 
-```bash
+```nginx
 server_name app1.domain;
 
 location / {
@@ -6674,7 +6674,7 @@ location / {
 
 Other example:
 
-```bash
+```nginx
 location /site99 {
 
   rewrite /site99(.*)$ /site99/page$1 break;
@@ -6689,7 +6689,7 @@ location /site99 {
 
 - `www` to `non-www`:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6704,7 +6704,7 @@ server {
 
 You can also do it for multiple `www` to `non-www` (e.g. for subdomains):
 
-```bash
+```nginx
 server {
 
   ...
@@ -6721,7 +6721,7 @@ server {
 
 Or:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6735,7 +6735,7 @@ server {
 
 This matches all domain names pointed to the server starting with `www.` and redirects to `non-www`:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6749,7 +6749,7 @@ server {
 
 These final solutions is generally not considered to be the best practice, however, it still works and does the job. Both removes `www` prefix before any domain.:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6765,7 +6765,7 @@ server {
 
 It is not a recommended if you don't care for the most ultimate performance (uses the `if` condition and regular expression) but in some cases it may be useful:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6781,7 +6781,7 @@ server {
 
 - `non-www` to `www`:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6796,7 +6796,7 @@ server {
 
 This matches all domain names pointed to the server starting with whatever but `www.` and redirects to `www.<domain>`:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6810,7 +6810,7 @@ server {
 
 The following is very similar to above but uses `if`:
 
-```bash
+```nginx
 server {
 
   ...
@@ -6839,7 +6839,7 @@ Look at this:
 
 You can try with the HTTP status code 307, a RFC compliant browser should repeat the post request. You just need to write a NGINX rewrite rule with HTTP status code 307 or 308:
 
-```bash
+```nginx
 location /api {
 
   # HTTP 307 only for POST requests:
@@ -6872,7 +6872,7 @@ Example 1:
 
   > In this example users can only see specific resource (`/v1/id`). The rest is hidden for them.
 
-```bash
+```nginx
 # 1) File: /etc/nginx/map_methods.conf
 map $request_method $method_dest {
 
@@ -6926,7 +6926,7 @@ server_name example.com;
 
 Example 1:
 
-```bash
+```nginx
 location ~* \.(?:ttf|ttc|otf|eot|woff|woff2)$ {
 
   if ( $http_origin ~* (https?://(.+\.)?(domain1|domain2|domain3)\.(?:me|co|com)$) ) {
@@ -6940,7 +6940,7 @@ location ~* \.(?:ttf|ttc|otf|eot|woff|woff2)$ {
 
 Example 2 (more slightly configuration; for GETs and POSTs):
 
-```bash
+```nginx
 location / {
 
   if ($http_origin ~* (^https?://([^/]+\.)*(domainone|domaintwo)\.com$)) {
@@ -6992,7 +6992,7 @@ location / {
 
 ##### Set correct scheme passed in X-Forwarded-Proto
 
-```bash
+```nginx
 # Sets a $real_scheme variable whose value is the scheme passed by the load
 # balancer in X-Forwarded-Proto (if any), defaulting to $scheme.
 # Similar to how the HttpRealIp module treats X-Forwarded-For.
@@ -7039,7 +7039,7 @@ python -m SimpleHTTPServer 8000
 
 Python 3.x:
 
-```bash
+```python
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import ssl
 
@@ -7054,7 +7054,7 @@ httpd.serve_forever()
 
 Python 2.x:
 
-```bash
+```python
 import BaseHTTPServer, SimpleHTTPServer
 import ssl
 

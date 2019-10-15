@@ -45,7 +45,7 @@ These are the basic set of rules to keep NGINX in good condition.
 
 ###### Example
 
-```bash
+```nginx
 # Store this configuration in https.conf for example:
 listen 10.240.20.2:443 ssl;
 
@@ -92,7 +92,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 # Bad code style:
 http {
   include    nginx/proxy.conf;
@@ -207,7 +207,7 @@ kill -HUP $(pgrep -f "nginx: master")
 
 ###### Example
 
-```bash
+```nginx
 # For HTTP:
 server {
 
@@ -244,7 +244,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 server {
 
   # This block will be processed:
@@ -295,7 +295,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 # Place it at the beginning of the configuration file to prevent mistakes:
 server {
 
@@ -374,7 +374,7 @@ server {
 
 Bad configuration:
 
-```bash
+```nginx
 upstream {
 
   server http://x-9s-web01-prod:8080;
@@ -392,7 +392,7 @@ server {
 
 Good configuration:
 
-```bash
+```nginx
 upstream {
 
   server http://192.168.252.200:8080;
@@ -437,7 +437,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 # Store this configuration in e.g. https.conf:
 listen 192.168.252.10:443 default_server ssl http2;
 
@@ -498,7 +498,7 @@ server {
 
   > I use both modules for a large lists. You should've thought about it because this rule requires to use several `if` conditions. I think that `allow/deny` directives are better solution for simple lists, after all. Take a look at the example below:
 
-```bash
+```nginx
 # Allow/deny:
 location /internal {
 
@@ -530,7 +530,7 @@ location /internal {
 
 ###### Example
 
-```bash
+```nginx
 # Map module:
 map $remote_addr $globals_internal_map_acl {
 
@@ -587,7 +587,7 @@ geo $globals_internal_geo_acl {
 
 ###### Example
 
-```bash
+```nginx
 map $http_user_agent $device_redirect {
 
   default "desktop";
@@ -629,7 +629,7 @@ if ($device_redirect = "mobile") {
 
 ###### Example
 
-```bash
+```nginx
 server {
 
   server_name domain.com;
@@ -673,7 +673,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 server {
 
   server_name www.example.com;
@@ -799,7 +799,7 @@ server {
 
 Bad configuration:
 
-```bash
+```nginx
 http {
 
   ...
@@ -847,7 +847,7 @@ http {
 
 Good configuration:
 
-```bash
+```nginx
 http {
 
   ...
@@ -911,7 +911,7 @@ NGINX has many methods for troubleshooting configuration problems. In this chapt
 
 ###### Example
 
-```bash
+```nginx
 # Default main log format from the NGINX repository:
 log_format main
                 '$remote_addr - $remote_user [$time_local] "$request" '
@@ -968,7 +968,7 @@ log_format debug-level-0
 
 - Debugging log to a file:
 
-```bash
+```nginx
 # Turn on in a specific context, e.g.:
 #   - global    - for global logging
 #   - http      - for http and all locations logging
@@ -978,7 +978,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - Debugging log to memory:
 
-  ```bash
+  ```nginx
   error_log memory:32m debug;
   ```
 
@@ -986,7 +986,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - Debugging log for a IP address/range:
 
-  ```bash
+  ```nginx
   events {
 
     debug_connection    192.168.252.15/32;
@@ -997,7 +997,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - Debugging log for each server:
 
-  ```bash
+  ```nginx
   error_log /var/log/nginx/debug.log debug;
 
   ...
@@ -1039,7 +1039,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 ###### Example
 
-```bash
+```nginx
 # From configuration file (global context):
 daemon            off
 master_process    off;
@@ -1067,7 +1067,7 @@ worker_processes  1;
 
 ###### Example
 
-```bash
+```nginx
 worker_rlimit_core    500m;
 worker_rlimit_nofile  65535;
 working_directory     /var/dump/nginx;
@@ -1117,7 +1117,7 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 
 ###### Example
 
-```bash
+```nginx
 # The safest way:
 worker_processes auto;
 
@@ -1145,7 +1145,7 @@ worker_processes 3;
 
 ###### Example
 
-```bash
+```nginx
 server {
 
   listen 10.240.20.2:443 ssl http2;
@@ -1180,7 +1180,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 ssl_session_cache   shared:NGX_SSL_CACHE:10m;
 ssl_session_timeout 12h;
 ssl_session_tickets off;
@@ -1205,7 +1205,7 @@ ssl_buffer_size     1400;
 
 ###### Example
 
-```bash
+```nginx
 # It is more efficient to define them explicitly:
 server {
 
@@ -1246,7 +1246,7 @@ server {
 
 Bad configuration:
 
-```bash
+```nginx
 server {
 
   ...
@@ -1268,7 +1268,7 @@ server {
 
 Good configuration:
 
-```bash
+```nginx
 server {
 
     server_name               www.domain.com;
@@ -1314,7 +1314,7 @@ server {
 
 Bad configuration:
 
-```bash
+```nginx
 # 1)
 rewrite ^/(.*)$ https://example.com/$1 permanent;
 
@@ -1324,7 +1324,7 @@ rewrite ^ https://example.com$request_uri? permanent;
 
 Good configuration:
 
-```bash
+```nginx
 return 301 https://example.com$request_uri;
 ```
 
@@ -1352,7 +1352,7 @@ return 301 https://example.com$request_uri;
 
 Bad configuration:
 
-```bash
+```nginx
 
   ...
 
@@ -1374,7 +1374,7 @@ Bad configuration:
 
 Good configuration:
 
-```bash
+```nginx
 
   ...
 
@@ -1406,7 +1406,7 @@ Good configuration:
 
 Bad configuration:
 
-```bash
+```nginx
 server {
 
   ...
@@ -1422,7 +1422,7 @@ server {
 
 Good configuration:
 
-```bash
+```nginx
 server {
 
   ...
@@ -1466,7 +1466,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 # In global context:
 pcre_jit on;
 ```
@@ -1483,7 +1483,7 @@ pcre_jit on;
 
 ###### Example
 
-```bash
+```nginx
 # Matches the query / only and stops searching:
 location = / {
 
@@ -1527,7 +1527,7 @@ location / {
 
 ###### Example
 
-```bash
+```nginx
 # Create limit connection zone:
 limit_conn_zone $binary_remote_addr zone=conn_for_remote_addr:1m;
 
@@ -1635,7 +1635,7 @@ chown -R nginx:nginx /var/www/domain.com
 
 ###### Example
 
-```bash
+```nginx
 # 1) During installation:
 ./configure --without-http_autoindex_module
 
@@ -1670,7 +1670,7 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
 ###### Example
 
-```bash
+```nginx
 if ($request_uri ~ "/\.git") {
 
   return 403;
@@ -1715,7 +1715,7 @@ location ~ /\.(?!well-known\/) {
 
 ###### Example
 
-```bash
+```nginx
 server_tokens off;
 ```
 
@@ -1736,7 +1736,7 @@ server_tokens off;
 
 ###### Example
 
-```bash
+```nginx
 more_set_headers "Server: Unknown";
 ```
 
@@ -1755,7 +1755,7 @@ more_set_headers "Server: Unknown";
 
 ###### Example
 
-```bash
+```nginx
 proxy_hide_header X-Powered-By;
 proxy_hide_header X-AspNetMvc-Version;
 proxy_hide_header X-AspNet-Version;
@@ -1786,7 +1786,7 @@ proxy_hide_header X-Drupal-Cache;
 
 - force all traffic to use TLS:
 
-  ```bash
+  ```nginx
   server {
 
     listen 10.240.20.2:80;
@@ -1810,7 +1810,7 @@ proxy_hide_header X-Drupal-Cache;
 
 - force e.g. login page to use TLS:
 
-  ```bash
+  ```nginx
   server {
 
     listen 10.240.20.2:80;
@@ -1968,13 +1968,13 @@ certbot certonly -d domain.com -d www.domain.com
 
 TLS 1.3 + 1.2:
 
-```bash
+```nginx
 ssl_protocols TLSv1.3 TLSv1.2;
 ```
 
 TLS 1.2:
 
-```bash
+```nginx
 ssl_protocols TLSv1.2;
 ```
 
@@ -1982,13 +1982,13 @@ ssl_protocols TLSv1.2;
 
 TLS 1.3 + 1.2 + 1.1:
 
-```bash
+```nginx
 ssl_protocols TLSv1.3 TLSv1.2 TLSv1.1;
 ```
 
 TLS 1.2 + 1.1:
 
-```bash
+```nginx
 ssl_protocols TLSv1.2 TLSv1.1;
 ```
 
@@ -2051,7 +2051,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
   **My recommendation:**
 
   > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with below cipher suites:
-  ```bash
+  ```nginx
   ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
   ```
 
@@ -2059,13 +2059,13 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 Cipher suites for TLS 1.3:
 
-```bash
+```nginx
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384";
 ```
 
 Cipher suites for TLS 1.2:
 
-```bash
+```nginx
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
 ```
 
@@ -2073,13 +2073,13 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 
 Cipher suites for TLS 1.3:
 
-```bash
+```nginx
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ```
 
 Cipher suites for TLS 1.2:
 
-```bash
+```nginx
 # 1)
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
 
@@ -2095,7 +2095,7 @@ ssl_ciphers "EECDH+CHACHA20:EDH+AESGCM:AES256+EECDH:AES256+EDH";
 
 Cipher suites for TLS 1.1 + 1.2:
 
-```bash
+```nginx
 # 1)
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
 
@@ -2109,13 +2109,13 @@ This will also give a baseline for comparison with [Mozilla SSL Configuration Ge
 
 - Modern profile with OpenSSL 1.1.0b (TLSv1.2)
 
-```bash
+```nginx
 ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
 ```
 
 - Intermediate profile with OpenSSL 1.1.0b (TLSv1, TLSv1.1 and TLSv1.2)
 
-```bash
+```nginx
 ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
 ```
 
@@ -2171,7 +2171,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
   **My recommendation:**
 
   > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) and [only strong ciphers](#use-only-strong-ciphers) with above curves:
-  ```bash
+  ```nginx
   ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
   ```
 
@@ -2179,13 +2179,13 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
 Curves for TLS 1.2:
 
-```bash
+```nginx
 ssl_ecdh_curve secp521r1:secp384r1:prime256v1;
 ```
 
 &nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
-```bash
+```nginx
 # Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order).
 
 # This setup downgrade Key Exchange score but is recommended for TLS 1.2 + 1.3:
@@ -2340,7 +2340,7 @@ python -m sslyze --early_data "$_host"
 
 Enable 0-RTT with `$ssl_early_data` variable:
 
-```bash
+```nginx
 server {
 
   ...
@@ -2389,7 +2389,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 ssl_prefer_server_ciphers on;
 ```
 
@@ -2429,7 +2429,7 @@ ssl_prefer_server_ciphers on;
 
 ###### Example
 
-```bash
+```nginx
 # Disable dynamic HTTP compression:
 gzip off;
 
@@ -2502,7 +2502,7 @@ The Importance of a Proper HTTP Strict Transport Security Implementation on Your
 
 ###### Example
 
-```bash
+```nginx
 add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" always;
 ```
 
@@ -2549,7 +2549,7 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
 ###### Example
 
-```bash
+```nginx
 # This policy allows images, scripts, AJAX, and CSS from the same origin, and does not allow any other resources to load:
 add_header Content-Security-Policy "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';" always;
 ```
@@ -2575,7 +2575,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 
 ###### Example
 
-```bash
+```nginx
 add_header Referrer-Policy "no-referrer";
 ```
 
@@ -2592,7 +2592,7 @@ add_header Referrer-Policy "no-referrer";
 
 ###### Example
 
-```bash
+```nginx
 add_header X-Frame-Options "SAMEORIGIN" always;
 ```
 
@@ -2611,7 +2611,7 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 
 ###### Example
 
-```bash
+```nginx
 add_header X-XSS-Protection "1; mode=block" always;
 ```
 
@@ -2630,7 +2630,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 
 ###### Example
 
-```bash
+```nginx
 add_header X-Content-Type-Options "nosniff" always;
 ```
 
@@ -2648,7 +2648,7 @@ add_header X-Content-Type-Options "nosniff" always;
 
 ###### Example
 
-```bash
+```nginx
 add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'; push 'none'; sync-xhr 'none'; microphone 'none'; camera 'none'; magnetometer 'none'; gyroscope 'none'; speaker 'none'; vibrate 'none'; fullscreen 'none'; payment 'none'; usb 'none';";
 ```
 
@@ -2666,7 +2666,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
 ###### Example
 
-```bash
+```nginx
 add_header Allow "GET, POST, HEAD" always;
 
 if ($request_method !~ ^(GET|POST|HEAD)$) {
@@ -2698,7 +2698,7 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 
 ###### Example
 
-```bash
+```nginx
 location /api {
 
   expires 0;
@@ -2724,7 +2724,7 @@ location /api {
 
 ###### Example
 
-```bash
+```nginx
 client_body_buffer_size 100k;
 client_header_buffer_size 1k;
 client_max_body_size 100k;
@@ -2745,7 +2745,7 @@ large_client_header_buffers 2 1k;
 
 ###### Example
 
-```bash
+```nginx
 client_body_timeout 10s;
 client_header_timeout 10s;
 keepalive_timeout 5s 5s;
@@ -2788,7 +2788,7 @@ One of the frequent uses of the NGINX is setting it up as a proxy server that ca
 
 Bad configuration:
 
-```bash
+```nginx
 server {
 
   location /app/ {
@@ -2804,7 +2804,7 @@ server {
 
 Good configuration:
 
-```bash
+```nginx
 server {
 
   location /app/ {
@@ -2846,7 +2846,7 @@ server {
 
 ###### Example
 
-```bash
+```nginx
 location = /a {
 
   proxy_pass http://127.0.0.1:8080/a;
@@ -2888,7 +2888,7 @@ location ^~ /a/ {
 
 ###### Example
 
-```bash
+```nginx
 proxy_set_header    Host    $host;
 ```
 
@@ -2930,7 +2930,7 @@ proxy_set_header    Host    $host;
 
 ###### Example
 
-```bash
+```nginx
 # The whole purpose that it exists is to do the appending behavior:
 proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
 # Above is equivalent for this:
@@ -2959,7 +2959,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 
 ###### Example
 
-```bash
+```nginx
 # 1) client <-> proxy <-> backend
 proxy_set_header    X-Forwarded-Proto  $scheme;
 
@@ -2990,7 +2990,7 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 
 ###### Example
 
-```bash
+```nginx
 location / {
 
   proxy_pass          http://bk_upstream_01;
@@ -3054,13 +3054,13 @@ location / {
 
 Not recommended configuration:
 
-```bash
+```nginx
 add_header X-Backend-Server $hostname;
 ```
 
 Recommended configuration:
 
-```bash
+```nginx
 add_header Backend-Server   $hostname;
 ```
 
@@ -3087,7 +3087,7 @@ Load balancing is a useful mechanism to distribute incoming traffic around sever
 
 ###### Example
 
-```bash
+```nginx
 upstream backend {
 
   server bk01_node:80 max_fails=3 fail_timeout=5s;
@@ -3114,7 +3114,7 @@ upstream backend {
 
 ###### Example
 
-```bash
+```nginx
 upstream backend {
 
   server bk01_node:80 max_fails=3 fail_timeout=5s down;
