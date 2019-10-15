@@ -402,6 +402,8 @@ pkg install jq git wget ncurses
 
   > Before installing external modules please read [Event-Driven architecture](NGINX_BASICS.md#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
 
+  > If you have running NGINX on your server, and if you want to add new modules, you'll need to compile them against the same version of NGINX that's currently installed (`nginx -v`) and to make new module compatible with the existing NGINX binary, you need to use the same compile flags (`nginx -V`).
+
 Modules can be compiled as a shared object (`*.so` file) and then dynamically loaded into NGINX at runtime (`--add-dynamic-module`). On the other hand you can also built them into NGINX at compile time and linked to the NGINX binary statically (`--add-module`).
 
 I mixed both variants because some of the modules are built-in automatically even if I try them to be compiled as a dynamic modules (they are not support dynamic linking).
@@ -5715,7 +5717,7 @@ Read also this: [Nginx SSL certificate authentication signed by intermediate CA 
 
 ##### Restricting access by geographical location
 
-  > The best explanation and technical reference is there: [Restricting Access by Geographical Location](https://docs.nginx.com/nginx/admin-guide/security-controls/controlling-access-by-geoip/). Look also at this: [ngx_http_geoip_module](http://nginx.org/en/docs/http/ngx_http_geoip_module.html).
+  > The best explanation and technical reference is [Restricting Access by Geographical Location](https://docs.nginx.com/nginx/admin-guide/security-controls/controlling-access-by-geoip/). Look also at [ngx_http_geoip_module](http://nginx.org/en/docs/http/ngx_http_geoip_module.html).
 
 I also recommend read the following resources:
 
@@ -5723,7 +5725,7 @@ I also recommend read the following resources:
 - [Blocking Country and Continent with nginx GeoIP on Ubuntu 18.04](https://guides.wp-bullet.com/blocking-country-and-continent-with-nginx-geoip-on-ubuntu-18-04/)
 - [Using NGINX With GeoIP MaxMind Database to Fetch Geolocation Data](https://dzone.com/articles/nginx-with-geoip-maxmind-database-to-fetch-user-ge)
 
-See also [ngx_http_geoip_module](NGINX_BASICS.md#ngx-http-geoip-module) chapter from this handbook.
+See also [ngx_http_geoip_module](NGINX_BASICS.md#ngx_http_geoip_module) chapter from this handbook.
 
 The NGINX must be compiled with the `ngx_http_geoip_module` or `ngx_http_geoip2_module` to use the GeoIP database. With this module you can blocking/allowing for example:
 

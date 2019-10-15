@@ -146,15 +146,13 @@ Please see also:
 
 #### HTTP Methods
 
-The HTTP protocol includes a set of methods that indicate which action to be done for a resource.
-
-The most common methods are GET and POST. But there are a few others, too.
+The HTTP protocol includes a set of methods that indicate which action to be done for a resource. The most common methods are `GET` and `POST`. But there are a few others, too:
 
 - `GET` - use this method to request data from a specified resource where data is not modified it in any way. `GET` requests do not change the state of resource
 
-- `POST` - use this method to send data to a server to create a resource
+- `POST` - use this method to send data to a server to create a resource. `POST` requests change the state of resource
 
-- `PUT` - use this method to update the existing resource on a server by using the content in the body of the request. Think of this as a way to "edit" something
+- `PUT` - use this method to update the existing resource on a server by using the content in the body of the request. `PUT` requests change the state of resource
 
 - `HEAD` - use this method the same way you use `GET`, but with the distinction that the return of a `HEAD` method should not contain body in the response. But the return will contain same headers as if `GET` was used. You use the `HEAD` method to check whether the resource is present prior of making a `GET` request
 
@@ -218,6 +216,10 @@ The simplest example is a contact form on a website. When you fill out the input
 
   > Requests with `POST` method change data on the backend server (by modifying or updating a resource).
 
+The `POST` method is used to add new elements. New, i.e. those whose ID is still unknown. After creating the object, return the code `HTTP 201 Created`.
+
+If you do not know the actual resource location, for instance, when you add a new article, but do not have any idea where to store it, you can `POST` it to an URL, and let the server decide the actual URL.
+
 Here are some tips for testing `POST` requests:
 
 - create a resource with a `POST` request and ensure a 200 status code is returned
@@ -244,6 +246,10 @@ Host: example.com
 
 The same `PUT` request multiple times will always produce the same result.
 
+The `PUT` method is very similar to the `POST` method, because we also send the whole object. An important difference is that we use the `PUT` method when the object ID comes from the client. So `PUT` should be used to update the resource. It is very important that in the case of this mechanism the entire object is replaced! After updating, return code `HTTP 204 No content`.
+
+Use `PUT` when you can update a resource completely through a specific resource. For instance, if you know that an article resides at `http://example.org/article/1234`, you can `PUT` a new resource representation of this article directly through a `PUT` on this URL.
+
 Check for these things when testing `PUT` requests:
 
 - repeatedly cally a `PUT` request always returns the same result (idempotent)
@@ -263,6 +269,12 @@ To overwrite an existing resource:
 PUT /items/<existing_item> HTTP/1.1
 Host: example.com
 ```
+
+Really, both `PUT` and `POST` can be used for creating. I think there is also a good explanation:
+
+  > The `POST` method is used to send user-generated data to the web server. For example, a `POST` method is used when a user comments on a forum or if they upload a profile picture. A `POST` method should also be used if you do not know the specific URL of where your newly created resource should reside.
+
+  > The `PUT` method completely replaces whatever currently exists at the target URL with something else. With this method, you can create a new resource or overwrite an existing one given you know the exact Request-URI.
 
 ###### Request URI
 
@@ -287,9 +299,7 @@ GET http://example.com/pub/index.html HTTP/1.1
 
 ###### HTTP version
 
-The last part of the request indicating the client's supported HTTP version.
-
-HTTP has four versions — HTTP/0.9, HTTP/1.0, HTTP/1.1, and HTTP/2.0. Today the versions in common use are HTTP/1.1 and HTTP/2.0.
+The last part of the request indicating the client's supported HTTP version. HTTP has four versions — HTTP/0.9, HTTP/1.0, HTTP/1.1, and HTTP/2.0. Today the versions in common use are HTTP/1.1 and HTTP/2.0.
 
 Determining the appropriate version of the HTTP protocol is very important because it allows you to set specific HTTP method or required headers (e.g. `cache-control` for HTTP/1.1).
 

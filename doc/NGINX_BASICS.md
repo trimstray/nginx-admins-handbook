@@ -56,8 +56,8 @@
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
   * [3rd party modules](#3rd-party-modules)
-    * [ngx_set_misc](#ngx-set-misc)
-    * [ngx_http_geoip_module](#ngx-http-geoip-module)
+    * [ngx_set_misc](#ngx_set_misc])
+    * [ngx_http_geoip_module](#ngx_http_geoip_module)
 
 #### Directories and files
 
