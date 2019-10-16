@@ -6829,11 +6829,11 @@ server {
 
 ##### Modify 301/302 response body
 
-By default, NGINX sent small document body for 301 and 302 redirects. [RFC 2616 - 10.3.2 301 Moved Permanently](https://tools.ietf.org/html/rfc2616#section-10.3.2) and [RFC 2616 - 10.3.3 302 Found](https://tools.ietf.org/html/rfc2616#section-10.3.3) specifies that the entity bodies you want to remove should be present.
+By default, NGINX sent small document body for 301 and 302 redirects. [RFC 2616 - 10.3.2 301 Moved Permanently](https://tools.ietf.org/html/rfc2616#section-10.3.2) and [RFC 2616 - 10.3.3 302 Found](https://tools.ietf.org/html/rfc2616#section-10.3.3) specifies that the entity bodies should be present.
 
 Here you have an excellent explanation of the problem by [Michael Hampton](https://serverfault.com/users/126632/michael-hampton): [NGINX 301 and 302 serving small nginx document body. Any way to remove this behaviour?](https://serverfault.com/a/423685).
 
-On the other hand, 301/302 bodies never actually contains any locations - all pages contain just an error number and message without any revealing information. So I understand the reasons for deleting the 301/302 body content. Performance can also be an argument. It depends on what you're optimising for; the difference might be quite substancial for traffic counting, for example; it might also be the tipping point between needing to send an extra packet for the body or not.
+On the other hand, 301/302 bodies never actually contains any locations - all pages contain just an error number and message without any revealing information. So I understand the reasons for deleting the 301/302 body content. Performance can also be an argument, however it depends on what you're optimising for; the difference might be quite substancial for traffic counting, for example; it might also be the tipping point between needing to send an extra packet for the body or not.
 
 However, please note that this change is not RFC compliant:
 
