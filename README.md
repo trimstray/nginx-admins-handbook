@@ -305,6 +305,7 @@
     * [Proxy/rewrite and keep the original URL](doc/HELPERS.md#proxyrewrite-and-keep-the-original-url)
     * [Proxy/rewrite and keep the part of original URL](doc/HELPERS.md#proxyrewrite-and-keep-the-part-of-original-url)
     * [Proxy/rewrite without changing the original URL (in browser)](doc/HELPERS.md#proxyrewrite-without-changing-the-original-url-in-browser)
+    * [Modify 301/302 response body](doc/HELPERS.md#modify-301302-response-body)
     * [Redirect POST request with payload to external endpoint](doc/HELPERS.md#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](doc/HELPERS.md#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](doc/HELPERS.md#allow-multiple-cross-domains-using-the-cors-headers)
@@ -812,6 +813,7 @@ Existing chapters:
     - [x] _Proxy/rewrite and keep the original URL_
     - [x] _Proxy/rewrite and keep the part of original URL_
     - [x] _Proxy/rewrite without changing the original URL (in browser)_
+    - [x] _Modify 301/302 response body_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
     - [x] _Allow multiple cross-domains using the CORS headers_

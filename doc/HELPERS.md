@@ -127,6 +127,7 @@
     * [Proxy/rewrite and keep the original URL](#proxyrewrite-and-keep-the-original-url)
     * [Proxy/rewrite and keep the part of original URL](#proxyrewrite-and-keep-the-part-of-original-url)
     * [Proxy/rewrite without changing the original URL (in browser)](#proxyrewrite-without-changing-the-original-url-in-browser)
+    * [Modify 301/302 response body](#modify-301302-response-body)
     * [Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)
     * [Route to different backends based on HTTP method](#route-to-different-backends-based-on-HTTP-method)
     * [Allow multiple cross-domains using the CORS headers](#allow-multiple-cross-domains-using-the-cors-headers)
@@ -6825,6 +6826,83 @@ server {
 
 }
 ```
+
+##### Modify 301/302 response body
+
+By default, NGINX sent small document body for 301 and 302 redirects. [RFC 2616 - 10.3.2 301 Moved Permanently](https://tools.ietf.org/html/rfc2616#section-10.3.2) and [RFC 2616 - 10.3.3 302 Found](https://tools.ietf.org/html/rfc2616#section-10.3.3) specifies that the entity bodies you want to remove should be present.
+
+Here you have an excellent explanation of the problem by [Michael Hampton](https://serverfault.com/users/126632/michael-hampton): [NGINX 301 and 302 serving small nginx document body. Any way to remove this behaviour?](https://serverfault.com/a/423685).
+
+On the other hand, 301/302 bodies never actually contains any locations - all pages contain just an error number and message without any revealing information. So I understand the reasons for deleting the 301/302 body content. Performance can also be an argument. It depends on what you're optimising for; the difference might be quite substancial for traffic counting, for example; it might also be the tipping point between needing to send an extra packet for the body or not.
+
+However, please note that this change is not RFC compliant:
+
+  > _This word, or the adjective "RECOMMENDED", mean that there may exist valid reasons in particular circumstances to ignore a particular item, but the full implications must be understood and carefully weighed before choosing a different course._
+
+Example 1:
+
+```nginx
+server {
+
+  ...
+
+  error_page 301 302 @30x;
+  location @30x {
+
+    default_type "";
+    return 300;
+
+  }
+
+  location / {
+
+    ...
+
+  }
+
+  ...
+
+}
+```
+
+Example 2:
+
+```nginx
+server {
+
+  ...
+
+  error_page 301 /redirect;
+  location = /redirect {
+
+    internal;
+    # We have to return 200 to modify content. If we would use 301 we would modify Location header.
+    # Don't worry, HTTP status will be 301:
+    return 200 "<h1>301 redirect</h1>";
+    # Or without body (200's need to be with a resource in the response):
+    # return 204;
+
+  }
+
+  location / {
+
+    ...
+
+    # Redirect has to be enclosed in location:
+    return  301 https://$host$request_uri;
+
+  }
+
+  ...
+
+}
+```
+
+For more information about `return` directive and `HTTP 200/204` response codes please see [`return` directive](doc/NGINX_BASICS.md#return-directive) from this handbook.
+
+Example 3:
+
+- modify the source code: `src/http/ngx_http_special_response.c` (but I not tested this solution)
 
 ##### Redirect POST request with payload to external endpoint
 

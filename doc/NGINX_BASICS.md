@@ -1426,7 +1426,7 @@ Finally, look at difference between `last` and `break` flags in action:
 
 ###### `return` directive
 
-  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**
+  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**<br>
   > **:bookmark: [Use return directive instead of rewrite for redirects - Performance - P2](RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
 
 The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
@@ -1511,15 +1511,17 @@ I use `return` directive in the following cases:
   }
   ```
 
-- and sometimes for reply with HTTP code without serving a file:
+- and sometimes for reply with HTTP code without serving a file or body:
 
   ```nginx
   server {
 
     ...
 
-    # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response)
+    # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response):
     return 204 "it's all okay";
+    # Or without body:
+    return 204;
 
     # Because default Content-Type is application/octet-stream, browser will offer to "save the file".
     # If you want to see reply in browser you should add properly Content-Type:
@@ -1527,6 +1529,8 @@ I use `return` directive in the following cases:
 
   }
   ```
+
+To the last example: be careful if you're using such a configuration to do a healthcheck. While a 204 HTTP code is semantically perfect for a healthcheck (success indication with no content), some services do not consider it a success.
 
 ##### `try_files` directive
 
