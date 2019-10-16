@@ -1062,7 +1062,7 @@ http {
   > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
   > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
   > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
-  > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**
+  > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
   > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
   > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](#beginner-use-only-one-ssl-config-for-the-listen-directive)**
 
@@ -2241,7 +2241,7 @@ Look also at the configuration snippets: [Using trailing slashes](#using-trailin
 
 ##### Passing headers
 
-  > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend - Reverse Proxy - P2](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)**<br>
+  > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
   > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
 By default, NGINX redefines two header fields in proxied requests:
@@ -2387,7 +2387,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
 1) Pass headers from proxy to the backend layer
 
-    - [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+    - [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
     - [Set properly values of the X-Forwarded-For header (from this handbook)](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)
 
 2) NGINX - modify the `set_real_ip_from` and `real_ip_header` directives:
@@ -2749,8 +2749,11 @@ location = /rate_limit.html {
   internal;
 
 }
+```
 
-# And create this file:
+And create this file:
+
+```bash
 cat > /usr/share/www/http-error-pages/sites/other/rate_limit.html << __EOF__
 HTTP 429 Too Many Requests
 __EOF__

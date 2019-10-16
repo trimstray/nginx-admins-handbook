@@ -2767,7 +2767,7 @@ send_timeout 10s;
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](#beginner-set-properly-values-of-the-x-forwarded-for-header)
   * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
-  * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+  * [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
 
 One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
@@ -2972,7 +2972,7 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 
 - [Reverse Proxy - Passing headers (from this handbook)](NGINX_BASICS.md#passing-headers)
 
-#### :beginner: Always pass `Host`, `X-Real-IP`, and `X-Forwarded` stack headers to the backend
+#### :beginner: Always pass `Host`, `X-Real-IP`, and `X-Forwarded` headers to the backend
 
 ###### Rationale
 

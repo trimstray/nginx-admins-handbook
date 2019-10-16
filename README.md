@@ -403,7 +403,7 @@
   * [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)
   * [Set properly values of the X-Forwarded-For header](doc/RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)
   * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](doc/RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
-  * [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](doc/RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)
+  * [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](doc/RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
   * [Use custom headers without X- prefix](doc/RULES.md#beginner-use-custom-headers-without-x--prefix)
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing"></a>
   * [Tweak passive health checks](doc/RULES.md#beginner-tweak-passive-health-checks)
@@ -916,7 +916,7 @@ Existing chapters:
   - [x] _Set and pass Host header only with $host variable_
   - [x] _Set properly values of the X-Forwarded-For header_
   - [x] _Don't use X-Forwarded-Proto with $scheme behind reverse proxy_
-  - [x] _Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend_
+  - [x] _Always pass Host, X-Real-IP, and X-Forwarded headers to the backend_
   - [x] _Use custom headers without X- prefix_
   - [ ] _Set proxy buffers and timeouts_
 
@@ -996,7 +996,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Control Buffer Overflow attacks](doc/RULES.md#beginner-control-buffer-overflow-attacks)<br><sup>Prevents errors are characterised by the overwriting of memory fragments of the NGINX process.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](doc/RULES.md#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
-| [Always pass Host, X-Real-IP, and X-Forwarded stack headers to the backend](doc/RULES.mdbeginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
+| [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](doc/RULES.mdbeginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
