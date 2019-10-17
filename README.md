@@ -454,6 +454,10 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 
 Generally, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
+NGINX is also known as a _Apache Killer_ because is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
+
+Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind—one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
+
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
 ----
@@ -821,6 +825,7 @@ Existing chapters:
     - [x] _Modify 301/302 response body_
     - [x] _Redirect POST request with payload to external endpoint_
     - [x] _Route to different backends based on HTTP method_
+    - [ ] _Redirect users with certain IP to special location_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [x] _Set correct scheme passed in X-Forwarded-Proto_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
@@ -1433,6 +1438,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://engineering.videoblocks.com/web-architecture-101-a3224e126947"><b>Web Architecture 101</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/leandromoreira/linux-network-performance-parameters"><b>Learn where some of the network sysctl variables fit into the Linux/Kernel network flow</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.blog/2018-08-08-glb-director-open-source-load-balancer/"><b>GLB: GitHub’s open source load balancer</b></a><br>
 </p>
 
 # What's next?
