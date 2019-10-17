@@ -175,6 +175,8 @@
     * [Variables](doc/NGINX_BASICS.md#variables)
     * [Directives, keys, and zones](doc/NGINX_BASICS.md#directives-keys-and-zones)
     * [Burst and nodelay parameters](doc/NGINX_BASICS.md#burst-and-nodelay-parameters)
+  * [Core modules](doc/NGINX_BASICS.md#core-modules)
+    * [ngx_http_geo_module](doc/NGINX_BASICS.md#ngx_http_geo_module)
   * [3rd party modules](doc/NGINX_BASICS.md#3rd-party-modules)
     * [ngx_set_misc](doc/NGINX_BASICS.md#ngx_set_misc)
     * [ngx_http_geoip_module](doc/NGINX_BASICS.md#ngx_http_geoip_module)
@@ -545,6 +547,7 @@ New chapters:
 - [x] **SSL/TLS Basics**
 - [x] **Reverse Proxy**
 - [ ] **Caching**
+- [x] **Core modules**
 - [x] **3rd party modules**
 - [ ] **Web Application Firewall**
 - [ ] **ModSecurity**
@@ -717,6 +720,8 @@ Existing chapters:
     - [x] _Variables_
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
+  - _Core modules_
+    - [x] _ngx_http_geo_module_
   - _3rd party modules_
     - [x] _ngx_set_misc_
     - [x] _ngx_http_geoip_module_

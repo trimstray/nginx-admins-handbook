@@ -55,8 +55,10 @@
     * [Variables](#variables)
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
+  * [Core modules](#core-modules)
+    * [ngx_http_geo_module](#ngx_http_geo_module)
   * [3rd party modules](#3rd-party-modules)
-    * [ngx_set_misc](#ngx_set_misc])
+    * [ngx_set_misc](#ngx_set_misc)
     * [ngx_http_geoip_module](#ngx_http_geoip_module)
 
 #### Directories and files
@@ -2825,6 +2827,72 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
+
+#### Core modules
+
+##### ngx_http_geo_module
+
+Documentation:
+
+- [`ngx_http_geo_module`](https://nginx.org/en/docs/http/ngx_http_geo_module.html)
+
+This module makes available variables, whose values depend on the IP address of the client. When combined with GeoIP module allows for very elaborate rules serving content according to the geolocation context.
+
+By default, the IP address used for doing the lookup is `$remote_addr`, but it is possible to specify an another variable.
+
+###### Performance
+
+Look at this (from official documentation):
+
+  > _Since variables are evaluated only when used, the mere existence of even a large number of declared `geo` variables does not cause any extra costs for request processing._
+
+This module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
+
+###### Examples
+
+  > See [Use geo/map modules instead of allow/deny](RULES.md#beginner-use-geomap-modules-instead-of-allowdeny) from this handbook.
+
+```nginx
+# The variable created is $trusted_ips:
+geo $trusted_ips {
+
+  default       0;
+  192.0.0.0/24  0;
+  8.8.8.8       1;
+
+}
+
+server {
+
+  if ( $trusted_ips = 1 ) {
+
+    return 403;
+
+  }
+
+  ...
+
+}
+```
+
+  > If the value of a variable does not represent a valid IP address then the `255.255.255.255` address is used.
+
+You can also test IP ranges, for example:
+
+```nginx
+# Create geo-ranges.conf:
+127.0.0.0-127.255.255.255   loopback;
+
+# Add geo definition:
+geo $geo_ranges {
+
+  ranges;
+  default                   default;
+  include                   geo-ranges.conf;
+  10.255.0.0-10.255.255.255 internal;
+
+}
+```
 
 #### 3rd party modules
 

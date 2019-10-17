@@ -492,7 +492,7 @@ server {
 
   > Since variables are evaluated only when used, the mere existence of even a large number of declared e.g. geo variables does not cause any extra costs for request processing.
 
-  > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`.
+  > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`. For example, `geo` module is great for conditionally allow or deny IP.
 
   > `geo` module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
 
