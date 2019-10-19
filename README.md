@@ -1445,27 +1445,27 @@ _In this ebook you will learn:_
 
 Go to the [Table of Contents](#table-of-contents) or read the next chapters:
 
-- **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**
+- **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics-2"></a>
   > Something about HTTP.
-- **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**
+- **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics-2"></a>
   > Something about SSL/TLS.
-- **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**
+- **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics-2"></a>
   > Explanation of the NGINX mechanisms.
-- **[Helpers](doc/HELPERS.md#helpers)**
+- **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers-2"></a>
   > One-liners, commands, utilities for building NGINX, and more
-- **[Base Rules (14)](doc/RULES.md#base-rules)**
+- **[Base Rules (14)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
   > The basic set of rules to keep NGINX in good condition.
-- **[Debugging (4)](doc/RULES.md#debugging)**
+- **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
-- **[Performance (11)](doc/RULES.md#performance)**
+- **[Performance (11)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
-- **[Hardening (28)](doc/RULES.md#hardening)**
+- **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.
-- **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**
+- **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.
-- **[Load Balancing (2)](doc/RULES.md#load-balancing)**
+- **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing-2"></a>
   > You may improve of some rules about the NGINX working as a load balancer.
-- **[Others (2)](doc/RULES.md#others)**
+- **[Others (2)](doc/RULES.md#others)**<a id="toc-others-2"></a>
   > Something about other interesting rules.
-- **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**
+- **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples-2"></a>
   > Here are some configuration examples.

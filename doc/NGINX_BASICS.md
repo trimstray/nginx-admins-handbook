@@ -1,6 +1,6 @@
 # NGINX Basics
 
-- **[⬆ NGINX Basics](https://github.com/trimstray/nginx-admins-handbook#toc-nginx-basics)**
+- **[⬆ NGINX Basics](https://github.com/trimstray/nginx-admins-handbook#toc-nginx-basics-2)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
