@@ -454,7 +454,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 
 Generally, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
-NGINX is also known as a _Apache Killer_ because is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
+NGINX is also known as a _Apache Killer_. It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
 
 Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind—one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
 
