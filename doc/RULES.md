@@ -1209,7 +1209,7 @@ ssl_buffer_size     1400;
 # It is more efficient to define them explicitly:
 server {
 
-    listen       80;
+    listen       192.168.252.10:80;
 
     server_name  example.org  www.example.org  *.example.org;
 
@@ -1220,7 +1220,7 @@ server {
 # Than to use the simplified form:
 server {
 
-    listen       80;
+    listen       192.168.252.10:80;
 
     server_name  .example.org;
 
@@ -1249,8 +1249,6 @@ Bad configuration:
 ```nginx
 server {
 
-  ...
-
   server_name                 domain.com www.domain.com;
 
   if ($host = www.domain.com) {
@@ -1278,13 +1276,13 @@ server {
     # If you force your web traffic to use HTTPS:
     #                         301 https://domain.com$request_uri;
 
-    ,,,
+    ...
 
 }
 
 server {
 
-    listen                    80;
+    listen                    192.168.252.10:80;
 
     server_name               domain.com;
 
