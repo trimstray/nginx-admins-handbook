@@ -1103,10 +1103,6 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 
   > The safest setting is to use the number of cores by passing `auto`. You can adjust this value to maximum throughput under high concurrency.
 
-  Official NGINX documentation say:
-
-  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it). [...] running one worker process per CPU core - makes the most efficient use of hardware resources._
-
   > How many worker processes do you need? Do some multiple load testing. Hit the app hard and see what happens with only one. Then add some more to it and hit it again. At some point you'll reach a point of truly saturating the server resources. That's when you know you have the right balance.
 
   > I think for high load proxy servers (also standalone servers) interesting value is `ALL_CORES - 1` (or more) because if you're running NGINX with other critical services on the same server, you're just going to thrash the CPUs with all the context switching required to manage all of those processes.
@@ -1114,6 +1110,10 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
   > Rule of thumb: If much time is spent blocked on I/O, worker processes should be increased further.
 
   > Increasing the number of worker processes is a great way to overcome a single CPU core bottleneck, but may opens a whole [new set of problems](https://blog.cloudflare.com/the-sad-state-of-linux-socket-balancing/).
+
+  Official NGINX documentation say:
+
+  > _When one is in doubt, setting it to the number of available CPU cores would be a good start (the value "auto" will try to autodetect it). [...] running one worker process per CPU core - makes the most efficient use of hardware resources._
 
 ###### Example
 
