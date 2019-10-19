@@ -2801,6 +2801,7 @@ server {
   ...
 
 }
+```
 
 Good configuration:
 
