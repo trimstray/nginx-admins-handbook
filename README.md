@@ -53,9 +53,9 @@
 
 - **[Introduction](#introduction)**<a id="toc-introduction"></a>
   * [Prologue](#prologue)
-  * [Why I Created This Handbook](#why-i-created-this-handbook)
-  * [Who This Handbook is For](#who-this-handbook-is-for)
-  * [Before You Start](#before-you-start)
+  * [Why I created this handbook](#why-i-created-this-handbook)
+  * [Who this handbook is for](#who-this-handbook-is-for)
+  * [Before you start](#before-you-start)
   * [Contributing & Support](#contributing--support)
   * [Checklist to rule them all](#checklist-to-rule-them-all)
 - **[Bonus Stuff](#bonus-stuff)**<a id="toc-bonus-stuff"></a>
@@ -494,7 +494,7 @@ These are definitely the best assets for us and in the first place you should se
 
 Moreover, in order to improve your knowledge please see [Books](#books) chapter. It contains top literature on NGINX.
 
-## Why I Created This Handbook
+## Why I created this handbook
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
@@ -508,13 +508,13 @@ In this handbook I added set of guidelines and examples has also been produced t
 
 Mostly, I apply the rules presented here on the NGINX working as a reverse proxy. However, does not to prevent them being implemented for NGINX as a standalone server.
 
-## Who This Handbook is For
+## Who this handbook is for
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
 I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy it, and fun with it.
 
-## Before You Start
+## Before you start
 
 Remember about the following most important things:
 
@@ -563,9 +563,9 @@ Existing chapters:
 <summary><b>Introduction</b></summary><br>
 
   - [x] _Prologue_
-  - [x] _Why I Created This Handbook_
-  - [x] _Who This Handbook is For_
-  - [x] _Before You Start_
+  - [x] _Why I created this handbook_
+  - [x] _Who this handbook is for_
+  - [x] _Before you start_
   - [x] _Contributing & Support_
   - [x] _Checklist to rule them all_
 
