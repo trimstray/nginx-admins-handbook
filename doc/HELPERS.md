@@ -264,15 +264,20 @@ Before the beginning installation process please read these important articles w
 - [Installing NGINX Open Source](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#configure)
 - [Building nginx from Sources](https://nginx.org/en/docs/configure.html)
 
-In this chapter I'll present three (very similar) methods of installation:
+In this chapter I'll present several very similar methods of installation:
 
-- the [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7)
-- the [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
-- the [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
-- the [Installation Nginx on FreeBSD 11.3](#installation-nginx-on-freebsd-113)
-- the [Installation Nginx on FreeBSD 11.3 from ports](#installation-nginx-on-freebsd-113-from-ports)
+- [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7)
+- [Installation OpenResty on CentOS 7](#installation-openresty-on-centos-7)
+- [Installation Tengine on Ubuntu 18.04](#installation-tengine-on-ubuntu-1804)
+- [Installation Nginx on FreeBSD 11.3](#installation-nginx-on-freebsd-113)
+- [Installation Nginx on FreeBSD 11.3 from ports](#installation-nginx-on-freebsd-113-from-ports)
 
-Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too.
+Each of them is suited towards a high performance as well as high-concurrency applications. They work great as a high-end proxy servers too. Of course, if you want you can use the default installation (remember about [dependencies](#dependencies)):
+
+```bash
+./configure
+make && make install
+```
 
 Look also on this short note about the system locations. That can be useful too:
 

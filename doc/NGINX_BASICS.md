@@ -179,7 +179,7 @@ NGINX configuration files don't support comment blocks, they only accept `#` at 
 
 ##### End of lines
 
-Lines containing directives must end with a `;` or NGINX will fail to load the configuration and report an error.
+Lines containing directives must end with a semicolon (`;`), otherwise NGINX will fail to load the configuration and report an error.
 
 ##### Variables, Strings, and Quotes
 
@@ -251,7 +251,7 @@ Configuration options are called directives. We have four types of directives:
   try_files $uri $uri/ /test/index.html;
   ```
 
-Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
+Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`. The curly braces actually denote a new configuration context.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values. The children contexts can override these values at will.
 
@@ -285,7 +285,26 @@ Global/Main Context
         +-----» Mail Context
 ```
 
-NGINX also provides other contexts (mainly used for mapping) such as:
+The most important context are shown in the following description. These will be the ones that you will be dealing with for the most part:
+
+- `global` - contains global configuration directives; is used to set the settings for NGINX globally and is the only context that is not surrounded by curly braces
+
+- `events` - configuration for the events module; is used to set global options for connection processing; contains directives that affect connection processing are specified
+
+- `http` - controls all the aspects of working with the HTTP module and holds directives for handling HTTP and HTTPS traffic; directives in this context can be grouped into:
+
+  - **HTTP client directives**
+  - **HTTP file I/O directives**
+  - **HTTP hash directives**
+  - **HTTP socket directives**
+
+- `server` - defines virtual host settings and describes a logical separation of a set of resources associated with a particular domain or IP address
+
+- `location` - define directives to handle client request and indicates a URI that comes either from the client or from an internal redirect
+
+- `upstream` - define a pool of back-end servers that NGINX can proxy the request; commonly used for defining either a web server cluster for load balancing
+
+NGINX also provides other contexts (e.g. used for mapping) such as:
 
 - `map` - is used to set the value of a variable depending on the value of another variable. It provides a mapping of one variable’s values to determine what the second variable should be set to
 
