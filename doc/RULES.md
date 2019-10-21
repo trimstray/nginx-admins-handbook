@@ -2541,9 +2541,14 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
   > Strict policies will significantly increase security, and higher code quality will reduce the overall number of errors. CSP can never replace secure code - new restrictions help reduce the effects of attacks (such as XSS), but they are not mechanisms to prevent them!
 
-  > You should always validate CSP before implement: [CSP Evaluator](https://csp-evaluator.withgoogle.com/) and [Content Security Policy (CSP) Validator](https://cspvalidator.org/).
+  > You should always validate CSP before implement:
+  >
+  > - [CSP Evaluator](https://csp-evaluator.withgoogle.com/)
+  > - [Content Security Policy (CSP) Validator](https://cspvalidator.org/)
 
-  > For generate a policy: [https://report-uri.com/home/generate](https://report-uri.com/home/generate). Remember, however, that these types of tools may become outdated or have errors.
+  > For generate a policy (remember, however, that these types of tools may become outdated or have errors):
+  >
+  > - [https://report-uri.com/home/generate](https://report-uri.com/home/generate)
 
 ###### Example
 
