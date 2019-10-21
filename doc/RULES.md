@@ -2508,6 +2508,7 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
 ###### External resources
 
+- [OWASP Secure Headers Project - HSTS](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#hsts)
 - [Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
 - [Security HTTP Headers - Strict-Transport-Security](https://zinoui.com/blog/security-http-headers#strict-transport-security)
 - [HTTP Strict Transport Security](https://https.cio.gov/hsts/)
@@ -2527,17 +2528,17 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
 ###### Rationale
 
-  > CSP reduce the risk and impact of XSS attacks in modern browsers.
-
-  > Whitelisting known-good resource origins, refusing to execute potentially dangerous inline scripts, and banning the use of eval are all effective mechanisms for mitigating cross-site scripting attacks.
+  > CSP reduce the risk and impact a wide range of attacks, including cross-site scripting and other cross-site injections in modern browsers. Is a good defence-in-depth measure to make exploitation of an accidental lapse in that less likely.
 
   > The inclusion of CSP policies significantly impedes successful XSS attacks, UI Redressing (Clickjacking), malicious use of frames or CSS injections.
 
-  > CSP is a good defence-in-depth measure to make exploitation of an accidental lapse in that less likely.
+  > Whitelisting known-good resource origins, refusing to execute potentially dangerous inline scripts, and banning the use of eval are all effective mechanisms for mitigating cross-site scripting attacks.
 
   > The default policy that starts building a header is: block everything. By modifying the CSP value, the programmer loosens restrictions for specific groups of resources (e.g. separately for scripts, images, etc.).
 
-  > Before enable this header you should discuss with developers about it. They probably going to have to update your application to remove any inline script and style, and make some additional modifications there.
+  > You should approach very individually and never set CSP sample values found on the Internet or anywhere else. Blindly deploying "standard/recommend" versions of the CSP header will broke the most of web apps.
+
+  > Before enabling this header, you should discuss about CSP parameters with developers and application architects. They probably going to have to update web application to remove any inline scripts and styles, and make some additional modifications there.
 
   > Strict policies will significantly increase security, and higher code quality will reduce the overall number of errors. CSP can never replace secure code - new restrictions help reduce the effects of attacks (such as XSS), but they are not mechanisms to prevent them!
 
@@ -2559,6 +2560,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 
 ###### External resources
 
+- [OWASP Secure Headers Project - Content-Security-Policy](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#csp)
 - [Content Security Policy (CSP) Quick Reference Guide](https://content-security-policy.com/)
 - [Content Security Policy Cheat Sheet – OWASP](https://www.owasp.org/index.php/Content_Security_Policy_Cheat_Sheet)
 - [Content Security Policy – OWASP](https://www.owasp.org/index.php/Content_Security_Policy)
@@ -2574,33 +2576,52 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 
 ###### Rationale
 
-  > Determine what information is sent along with the requests.
+  > Referral policy deals with what information (related to the url) the browser ships to a server to retrieve an external resource.
+
+  > Basically this is a privacy enhancement, when you want to hide information for owner of the domain of a link where is clicked that the user came from your website.
+
+  > I think the most secure value is `no-referrer` which specifies that no referrer information is to be sent along with requests made from a particular request client to any origin. The header will be omitted entirely.
+
+  > The use of `no-referrer` has its advantages because it allows you to hide the HTTP header, and this increases online privacy and the security of users themselves. On the other hand, it can mainly affects analytics (in theory, should not have any SEO impact) because `noreferrer` specifies to hide that kind of information.
+
+  > Mozilla has a good table explaining how each of referrer policy options works. It comes from [Mozilla's reference documentation about Referer Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy).
 
 ###### Example
 
 ```nginx
+# This policy does not send information about the referring site after clicking the link:
 add_header Referrer-Policy "no-referrer";
 ```
 
 ###### External resources
 
+- [OWASP Secure Headers Project - Referrer-Policy](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#rp)
 - [A new security header: Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
 - [Security HTTP Headers - Referrer-Policy](https://zinoui.com/blog/security-http-headers#referrer-policy)
+- [What you need to know about Referrer Policy](https://searchengineland.com/need-know-referrer-policy-276185)
 
 #### :beginner: Provide clickjacking protection (X-Frame-Options)
 
 ###### Rationale
 
-  > Helps to protect your visitors against clickjacking attacks. It is recommended that you use the `x-frame-options` header on pages which should not be allowed to render a page in a frame.
+  > Helps to protect your visitors against clickjacking attacks by declaring a policy whether your application may be embedded on other (external) pages using frames.
+
+  > It is recommended that you use the `x-frame-options` header on pages which should not be allowed to render a page in a frame.
+
+  > This header allows 3 parameters, but in my opinion you should consider only two: a `deny` parameter to disallow embedding the resource in general or a `sameorigin` parameter to allow embedding the resource on the same host/origin.
+
+  > This header has a lower priority than CSP but in my opinion it is worth using as a fallback.
 
 ###### Example
 
 ```nginx
+# Only pages from the same domain can "frame" this URL:
 add_header X-Frame-Options "SAMEORIGIN" always;
 ```
 
 ###### External resources
 
+- [OWASP Secure Headers Project - X-Frame-Options](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#xfo)
 - [HTTP Header Field X-Frame-Options](https://tools.ietf.org/html/rfc7034)
 - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
 - [Security HTTP Headers - X-Frame-Options](https://zinoui.com/blog/security-http-headers#x-frame-options)
@@ -2612,6 +2633,8 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 
   > Enable the cross-site scripting (XSS) filter built into modern web browsers.
 
+  > I think you can set this header without consulting its value with web application architects.
+
 ###### Example
 
 ```nginx
@@ -2620,6 +2643,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 
 ###### External resources
 
+- [OWASP Secure Headers Project - X-XSS-Protection](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#xxxsp)
 - [XSS (Cross Site Scripting) Prevention Cheat Sheet](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet)
 - [DOM based XSS Prevention Cheat Sheet](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
 - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
@@ -2631,14 +2655,18 @@ add_header X-XSS-Protection "1; mode=block" always;
 
   > It prevents the browser from doing MIME-type sniffing (prevents "mime" based attacks).
 
+  > Setting this header will prevent the browser from interpreting files as something else than declared by the content type in the HTTP headers.
+
 ###### Example
 
 ```nginx
+# Disallow content sniffing:
 add_header X-Content-Type-Options "nosniff" always;
 ```
 
 ###### External resources
 
+- [OWASP Secure Headers Project - X-Content-Type-Options](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#xcto)
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
 - [Security HTTP Headers - X-Content-Type-Options](https://zinoui.com/blog/security-http-headers#x-content-type-options)
 - [X-Content-Type-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-content-type-options)
@@ -2660,6 +2688,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 - [Feature Policy Explainer](https://docs.google.com/document/d/1k0Ua-ZWlM_PsFCFdLMa8kaVTo32PeNZ4G7FFHqpFx4E/edit)
 - [Policy Controlled Features](https://github.com/w3c/webappsec-feature-policy/blob/master/features.md)
 - [Security HTTP Headers - Feature-Policy](https://zinoui.com/blog/security-http-headers#feature-policy)
+- [Feature policy playground](https://featurepolicy.info/)
 
 #### :beginner: Reject unsafe HTTP methods
 
