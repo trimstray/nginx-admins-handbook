@@ -148,21 +148,21 @@ Please see also:
 
 The HTTP protocol includes a set of methods that indicate which action to be done for a resource. The most common methods are `GET` and `POST`. But there are a few others, too:
 
-- `GET` - use this method to request data from a specified resource where data is not modified it in any way. `GET` requests do not change the state of resource
+- `GET` - is used to retreive data from a server at the specified resource
 
-- `POST` - use this method to send data to a server to create a resource. `POST` requests change the state of resource
+- `POST` - is used to create or append a resource to an existing collection
 
-- `PUT` - use this method to update the existing resource on a server by using the content in the body of the request. `PUT` requests change the state of resource
+- `PUT` - is used to create or update (replace) the existing resource
 
-- `HEAD` - use this method the same way you use `GET`, but with the distinction that the return of a `HEAD` method should not contain body in the response. But the return will contain same headers as if `GET` was used. You use the `HEAD` method to check whether the resource is present prior of making a `GET` request
+- `HEAD` - is almost identical to `GET`, except without the response body
 
-- `TRACE` - use this method for diagnostic purposes. The response will contain in its body the exact content of the request message
+- `TRACE` - is used for diagnostic purposes. The response will contain in its body the exact content of the request message
 
-- `OPTIONS` - use this method to describe the communication options (HTTP methods) that are available for the target resource
+- `OPTIONS` - is used to describe the communication options (HTTP methods) that are available for the target resource
 
-- `PATCH` - use this method to apply partial modifications to a resource
+- `PATCH` - is used to apply partial modifications to a resource
 
-- `DELETE` - use this method to delete the specified resource
+- `DELETE` - is used to delete the specified resource
 
 #### Request
 
@@ -199,31 +199,37 @@ Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 | :---:         | :---         |
 | `GET` | is used to retreive data from a server at the specified resource |
 
+For more information look at the [HTTP/1.1 RFC](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3) for the definition of `GET`.
+
 For example, say you have an API with a `/api/v2/users` endpoint. Making a `GET` request to that endpoint should return a list of all available users.
 
-  > Requests with `GET` method does not change any data.
+  > Requests with `GET` method does not change any data (the state of resource) and should never be used to submit new information to the server. This method is almost identical to `HEAD`. If `GET /users` returns a list of users, then `HEAD /users` will make the same request but won't get back the list of users.
 
 At a basic level, these things should be validated:
 
-- check that a valid `GET` request returns a 200 status code
+- check that a valid `GET` request returns a `200` status code
 - ensure that a `GET` request to a specific resource returns the correct data
+
+When executing a `GET` request, you ask the server for one, or a set of entities. To allow the client to filter the result, it can use the so called "query string" (`?`) of the URL.
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
 | `POST` | is used to send data to the sever to modify and update a resource |
 
-The simplest example is a contact form on a website. When you fill out the inputs in a form and hit Send, that data is put in the response body of the request and sent to the server.
+Look at the [HTTP/1.1 RFC](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5) for the definition of `POST`:
 
-  > Requests with `POST` method change data on the backend server (by modifying or updating a resource).
+  > _The `POST` method is used to request that the origin server accept the entity enclosed in the request as a new subordinate of the resource identified by the Request-URI [...] The posted entity is subordinate to that URI in the same way that a file is subordinate to a directory containing it, a news article is subordinate to a newsgroup to which it is posted, or a record is subordinate to a database._
 
-The `POST` method is used to add new elements. New, i.e. those whose ID is still unknown. After creating the object, return the code `HTTP 201 Created`.
+When executing a `POST` request, the client is actually submitting a new document to the remote host but the server decides the location where it is stored under the user collection.
+
+  > Requests with `POST` method change data (the state of resource) on the backend server by modifying or updating a resource.
 
 If you do not know the actual resource location, for instance, when you add a new article, but do not have any idea where to store it, you can `POST` it to an URL, and let the server decide the actual URL.
 
 Here are some tips for testing `POST` requests:
 
-- create a resource with a `POST` request and ensure a 200 status code is returned
-- next, make a `GET` request for that resource, and ensure the data was saved correctly
+- create a resource with a `POST` request (the server could respond with a `201 Created`)
+- next, make a `GET` request to ensure a `200 OK` status code is returned (the data was saved correctly)
 - add tests that ensure `POST` requests fail with incorrect or ill-formatted data
 
 Modify and update a resource:
@@ -244,16 +250,18 @@ Host: example.com
 | :---:         | :---         |
 | `PUT` | is used to send data to the sever to create or overwrite a resource |
 
-The same `PUT` request multiple times will always produce the same result.
+Look at the [HTTP/1.1 RFC](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5) for the definition of `PUT`:
 
-The `PUT` method is very similar to the `POST` method, because we also send the whole object. An important difference is that we use the `PUT` method when the object ID comes from the client. So `PUT` should be used to update the resource. It is very important that in the case of this mechanism the entire object is replaced! After updating, return code `HTTP 204 No content`.
+  > _The `PUT` method requests that the enclosed entity be stored under the supplied Request-URI. If the Request-URI refers to an already existing resource, the enclosed entity SHOULD be considered as a modified version of the one residing on the origin server. If the Request-URI does not point to an existing resource [...] the origin server can create the resource with that URI._
 
-Use `PUT` when you can update a resource completely through a specific resource. For instance, if you know that an article resides at `http://example.org/article/1234`, you can `PUT` a new resource representation of this article directly through a `PUT` on this URL.
+The `PUT` specification requires that you already know the URL of the resource you wish to create or update. On create, if the client chooses the identifier for a resource a `PUT` request will create the new resource at the specified URL.
+
+If you know that a resource already exists for a URL, you can make a `PUT` request to that URL to replace the state of that resource on the server.
 
 Check for these things when testing `PUT` requests:
 
-- repeatedly cally a `PUT` request always returns the same result (idempotent)
-- after updating a resource with a `PUT` request, a `GET` request for that resource should return the new data
+- repeatedly call a `PUT` request always returns the same result (idempotent)
+- if an existing resource is modified, either the `200 OK` or `204 No Content` response codes SHOULD be sent to indicate successful completion of the request
 - `PUT` requests should fail if invalid data is supplied in the request - nothing should be updated
 
 For a new resource:
@@ -270,11 +278,15 @@ PUT /items/<existing_item> HTTP/1.1
 Host: example.com
 ```
 
-Really, both `PUT` and `POST` can be used for creating. I think there is also a good explanation:
+For me, the difference between `POST` and `PUT` is sometimes unclear. I think both can be used for creating and the big difference is that a `POST` request is supposed to let the server decide how to (and if at all) create a new resource.
+
+In my opinion, there is one more good explanation:
 
   > The `POST` method is used to send user-generated data to the web server. For example, a `POST` method is used when a user comments on a forum or if they upload a profile picture. A `POST` method should also be used if you do not know the specific URL of where your newly created resource should reside.
 
   > The `PUT` method completely replaces whatever currently exists at the target URL with something else. With this method, you can create a new resource or overwrite an existing one given you know the exact Request-URI.
+
+Look also at [this](https://stackoverflow.com/a/630475) amazing answer by [Brian R. Bondy](https://stackoverflow.com/users/3153/brian-r-bondy).
 
 ###### Request URI
 
@@ -401,6 +413,14 @@ For more information please see:
 - [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 - [HTTP Status Codes](https://httpstatuses.com/)
 - [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Status Code Definitions](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
+
+Be sure to take a look at this:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_decision_diagram.png" alt="http_decision_diagram">
+</p>
+
+<sup><i>This amazing diagram comes from [for-GET/http-decision-diagram](https://github.com/for-GET/http-decision-diagram) repository.</i></sup>
 
 ##### Response header fields
 
