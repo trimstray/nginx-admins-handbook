@@ -520,6 +520,8 @@ Remember about the following most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
+  > **`Blindly deploying of the rules described here can damage your web application.`**
+
   > **`There are no settings that are perfect for everyone.`**
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
