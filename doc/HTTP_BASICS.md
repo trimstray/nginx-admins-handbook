@@ -29,7 +29,7 @@ Some important information about HTTP:
 - the requests and responses are in readable text
 - the requests are independent of each other and the server doesn’t need to track the requests
 
-I will not describe the HTTP protocol in detail, but I will discuss only the most important things because we have some great documents which describe it meticulously:
+I will not describe the HTTP protocol meticulously so you have to look at this as an introduction. I will discuss only the most important things because we have some great documents which describe this protocol in a great deal of detail:
 
 - [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
 - [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)
@@ -50,7 +50,7 @@ By its nature, HTTP is stateless. Stateless means that all requests are separate
 
 Here is a brief explanation:
 
-- most often the HTTP communication use the TCP protocol
+- most often the HTTP communication uses the TCP protocol
 
 - HTTP protocol is stateless (all requests are separate from each other)
 
@@ -122,7 +122,7 @@ When a client requests a resource from a server it uses HTTP. This request inclu
 
 The server answers with the requested resource but also sends response headers giving information on the resource or the server itself.
 
-See these explanations about HTTP headers:
+See these articles about HTTP headers:
 
 - [HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 - [The HTTP Request Headers List](https://flaviocopes.com/http-request-headers/)
@@ -132,7 +132,7 @@ HTTP headers allow the client and the server to pass additional information with
 
 The role of header compression:
 
-  > Header compression resulted in an ~88% reduction in the size of request headers and an ~85% reduction in the size of response headers. On the lower-bandwidth DSL link, in which the upload link is only 375 Kbps, request header compression in particular, led to significant page load time improvements for certain sites (i.e. those that issued large number of resource requests). We found a reduction of 45 - 1142 ms in page load time simply due to header compression.
+  > _Header compression resulted in an ~88% reduction in the size of request headers and an ~85% reduction in the size of response headers. On the lower-bandwidth DSL link, in which the upload link is only 375 Kbps, request header compression in particular, led to significant page load time improvements for certain sites (i.e. those that issued large number of resource requests). We found a reduction of 45 - 1142 ms in page load time simply due to header compression._
 
 - HTTP/2 supports a new dedicated header compression algorithm, called HPACK
 - HPACK is resilient to CRIME
@@ -156,7 +156,7 @@ The HTTP protocol includes a set of methods that indicate which action to be don
 
 - `HEAD` - is almost identical to `GET`, except without the response body
 
-- `TRACE` - is used for diagnostic purposes. The response will contain in its body the exact content of the request message
+- `TRACE` - is used for used for diagnostic/debugging purposes which echo's back input back to the user
 
 - `OPTIONS` - is used to describe the communication options (HTTP methods) that are available for the target resource
 
@@ -187,7 +187,7 @@ Example of form an HTTP request to fetch `/alerts/status` page from the web serv
 
 ##### Request line
 
-The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF. The elements are separated by space SP characters:
+The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF (`\r\n`). The elements are separated by space SP characters:
 
 ```
 Request-Line = Method SP Request-URI SP HTTP-Version CRLF

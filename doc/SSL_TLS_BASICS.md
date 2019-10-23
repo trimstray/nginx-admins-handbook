@@ -10,7 +10,11 @@ TLS stands for _Transport Layer Security_. It is a protocol that provides privac
 
 TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1, and 1.0.
 
-I recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/).
+I will not describe the SSL/TLS protocols meticulously so you have to look at this as an introduction. I will discuss only the most important things because we have some great documents which describe this protocol in a great deal of detail:
+
+- [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/)
+- [Cryptology ePrint Archive](https://eprint.iacr.org/)
+- [Every byte of a TLS connection explained and reproduced - TLS 1.2](https://tls.ulfheim.net/)
 
 #### TLS versions
 

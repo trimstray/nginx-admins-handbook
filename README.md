@@ -456,7 +456,7 @@ Generally, it provides the core of complete web stacks and is designed to help b
 
 NGINX is also known as a _Apache Killer_. It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
 
-Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind—one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
+Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind - one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
 
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -943,7 +943,7 @@ Existing chapters:
 
 </details>
 
-If you have an idea, send it back to me or add a pull request.
+If you have any idea, send it back to me or add a pull request.
 
 ## Checklist to rule them all
 
