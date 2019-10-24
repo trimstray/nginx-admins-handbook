@@ -5,6 +5,8 @@
   * [TLS handshake](#tls-handshake)
   * [Cipher suites](#cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
+  * [Certificates](#certificates)
+    * [Wildcard](#wildcard)
 
 TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
@@ -36,7 +38,7 @@ Useful resources:
 
 #### TLS handshake
 
-The differences between TLS 1.2 and TLS 1.3 are presented in the following illustrations (every byte explained and reproduced):
+The differences between TLS 1.2 and TLS 1.3 are presented in the following illustrations (every byte explained and reproduced - marvelous work!):
 
 - [The New Illustrated TLS Connection TLS 1.2](https://tls.ulfheim.net/)
 - [The New Illustrated TLS Connection TLS 1.3](https://tls13.ulfheim.net/)
@@ -120,3 +122,9 @@ The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curv
 Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any DH exchange, you can only use `RSA` in encryption mode.
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
+
+#### Certificates
+
+##### Wildcard
+
+In this brief the author explain [Why you probably shouldn't use a wildcard certificate](https://gist.github.com/joepie91/7e5cad8c0726fd6a5e90360a754fc568), as it will put your security at risk.

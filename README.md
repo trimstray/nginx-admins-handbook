@@ -120,6 +120,8 @@
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
+  * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
+    * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
   * [Directories and files](doc/NGINX_BASICS.md#directories-and-files)
   * [Commands](doc/NGINX_BASICS.md#commands)
@@ -669,6 +671,10 @@ Existing chapters:
   - [x] _TLS handshake_
   - [x] _Cipher suites_
   - [x] _Diffie-Hellman key exchange_
+  - [x] _Certificates_
+   - [ ] _Single-domain_
+   - [ ] _Multi-domain_
+   - [x] _Wildcard_
 
 </details>
 

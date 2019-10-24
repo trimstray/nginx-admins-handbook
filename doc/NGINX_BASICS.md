@@ -88,6 +88,8 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
 - `/var/run/nginx` - contains information about NGINX process(es)
   * other locations: `/usr/local/nginx/logs`, `logs/` in root directory
 
+See also [Installation and Compile-Time Options - Files and Permissions](https://www.nginx.com/resources/wiki/start/topics/tutorials/installoptions/#files-and-permissions).
+
 #### Commands
 
   > **:bookmark: [Use reload option to change configurations on the fly - Base Rules - P2](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
@@ -285,7 +287,7 @@ Global/Main Context
         +-----» Mail Context
 ```
 
-The most important context are shown in the following description. These will be the ones that you will be dealing with for the most part:
+The most important contexts are shown in the following description. These will be the ones that you will be dealing with for the most part:
 
 - `global` - contains global configuration directives; is used to set the settings for NGINX globally and is the only context that is not surrounded by curly braces
 
@@ -293,10 +295,10 @@ The most important context are shown in the following description. These will be
 
 - `http` - controls all the aspects of working with the HTTP module and holds directives for handling HTTP and HTTPS traffic; directives in this context can be grouped into:
 
-  - **HTTP client directives**
-  - **HTTP file I/O directives**
-  - **HTTP hash directives**
-  - **HTTP socket directives**
+  - HTTP client directives
+  - HTTP file I/O directives
+  - HTTP hash directives
+  - HTTP socket directives
 
 - `server` - defines virtual host settings and describes a logical separation of a set of resources associated with a particular domain or IP address
 
