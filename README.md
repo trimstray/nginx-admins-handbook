@@ -512,9 +512,9 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 ## Who this handbook is for
 
-If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful, especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
 
-I did my best to make this handbook a single and consistent. Is organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy it, and fun with it.
+I did my best to make this handbook a single and consistent. It's organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
 ## Before you start
 
