@@ -676,6 +676,7 @@ Existing chapters:
    - [ ] _Single-domain_
    - [ ] _Multi-domain_
    - [x] _Wildcard_
+   - [x] _Wildcard SSL doesn't handle root domain?_
 
 </details>
 
