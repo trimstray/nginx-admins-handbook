@@ -7,6 +7,7 @@
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
   * [Certificates](#certificates)
     * [Wildcard](#wildcard)
+    * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
 
 TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
@@ -128,3 +129,45 @@ These parameters aren't secret and can be reused; plus they take several seconds
 ##### Wildcard
 
 In this brief the author explain [Why you probably shouldn't use a wildcard certificate](https://gist.github.com/joepie91/7e5cad8c0726fd6a5e90360a754fc568), as it will put your security at risk.
+
+##### Wildcard SSL doesn't handle root domain?
+
+No, it is not possible. By default, the wildcard cert is valid only for `*.example.com`, not `example.com` .A wildcard inside a name only reflects a single label and the wildcard can only be leftmost. Thus `*.*.example.org` or `www.*.example.org` are not possible. And `*.example.org` will neither match `example.org` nor `www.subdomain.example.org`, only `sub.example.org.`
+
+Technically, wildcard certs are issued based on the unknown children of a subdomain. Most wildcard certs are issued for 3-part domains (`*.domain.com`), but it's also very common to see them for 4-part domains (e.g. `*.domain.co.uk`).
+
+The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools.ietf.org/html/rfc2818#section-3.1):
+
+  > _Matching is performed using the matching rules specified by
+    RFC2459. If more than one identity of a given type is present in
+    the certificate (e.g., more than one dNSName name, a match in any one
+    of the set is considered acceptable.) Names may contain the wildcard
+    character `*` which is considered to match any single domain name
+    component or component fragment. E.g., `*.a.com` matches `foo.a.com` but
+    not `bar.foo.a.com`. `f*.com` matches `foo.com` but not `bar.com`._
+
+[RFC2459 (2.4. Server Identity Check)](https://tools.ietf.org/html/rfc2595#section-2.4) says:
+
+  > _A "`*`" wildcard character MAY be used as **the left-most name
+    component** in the certificate.  For example, `*.example.com` would
+    match `a.example.com`, `foo.example.com`, etc. but **would not match**
+    `example.com`._
+
+Essentially, the standards say that the `*` should match 1 or more non-dot characters. So the root domain needs to be an alternate name for it to validate.
+
+For a `*.example.com cert`:
+
+- `a.example.com` should pass
+- `www.example.com` should pass
+- `example.com` shouldn't pass
+- `a.b.example.com` may pass depending on implementation (but probably not)
+
+Sometimes, some SSL providers will automatically add the root domain as a Subject Alternative Name to a wildcard SSL certificate, e.g.:
+
+```bash
+issuer: RapidSSL RSA CA 2018 (DigiCert Inc)
+cn: example.com
+san: *.example.com example.com
+```
+
+Another interesting thing is that you can have multiple wildcard names inside the same certificate, that is you can have `*.example.org` and `*.subdomain.example.org` inside the same certificate. You should have little trouble finding a Certificate Authority that will issue such a certificate, and most clients should accept it.

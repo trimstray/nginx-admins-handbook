@@ -122,6 +122,7 @@
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
+    * [Wildcard SSL doesn't handle root domain?](doc/SSL_TLS_BASICS.md#wildcard-ssl-doesnt-handle-root-domain)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
   * [Directories and files](doc/NGINX_BASICS.md#directories-and-files)
   * [Commands](doc/NGINX_BASICS.md#commands)
