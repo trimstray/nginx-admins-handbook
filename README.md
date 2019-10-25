@@ -957,7 +957,7 @@ If you have any idea, send it back to me or add a pull request.
 
   > This checklist contains [all rules (68)](doc/RULES.md) from this handbook.
 
-Generally, I think that each of these principles is important and should be considered. I tried, however, to separate them into four levels of priority which I hope will help guide your decision.
+Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
