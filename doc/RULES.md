@@ -245,6 +245,10 @@ server {
 ###### Example
 
 ```nginx
+# Client side:
+curl -Iks http://api.random.com
+
+# Server side:
 server {
 
   # This block will be processed:
@@ -431,7 +435,7 @@ server {
 
   Also take a look at this:
 
-  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, RFC 6066), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, [RFC6066 - Transport Layer Security (TLS) Extensions: Extension Definitions](https://tools.ietf.org/html/rfc6066)), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
 
   > Another good idea is to move common server settings into a separate file, i.e. `common/example.com.conf` and then include it in separate `server` blocks.
 
@@ -1029,7 +1033,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
   > These directives with following values are mainly used during development and debugging, e.g. while testing a bug/feature.
 
-  > `daemon off` and `master_process off` lets me test configurations rapidly.
+  > For example, `daemon off` and `master_process off` lets me test configurations rapidly.
 
   > For normal production the NGINX server will start in the background (`daemon on`). In this way NGINX and other services are running and talking to each other. One server runs many services.
 
@@ -1061,7 +1065,7 @@ worker_processes  1;
 
   > NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
 
-  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory).
+  > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory) chapter.
 
   > You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
 
@@ -1174,7 +1178,7 @@ server {
 
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
-  Ivan Ristić (Founder of Hardenize) say:
+  [Ivan Ristić](https://twitter.com/ivanristic) (Founder of Hardenize) say:
 
   > _Session resumption either creates a large server-side cache that can be broken into or, with tickets, kills forward secrecy. So you have to balance performance (you don't want your users to use full handshakes on every connection) and security (you don't want to compromise it too much). Different projects dictate different settings. [...] One reason not to use a very large cache (just because you can) is that popular implementations don't actually delete any records from there; even the expired sessions are still in the cache and can be recovered. The only way to really delete is to overwrite them with a new session. [...] These days I'd probably reduce the maximum session duration to 4 hours, down from 24 hours currently in my book. But that's largely based on a gut feeling that 4 hours is enough for you to reap the performance benefits, and using a shorter lifetime is always better._
 
@@ -1627,8 +1631,8 @@ chown -R nginx:nginx /var/www/domain.com
 
   > The best way to unload unused modules is use the `configure` option during installation. If you have static linking a shared module you should re-compile NGINX.
 
-  > Use only high quality modules and remember about that:
-  >
+Use only high quality modules and remember about that:
+
   > _Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs._
 
 ###### Example
@@ -1836,24 +1840,24 @@ proxy_hide_header X-Drupal-Cache;
 
 ###### Rationale
 
-  > Before start see [Release Strategy Policies](https://www.openssl.org/policies/releasestrat.html) and [Changelog](https://www.openssl.org/news/changelog.html) on the OpenSSL website.
-
-  > Criteria for choosing OpenSSL version can vary and it depends all on your use.
+  > Before start see [Release Strategy Policies](https://www.openssl.org/policies/releasestrat.html) and [Changelog](https://www.openssl.org/news/changelog.html) on the OpenSSL website. Criteria for choosing OpenSSL version can vary and it depends all on your use.
 
   > The latest versions of the major OpenSSL library are (may be changed):
   >
   >   - the next version of OpenSSL will be 3.0.0
   >   - version 1.1.1 will be supported until 2023-09-11 (LTS)
-  >     - last minor version: 1.1.1c (May 23, 2019)
+  >     - last minor version: 1.1.1d (September 10, 2019)
   >   - version 1.1.0 will be supported until 2019-09-11
   >     - last minor version: 1.1.0k (May 28, 2018)
   >   - version 1.0.2 will be supported until 2019-12-31 (LTS)
   >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
 
-  > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1).
+  > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1) but you should know one thing: OpenSSL 1.1.1 has a different API than the current 1.0.2 so that's not just a simple flick of the switch.
 
   > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
+
+  > I also recommend track the [Vulnerabilities](https://www.openssl.org/news/vulnerabilities.html) official newsletter, if you want to know a security bugs and issues fixed in OpenSSL.
 
 ###### External resources
 
@@ -1865,17 +1869,17 @@ proxy_hide_header X-Drupal-Cache;
 
 ###### Rationale
 
-  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per NIST).
+  > The truth is, the industry/community are split on this topic. I am in the "_use 2048, because 4096 gives us almost nothing, while costing us quite a lot_" camp myself.
 
-  > The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
+  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per NIST). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
 
-  > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals.
+  > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage and higher power consumption.
 
-  > If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main reason why you should use them.
+  > The real advantage of using a 4096-bit key nowadays is future proofing. If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main (and the only one for me) reason why you should use them.
 
   > Longer keys take more time to generate and require more CPU and power when used for encrypting and decrypting, also the SSL handshake at the start of each connection will be slower. It also has a small impact on the client side (e.g. browsers).
 
-  > You can test above on your server with `openssl speed rsa` but remember: in OpenSSL speed tests you see difference on block cipher speed, while in real life most cpu time is spent on asymmetric algorithms during ssl handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
+  > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most cpu time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
   > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break.
 
@@ -1932,11 +1936,13 @@ certbot certonly -d domain.com -d www.domain.com
 
 - [Key Management Guidelines by NIST](https://csrc.nist.gov/Projects/Key-Management/Key-Management-Guidelines)
 - [Recommendation for Transitioning the Use of Cryptographic Algorithms and Key Lengths](https://csrc.nist.gov/publications/detail/sp/800-131a/archive/2011-01-13)
+- [NIST SP 800-57 Part 1 Rev. 3 - Recommendation for Key Management](https://csrc.nist.gov/publications/detail/sp/800-57-part-1/rev-3/archive/2012-07-10)
 - [FIPS PUB 186-4 - Digital Signature Standard (DSS)](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf) <sup>[pdf]</sup>
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 - [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)
+- [HTTPS Performance, 2048-bit vs 4096-bit](https://blog.nytsoi.net/2015/11/02/nginx-https-performance)
 
 #### :beginner: Keep only TLS 1.3 and TLS 1.2
 
@@ -1944,7 +1950,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > It is recommended to run TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes).
 
-  > TLS 1.0 and TLS 1.1 must not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)) and were superceded by TLS 1.2, which has now itself been superceded by TLS 1.3. They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST SP 80052r2) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS1].
+  > TLS 1.0 and TLS 1.1 must not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)) and were superceded by TLS 1.2, which has now itself been superceded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://csrc.nist.gov/CSRC/media/Publications/sp/800-52/rev-2/draft/documents/sp800-52r2-draft2.pdf)) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf).
 
   > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, `CBC` MAC-then-Encrypt ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
@@ -2015,6 +2021,9 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [This POODLE bites: exploiting the SSL 3.0 fallback](https://security.googleblog.com/2014/10/this-poodle-bites-exploiting-ssl-30.html)
 - [Are You Ready for 30 June 2018? Saying Goodbye to SSL/early TLS](https://blog.pcisecuritystandards.org/are-you-ready-for-30-june-2018-sayin-goodbye-to-ssl-early-tls)
 - [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)
+- [Are You Ready for 30 June 2018? Saying Goodbye to SSL/early TLS](https://blog.pcisecuritystandards.org/are-you-ready-for-30-june-2018-sayin-goodbye-to-ssl-early-tls)
+- [What Happens After 30 June 2018? New Guidance on Use of SSL/Early TLS](https://blog.pcisecuritystandards.org/what-happens-after-30-june-2018-new-guidance-on-use-of-ssl/early-tls-)
+- [Recommended Cloudflare SSL configurations for PCI compliance](https://support.cloudflare.com/hc/en-us/articles/205043158-PCI-compliance-and-Cloudflare-SSL#h_8d214b26-c3e5-4632-8056-d2ccd08790dd)
 
 #### :beginner: Use only strong ciphers
 
@@ -2034,7 +2043,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > It is not possible to control ciphers for TLS 1.3 without support from client to use new API for TLS 1.3 cipher suites. NGINX isn't able to influence that so at this moment it's always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+  > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API. NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
@@ -2147,13 +2156,11 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
   > Bernstein and Lange believe that the NIST curves are not optimal and there are better (more secure) curves that work just as fast, e.g. `x25519`.
 
-  > Keep an eye also on this:
-  >
-  > _Secure implementations of the standard curves are theoretically possible but very hard._
-  >
+  > Keep an eye also on this: _Secure implementations of the standard curves are theoretically possible but very hard._
+
   > The SafeCurves say:
-  >   - `NIST P-224`, `NIST P-256` and `NIST P-384` are UNSAFE
-  >
+  >   - `NIST P-224`, `NIST P-256` and `NIST P-384` are **UNSAFE**
+
   > From the curves described here only `x25519` is a curve meets all SafeCurves requirements.
 
   > I think you can use `P-256` to minimise trouble. If you feel that your manhood is threatened by using a 256-bit curve where a 384-bit curve is available, then use `P-384`: it will increases your computational and network costs.
@@ -2210,7 +2217,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use it, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters to define how performs the Diffie-Hellman (DH) key-exchange. This uses a weak key (by default: `1024 bit`) that gets lower scores.
 
-  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`). Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525](https://tools.ietf.org/html/rfc7525#section-6.3).
+  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`). Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - 6.3. Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3).
 
   > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with min. `2048 bit` size) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
 
@@ -2404,7 +2411,7 @@ ssl_prefer_server_ciphers on;
 
   > Disable HTTP compression or compress only zero sensitive content.
 
-  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540: 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
+  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
 
   > CRIME exploits SSL/TLS compression which is disabled since nginx 1.3.2. BREACH exploits HTTP compression
 
@@ -2610,7 +2617,7 @@ add_header Referrer-Policy "no-referrer";
 
   > This header allows 3 parameters, but in my opinion you should consider only two: a `deny` parameter to disallow embedding the resource in general or a `sameorigin` parameter to allow embedding the resource on the same host/origin.
 
-  > This header has a lower priority than CSP but in my opinion it is worth using as a fallback.
+  > It has a lower priority than CSP but in my opinion it is worth using as a fallback.
 
 ###### Example
 
@@ -2633,7 +2640,9 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 
   > Enable the cross-site scripting (XSS) filter built into modern web browsers.
 
-  > I think you can set this header without consulting its value with web application architects.
+  >  It's usually enabled by default anyway, so the role of this header is to re-enable the filter for this particular website if it was disabled by the user.
+
+  > I think you can set this header without consulting its value with web application architects but all well written apps have to emit header `X-XSS-Protection: 0` and just forget about this feature. If you want to have extra security that better user agents can provide, use a strict `Content-Security-Policy` header. There is an [exact answer](https://stackoverflow.com/a/57802070) by [Mikko Rantalainen](https://stackoverflow.com/users/334451/mikko-rantalainen).
 
 ###### Example
 

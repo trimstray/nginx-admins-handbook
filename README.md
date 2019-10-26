@@ -479,6 +479,8 @@ In addition, I would like to recommend three great docs focuses on the concept o
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
+And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool.
+
 ## Prologue
 
 When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
@@ -523,9 +525,11 @@ Remember about the following most important things:
 
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-  > **`Blindly deploying of the rules described here can damage your web application.`**
+  > **`Blindly deploying of the rules described here can damage your web application!`**
 
   > **`There are no settings that are perfect for everyone.`**
+
+  > **`Always think about what is better and more important for you: security or compatibility.`**
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
 

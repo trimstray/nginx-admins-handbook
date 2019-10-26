@@ -160,7 +160,7 @@ For a `*.example.com` cert:
 - `a.example.com` should pass
 - `www.example.com` should pass
 - `example.com` shouldn't pass
-- `a.b.example.com` may pass depending on implementation (but probably not)
+- `a.b.example.com` shouldn't pass
 
 Sometimes, some SSL providers will automatically add the root domain as a Subject Alternative Name to a wildcard SSL certificate, e.g.:
 
