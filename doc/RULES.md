@@ -2481,13 +2481,13 @@ The Importance of a Proper HTTP Strict Transport Security Implementation on Your
   >
   > - The strongest protection is to ensure that all requested resources use only TLS with a well-formed HSTS header. Qualys recommends providing an HSTS header on all HTTPS resources in the target domain
   >
-  > - It is advisable to assign the max-age directive’s value to be greater than `10368000` seconds (120 days) and ideally to `31536000` (one year). Websites should aim to ramp up the max-age value to ensure heightened security for a long duration for the current domain and/or subdomains
+  > - It is advisable to assign the `max-age` directive’s value to be greater than `10368000` seconds (120 days) and ideally to `31536000` (one year). Websites should aim to ramp up the max-age value to ensure heightened security for a long duration for the current domain and/or subdomains
   >
   > - [RFC 6797](https://tools.ietf.org/html/rfc6797), section 14.4 advocates that a web application must aim to add the `includeSubDomain` directive in the policy definition whenever possible. The directive’s presence ensures the HSTS policy is applied to the domain of the issuing host and all of its subdomains, e.g. `example.com` and `www.example.com`
   >
   > - The application should never send an HSTS header over a plaintext HTTP header, as doing so makes the connection vulnerable to SSL stripping attacks
   >
-  > - It is not recommended to provide an HSTS policy via the http-equiv attribute of a meta tag. According to HSTS RFC 6797, user agents don’t heed `http-equiv="Strict-Transport-Security"` attribute on `<meta>` elements on the received content`
+  > - It is not recommended to provide an HSTS policy via the `http-equiv` attribute of a meta tag. According to HSTS [RFC 6797](https://tools.ietf.org/html/rfc6797), user agents don’t heed `http-equiv="Strict-Transport-Security"` attribute on `<meta>` elements on the received content`
 
   > To meet the HSTS preload list standard a root domain needs to return a `strict-transport-security` header that includes both the `includeSubDomains` and `preload` directives and has a minimum `max-age` of one year. Your site must also serve a valid SSL certificate on the root domain and all subdomains, as well as redirect all HTTP requests to HTTPS on the same host.
 
@@ -2582,7 +2582,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 
   > I think the most secure value is `no-referrer` which specifies that no referrer information is to be sent along with requests made from a particular request client to any origin. The header will be omitted entirely.
 
-  > The use of `no-referrer` has its advantages because it allows you to hide the HTTP header, and this increases online privacy and the security of users themselves. On the other hand, it can mainly affects analytics (in theory, should not have any SEO impact) because `noreferrer` specifies to hide that kind of information.
+  > The use of `no-referrer` has its advantages because it allows you to hide the HTTP header, and this increases online privacy and the security of users themselves. On the other hand, it can mainly affects analytics (in theory, should not have any SEO impact) because `no-referrer` specifies to hide that kind of information.
 
   > Mozilla has a good table explaining how each of referrer policy options works. It comes from [Mozilla's reference documentation about Referer Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy).
 
@@ -2653,7 +2653,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 
 ###### Rationale
 
-  > It prevents the browser from doing MIME-type sniffing (prevents "mime" based attacks).
+  > It prevents the browser from doing MIME-type sniffing.
 
   > Setting this header will prevent the browser from interpreting files as something else than declared by the content type in the HTTP headers.
 
@@ -2694,7 +2694,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
 ###### Rationale
 
-  > Set of methods support by a resource. An ordinary web server supports the `HEAD`, `GET` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
+  > An ordinary web server supports the `HEAD`, `GET` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
 ###### Example
 
@@ -2871,7 +2871,7 @@ server {
 
 ###### Rationale
 
-  > Be careful with trailing slashes because NGINX replaces part literally and you could end up with some strange url.
+  > NGINX replaces part literally and you could end up with some strange url.
 
   > If `proxy_pass` used without URI (i.e. without path after `server:port`) NGINX will put URI from original request exactly as it was with all double slashes, `../` and so on.
 
@@ -2978,7 +2978,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 - [Bypass IP blocks with the X-Forwarded-For header](https://www.sjoerdlangkemper.nl/2017/03/01/bypass-ip-block-with-x-forwarded-for-header/)
 - [Forwarded header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded)
 
-#### :beginner: Don't use `X-Forwarded-Proto` with $scheme behind reverse proxy
+#### :beginner: Don't use `X-Forwarded-Proto` with `$scheme` behind reverse proxy
 
 ###### Rationale
 

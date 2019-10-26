@@ -1454,7 +1454,7 @@ _In this ebook you will learn:_
 
 # What's next?
 
-Go to the [Table of Contents](#table-of-contents) or read the next chapters:
+Go back to the [Table of Contents](#table-of-contents) or read the next chapters:
 
 - **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics-2"></a>
   > Something about HTTP.
@@ -1465,7 +1465,7 @@ Go to the [Table of Contents](#table-of-contents) or read the next chapters:
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers-2"></a>
   > One-liners, commands, utilities for building NGINX, and more
 - **[Base Rules (14)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
-  > The basic set of rules to keep NGINX in good condition.
+  > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
 - **[Performance (11)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>

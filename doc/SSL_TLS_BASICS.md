@@ -132,7 +132,7 @@ In this brief the author explain [Why you probably shouldn't use a wildcard cert
 
 ##### Wildcard SSL doesn't handle root domain?
 
-No, it is not possible. By default, the wildcard cert is valid only for `*.example.com`, not `example.com` .A wildcard inside a name only reflects a single label and the wildcard can only be leftmost. Thus `*.*.example.org` or `www.*.example.org` are not possible. And `*.example.org` will neither match `example.org` nor `www.subdomain.example.org`, only `sub.example.org.`
+No, it is not possible. By default, the wildcard cert is valid only for `*.example.com`, not `example.com`. A wildcard inside a name only reflects a single label and the wildcard can only be leftmost. Thus `*.*.example.org` or `www.*.example.org` are not possible. And `*.example.org` will neither match `example.org` nor `www.subdomain.example.org`, only `sub.example.org.`
 
 Technically, wildcard certs are issued based on the unknown children of a subdomain. Most wildcard certs are issued for 3-part domains (`*.domain.com`), but it's also very common to see them for 4-part domains (e.g. `*.domain.co.uk`).
 
@@ -155,7 +155,7 @@ The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools
 
 Essentially, the standards say that the `*` should match 1 or more non-dot characters. So the root domain needs to be an alternate name for it to validate.
 
-For a `*.example.com cert`:
+For a `*.example.com` cert:
 
 - `a.example.com` should pass
 - `www.example.com` should pass
