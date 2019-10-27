@@ -446,7 +446,7 @@
 
   > Before you start playing with NGINX please read an official **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
-**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler. In the April 2019 NGINX was the most commonly used HTTP server (see [Netcraft survey](https://news.netcraft.com/archives/category/web-server-survey/)).
+**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler. At this moment some high-profile companies using NGINX include Cisco, DuckDuckGo, Facebook, GitLab, Google, Twitter, Apple, Intel, and many more. In the April 2019 it was the most commonly used HTTP server (see [Netcraft survey](https://news.netcraft.com/archives/category/web-server-survey/)).
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a:
 
@@ -479,7 +479,7 @@ In addition, I would like to recommend three great docs focuses on the concept o
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
-And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool.
+And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start with.
 
 ## Prologue
 
@@ -487,7 +487,7 @@ When I was studying architecture of HTTP servers I became interested in NGINX. I
 
 I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
 
-Of course, [Official Documentation](https://nginx.org/en/docs/) is the best place but I know that we also have other great resources:
+Of course, [NGINX Official Documentation](https://nginx.org/en/docs/) is the best place but I know that we also have other great resources:
 
 - [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html)
 - [Nginx Guts](http://www.nginxguts.com/)
@@ -503,7 +503,7 @@ Moreover, in order to improve your knowledge please see [Books](#books) chapter.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
-  > This handbook is a collection of rules, helpers, notes, papers, best practices, and recommendations gathered and used by me (also in production environments). Many of them refer to external resources.
+  > _This handbook is a collection of rules, helpers, notes, papers, best practices, and recommendations gathered and used by me (also in production environments). Many of them refer to external resources._
 
 There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
@@ -677,10 +677,10 @@ Existing chapters:
   - [x] _Cipher suites_
   - [x] _Diffie-Hellman key exchange_
   - [x] _Certificates_
-   - [ ] _Single-domain_
-   - [ ] _Multi-domain_
-   - [x] _Wildcard_
-   - [x] _Wildcard SSL doesn't handle root domain?_
+    - [ ] _Single-domain_
+    - [ ] _Multi-domain_
+    - [x] _Wildcard_
+    - [x] _Wildcard SSL doesn't handle root domain?_
 
 </details>
 
@@ -1484,3 +1484,11 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > Something about other interesting rules.
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples-2"></a>
   > Here are some configuration examples.
+
+<br>
+
+<p align="center">
+  <a href="https://nystudio107.com/blog/stop-using-htaccess-files-no-really">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_meme_2.png" alt="Meme">
+  </a>
+</p>
