@@ -1485,10 +1485,12 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples-2"></a>
   > Here are some configuration examples.
 
+----
+
 <br>
 
 <p align="center">
   <a href="https://nystudio107.com/blog/stop-using-htaccess-files-no-really">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_meme_2.png" alt="Meme">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_meme_2.png" alt="Meme" width="50%" height="50%">
   </a>
 </p>
