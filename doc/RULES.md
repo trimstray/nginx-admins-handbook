@@ -30,7 +30,7 @@ These are the basic set of rules to keep NGINX in good condition.
 
   > Use `include` directive to move common server settings into a separate files and to attach your specific code to global config, contexts and other.
 
-  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file. I prefer following structure:
+  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file. I prefer the following structure:
   >
   > - `html` - for default static files, e.g. global 5xx error page
   > - `master` - for main configuration, e.g. acls, listen directives, and domains
@@ -160,7 +160,7 @@ http {
 
   From NGINX documentation:
 
-  > _In order for NGINX to re-read the configuration file, a HUP signal should be sent to the master process. The master process first checks the syntax validity, then tries to apply new configuration, that is, to open log files and new listen sockets. If this fails, it rolls back changes and continues to work with old configuration. If this succeeds, it starts new worker processes, and sends messages to old worker processes requesting them to shut down gracefully. Old worker processes close listen sockets and continue to service old clients. After all clients are serviced, old worker processes are shut down._
+  > _In order for NGINX to re-read the configuration file, a `HUP` signal should be sent to the master process. The master process first checks the syntax validity, then tries to apply new configuration, that is, to open log files and new listen sockets. If this fails, it rolls back changes and continues to work with old configuration. If this succeeds, it starts new worker processes, and sends messages to old worker processes requesting them to shut down gracefully. Old worker processes close listen sockets and continue to service old clients. After all clients are serviced, old worker processes are shut down._
 
 ###### Example
 
@@ -1711,7 +1711,7 @@ location ~ /\.(?!well-known\/) {
 
   > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
 
-  But the "Official Apache Documentation (Apache Core Features)" (yep, it's not a joke...) say:
+  But the "Official Apache Documentation (Apache Core Features)" (yep, it's not a joke, in my opinion that's an interesting point of view) say:
 
   > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
 
@@ -2922,7 +2922,7 @@ location ^~ /a/ {
 
   > The difference is explained in the NGINX documentation:
   >
-  >   - `$host` contains "in this order of precedence: host name from the request line, or host name from the 'Host' request header field, or the server name matching a request"
+  >   - `$host` contains "in this order of precedence: host name from the request line, or host name from the `Host` request header field, or the server name matching a request"
   >   - `$http_host` contains the content of the HTTP `Host` header field, if it was present in the request (equals always the `HTTP_HOST` request header)
   >   - `$server_name` contains the `server_name` of the virtual host which processed the request, as it was defined in the NGINX configuration. If a server contains multiple server names, only the first one will be present in this variable
 
