@@ -1735,7 +1735,7 @@ location ~ /\.(?!well-known\/) {
 
   > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
 
-  But the "Official Apache Documentation (Apache Core Features)" (yep, it's not a joke, in my opinion that's an interesting point of view) say:
+  But the Official Apache Documentation (yep, it's not a joke, in my opinion that's an interesting point of view) say:
 
   > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
 
