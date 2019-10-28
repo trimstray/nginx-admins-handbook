@@ -15,6 +15,12 @@
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
   * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
+- **[Debugging](#debugging)**
+- **[Performance](#performance)**
+- **[Hardening](#hardening)**
+- **[Reverse Proxy](#reverse-proxy)**
+- **[Load Balancing](#load-balancing)**
+- **[Others](#others)**
 
 These are the basic set of rules to keep NGINX in good condition.
 
@@ -897,11 +903,17 @@ http {
 
 # Debugging
 
+- **[Base Rules](#base-rules)**
 - **[⬆ Debugging](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
+- **[Performance](#performance)**
+- **[Hardening](#hardening)**
+- **[Reverse Proxy](#reverse-proxy)**
+- **[Load Balancing](#load-balancing)**
+- **[Others](#others)**
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
@@ -1084,6 +1096,8 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
+- **[Base Rules](#base-rules)**
+- **[Debugging](#debugging)**
 - **[⬆ Performance](https://github.com/trimstray/nginx-admins-handbook#toc-performance-2)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
@@ -1096,6 +1110,10 @@ working_directory     /var/dump/nginx;
   * [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
+- **[Hardening](#hardening)**
+- **[Reverse Proxy](#reverse-proxy)**
+- **[Load Balancing](#load-balancing)**
+- **[Others](#others)**
 
 NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
@@ -1552,6 +1570,9 @@ location /videos {
 
 # Hardening
 
+- **[Base Rules](#base-rules)**
+- **[Debugging](#debugging)**
+- **[Performance](#performance)**
 - **[⬆ Hardening](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
@@ -1581,6 +1602,9 @@ location /videos {
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
+- **[Reverse Proxy](#reverse-proxy)**
+- **[Load Balancing](#load-balancing)**
+- **[Others](#others)**
 
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
@@ -2802,6 +2826,10 @@ send_timeout 10s;
 
 # Reverse Proxy
 
+- **[Base Rules](#base-rules)**
+- **[Debugging](#debugging)**
+- **[Performance](#performance)**
+- **[Hardening](#hardening)**
 - **[⬆ Reverse Proxy](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
   * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
@@ -2810,6 +2838,8 @@ send_timeout 10s;
   * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
   * [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
+- **[Load Balancing](#load-balancing)**
+- **[Others](#others)**
 
 One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
 
@@ -3113,9 +3143,15 @@ add_header Backend-Server   $hostname;
 
 # Load Balancing
 
+- **[Base Rules](#base-rules)**
+- **[Debugging](#debugging)**
+- **[Performance](#performance)**
+- **[Hardening](#hardening)**
+- **[Reverse Proxy](#reverse-proxy)**
 - **[⬆ Load Balancing](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
+- **[Others](#others)**
 
 Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
@@ -3171,6 +3207,12 @@ upstream backend {
 
 # Others
 
+- **[Base Rules](#base-rules)**
+- **[Debugging](#debugging)**
+- **[Performance](#performance)**
+- **[Hardening](#hardening)**
+- **[Reverse Proxy](#reverse-proxy)**
+- **[Load Balancing](#load-balancing)**
 - **[⬆ Others](https://github.com/trimstray/nginx-admins-handbook#toc-others-2)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
