@@ -32,6 +32,8 @@
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
     * [Error log severity levels](#error-log-severity-levels)
+    * [How to log the start time of a request?](#how-to-log-the-start-time-of-a-request)
+    * [How to log the HTTP request body?](#how-to-log-the-http-request-body)
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
     * [Trailing slashes](#trailing-slashes)
@@ -253,7 +255,9 @@ Configuration options are called directives. We have four types of directives:
   try_files $uri $uri/ /test/index.html;
   ```
 
-Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`. The curly braces actually denote a new configuration context.
+Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
+
+  > The curly braces actually denote a new configuration context.
 
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values. The children contexts can override these values at will.
 
@@ -332,6 +336,9 @@ NGINX lookup starts from the http block, then through one or more server blocks,
 
 ```nginx
 include /etc/nginx/proxy.conf;
+
+# or:
+include /etc/nginx/conf/*.conf;
 ```
 
 ##### Measurement units
@@ -571,7 +578,7 @@ NGINX uses a custom event loop which was designed specifically for NGINX - all c
 
 Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()`, or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
-  > See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of NGINX.
+  > See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of the NGINX.
 
 NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
 
@@ -900,7 +907,7 @@ Keepalive connections reduce overhead, especially when SSL/TLS is in use but the
 
   > NGINX closes keepalive connections when the `worker_connections` limit is reached.
 
-To better understand how Keep-Alive works, I recommend a great [explanation](https://stackoverflow.com/a/38190172) by [Barry Pollard](https://stackoverflow.com/users/2144578/barry-pollard).
+To better understand how Keep-Alive works, please see amazing [explanation](https://stackoverflow.com/a/38190172) by [Barry Pollard](https://stackoverflow.com/users/2144578/barry-pollard).
 
 NGINX provides the two layers to enable Keep-Alive:
 
@@ -1559,7 +1566,7 @@ To the last example: be careful if you're using such a configuration to do a hea
 
 We have one more very interesting and important directive: `try_files` (from the `ngx_http_core_module`). This directive tells NGINX to check for the existence of a named set of files or directories (checks files conditionally breaking on success).
 
-I think the best explanation comes from official documentation:
+I think the best explanation comes from the official documentation:
 
   > _`try_files` checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. The path to a file is constructed from the file parameter according to the root and alias directives. It is possible to check directory’s existence by specifying a slash at the end of a name, e.g. `$uri/`. If none of the files were found, an internal redirect to the uri specified in the last parameter is made._
 
@@ -1704,7 +1711,7 @@ location ^~ /data/ { root /home/www/static/; }
 
 The `root` directive is typically placed in server and location blocks. Placing a `root` directive in the server block makes the `root` directive available to all location blocks within the same server block.
 
-The `root` directive tells NGINX to take the request url and append it behind the specified directory. For example, with the following configuration block:
+This directive tells NGINX to take the request url and append it behind the specified directory. For example, with the following configuration block:
 
 ```nginx
 server {
@@ -1785,7 +1792,7 @@ server {
 NGINX will map the request made to:
 
 - `http://example.com/images/logo.png` into the file path `/var/www/static/logo.png`
-- `http://example.com/images/third-party/facebook-logo.png` into the file path `/var/www/static/third-party/facebook-logo.png`
+- `http://example.com/images/ext/img.png` into the file path `/var/www/static/ext/img.png`
 - `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
 - `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
 
@@ -1853,9 +1860,9 @@ location /external-api/ {
 }
 ```
 
-  > There is a limit of 10 internal redirects per request to prevent request processing cycles that can occur in incorrect configurations. If this limit is reached, the error 500 (Internal Server Error) is returned. In such cases, the `rewrite or internal redirection cycle` message can be seen in the error log.
-
 <sup><i>Examples 2 and 3 (both are great!) comes from [How to use internal redirects in NGINX](https://clubhouse.io/developer-how-to/how-to-use-internal-redirects-in-nginx/).</i></sup>
+
+  > There is a limit of 10 internal redirects per request to prevent request processing cycles that can occur in incorrect configurations. If this limit is reached, the error _HTTP 500 Internal Server Error_ is returned. In such cases, the `rewrite or internal redirection cycle` message can be seen in the error log.
 
 Look also at [Authentication Based on Subrequest Result](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/) from the official documentation.
 
@@ -1877,13 +1884,13 @@ There is also [great explanation](https://openresty.org/download/agentzh-nginx-t
 
 There are two different kinds of internal requests:
 
-- internal redirects - redirects the client requests internally. The URI is
+- **internal redirects** - redirects the client requests internally. The URI is
 changed, and the request may therefore match another location block and
 become eligible for different settings. The most common case of internal
 redirects is when using the `rewrite` directive, which allows you to rewrite the
 request URI
 
-- sub-requests - additional requests that are triggered internally to generate (insert or append to the body of the original request) content that is complementary to the main request (`addition` or `ssi` modules)
+- **sub-requests** - additional requests that are triggered internally to generate (insert or append to the body of the original request) content that is complementary to the main request (`addition` or `ssi` modules)
 
 #### Log files
 
@@ -1984,9 +1991,101 @@ The following is a list of all severity levels:
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
 
+#### How to log the start time of a request?
+
+The most logging information requires the request to complete (status code, bytes sent, durations, etc). If you want to log the start time of a request in NGINX you should apply a [patch](https://gist.github.com/rkbodenner/318681) that exposes request start time as a variable.
+
+The `$time_local` variable contains the time when the log entry is written so when the HTTP request header is read, NGINX does a lookup of the associated virtual server configuration. If the virtual server is found, the request goes through six phases:
+
+- server rewrite phase
+- location phase
+- location rewrite phase (which can bring the request back to the previous phase)
+- access control phase
+- `try_files` phase
+- log phase
+
+Since the log phase is the last one, `$time_local` variable is much more colse to the end of the request than it's start.
+
+#### How to log the HTTP request body?
+
+Nginx doesn't parse the client request body unless it really needs to, so it usually does not fill the `$request_body` variable.
+
+The exceptions are when:
+
+- it sends the request to a proxy
+- or a fastcgi server
+
+So you really need to either add the `proxy_pass` or `fastcgi_pass` directives to your block.
+
+```nginx
+# 1) Set log format:
+log_format req_body_logging '$remote_addr - $remote_user [$time_local] '
+                            '"$request" $status $body_bytes_sent '
+                            '"$http_referer" "$http_user_agent"' "$request_body"';
+
+# 2) Limit the request body size:
+client_max_body_size 1k;
+client_body_buffer_size 1k;
+client_body_in_single_buffer on;
+
+# 3) Put the log format:
+server {
+
+  ...
+
+  location /api/v4 {
+
+    access_log    logs/access_req_body.log req_body_logging;
+    proxy_pass    http://127.0.0.1;
+
+    ...
+
+  }
+
+  location = /post.php {
+
+    access_log    /var/log/nginx/postdata.log req_body_logging;
+    fastcgi_pass  php_cgi;
+
+    ...
+
+  }
+
+}
+```
+
+For this, you can also used [echo](https://github.com/openresty/echo-nginx-module) module. To log a request body, what we need is to use the `echo_read_request_body` command and the `$request_body` variable (contains the request body of the echo module).
+
+  > `echo_read_request_body` explicitly reads request body so that the `$request_body` variable will always have non-empty values (unless the body is so big that it has been saved by NGINX to a local temporary file).
+
+```nginx
+http {
+
+  log_format req_body_logging '$request_body';
+  access_log /var/log/nginx/access.log req_body_logging;
+
+  ...
+
+  server {
+
+    location / {
+
+      echo_read_request_body;
+
+      ...
+
+    }
+
+    ...
+
+  }
+
+}
+```
+
 #### Reverse proxy
 
-  > After reading this chapter, please see: [Rules: Reverse Proxy](RULES.md#reverse-proxy-1).
+  > After reading this chapter, please see: [Rules: Reverse Proxy](RULES.md#reverse-proxy).
 
 This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 

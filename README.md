@@ -155,6 +155,8 @@
     * [Conditional logging](doc/NGINX_BASICS.md#conditional-logging)
     * [Manually log rotation](doc/NGINX_BASICS.md#manually-log-rotation)
     * [Error log severity levels](doc/NGINX_BASICS.md#error-log-severity-levels)
+    * [How to log the start time of a request?](doc/NGINX_BASICS.md#how-to-log-the-start-time-of-a-request)
+    * [How to log the HTTP request body?](doc/NGINX_BASICS.md#how-to-log-the-http-request-body)
   * [Reverse proxy](doc/NGINX_BASICS.md#reverse-proxy)
     * [Passing requests](doc/NGINX_BASICS.md#passing-requests)
     * [Trailing slashes](doc/NGINX_BASICS.md#trailing-slashes)
