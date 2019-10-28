@@ -395,7 +395,7 @@ pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoco
 
 pkg install pcre luajit
 
-pkg install jq git wget ncurses
+pkg install jq git wget ncurses texinfo gettext gettext-tools
 ```
 
 ##### Patches
@@ -485,6 +485,10 @@ A short description of the modules that I used in this step-by-step tutorial:
 - [`ngx_http_custom_counters_module`](https://github.com/lyokha/nginx-custom-counters-module) - customizable counters shared by all worker processes and virtual servers
 
 - [`ngx_chash_map`](https://github.com/Wine93/chash-map-nginx-module) - creates variables whose values are mapped to group by consistent hashing method
+
+- [`ngx_http_ip2location_module`](https://github.com/ip2location/ip2location-nginx) - enables user to easily perform client's IP to geographical location lookup by using IP2Location database
+
+- [`ngx_http_ip2proxy`](https://github.com/ip2location/ip2location-nginx) - detects visitor IP addresses which are used as VPN anonymizer, open proxies, web proxies and Tor exits
 
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
@@ -2577,7 +2581,7 @@ export NGINX_GID="920"
 
 ```bash
 # It's important and required, regardless of chosen sources:
-pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
+pkg install gcc gmake bison perl5-devel lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses texinfo gettext gettext-tools
 
 # In this example we use sources for all below packages so we do not install them:
 # pkg install pcre luajit
@@ -2708,6 +2712,8 @@ if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
   echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
 
 fi
+
+# After above, you will have to rebuild all required packages for build NGINX from sources.
 
 make -j2 && make test
 make install
@@ -3214,7 +3220,7 @@ portsnap update
 
 ```bash
 # It's important and required, regardless of chosen sources:
-pkg install gcc gmake bison perl5-devel pcre lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses
+pkg install gcc gmake bison perl5-devel pcre lua51 libxslt libgd libxml2 expat autoconf jq git wget ncurses texinfo gettext gettext-tools
 ```
 
 OpenSSL (example 1):
@@ -3225,7 +3231,12 @@ psearch openssl
 
 cd /usr/ports/security/openssl111
 
-# Parameters:
+# Parameters (from: /var/db/ports/security_openssl111/options):
+OPTIONS_FILE_SET+=ASYNC
+OPTIONS_FILE_SET+=CT
+OPTIONS_FILE_SET+=MAN3
+OPTIONS_FILE_UNSET+=RFC3779
+OPTIONS_FILE_SET+=SHARED
 OPTIONS_FILE_SET+=ZLIB
 OPTIONS_FILE_UNSET+=ARIA
 OPTIONS_FILE_UNSET+=DES
@@ -3261,6 +3272,8 @@ if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
   echo -en "DEFAULT_VERSIONS+=ssl=openssl111\n" >> /etc/make.conf
 
 fi
+
+# After above, you will have to rebuild all required packages for build NGINX from sources.
 
 if [[ -e "/usr/bin/openssl" ]] ; then
 
@@ -3340,6 +3353,8 @@ if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
 fi
 
+# After above, you will have to rebuild all required packages for build NGINX from sources.
+
 make -j2 && make test
 make install
 
@@ -3393,6 +3408,7 @@ cd /usr/ports/www/nginx
 Parameters:
 
 ```bash
+# From /var/db/ports/www_nginx/options:
 OPTIONS_FILE_SET+=DEBUG
 OPTIONS_FILE_SET+=DEBUGLOG
 OPTIONS_FILE_SET+=DSO
@@ -3408,11 +3424,11 @@ OPTIONS_FILE_UNSET+=MAIL_IMAP
 OPTIONS_FILE_UNSET+=MAIL_POP3
 OPTIONS_FILE_UNSET+=MAIL_SMTP
 OPTIONS_FILE_UNSET+=MAIL_SSL
-OPTIONS_FILE_SET+=GOOGLE_PERFTOOLS
+OPTIONS_FILE_UNSET+=GOOGLE_PERFTOOLS
 OPTIONS_FILE_SET+=HTTP
-OPTIONS_FILE_SET+=HTTP_ADDITION
+OPTIONS_FILE_UNSET+=HTTP_ADDITION
 OPTIONS_FILE_SET+=HTTP_AUTH_REQ
-OPTIONS_FILE_UNSET+=HTTP_CACHE
+OPTIONS_FILE_SET+=HTTP_CACHE
 OPTIONS_FILE_UNSET+=HTTP_DAV
 OPTIONS_FILE_UNSET+=HTTP_FLV
 OPTIONS_FILE_SET+=HTTP_GUNZIP_FILTER
@@ -3420,11 +3436,12 @@ OPTIONS_FILE_SET+=HTTP_GZIP_STATIC
 OPTIONS_FILE_UNSET+=HTTP_IMAGE_FILTER
 OPTIONS_FILE_UNSET+=HTTP_MP4
 OPTIONS_FILE_UNSET+=HTTP_PERL
-OPTIONS_FILE_SET+=HTTP_RANDOM_INDEX
+OPTIONS_FILE_UNSET+=HTTP_RANDOM_INDEX
 OPTIONS_FILE_SET+=HTTP_REALIP
 OPTIONS_FILE_SET+=HTTP_REWRITE
-OPTIONS_FILE_SET+=HTTP_SECURE_LINK
-OPTIONS_FILE_SET+=HTTP_SLICE
+OPTIONS_FILE_UNSET+=HTTP_SECURE_LINK
+OPTIONS_FILE_UNSET+=HTTP_SLICE
+OPTIONS_FILE_UNSET+=HTTP_SLICE_AHEAD
 OPTIONS_FILE_SET+=HTTP_SSL
 OPTIONS_FILE_SET+=HTTP_STATUS
 OPTIONS_FILE_SET+=HTTP_SUB
@@ -3438,36 +3455,38 @@ OPTIONS_FILE_UNSET+=AWS_AUTH
 OPTIONS_FILE_UNSET+=BROTLI
 OPTIONS_FILE_UNSET+=CACHE_PURGE
 OPTIONS_FILE_UNSET+=CLOJURE
-OPTIONS_FILE_SET+=CT
-OPTIONS_FILE_SET+=DEVEL_KIT
-OPTIONS_FILE_SET+=ARRAYVAR
+OPTIONS_FILE_UNSET+=CT
+OPTIONS_FILE_UNSET+=DEVEL_KIT
+OPTIONS_FILE_UNSET+=ARRAYVAR
 OPTIONS_FILE_UNSET+=DRIZZLE
 OPTIONS_FILE_SET+=DYNAMIC_UPSTREAM
 OPTIONS_FILE_SET+=ECHO
-OPTIONS_FILE_SET+=ENCRYPTSESSION
+OPTIONS_FILE_UNSET+=ENCRYPTSESSION
 OPTIONS_FILE_UNSET+=FASTDFS
 OPTIONS_FILE_UNSET+=FORMINPUT
 OPTIONS_FILE_UNSET+=GRIDFS
 OPTIONS_FILE_SET+=HEADERS_MORE
-OPTIONS_FILE_SET+=HTTP_ACCEPT_LANGUAGE
+OPTIONS_FILE_UNSET+=HTTP_ACCEPT_LANGUAGE
 OPTIONS_FILE_UNSET+=HTTP_AUTH_DIGEST
 OPTIONS_FILE_UNSET+=HTTP_AUTH_KRB5
 OPTIONS_FILE_UNSET+=HTTP_AUTH_LDAP
 OPTIONS_FILE_UNSET+=HTTP_AUTH_PAM
 OPTIONS_FILE_UNSET+=HTTP_DAV_EXT
-OPTIONS_FILE_SET+=HTTP_EVAL
-OPTIONS_FILE_SET+=HTTP_FANCYINDEX
+OPTIONS_FILE_UNSET+=HTTP_EVAL
+OPTIONS_FILE_UNSET+=HTTP_FANCYINDEX
 OPTIONS_FILE_SET+=HTTP_FOOTER
-OPTIONS_FILE_UNSET+=HTTP_GEOIP2
-OPTIONS_FILE_SET+=HTTP_JSON_STATUS
+OPTIONS_FILE_SET+=HTTP_GEOIP2
+OPTIONS_FILE_SET+=HTTP_IP2LOCATION
+OPTIONS_FILE_SET+=HTTP_IP2PROXY
+OPTIONS_FILE_UNSET+=HTTP_JSON_STATUS
 OPTIONS_FILE_UNSET+=HTTP_MOGILEFS
 OPTIONS_FILE_UNSET+=HTTP_MP4_H264
-OPTIONS_FILE_SET+=HTTP_NOTICE
+OPTIONS_FILE_UNSET+=HTTP_NOTICE
 OPTIONS_FILE_UNSET+=HTTP_PUSH
 OPTIONS_FILE_UNSET+=HTTP_PUSH_STREAM
 OPTIONS_FILE_UNSET+=HTTP_REDIS
-OPTIONS_FILE_SET+=HTTP_RESPONSE
-OPTIONS_FILE_SET+=HTTP_SUBS_FILTER
+OPTIONS_FILE_UNSET+=HTTP_RESPONSE
+OPTIONS_FILE_UNSET+=HTTP_SUBS_FILTER
 OPTIONS_FILE_UNSET+=HTTP_TARANTOOL
 OPTIONS_FILE_UNSET+=HTTP_UPLOAD
 OPTIONS_FILE_UNSET+=HTTP_UPLOAD_PROGRESS
@@ -3478,8 +3497,8 @@ OPTIONS_FILE_UNSET+=HTTP_VIDEO_THUMBEXTRACTOR
 OPTIONS_FILE_UNSET+=HTTP_ZIP
 OPTIONS_FILE_UNSET+=ICONV
 OPTIONS_FILE_UNSET+=LET
-OPTIONS_FILE_SET+=LUA
-OPTIONS_FILE_SET+=MEMC
+OPTIONS_FILE_UNSET+=LUA
+OPTIONS_FILE_UNSET+=MEMC
 OPTIONS_FILE_UNSET+=MODSECURITY
 OPTIONS_FILE_UNSET+=MODSECURITY3
 OPTIONS_FILE_SET+=NAXSI
@@ -3498,7 +3517,7 @@ OPTIONS_FILE_UNSET+=SMALL_LIGHT
 OPTIONS_FILE_UNSET+=SRCACHE
 OPTIONS_FILE_UNSET+=VOD
 OPTIONS_FILE_SET+=VTS
-OPTIONS_FILE_SET+=XSS
+OPTIONS_FILE_UNSET+=XSS
 OPTIONS_FILE_UNSET+=WEBSOCKIFY
 ```
 
@@ -3516,8 +3535,6 @@ make config-recursive
 make install
 make clean
 ```
-
-During configuration process I chose the following parameters (work in progress).
 
 ###### Post installation tasks
 
