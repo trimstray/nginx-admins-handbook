@@ -2054,7 +2054,7 @@ server {
 }
 ```
 
-For this, you can also used [echo](https://github.com/openresty/echo-nginx-module) module. To log a request body, what we need is to use the `echo_read_request_body` command and the `$request_body` variable (contains the request body of the echo module).
+For this, you can also use [echo](https://github.com/openresty/echo-nginx-module) module. To log a request body, what we need is to use the `echo_read_request_body` command and the `$request_body` variable (contains the request body of the echo module).
 
   > `echo_read_request_body` explicitly reads request body so that the `$request_body` variable will always have non-empty values (unless the body is so big that it has been saved by NGINX to a local temporary file).
 
