@@ -413,6 +413,7 @@
   * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](doc/RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
   * [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](doc/RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
   * [Use custom headers without X- prefix](doc/RULES.md#beginner-use-custom-headers-without-x--prefix)
+  * [Always use $request_uri instead of $uri in proxy_pass](doc/RULES.md#beginner-always-use-request_uri-instead-of-uri-in-proxy_pass)
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing"></a>
   * [Tweak passive health checks](doc/RULES.md#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)
@@ -946,6 +947,7 @@ Existing chapters:
   - [x] _Don't use X-Forwarded-Proto with $scheme behind reverse proxy_
   - [x] _Always pass Host, X-Real-IP, and X-Forwarded headers to the backend_
   - [x] _Use custom headers without X- prefix_
+  - [x] _Always use $request_uri instead of $uri in proxy_pass_
   - [ ] _Set proxy buffers and timeouts_
 
 </details>
@@ -961,13 +963,13 @@ If you have any idea, send it back to me or add a pull request.
 
 ## Checklist to rule them all
 
-  > This checklist contains [all rules (68)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (69)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 28 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 29 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 22 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
@@ -1004,6 +1006,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use pass directive compatible with backend protocol](doc/RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](doc/RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](doc/RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
+| [Always use $request_uri instead of $uri in proxy_pass](doc/RULES.md#beginner-always-use-request_uri-instead-of-uri-in-proxy_pass)<br><sup>You should always pass unchanged URI to the backend layer.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)<br><sup>Well organised code is easier to understand and maintain.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Format, prettify and indent your Nginx code](doc/RULES.md#beginner-format-prettify-and-indent-your-nginx-code)<br><sup>Formatted code is easier to maintain, debug, and can be read and understood in a short amount of time.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use reload option to change configurations on the fly](doc/RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
@@ -1478,7 +1481,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.
-- **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
+- **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing-2"></a>
   > You may improve of some rules about the NGINX working as a load balancer.

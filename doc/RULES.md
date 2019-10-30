@@ -1,6 +1,6 @@
 # Base Rules
 
-- **[⬆ Base Rules](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
+- **[⬆ Base Rules (14)](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -918,7 +918,7 @@ http {
 # Debugging
 
 - **[Base Rules](#base-rules)**
-- **[⬆ Debugging](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
+- **[⬆ Debugging (4)](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
@@ -1112,7 +1112,7 @@ working_directory     /var/dump/nginx;
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
-- **[⬆ Performance](https://github.com/trimstray/nginx-admins-handbook#toc-performance-2)**
+- **[⬆ Performance (11)](https://github.com/trimstray/nginx-admins-handbook#toc-performance-2)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
@@ -1340,11 +1340,17 @@ server {
 
   > With built-in variable `$request_uri` we can effectively avoid doing any capturing or matching at all. By default, the regex is costly and will slow down the performance.
 
-  > This rule is addressing passing the URL unchanged to a new host, sure return is more efficient just passing through the existing URI.
-
   I think the best explanation comes from the official documentation:
 
   > _Don’t feel bad here, it’s easy to get confused with regular expressions. In fact, it’s so easy to do that we should make an effort to keep them neat and clean._
+
+  > This rule is addressing passing the URL unchanged to a new host, sure return is more efficient just passing through the existing URI.
+
+  > The value of `$request_uri` is always the original URI (full original request URI with arguments) as received from the client and is not subject to any normalisations compared to the `$uri` directive.
+
+  > Use `$request_uri` in a map directive, if you need to match the URI and its query string.
+
+  > An unconsidered use the `$request_uri` can lead to many strange behaviors. For example, using `$request_uri` in the wrong place can cause URL encoded characters to become doubly encoded. So the most of the time you would use `$uri`, because it is normalised.
 
 ###### Example
 
@@ -1355,7 +1361,7 @@ Bad configuration:
 rewrite ^/(.*)$ https://example.com/$1 permanent;
 
 # 2)
-rewrite ^ https://example.com$request_uri? permanent;
+rewrite ^ https://example.com$request_uri permanent;
 ```
 
 Good configuration:
@@ -1367,6 +1373,10 @@ return 301 https://example.com$request_uri;
 ###### External resources
 
 - [Pitfalls and Common Mistakes - Taxing Rewrites](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites)
+
+###### External resources
+
+- [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 
 #### :beginner: Use `try_files` directive to ensure a file exists
 
@@ -1589,7 +1599,7 @@ location /videos {
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
-- **[⬆ Hardening](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
+- **[⬆ Hardening (28)](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -2846,7 +2856,7 @@ send_timeout 10s;
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
-- **[⬆ Reverse Proxy](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
+- **[⬆ Reverse Proxy (8)](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
   * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
@@ -2854,6 +2864,7 @@ send_timeout 10s;
   * [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
   * [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
   * [Use custom headers without X- prefix](#beginner-use-custom-headers-without-x--prefix)
+  * [Always use $request_uri instead of $uri in proxy_pass](#beginner-always-use-request_uri-instead-of-uri-in-proxy_pass)
 - **[Load Balancing](#load-balancing)**
 - **[Others](#others)**
 
@@ -3157,6 +3168,54 @@ add_header Backend-Server   $hostname;
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00)
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
 
+#### :beginner: Always use `$request_uri` instead of `$uri` in `proxy_pass`
+
+###### Rationale
+
+  > Naturally, there are exceptions to what I'm going to say about this. I think, the best rule for pass unchanged URI to the backend layer is use `proxy_pass http://<backend>` without any arguments.
+
+  Look what the NGINX documentation says about it:
+
+  > _If proxy_pass is specified without a URI, the request URI is passed to the server in the same form as sent by a client when the original request is processed [...]_
+
+  > But if you add something more at the end of `proxy_pass` directive, you should always pass unchanged URI to the backend layer unless you know what you're doing. For example, using `$uri` (is unescaped, URL encoded characters are decoded - this sometimes matters; and is not equivalent to `$request_uri`) accidentally in `proxy_pass` directives opens you up to http header injection vulnerabilities.
+
+  > Note that using `proxy_pass` with variables implies various other side effects, notably use of resolver for dynamic name resolution, and generally less effective than using names in a configuration.
+
+  > The `request_uri` is equal to the original request URI as received from the client including the arguments. In this case (pass variable like a `$request_uri`), if URI is specified in the directive, it is passed to the server as is, replacing the original request URI.
+
+###### Example
+
+Bad configuration:
+
+```nginx
+location /foo {
+
+  proxy_pass http://django_app_server$uri;
+
+}
+```
+
+Good configuration:
+
+```nginx
+location /foo {
+
+  proxy_pass http://django_app_server$request_uri;
+
+}
+```
+
+The best configuration:
+
+```nginx
+location /foo {
+
+  proxy_pass http://django_app_server;
+
+}
+```
+
 # Load Balancing
 
 - **[Base Rules](#base-rules)**
@@ -3164,7 +3223,7 @@ add_header Backend-Server   $hostname;
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
-- **[⬆ Load Balancing](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
+- **[⬆ Load Balancing (2)](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others](#others)**
@@ -3229,7 +3288,7 @@ upstream backend {
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
-- **[⬆ Others](https://github.com/trimstray/nginx-admins-handbook#toc-others-2)**
+- **[⬆ Others (2)](https://github.com/trimstray/nginx-admins-handbook#toc-others-2)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
 
