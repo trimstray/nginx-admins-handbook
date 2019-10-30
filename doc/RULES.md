@@ -686,10 +686,24 @@ server {
 ```nginx
 server {
 
+  listen 192.168.252.10:80;
+
   server_name www.example.com;
 
-  # return    301 https://$host$request_uri;
-  return      301 $scheme://www.example.com$request_uri;
+  ...
+
+  # return  301 https://$host$request_uri;
+  return    301 https://example.com$request_uri;
+
+}
+
+server {
+
+  ...
+
+  server_name domain.com;
+
+  return      301 $scheme://www.domain.com$request_uri;
 
 }
 ```
@@ -1296,7 +1310,7 @@ server {
     return                    301 $scheme://domain.com$request_uri;
 
     # If you force your web traffic to use HTTPS:
-    #                         301 https://domain.com$request_uri;
+    # return                  301 https://domain.com$request_uri;
 
     ...
 
