@@ -1278,6 +1278,8 @@ server {
 
   > Instead use two server directives like the example below. This approach decreases NGINX processing requirements.
 
+  > The problem is not just the `$server_name` directive. Keep in mind also other variables, e.g. `$scheme`. In some cases (but not always), it is better to add an additional a block directive than to use the `if`.
+
 ###### Example
 
 Bad configuration:
