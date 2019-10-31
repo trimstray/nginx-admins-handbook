@@ -3178,11 +3178,11 @@ add_header Backend-Server   $hostname;
 
   > _If proxy_pass is specified without a URI, the request URI is passed to the server in the same form as sent by a client when the original request is processed [...]_
 
-  > But if you add something more at the end of `proxy_pass` directive, you should always pass unchanged URI to the backend layer unless you know what you're doing. For example, using `$uri` (is unescaped, URL encoded characters are decoded - this sometimes matters; and is not equivalent to `$request_uri`) accidentally in `proxy_pass` directives opens you up to http header injection vulnerabilities.
-
-  > Note that using `proxy_pass` with variables implies various other side effects, notably use of resolver for dynamic name resolution, and generally less effective than using names in a configuration.
+  > If you add something more at the end of `proxy_pass` directive, you should always pass unchanged URI to the backend layer unless you know what you're doing. For example, using `$uri` accidentally in `proxy_pass` directives opens you up to http header injection vulnerabilities because URL encoded characters are decoded (this sometimes matters and is not equivalent to `$request_uri`). And what's more, the value of `$uri` may change during request processing, e.g. when doing internal redirects, or when using index files.
 
   > The `request_uri` is equal to the original request URI as received from the client including the arguments. In this case (pass variable like a `$request_uri`), if URI is specified in the directive, it is passed to the server as is, replacing the original request URI.
+
+  > Note also that using `proxy_pass` with variables implies various other side effects, notably use of resolver for dynamic name resolution, and generally less effective than using names in a configuration.
 
 ###### Example
 
