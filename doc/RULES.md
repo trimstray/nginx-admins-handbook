@@ -1,5 +1,7 @@
 # Base Rules
 
+These are the basic set of rules to keep NGINX in good condition.
+
 - **[⬆ Base Rules (14)](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
@@ -21,8 +23,6 @@
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
 - **[Others](#others)**
-
-These are the basic set of rules to keep NGINX in good condition.
 
 #### :beginner: Organising Nginx configuration
 
@@ -917,6 +917,8 @@ http {
 
 # Debugging
 
+NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
+
 - **[Base Rules](#base-rules)**
 - **[⬆ Debugging (4)](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
@@ -928,8 +930,6 @@ http {
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
 - **[Others](#others)**
-
-NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
 #### :beginner: Use custom log formats
 
@@ -1110,6 +1110,8 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
+NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
+
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[⬆ Performance (11)](https://github.com/trimstray/nginx-admins-handbook#toc-performance-2)**
@@ -1128,8 +1130,6 @@ working_directory     /var/dump/nginx;
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
 - **[Others](#others)**
-
-NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
 #### :beginner: Adjust worker processes
 
@@ -1596,6 +1596,8 @@ location /videos {
 
 # Hardening
 
+In this chapter I will talk about some of the NGINX hardening approaches and security standards.
+
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
@@ -1631,8 +1633,6 @@ location /videos {
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
 - **[Others](#others)**
-
-In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
 #### :beginner: Always keep NGINX up-to-date
 
@@ -2852,6 +2852,8 @@ send_timeout 10s;
 
 # Reverse Proxy
 
+One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
+
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
@@ -2867,8 +2869,6 @@ send_timeout 10s;
   * [Always use $request_uri instead of $uri in proxy_pass](#beginner-always-use-request_uri-instead-of-uri-in-proxy_pass)
 - **[Load Balancing](#load-balancing)**
 - **[Others](#others)**
-
-One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
 
 #### :beginner: Use pass directive compatible with backend protocol
 
@@ -3218,6 +3218,8 @@ location /foo {
 
 # Load Balancing
 
+Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
+
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
@@ -3227,8 +3229,6 @@ location /foo {
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others](#others)**
-
-Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
 #### :beginner: Tweak passive health checks
 
@@ -3282,6 +3282,8 @@ upstream backend {
 
 # Others
 
+This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
+
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
@@ -3291,8 +3293,6 @@ upstream backend {
 - **[⬆ Others (2)](https://github.com/trimstray/nginx-admins-handbook#toc-others-2)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
-
-This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
 
 #### :beginner: Enable DNS CAA Policy
 
