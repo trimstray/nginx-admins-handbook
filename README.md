@@ -362,7 +362,7 @@
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging"></a>
   * [Use custom log formats](doc/RULES.md#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](doc/RULES.md#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
-  * [Disable daemon, master process, and all workers except one](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)
+  * [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
 - **[Performance (11)](doc/RULES.md#performance)**<a id="toc-performance"></a>
   * [Adjust worker processes](doc/RULES.md#beginner-adjust-worker-processes)
@@ -460,7 +460,7 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 
 Generally, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
-NGINX is also known as a _Apache Killer_. It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
+NGINX is also known as a _Apache Killer_ (mainly because of its lightness and much less RAM consumption). It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
 
 Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind - one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
 
@@ -530,13 +530,13 @@ Remember about the following most important things:
 
   > **`Blindly deploying of the rules described here can damage your web application!`**
 
+  > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
+
   > **`There are no settings that are perfect for everyone.`**
 
   > **`Always think about what is better and more important for you: security or compatibility.`**
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
-
-  > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
 
 <br>
 
@@ -902,7 +902,7 @@ Existing chapters:
 <details>
 <summary><b>Debugging</b></summary><br>
 
-  - [x] _Disable daemon, master process, and all workers except one_
+  - [x] _Improve debugging by disable daemon, master process, and all workers except one_
   - [x] _Use core dumps to figure out why NGINX keep crashing_
   - [ ] _Use mirror module to copy requests to another backend_
   - [ ] _Dynamic debugging with echo module_
@@ -1044,7 +1044,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Map all the things...](doc/RULES.md#beginner-map-all-the-things)<br><sup>Map module provides a more elegant solution for clearly parsing a big list of regexes.</sup> | Base Rules | ![info](static/img/priorities/info.png) |
 | [Use custom log formats](doc/RULES.md#beginner-use-custom-log-formats)<br><sup>This is extremely helpful for debugging specific location directives.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use debug mode to track down unexpected behaviour](doc/RULES.md#beginner-use-debug-mode-to-track-down-unexpected-behaviour)<br><sup>There's probably more detail than you want, but that can sometimes be a lifesaver.</sup> | Debugging | ![info](static/img/priorities/info.png) |
-| [Disable daemon, master process, and all workers except one](doc/RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
+| [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)<br><sup>Is a good solution to marks the server as permanently unavailable.</sup> | Load Balancing | ![info](static/img/priorities/info.png) |
 

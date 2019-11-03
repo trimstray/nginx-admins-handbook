@@ -1,8 +1,10 @@
 # Base Rules
 
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
+
 These are the basic set of rules to keep NGINX in good condition.
 
-- **[⬆ Base Rules (14)](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
+- **[≡ Base Rules (14)](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -36,7 +38,7 @@ These are the basic set of rules to keep NGINX in good condition.
 
   > Use `include` directive to move common server settings into a separate files and to attach your specific code to global config, contexts and other.
 
-  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file. I prefer the following structure:
+  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`). I prefer the following structure:
   >
   > - `html` - for default static files, e.g. global 5xx error page
   > - `master` - for main configuration, e.g. acls, listen directives, and domains
@@ -45,20 +47,20 @@ These are the basic set of rules to keep NGINX in good condition.
   >   - `_listen` - for all listen directives; also stores SSL configuration
   >   - `_server` - for domains (localhost) configuration; also stores all backends definitions
   > - `modules` - for modules which are dynamically loading into NGINX
-  > - `snippets` - for NGINX aliases, configuration templates, e.g. logrotate
+  > - `snippets` - for NGINX aliases, configuration templates
   >
-  > I attach some of them, if necessary, to files which has `server` directives.
+  > I attach some of them, if necessary, mostly to the files which has `server` directives.
 
 ###### Example
 
 ```nginx
-# Store this configuration in https.conf for example:
+# Store this in https.conf for example:
 listen 10.240.20.2:443 ssl;
 
 ssl_certificate /etc/nginx/master/_server/example.com/certs/nginx_example.com_bundle.crt;
 ssl_certificate_key /etc/nginx/master/_server/example.com/certs/example.com.key;
 
-# Include this file to the server section:
+# Include 'https.conf' to the server section:
 server {
 
   include /etc/nginx/master/_listen/10.240.20.2/https.conf;
@@ -82,7 +84,7 @@ server {
 
 ###### Rationale
 
-  > Work with unreadable configuration files is terrible, if syntax isn’t very readable, it makes your eyes sore, and you suffers from headaches.
+  > Work with unreadable configuration files is terrible. If syntax is not very clear and readable, it makes your eyes sore, and you suffers from headaches.
 
   > When your code is formatted, it is significantly easier to maintain, debug, optimise, and can be read and understood in a short amount of time. You should eliminate code style violations from your NGINX configuration files.
 
@@ -98,8 +100,9 @@ server {
 
 ###### Example
 
+Not recommended code style:
+
 ```nginx
-# Bad code style:
 http {
   include    nginx/proxy.conf;
   include    /etc/nginx/fastcgi.conf;
@@ -115,8 +118,11 @@ http {
   server_names_hash_bucket_size 128; # this seems to be required for some vhosts
 
   ...
+```
 
-# Good code style:
+Recommended code style:
+
+```nginx
 http {
 
   # Attach global rules:
@@ -293,7 +299,7 @@ server {
 
   > NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed.
 
-  > It is a simple procedure for all non defined server names:
+  > There is a simple procedure for all non defined server names:
   >
   > - one `server` block, with...
   > - complete `listen` directive, with...
@@ -332,8 +338,6 @@ server {
     #   root /etc/nginx/error-pages/404;
     # or redirect:
     #   return 301 https://badssl.com;
-
-    # return 444;
 
   # }
 
@@ -382,7 +386,7 @@ server {
 
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 upstream {
@@ -400,7 +404,7 @@ server {
 }
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 upstream {
@@ -500,7 +504,7 @@ server {
 
   > Use `map` or `geo` modules (one of them) to prevent users abusing your servers. This allows to create variables with values depending on the client IP address.
 
-  > Since variables are evaluated only when used, the mere existence of even a large number of declared e.g. geo variables does not cause any extra costs for request processing.
+  > Since variables are evaluated only when used, the mere existence of even a large number of declared e.g. `geo` variables does not cause any extra costs for request processing.
 
   > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`. For example, `geo` module is great for conditionally allow or deny IP.
 
@@ -598,6 +602,7 @@ geo $globals_internal_geo_acl {
 ###### Example
 
 ```nginx
+# Define in an external file (e.g. maps/http_user_agent.conf):
 map $http_user_agent $device_redirect {
 
   default "desktop";
@@ -614,7 +619,10 @@ map $http_user_agent $device_redirect {
 
 }
 
-# Turn on in a specific context (e.g. location):
+# Include to the server context:
+include maps/http_user_agent.conf
+
+# And turn on in a specific context (e.g. location):
 if ($device_redirect = "mobile") {
 
   return 301 https://m.domain.com$request_uri;
@@ -632,6 +640,10 @@ if ($device_redirect = "mobile") {
 ###### Rationale
 
   > Set global `root` inside server directive for requests. It specifies the root directory for undefined locations.
+
+  > If you define root in a location block it will only be available in that location. This almost always leads to duplication of either root directives of file paths, neither of which is good.
+
+  > If you define it in the server block it is always inherited by the location blocks so it will always be available in the `$document_root` variable, thus avoiding the duplication of file paths.
 
   From official documentation:
 
@@ -679,7 +691,9 @@ server {
 
   > It's a simple rule. You should use server blocks and `return` statements as they're way faster than evaluating RegEx.
 
-  > It is simpler and faster because NGINX stops processing the request (and doesn't have to process a regular expressions).
+  > It is simpler and faster because NGINX stops processing the request (and doesn't have to process a regular expressions). More than that, you can specify a code in the 3xx series.
+
+  > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use rewrite.
 
 ###### Example
 
@@ -712,6 +726,7 @@ server {
 
 - [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/)
 - [How to do an Nginx redirect](https://bjornjohansen.no/nginx-redirect)
+- [rewrite vs return (from this handbook)](NGINX_BASICS.md#rewrite-vs-return)
 - [Adding and removing the www prefix (from this handbook)](HELPERS.md#adding-and-removing-the-www-prefix)
 - [Avoid checks server_name with if directive (from this handbook)](#beginner-avoid-checks-server_name-with-if-directive)
 
@@ -740,6 +755,7 @@ server {
 - for automate rotation:
 
   ```bash
+  # GNU/Linux distributions:
   cat > /etc/logrotate.d/nginx << __EOF__
   /var/log/nginx/*.log {
     daily
@@ -803,6 +819,34 @@ server {
   __EOF__
   ```
 
+  ```bash
+  # BSD systems:
+  cat > /usr/local/etc/logrotate.d/nginx << __EOF__
+  /var/log/nginx/*.log {
+    daily
+    rotate 14
+    missingok
+    sharedscripts
+    compress
+    postrotate
+      kill -HUP `cat /var/run/nginx.pid`
+    endscript
+    dateext
+  }
+  /var/log/nginx/*/*.log {
+    daily
+    rotate 14
+    missingok
+    sharedscripts
+    compress
+    postrotate
+      kill -HUP `cat /var/run/nginx.pid`
+    endscript
+    dateext
+  }
+  __EOF__
+  ```
+
 ###### External resources
 
 - [Understanding logrotate utility](https://support.rackspace.com/how-to/understanding-logrotate-utility/)
@@ -821,7 +865,7 @@ server {
 
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 http {
@@ -869,7 +913,7 @@ http {
 }
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 http {
@@ -917,13 +961,15 @@ http {
 
 # Debugging
 
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
+
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
 - **[Base Rules](#base-rules)**
-- **[⬆ Debugging (4)](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
+- **[≡ Debugging (4)](#debugging)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
-  * [Disable daemon, master process, and all workers except one](#beginner-disable-daemon-master-process-and-all-workers-except-one)
+  * [Improve debugging by disable daemon, master process, and all workers except one](#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
@@ -1052,8 +1098,9 @@ error_log /var/log/nginx/error-debug.log debug;
 
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 - [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
+- [Error log severity levels (from this hadnbook)](NGINX_BASICS.md#error-log-severity-levels)
 
-#### :beginner: Disable daemon, master process, and all workers except one
+#### :beginner: Improve debugging by disable daemon, master process, and all workers except one
 
 ###### Rationale
 
@@ -1070,12 +1117,12 @@ error_log /var/log/nginx/error-debug.log debug;
 ###### Example
 
 ```nginx
-# From configuration file (global context):
+# Update configuration file (in a global context):
 daemon            off
 master_process    off;
 worker_processes  1;
 
-# From shell (oneliner):
+# Or run NGINX from shell (oneliner):
 /usr/sbin/nginx -t -g 'daemon off; master_process off; worker_processes 1;'
 ```
 
@@ -1110,11 +1157,13 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-performance)**
+
 NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
-- **[⬆ Performance (11)](https://github.com/trimstray/nginx-admins-handbook#toc-performance-2)**
+- **[≡ Performance (11)](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
@@ -1154,7 +1203,7 @@ NGINX is a insanely fast, but you can adjust a few things to make sure it's as f
 ###### Example
 
 ```nginx
-# The safest way:
+# The safest and recommend way:
 worker_processes auto;
 
 # VCPU = 4 , expr $(nproc --all) - 1
@@ -1175,7 +1224,7 @@ worker_processes 3;
 
   > Note that HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
-  > You should also include the `ssl` parameter, required because browsers do not support HTTP/2 without encryption.
+  > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
@@ -1282,7 +1331,7 @@ server {
 
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 server {
@@ -1302,7 +1351,7 @@ server {
 }
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 server {
@@ -1340,10 +1389,6 @@ server {
 
   > With built-in variable `$request_uri` we can effectively avoid doing any capturing or matching at all. By default, the regex is costly and will slow down the performance.
 
-  I think the best explanation comes from the official documentation:
-
-  > _Don’t feel bad here, it’s easy to get confused with regular expressions. In fact, it’s so easy to do that we should make an effort to keep them neat and clean._
-
   > This rule is addressing passing the URL unchanged to a new host, sure return is more efficient just passing through the existing URI.
 
   > The value of `$request_uri` is always the original URI (full original request URI with arguments) as received from the client and is not subject to any normalisations compared to the `$uri` directive.
@@ -1352,9 +1397,13 @@ server {
 
   > An unconsidered use the `$request_uri` can lead to many strange behaviors. For example, using `$request_uri` in the wrong place can cause URL encoded characters to become doubly encoded. So the most of the time you would use `$uri`, because it is normalised.
 
+  I think the best explanation comes from the official documentation:
+
+  > _Don’t feel bad here, it’s easy to get confused with regular expressions. In fact, it’s so easy to do that we should make an effort to keep them neat and clean._
+
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 # 1)
@@ -1364,7 +1413,7 @@ rewrite ^/(.*)$ https://example.com/$1 permanent;
 rewrite ^ https://example.com$request_uri permanent;
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 return 301 https://example.com$request_uri;
@@ -1396,7 +1445,7 @@ return 301 https://example.com$request_uri;
 
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 
@@ -1418,7 +1467,7 @@ Bad configuration:
 }
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 
@@ -1448,9 +1497,11 @@ Good configuration:
 
   > You should use server blocks and `return` statements as they're way simpler and faster than evaluating RegEx via location blocks. This directive stops processing and returns the specified code to a client.
 
+  > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use rewrite.
+
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 server {
@@ -1466,7 +1517,7 @@ server {
   ...
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 server {
@@ -1596,12 +1647,14 @@ location /videos {
 
 # Hardening
 
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
+
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
-- **[⬆ Hardening (28)](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
+- **[≡ Hardening (28)](#hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -1655,15 +1708,17 @@ In this chapter I will talk about some of the NGINX hardening approaches and sec
 
 ###### Rationale
 
+  > It is an important general principle that programs have the minimal amount of privileges necessary to do its job. That way, if the program is broken, its damage is limited. The most extreme example is to simply not write a secure program at all - if this can be done, it usually should be.
+
   > There is no real difference in security just by changing the process owner name. On the other hand in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
 
-  > This is the default NGINX behaviour, but remember to check it.
+  > NGINX meets these requirements and it is the default behaviour, but remember to check it.
 
 ###### Example
 
 ```bash
 # Edit nginx.conf:
-user nginx;
+user nginx;   # or 'www' for example
 
 # Set owner and group for root (app, default) directory:
 chown -R nginx:nginx /var/www/domain.com
@@ -1672,6 +1727,8 @@ chown -R nginx:nginx /var/www/domain.com
 ###### External resources
 
 - [Why does nginx starts process as root?](https://unix.stackexchange.com/questions/134301/why-does-nginx-starts-process-as-root)
+- [How and why Linux daemons drop privileges](https://linux-audit.com/how-and-why-linux-daemons-drop-privileges/)
+- [POS36-C. Observe correct revocation order while relinquishing privileges](https://wiki.sei.cmu.edu/confluence/display/c/POS36-C.+Observe+correct+revocation+order+while+relinquishing+privileges)
 
 #### :beginner: Disable unnecessary modules
 
@@ -1860,7 +1917,7 @@ proxy_hide_header X-Drupal-Cache;
   }
   ```
 
-- force e.g. login page to use TLS:
+- force login page to use TLS:
 
   ```nginx
   server {
@@ -1902,6 +1959,8 @@ proxy_hide_header X-Drupal-Cache;
   >   - version 1.0.2 will be supported until 2019-12-31 (LTS)
   >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
+
+  > Criteria for choosing OpenSSL version: It depends all on your use.
 
   > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1) but you should know one thing: OpenSSL 1.1.1 has a different API than the current 1.0.2 so that's not just a simple flick of the switch.
 
@@ -2463,7 +2522,7 @@ ssl_prefer_server_ciphers on;
 
   > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
 
-  > CRIME exploits SSL/TLS compression which is disabled since nginx 1.3.2. BREACH exploits HTTP compression
+  > CRIME exploits SSL/TLS compression which is disabled since nginx 1.3.2. BREACH exploits only HTTP compression.
 
   > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
 
@@ -2755,6 +2814,8 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
   > An ordinary web server supports the `HEAD`, `GET` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
+  > However, some of the API (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
+
 ###### Example
 
 ```nginx
@@ -2783,8 +2844,8 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 
   > To cover various browser implementations the full set of headers to prevent content being cached should be:
   >
-  > `Cache-Control: no-cache, no-store, private, must-revalidate, max-age=0, no-transform`
-  > `Pragma: no-cache`
+  > `Cache-Control: no-cache, no-store, private, must-revalidate, max-age=0, no-transform`<br>
+  > `Pragma: no-cache`<br>
   > `Expires: 0`
 
 ###### Example
@@ -2816,10 +2877,10 @@ location /api {
 ###### Example
 
 ```nginx
-client_body_buffer_size 100k;
-client_header_buffer_size 1k;
-client_max_body_size 100k;
-large_client_header_buffers 2 1k;
+client_body_buffer_size       100k;
+client_header_buffer_size     1k;
+client_max_body_size          100k;
+large_client_header_buffers   2 1k;
 ```
 
 ###### External resources
@@ -2837,10 +2898,10 @@ large_client_header_buffers 2 1k;
 ###### Example
 
 ```nginx
-client_body_timeout 10s;
-client_header_timeout 10s;
-keepalive_timeout 5s 5s;
-send_timeout 10s;
+client_body_timeout           10s;
+client_header_timeout         10s;
+keepalive_timeout             5s 5s;
+send_timeout                  10s;
 ```
 
 ###### External resources
@@ -2852,13 +2913,15 @@ send_timeout 10s;
 
 # Reverse Proxy
 
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
+
 One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
-- **[⬆ Reverse Proxy (8)](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
+- **[≡ Reverse Proxy (8)](#reverse-proxy)**
   * [Use pass directive compatible with backend protocol](#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](#beginner-set-and-pass-host-header-only-with-host-variable)
@@ -2876,7 +2939,7 @@ One of the frequent uses of the NGINX is setting it up as a proxy server that ca
 
   > All `proxy_*` directives are related to the backends that use the specific backend protocol.
 
-  > You should use `proxy_pass` only for HTTP servers working on the backend layer (set also the `http://` protocol before referencing the HTTP backend) and other `*_pass` directives only for non-HTTP backend servers (like a uWSGI or FastCGI).
+  > You should always use `proxy_pass` only for HTTP servers working on the backend layer (set also the `http://` protocol before referencing the HTTP backend) and other `*_pass` directives only for non-HTTP backend servers (like a uWSGI or FastCGI).
 
   > Directives such as `uwsgi_pass`, `fastcgi_pass`, or `scgi_pass` are designed specifically for non-HTTP apps and you should use them instead of the `proxy_pass` (non-HTTP talking).
 
@@ -2884,7 +2947,7 @@ One of the frequent uses of the NGINX is setting it up as a proxy server that ca
 
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 server {
@@ -2901,7 +2964,7 @@ server {
 }
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 server {
@@ -2966,6 +3029,7 @@ location ^~ /a/ {
 ###### External resources
 
 - [ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+- [Trailing slashes (from this handbook)](NGINX_BASICS.md#trailing-slashes)
 
 #### :beginner: Set and pass `Host` header only with `$host` variable
 
@@ -2979,7 +3043,7 @@ location ^~ /a/ {
 
   > The difference is explained in the NGINX documentation:
   >
-  >   - `$host` contains "in this order of precedence: host name from the request line, or host name from the `Host` request header field, or the server name matching a request"
+  >   - `$host` contains in this order of precedence: host name from the request line, or host name from the `Host` request header field, or the server name matching a request
   >   - `$http_host` contains the content of the HTTP `Host` header field, if it was present in the request (equals always the `HTTP_HOST` request header)
   >   - `$server_name` contains the `server_name` of the virtual host which processed the request, as it was defined in the NGINX configuration. If a server contains multiple server names, only the first one will be present in this variable
 
@@ -3083,7 +3147,7 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 
   > If you use a front-end service like Apache or whatever else as the front-end to your APIs, you will need these headers to understand what IP or hostname was used to connect to the API.
 
-  > Forwarding these headers is also important if you use the https protocol (it has become a standard nowadays).
+  > Forwarding these headers is also important if you use the HTTPS protocol (it has become a standard nowadays).
 
   > However, I would not rely on either the presence of all `X-Forwarded` headers, or the validity of their data.
 
@@ -3141,13 +3205,13 @@ location / {
 
 ###### Rationale
 
+  > The use of custom headers with `X-` prefix is not forbidden but discouraged. In other words, you can keep using `X-` prefixed headers, but it's not recommended and you may not document them as if they are public standard.
+
   > Internet Engineering Task Force released a new RFC ([RFC-6648](https://tools.ietf.org/html/rfc6648)), recommending deprecation of `X-` prefix.
 
   > The `X-` in front of a header name customarily has denoted it as experimental/non-standard/vendor-specific. Once it's a standard part of HTTP, it'll lose the prefix.
 
   > If it’s possible for new custom header to be standardized, use a non-used and meaningful header name.
-
-  > The use of custom headers with `X-` prefix is not forbidden but discouraged. In other words, you can keep using `X-` prefixed headers, but it's not recommended and you may not document them as if they are public standard.
 
 ###### Example
 
@@ -3186,7 +3250,7 @@ add_header Backend-Server   $hostname;
 
 ###### Example
 
-Bad configuration:
+Not recommended configuration:
 
 ```nginx
 location /foo {
@@ -3196,7 +3260,7 @@ location /foo {
 }
 ```
 
-Good configuration:
+Recommended configuration:
 
 ```nginx
 location /foo {
@@ -3206,7 +3270,7 @@ location /foo {
 }
 ```
 
-The best configuration:
+Most recommended configuration:
 
 ```nginx
 location /foo {
@@ -3218,6 +3282,8 @@ location /foo {
 
 # Load Balancing
 
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
+
 Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
 - **[Base Rules](#base-rules)**
@@ -3225,7 +3291,7 @@ Load balancing is a useful mechanism to distribute incoming traffic around sever
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
-- **[⬆ Load Balancing (2)](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
+- **[≡ Load Balancing (2)](#load-balancing)**
   * [Tweak passive health checks](#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others](#others)**
@@ -3265,6 +3331,8 @@ upstream backend {
 
   > NGINX also provides a `backup` parameter which marks the server as a backup server. It will be passed requests when the primary servers are unavailable. I use this option rarely for the above purposes and only if I am sure that the backends will work at the maintenance time.
 
+  > You can also use `ngx_dynamic_upstream` for operating upstreams dynamically with HTTP APIs.
+
 ###### Example
 
 ```nginx
@@ -3279,8 +3347,11 @@ upstream backend {
 ###### External resources
 
 - [Module ngx_http_upstream_module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
+- [Module ngx_dynamic_upstream](https://github.com/cubicdaiya/ngx_dynamic_upstream)
 
 # Others
+
+Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-others-2)**
 
 This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
 
@@ -3290,7 +3361,7 @@ This rules aren't strictly related to the NGINX but in my opinion they're also v
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
-- **[⬆ Others (2)](https://github.com/trimstray/nginx-admins-handbook#toc-others-2)**
+- **[≡ Others (2)](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
 
@@ -3299,6 +3370,10 @@ This rules aren't strictly related to the NGINX but in my opinion they're also v
 ###### Rationale
 
   > DNS CAA policy helps you to control which Certificat Authorities are allowed to issue certificates for your domain becaues if no CAA record is present, any CA is allowed to issue a certificate for the domain.
+
+  > The purpose of the CAA record is to allow domain owners to declare which certificate authorities are allowed to issue a certificate for a domain. They also provide a means of indicating notification rules in case someone requests a certificate from an unauthorized certificate authority.
+
+  > If no CAA record is present, any CA is allowed to issue a certificate for the domain. If a CAA record is present, only the CAs listed in the record(s) are allowed to issue certificates for that hostname.
 
 ###### Example
 

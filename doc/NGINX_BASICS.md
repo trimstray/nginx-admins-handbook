@@ -455,7 +455,7 @@ cabal update
 #### Processes
 
   > **:bookmark: [Adjust worker processes - Performance - P3](RULES.md#beginner-adjust-worker-processes)**<br>
-  > **:bookmark: [Disable daemon, master process, and all workers except one - Debugging - P4](RULES.md#beginner-disable-daemon-master-process-and-all-workers-except-one)**
+  > **:bookmark: [Improve debugging by disable daemon, master process, and all workers except one - Debugging - P4](RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)**
 
 NGINX has **one master process** and **one or more worker processes**.
 
@@ -1391,6 +1391,8 @@ location / {
 }
 ```
 
+  > You must know that rewrite returns only code 301 or 302.
+
 `rewrite` directive accept optional flags:
 
 - `break` - basically completes processing of rewrite directives, stops processing, and breakes location lookup cycle by not doing any location lookup and internal jump at all
@@ -1796,6 +1798,23 @@ NGINX will map the request made to:
 - `http://example.com/contact.html` into the file path `/var/www/example.com/contact.html`
 - `http://example.com/about/us.html` into the file path `/var/www/example.com/about/us.html`
 
+When location matches the last part of the directive's value it is better to use the root directive (it seems like an arbitrary style choice because authors don't justify that instruction at all). Look at this example from the official documentation:
+
+```nginx
+location /images/ {
+
+  alias /data/w3/images/;
+
+}
+
+# Better solution:
+location /images/ {
+
+  root /data/w3;
+
+}
+```
+
 ##### `internal` directive
 
 This directive specifies that the location block is internal. In other words,
@@ -1976,6 +1995,8 @@ gzip -t access.log.0 && rm -fr access.log.0
 
 ##### Error log severity levels
 
+  > You can't specify your own format, but in NGINX build-in several level's of `error_log`-ing.
+
 The following is a list of all severity levels:
 
 | <b>TYPE</b> | <b>DESCRIPTION</b> |
@@ -1990,6 +2011,12 @@ The following is a list of all severity levels:
 | `emerg` | the system is in an unusable state and requires immediate attention |
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
+
+Default values for the error level:
+
+- in the main section - `error`
+- in the HTTP section - `crit`
+- in the server section - `crit`
 
 #### How to log the start time of a request?
 
