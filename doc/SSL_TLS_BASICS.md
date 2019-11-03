@@ -6,6 +6,8 @@
   * [Cipher suites](#cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
   * [Certificates](#certificates)
+    * [Single-domain](#single-domain)
+    * [Multi-domain](#multi-domain)
     * [Wildcard](#wildcard)
     * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
 
@@ -126,7 +128,23 @@ These parameters aren't secret and can be reused; plus they take several seconds
 
 #### Certificates
 
+##### Single-domain
+
+When a certificate only has one SAN field and it contains a reference to a single site, then it’s a single-domain certificate. It can only be used on one specific website.
+
+This type of certificates secures a single subdomain/hostname (both `www` and `non-www` variations).
+
+##### Multi-domain
+
+The multi-domain certificate is also commonly referred to as a SAN certificate (using the SAN feature of an SSL certificate) and that can be used on more than one domain.
+
+When a user tries to access a website protected by a multi-domain/SAN certificate, the browser will check the certificate to see if the URL matches one of the SAN names contained within. If it does, a secure connection to the server will be established.
+
+Multi-domain certificate sometimes have 100 or more SAN fields, and some or all of these fields may contain wildcards, creating a hybrid "multi-domain wildcard" certificate.
+
 ##### Wildcard
+
+Wildcard certificates are used when you want to secure an unlimited number of subdomains on a single certificate.
 
 In this brief the author explain [Why you probably shouldn't use a wildcard certificate](https://gist.github.com/joepie91/7e5cad8c0726fd6a5e90360a754fc568), as it will put your security at risk.
 

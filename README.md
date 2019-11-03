@@ -121,6 +121,8 @@
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
+    * [Single-domain](doc/SSL_TLS_BASICS.md#single-domain)
+    * [Multi-domain](doc/SSL_TLS_BASICS.md#multi-domain)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
     * [Wildcard SSL doesn't handle root domain?](doc/SSL_TLS_BASICS.md#wildcard-ssl-doesnt-handle-root-domain)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
@@ -682,8 +684,8 @@ Existing chapters:
   - [x] _Cipher suites_
   - [x] _Diffie-Hellman key exchange_
   - [x] _Certificates_
-    - [ ] _Single-domain_
-    - [ ] _Multi-domain_
+    - [x] _Single-domain_
+    - [x] _Multi-domain_
     - [x] _Wildcard_
     - [x] _Wildcard SSL doesn't handle root domain?_
 
