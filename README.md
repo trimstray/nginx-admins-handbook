@@ -211,7 +211,7 @@
     * [Installation OpenResty on CentOS 7](doc/HELPERS.md#installation-openresty-on-centos-7)
     * [Installation Tengine on Ubuntu 18.04](doc/HELPERS.md#installation-tengine-on-ubuntu-1804)
     * [Installation Nginx on FreeBSD 11.3](doc/HELPERS.md#installation-nginx-on-freebsd-113)
-    * [Installation Nginx on FreeBSD 11.3 from ports](doc/HELPERS.md#installation-nginx-on-freebsd-113-from-ports)
+    * [Installation Nginx on FreeBSD 11.3 (from ports)](doc/HELPERS.md#installation-nginx-on-freebsd-113-from-ports)
   * [Analyse configuration](doc/HELPERS.md#analyse-configuration)
   * [Monitoring](doc/HELPERS.md#monitoring)
     * [GoAccess](doc/HELPERS.md#goaccess)
@@ -510,9 +510,9 @@ For me, however, there hasn't been a truly in-depth and reasonably simple cheats
 
 There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
-Throughout this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here a few best tips to avoid pitfalls and configuration mistakes.
+With this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here a few best tips to avoid pitfalls and configuration mistakes.
 
-In this handbook I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
+I added set of guidelines and examples has also been produced to help you administer of the NGINX. They give us insight into NGINX internals also.
 
 Mostly, I apply the rules presented here on the NGINX working as a reverse proxy. However, does not to prevent them being implemented for NGINX as a standalone server.
 
@@ -763,7 +763,7 @@ Existing chapters:
     - [x] _Installation OpenResty on CentOS 7_
     - [x] _Installation Tengine on Ubuntu 18.04_
     - [x] _Installation Nginx on FreeBSD 11.3_
-    - [x] _Installation Nginx on FreeBSD 11.3 from ports_
+    - [x] _Installation Nginx on FreeBSD 11.3 (from ports)_
   - _Monitoring_
     - [ ] _CollectD, Prometheus, and Grafana_
       - [ ] _nginx-vts-exporter_
