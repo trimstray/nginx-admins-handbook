@@ -486,7 +486,7 @@ And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issu
 
 ## Prologue
 
-When I was studying architecture of HTTP servers I became interested in NGINX. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
+When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
 
 I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
 
@@ -498,9 +498,7 @@ Of course, [NGINX Official Documentation](https://nginx.org/en/docs/) is the bes
 - [Emiller’s Guide To Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide.html)
 - [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html)
 
-These are definitely the best assets for us and in the first place you should seek help there.
-
-Moreover, in order to improve your knowledge please see [Books](#books) chapter. It contains top literature on NGINX.
+These are definitely the best assets for us and in the first place you should seek help there. Moreover, in order to improve your knowledge please see [Books](#books) chapter. It contains top literature on NGINX.
 
 ## Why I created this handbook
 
@@ -518,9 +516,11 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 ## Who this handbook is for
 
-If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful, especially for System Administrators and Experts of web-based applications. I think it can also be a good complement to official documentation.
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications.
 
-I did my best to make this handbook a single and consistent. It's organized in an order that makes logical sense to me. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
+This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand that also discusses heavyweight topics for advanced users so there is something for everyone.
+
+I did my best to make this handbook a single and consistent. It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
 ## Before you start
 
@@ -529,6 +529,8 @@ Remember about the following most important things:
   > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
   > **`Blindly deploying of the rules described here can damage your web application!`**
+
+  > **`Copy-and-paste is not the best way to learn. Think twice before adopting rules from this handbook.`**
 
   > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
 
