@@ -506,7 +506,7 @@ Moreover, in order to improve your knowledge please see [Books](#books) chapter.
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
-  > _This handbook is a collection of rules, helpers, notes, papers, best practices, and recommendations gathered and used by me (also in production environments). Many of them refer to external resources._
+  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes and papers. Many of them refer to external resources._
 
 There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
