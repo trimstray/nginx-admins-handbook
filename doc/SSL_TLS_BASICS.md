@@ -130,9 +130,7 @@ These parameters aren't secret and can be reused; plus they take several seconds
 
 ##### Single-domain
 
-When a certificate only has one SAN field and it contains a reference to a single site, then it’s a single-domain certificate. It can only be used on one specific website.
-
-This type of certificates secures a single subdomain/hostname (both `www` and `non-www` variations).
+When a certificate only has one SAN field and it contains a reference to a single subdomain/hostname, then it’s a single-domain certificate (it cannot secure any other domains).
 
 ##### Multi-domain
 
