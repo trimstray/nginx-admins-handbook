@@ -307,7 +307,7 @@ server {
   > - only one `server_name` definition, and...
   > - preventively I add it at the beginning of the configuration
 
-  > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in NGINX.
+  > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
 
 ###### Example
 
@@ -326,6 +326,8 @@ server {
   #   - default_server in server_name directive is not required - I add this for a better understanding and I think it's an unwritten standard
   # ...but you should know that it's irrelevant, really, you can put in everything there.
   server_name _ "" default_server;
+
+  limit_req zone=per_ip_5r_s;
 
   ...
 
