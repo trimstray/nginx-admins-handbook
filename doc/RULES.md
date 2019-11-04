@@ -2849,9 +2849,9 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 
   > To cover various browser implementations the full set of headers to prevent content being cached should be:
   >
-  > `Cache-Control: no-cache, no-store, private, must-revalidate, max-age=0, no-transform`<br>
-  > `Pragma: no-cache`<br>
-  > `Expires: 0`
+  > 1 - `Cache-Control: no-cache, no-store, private, must-revalidate, max-age=0, no-transform`<br>
+  > 2 - `Pragma: no-cache`<br>
+  > 3 - `Expires: 0`
 
 ###### Example
 
