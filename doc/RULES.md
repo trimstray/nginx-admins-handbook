@@ -988,8 +988,8 @@ NGINX has many methods for troubleshooting configuration problems. In this chapt
 ###### Example
 
 ```nginx
-# Default main log format from the NGINX repository:
-log_format main
+# Default main log format from nginx repository:
+log_format default
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
                 '"$http_user_agent" "$http_x_forwarded_for"';
@@ -1003,6 +1003,8 @@ log_format main-level-0
                 '$request_time';
 
 # Debug log formats:
+#   - level 0
+#   - based on main-level-0 without "$http_referer" "$http_user_agent"
 log_format debug-level-0
                 '$remote_addr - $remote_user [$time_local] '
                 '"$request_method $scheme://$host$request_uri '

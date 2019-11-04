@@ -5567,8 +5567,8 @@ This [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/maste
 ##### Custom log formats
 
 ```nginx
-# Default main log format from the NGINX repository:
-log_format main
+# Default main log format from nginx repository:
+log_format default
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
                 '"$http_user_agent" "$http_x_forwarded_for"';
@@ -5582,6 +5582,8 @@ log_format main-level-0
                 '$request_time';
 
 # Debug log formats:
+#   - level 0
+#   - based on main-level-0 without "$http_referer" "$http_user_agent"
 log_format debug-level-0
                 '$remote_addr - $remote_user [$time_local] '
                 '"$request_method $scheme://$host$request_uri '
@@ -5591,6 +5593,8 @@ log_format debug-level-0
                 '$upstream_response_time "$request_filename" '
                 '$request_completion';
 
+#   - level 1
+#   - based on main-level-0 without "$http_referer" "$http_user_agent"
 log_format debug-level-1
                 '$remote_addr - $remote_user [$time_local] '
                 '"$request_method $scheme://$host$request_uri '
@@ -5598,9 +5602,10 @@ log_format debug-level-1
                 '$request_id $pid $msec $request_time '
                 '$upstream_connect_time $upstream_header_time '
                 '$upstream_response_time "$request_filename" $request_length '
-                '$request_completion $connection $connection_requests '
-                '"$http_user_agent"';
+                '$request_completion $connection $connection_requests';
 
+#   - level 2
+#   - based on main-level-0 without "$http_referer" "$http_user_agent"
 log_format debug-level-2
                 '$remote_addr - $remote_user [$time_local] '
                 '"$request_method $scheme://$host$request_uri '
@@ -5609,10 +5614,10 @@ log_format debug-level-2
                 '$upstream_connect_time $upstream_header_time '
                 '$upstream_response_time "$request_filename" $request_length '
                 '$request_completion $connection $connection_requests '
-                '$remote_addr $remote_port $server_addr $server_port '
-                '$http_x_forwarded_for "$http_referer" "$http_user_agent"';
+                '$server_addr $server_port $remote_addr $remote_port';
 
 # Debug log format for SSL:
+#   - based on main-level-0
 log_format debug-ssl-level-0
                 '$remote_addr - $remote_user [$time_local] '
                 '"$request_method $scheme://$host$request_uri '
@@ -5621,17 +5626,24 @@ log_format debug-ssl-level-0
                 '$request_time '
                 '$tls_version $ssl_protocol $ssl_cipher';
 
-# Log format for GeoIP module (ngx_http_geoip_module):
+# Debug log format for GeoIP module (ngx_http_geoip_module):
+#   - based on main-level-0
 log_format geoip-level-0
-                '$remote_addr - $remote_user [$time_local] "$request" '
-                '$status $body_bytes_sent "$http_referer" '
-                '"$http_user_agent" "$http_x_forwarded_for" '
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '$request_time '
                 '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
 
 # The following log format is very useful for debugging connection between proxy and upstream servers:
-log_format upstream_log '$remote_addr - $remote_user [$time_local] '
-                '"$request" $status $body_bytes_sent '
+#   - based on main-level-0
+log_format upstream_log
+                '$remote_addr - $remote_user [$time_local] '
+                '"$request_method $scheme://$host$request_uri '
+                '$server_protocol" $status $body_bytes_sent '
                 '"$http_referer" "$http_user_agent" '
+                '$request_time '
                 'upstream_addr $upstream_addr '
                 'upstream_bytes_received $upstream_bytes_received '
                 'upstream_cache_status $upstream_cache_status '
