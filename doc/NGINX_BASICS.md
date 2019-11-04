@@ -1925,7 +1925,7 @@ By default:
 It is the equivalent to the following configuration.
 
 ```nginx
-# In nginx.conf:
+# In nginx.conf (default log format):
 http {
 
   ...

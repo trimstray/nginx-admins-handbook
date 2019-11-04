@@ -5624,7 +5624,7 @@ log_format debug-ssl-level-0
                 '$server_protocol" $status $body_bytes_sent '
                 '"$http_referer" "$http_user_agent" '
                 '$request_time '
-                '$tls_version $ssl_protocol $ssl_cipher';
+                '$ssl_protocol $ssl_cipher';
 
 # Debug log format for GeoIP module (ngx_http_geoip_module):
 #   - based on main-level-0
