@@ -1,6 +1,8 @@
 # NGINX Basics
 
-- **[⬆ NGINX Basics](https://github.com/trimstray/nginx-admins-handbook#toc-nginx-basics-2)**
+Go to the **[⬆ TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)**
+
+- **[≡ NGINX Basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
@@ -340,6 +342,8 @@ include /etc/nginx/proxy.conf;
 # or:
 include /etc/nginx/conf/*.conf;
 ```
+
+  > You cannot use variables in NGINX config file includes. This is because includes are processed before any variables are evaluated.
 
 ##### Measurement units
 
@@ -717,10 +721,10 @@ In my opinion, the safe value of `worker_rlimit_nofile` (and system limits) is:
 
 ```
 # 1 file handler for 1 connection:
-worker_connections + (shared libs, log files, event pool etc.) = worker_rlimit_nofile
+worker_connections + (shared libs, log files, event pool, etc.) = worker_rlimit_nofile
 
 # 2 file handlers for 1 connection:
-(worker_connections * 2) + (shared libs, log files, event pool etc.) = worker_rlimit_nofile
+(worker_connections * 2) + (shared libs, log files, event pool, etc.) = worker_rlimit_nofile
 ```
 
 That is probably how many files can be opened by each worker and should have a value greater than to the number of connections per worker (according to the above formula).
@@ -732,7 +736,7 @@ However, after a deeper reflection they are rational because they allow one work
 So, moving on, the maximum number of open files by the NGINX should be:
 
 ```
-(worker_processes * worker_connections * 2) + (shared libs, log files, event pool) = max open files
+(worker_processes * worker_connections * 2) + (shared libs, log files, event pool, etc.) = max open files
 ```
 
   > To serve **16,384** connections by all workers (4,096 connections for each worker), and bearing in mind about the other handlers used by NGINX, a reasonably value of max files handlers in this case may be **35,000**. I think it's more than enough.

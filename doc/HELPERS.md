@@ -1,6 +1,8 @@
 # Helpers
 
-- **[⬆ Helpers](https://github.com/trimstray/nginx-admins-handbook#toc-helpers-2)**
+Go to the **[⬆ TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)**
+
+- **[≡ Helpers](#helpers)**
   * [Installing from prebuilt packages](#installing-from-prebuilt-packages)
     * [RHEL7 or CentOS 7](#rhel7-or-centos-7)
     * [Debian or Ubuntu](#debian-or-ubuntu)

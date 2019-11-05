@@ -1,6 +1,8 @@
 # Configuration Examples
 
-- **[⬆ Configuration Examples](https://github.com/trimstray/nginx-admins-handbook#toc-configuration-examples-2)**
+Go to the **[⬆ TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)**
+
+- **[≡ Configuration Examples](#examples)**
   * [Reverse Proxy](#reverse-proxy)
     * [Installation](#installation)
     * [Configuration](#configuration)
