@@ -5570,7 +5570,7 @@ This [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/maste
 
 ```nginx
 # Default main log format from nginx repository:
-log_format default
+log_format main
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
                 '"$http_user_agent" "$http_x_forwarded_for"';
@@ -5630,13 +5630,14 @@ log_format debug-ssl-level-0
 
 # Debug log format for GeoIP module (ngx_http_geoip_module):
 #   - based on main-level-0
-log_format geoip-level-0
-                '$remote_addr - $remote_user [$time_local] '
-                '"$request_method $scheme://$host$request_uri '
-                '$server_protocol" $status $body_bytes_sent '
-                '"$http_referer" "$http_user_agent" '
-                '$request_time '
-                '"$geoip_area_code $geoip_city_country_code $geoip_country_code"';
+#   - only if you enable ngx_http_geoip2_module and define geoip2 variables
+# log_format geoip-level-0
+#                 '$remote_addr - $remote_user [$time_local] '
+#                 '"$request_method $scheme://$host$request_uri '
+#                 '$server_protocol" $status $body_bytes_sent '
+#                 '"$http_referer" "$http_user_agent" '
+#                 '$request_time '
+#                 '"$geoip2_data_country_code $geoip2_data_country_name"';
 
 # The following log format is very useful for debugging connection between proxy and upstream servers:
 #   - based on main-level-0
@@ -5653,6 +5654,23 @@ log_format upstream_log
                 'upstream_header_time $upstream_header_time '
                 'upstream_response_length $upstream_response_length '
                 'upstream_response_time $upstream_response_time upstream_status $upstream_status ';
+
+# Log only specific error codes:
+#   Example:
+#     - access_log /var/log/nginx/access.log main if=$error_codes;
+map $status $error_codes {
+
+  default   1;
+  ~^[23]    0;
+
+}
+
+map $status $error_codes_5xx {
+
+  default   1;
+  ~^[234]   0;
+
+}
 ```
 
 ##### Log only 4xx/5xx

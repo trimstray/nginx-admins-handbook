@@ -991,7 +991,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
 
 ```nginx
 # Default main log format from nginx repository:
-log_format default
+log_format main
                 '$remote_addr - $remote_user [$time_local] "$request" '
                 '$status $body_bytes_sent "$http_referer" '
                 '"$http_user_agent" "$http_x_forwarded_for"';
@@ -2879,38 +2879,48 @@ location /api {
 
   > Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in NGINX we can set buffer size limitations for all clients.
 
+  > Corresponding values depends on your server memory and how many traffic you have. Long ago I found an interesting formula:
+  >
+  > `MAX_MEMORY = client_body_buffer_size x CONCURRENT_TRAFFIC - OS_RAM - FS_CACHE`
+  >
+  > I think, the key is to monitor all the things (MEMORY/CPU/Traffic) and change settings according your usage, star little of course then increase until you can.
+
+  > In my opinion, using a smaller `client_body_buffer_size` (a little bigger than 10k but not so much) is definitely better, since a bigger buffer could ease DoS attack vectors, since you would allocate more memory for it.
+
+  > Tip: If a request body is larger than `client_body_buffer_size`, it's written to disk and not available in memory, hence no `$request_body`. Additionally, setting the `client_body_buffer_size` to high may affect the log file size (if you log `$request_body`).
+
 ###### Example
 
 ```nginx
-client_body_buffer_size       100k;
-client_header_buffer_size     1k;
-client_max_body_size          100k;
-large_client_header_buffers   2 1k;
+client_body_buffer_size       16k;    # default: 8k (32-bit) | 16k (64-bit)
+client_header_buffer_size     1k;     # default: 1k
+client_max_body_size          100k;   # default: 1m
+large_client_header_buffers   2 1k;   # default: 4 8k
 ```
 
 ###### External resources
 
+- [Module ngx_http_core_module](http://nginx.org/en/docs/http/ngx_http_core_module.html)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 
 #### :beginner: Mitigating Slow HTTP DoS attacks (Closing Slow Connections)
 
 ###### Rationale
 
-  > Close connections that are writing data too infrequently, which can represent an attempt to keep connections open as long as possible.
-
   > You can close connections that are writing data too infrequently, which can represent an attempt to keep connections open as long as possible (thus reducing the server’s ability to accept new connections).
 
 ###### Example
 
 ```nginx
-client_body_timeout           10s;
-client_header_timeout         10s;
-keepalive_timeout             5s 5s;
-send_timeout                  10s;
+client_body_timeout           10s;    # default: 60s
+client_header_timeout         10s;    # default: 60s
+keepalive_timeout             5s 5s;  # default: 75s
+send_timeout                  10s;    # 6default: 0s
 ```
 
 ###### External resources
 
+- [Module ngx_http_core_module](http://nginx.org/en/docs/http/ngx_http_core_module.html)
 - [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 - [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
