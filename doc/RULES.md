@@ -1,8 +1,8 @@
 # Base Rules
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-These are the basic set of rules to keep NGINX in good condition.
+  > :pushpin:&nbsp; These are the basic set of rules to keep NGINX in good condition.
 
 - **[≡ Base Rules (14)](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
@@ -963,9 +963,9 @@ http {
 
 # Debugging
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
+  > :pushpin:&nbsp; NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
 - **[Base Rules](#base-rules)**
 - **[≡ Debugging (4)](#debugging)**
@@ -1161,9 +1161,9 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-performance)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
+  > :pushpin:&nbsp; NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
@@ -1651,9 +1651,9 @@ location /videos {
 
 # Hardening
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-In this chapter I will talk about some of the NGINX hardening approaches and security standards.
+  > :pushpin:&nbsp; In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
@@ -2918,9 +2918,9 @@ send_timeout                  10s;
 
 # Reverse Proxy
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
+  > :pushpin:&nbsp; One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
@@ -3287,9 +3287,9 @@ location /foo {
 
 # Load Balancing
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
+  > :pushpin:&nbsp; Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
@@ -3356,9 +3356,9 @@ upstream backend {
 
 # Others
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-others-2)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
+  > :pushpin:&nbsp; This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**

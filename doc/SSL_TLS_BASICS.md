@@ -1,6 +1,6 @@
 # SSL/TLS Basics
 
-Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)**
+Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
 - **[≡ SSL/TLS Basics](#ssltls-basics)**
   * [TLS versions](#tls-versions)
