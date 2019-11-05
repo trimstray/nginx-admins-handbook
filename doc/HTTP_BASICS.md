@@ -1,6 +1,6 @@
 # HTTP Basics
 
-Go to the **[⬆ TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)**
 
 - **[≡ HTTP Basics](#http-basics)**
   * [Features and architecture](#features-and-architecture)

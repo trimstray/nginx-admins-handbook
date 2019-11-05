@@ -1,6 +1,6 @@
 # Base Rules
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-base-rules-2)**
 
 These are the basic set of rules to keep NGINX in good condition.
 
@@ -963,7 +963,7 @@ http {
 
 # Debugging
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-debugging-2)**
 
 NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
@@ -1161,7 +1161,7 @@ working_directory     /var/dump/nginx;
 
 # Performance
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-performance)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-performance)**
 
 NGINX is a insanely fast, but you can adjust a few things to make sure it's as fast as possible for your use case.
 
@@ -1651,7 +1651,7 @@ location /videos {
 
 # Hardening
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-hardening-2)**
 
 In this chapter I will talk about some of the NGINX hardening approaches and security standards.
 
@@ -2918,7 +2918,7 @@ send_timeout                  10s;
 
 # Reverse Proxy
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-reverse-proxy-2)**
 
 One of the frequent uses of the NGINX is setting it up as a proxy server that can off load much of the infrastructure concerns of a high-volume distributed web application.
 
@@ -3287,7 +3287,7 @@ location /foo {
 
 # Load Balancing
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-balancing-2)**
 
 Load balancing is a useful mechanism to distribute incoming traffic around several capable servers. We may improve of some rules about the NGINX working as a load balancer.
 
@@ -3356,7 +3356,7 @@ upstream backend {
 
 # Others
 
-Go to the **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-others-2)**
+Go to the **[⬆ Main TOC](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next? - TOC](https://github.com/trimstray/nginx-admins-handbook#toc-load-others-2)**
 
 This rules aren't strictly related to the NGINX but in my opinion they're also very important aspect of security.
 
