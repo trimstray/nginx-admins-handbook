@@ -2909,6 +2909,12 @@ large_client_header_buffers   2 1k;   # default: 4 8k
 
   > You can close connections that are writing data too infrequently, which can represent an attempt to keep connections open as long as possible (thus reducing the server’s ability to accept new connections).
 
+  > In my opinion, 2-3 seconds for `keepalive_timeout` are often enough for most folks to parse HTML/CSS and retrieve needed images, icons, or frames, connections are cheap in NGINX so increasing this is generally safe. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible.
+
+  > I would also suggest that if you set the `send_timeout` small then your web server will close connections quickly which will give more overall connections available to connecting hosts.
+
+  > These parameters are most likely only relevant in a high traffic webserver. Both are supporting the same goal and that is less connections and more efficient handling of requests. Either putting all requests into one connection (keep alive) or closing connections quickly to handle more requests (send timeout).
+
 ###### Example
 
 ```nginx

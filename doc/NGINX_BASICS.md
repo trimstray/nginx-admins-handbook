@@ -872,6 +872,8 @@ The original model of HTTP, and the default one in HTTP/1.0, is short-lived conn
 
 HTTP Keep-Alive connection or persistent connection is the idea of using a single TCP connection to send and receive multiple HTTP requests/responses (Keep Alive's work between requests), as opposed to opening a new connection for every single request/response pair.
 
+When using keep alive the browser does not have to make multiple connections. But uses the already established connection, this controls how long that stays active/open.
+
 This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because NGINX needs to close connections from time to time, even if you configure NGINX to allow infinite keep-alive-timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
 
 <p align="center">
