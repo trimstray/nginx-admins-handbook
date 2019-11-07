@@ -1125,6 +1125,19 @@ tcp_nopush on;
 tcp_nopush off;   # default
 ```
 
+###### Mixing all together
+
+There are many opinions on this. My recommendation also says to set all to `on`. However, I quote an interesting comment ([Mixing sendfile, tcp_nodelay and tcp_nopush illogical?](https://github.com/denji/nginx-tuning/issues/5)) that should dispel any doubts:
+
+  > _When set indicates to always queue non-full frames. Later the user clears this option and we transmit any pending partial frames in the queue. This is meant to be used alongside `sendfile()` to get properly filled frames when the user (for example) must write out headers with a `write()` call first and then use `sendfile` to send out the data parts. `TCP_CORK` can be set together with `TCP_NODELAY` and it is stronger than `TCP_NODELAY`._
+
+So in fact, the most important changes are listed below:
+
+```nginx
+sendfile on;
+tcp_nopush on;    # with this, the tcp_nodelay does not matter
+```
+
 #### Request processing stages
 
 There can be altogether 11 phases when NGINX handles (processes) a request:
