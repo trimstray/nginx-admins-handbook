@@ -36,7 +36,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to move common server settings into a separate files and to attach your specific code to global config, contexts and other.
+  > Use `include` directive to move and to split common server settings into a multiple files and to attach your specific code to global config, contexts and other. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
 
   > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`). I prefer the following structure:
   >
@@ -87,6 +87,8 @@ server {
   > Work with unreadable configuration files is terrible. If syntax is not very clear and readable, it makes your eyes sore, and you suffers from headaches.
 
   > When your code is formatted, it is significantly easier to maintain, debug, optimise, and can be read and understood in a short amount of time. You should eliminate code style violations from your NGINX configuration files.
+
+  > Spaces, tabs, and new line characters are not part of the NGINX configuration. They are not interpreted by the NGINX engine, but they help to make the configuration more readable.
 
   > Choose your formatter style and setup a common config for it. Some rules are universal, but the most important thing is to keep a consistent NGINX code style throughout your code base:
   >
@@ -1190,11 +1192,11 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
 
   > The `worker_processes` directive is the sturdy spine of life for NGINX. This directive is responsible for letting our virtual server know many workers to spawn once it has become bound to the proper IP and port(s) and its value is helpful in CPU-intensive work.
 
-  > The safest setting is to use the number of cores by passing `auto`. You can adjust this value to maximum throughput under high concurrency.
+  > The safest setting is to use the number of cores by passing `auto`. You can adjust this value to maximum throughput under high concurrency. The value should be changed to an optimal value depending on the number of cores available, disks, network subsystem, server load, and so on.
 
   > How many worker processes do you need? Do some multiple load testing. Hit the app hard and see what happens with only one. Then add some more to it and hit it again. At some point you'll reach a point of truly saturating the server resources. That's when you know you have the right balance.
 
-  > I think for high load proxy servers (also standalone servers) interesting value is `ALL_CORES - 1` (or more) because if you're running NGINX with other critical services on the same server, you're just going to thrash the CPUs with all the context switching required to manage all of those processes.
+  > In my opinion, for high load proxy servers (also standalone servers) interesting value is `ALL_CORES - 1` (or more) because if you're running NGINX with other critical services on the same server, you're just going to thrash the CPUs with all the context switching required to manage all of those processes.
 
   > Rule of thumb: If much time is spent blocked on I/O, worker processes should be increased further.
 
@@ -1210,7 +1212,8 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
 # The safest and recommend way:
 worker_processes auto;
 
-# VCPU = 4 , expr $(nproc --all) - 1
+# Alternative:
+# VCPU = 4 , expr $(nproc --all) - 1, grep "processor" /proc/cpuinfo | wc -l
 worker_processes 3;
 ```
 
