@@ -1099,15 +1099,15 @@ tcp_nodelay off;
 
 ###### `tcp_nopush`
 
-This option is only available if you are using `sendfile` (NGINX uses `tcp_nopush` for requests served with sendfile). It causes NGINX to attempt to send its HTTP response head in one packet, instead of using partial frames. This is useful for prepending headers before calling sendfile, or for throughput optimization.
+This option is only available if you are using `sendfile` (NGINX uses `tcp_nopush` for requests served with `sendfile`). It causes NGINX to attempt to send its HTTP response head in one packet, instead of using partial frames. This is useful for prepending headers before calling `sendfile`, or for throughput optimization.
 
   > Normally, using `tcp_nopush` along with `sendfile` is very good. However, there are some cases where it can slow down things (specially from cache systems), so, run your own tests and find if it’s useful in that way.
 
 `tcp_nopush` enables `TCP_CORK` (more specifically, the `TCP_NOPUSH` socket option on FreeBSD or the `TCP_CORK` socket option on Linux) which aggressively accumulates data and which tells TCP to wait for the application to remove the cork before sending any packets.
 
-If `TCP_NOPUSH/TCP_CORK` (are not the same!) is enabled in a socket, it will not send data until the buffer fills to a fixed limit (allows application to control building of packet, e.g pack a packet with full HTTP response). To read more about it and get into the details of this option I recommend [TCP_CORK: More than you ever wanted to know](https://baus.net/on-tcp_cork/).
+If `TCP_NOPUSH/TCP_CORK` (are not the same!) is enabled in a socket, it will not send data until the buffer fills to a fixed limit (allows application to control building of packet, e.g pack a packet with full HTTP response). To read more about it and get into the details of this option please read [TCP_CORK: More than you ever wanted to know](https://baus.net/on-tcp_cork/).
 
-Once, I read that `tcp_nopush` is opposite to `tcp_nodelay`. I don't agree with that because, as I understand it, the first one aggregates data based on buffer pressure instead whereas Nagle's algorithm aggregates data while waiting for a return `ACK`, which the latter option disables.
+Once, I read that `tcp_nopush` is opposite to `tcp_nodelay`. I don't agree with that because, as I understand it, the first one aggregates data based on buffer pressure instead whereas Nagle's algorithm aggregates data while waiting for a return ACK, which the latter option disables.
 
 It may appear that `tcp_nopush` and `tcp_nodelay` are mutually exclusive but if all directives are turned on, NGINX manages them very wisely:
 
