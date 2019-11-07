@@ -1018,7 +1018,7 @@ server {
 
 ##### `sendfile`, `tcp_nodelay`, and `tcp_nopush`
 
-Before starting read this chapter please review:
+Before you start reading please review:
 
 - [Nginx optimization, understanding SENDFILE, TCP_NODELAY and TCP_NOPUSH](https://thoughts.t37.net/nginx-optimization-understanding-sendfile-tcp-nodelay-and-tcp-nopush-c55cdd276765)
 - [Nginx Tutorial #2: Performance](https://www.netguru.com/codestories/nginx-tutorial-performance)
@@ -1045,7 +1045,7 @@ NGINX employs a solution that uses the `sendfile` system call to perform a zero-
 
 This method is an improved method of data transfer, in which data is copied between file descriptors within the OS kernel space, that is, without transferring data to the application buffers. No additional buffers or data copies are required, and the data never leaves the kernel memory address space.
 
-In my opinion enabling this really won't make any difference unless NGINX is reading from something which can be mapped into the virtual memory space like a file (i.e. the data is in the cache). But please... do not let me influence you because you should in the first place also be keeping an eye on this document: [Optimizing TLS for High–Bandwidth Applications in FreeBSD](https://people.freebsd.org/~rrs/asiabsd_2015_tls.pdf).
+In my opinion enabling this really won't make any difference unless NGINX is reading from something which can be mapped into the virtual memory space like a file (i.e. the data is in the cache). But please... do not let me influence you - you should in the first place be keeping an eye on this document: [Optimizing TLS for High–Bandwidth Applications in FreeBSD](https://people.freebsd.org/~rrs/asiabsd_2015_tls.pdf).
 
 By default NGINX disable the use of `sendfile`:
 
@@ -1062,13 +1062,13 @@ sendfile off;     # default
 
 I recommend to read [The Caveats of TCP_NODELAY](https://eklitzke.org/the-caveats-of-tcp-nodelay) and [Rethinking the TCP Nagle Algorithm](http://ccr.sigcomm.org/archive/2001/jan01/ccr-200101-mogul.pdf). These great papers describes very interesting topics about `TCP_NODELAY` and `TCP_NOPUSH`.
 
-`tcp_nodelay` is used for disabling Nagle's algorithm (and then send the data as soon as it’s available) which is one mechanism for improving TCP efficiency by reducing the number of small packets sent over the network. If you set `tcp_nodelay on;`, NGINX adds the `TCP_NODELAY` options when opening a new socket.
+`tcp_nodelay` is used to manage Nagle's algorithm which is one mechanism for improving TCP efficiency by reducing the number of small packets sent over the network. If you set `tcp_nodelay on;`, NGINX adds the `TCP_NODELAY` options when opening a new socket.
 
   > The option only affects keep-alive connections. Otherwise there is 100ms delay when NGINX sends response tail in the last incomplete TCP packet. Additionally, it is enabled on SSL connections, for unbuffered proxying, and for WebSocket proxying.
 
-Maybe you should think about enabling Nagle's algorithm (`tcp_nodelay off;`) but it really depends on what is your specific workload and dominant traffic patterns on a service. Typically LANs have less issues with traffic congestion as compared to the WANs. The Nagle algorithm is most effective if TCP/IP traffic is generated sporadically by user input, not by applications using stream oriented protocols like a HTTP traffic.
+Maybe you should think about enabling Nagle's algorithm (`tcp_nodelay off;`) but it really depends on what is your specific workload and dominant traffic patterns on a service. `tcp_nodelay on;` is more reasonable for the modern web, the whole delay business of TCP was reasonable for terminals. Typically LANs have less issues with traffic congestion as compared to the WANs. The Nagle algorithm is most effective if TCP/IP traffic is generated sporadically by user input, not by applications using stream oriented protocols like a HTTP traffic.
 
-So the recipe is simple:
+So, for me the recipe is simple:
 
 - small payloads
 - applications that require lower latency
@@ -1090,7 +1090,7 @@ By default NGINX enable the use of `TCP_NODELAY` option:
 
 ```nginx
 # http, server, location contexts
-# To turn on tcp_nodelay and at the same time to disable Nagle’s algorithm (my recommendation):
+# To turn on tcp_nodelay and at the same time to disable Nagle’s algorithm (my recommendation, unless you turn tcp_nopush on):
 tcp_nodelay on;   # default
 
 # To turn off tcp_nodelay and at the same time to enable Nagle’s algorithm:
@@ -1099,20 +1099,26 @@ tcp_nodelay off;
 
 ###### `tcp_nopush`
 
-This option is only available if you are using `sendfile` (NGINX uses tcp_nopush for requests served with sendfile). It causes NGINX to attempt to send its HTTP response head in one packet, instead of using partial frames. This is useful for prepending headers before calling sendfile, or for throughput optimization.
+This option is only available if you are using `sendfile` (NGINX uses `tcp_nopush` for requests served with sendfile). It causes NGINX to attempt to send its HTTP response head in one packet, instead of using partial frames. This is useful for prepending headers before calling sendfile, or for throughput optimization.
 
   > Normally, using `tcp_nopush` along with `sendfile` is very good. However, there are some cases where it can slow down things (specially from cache systems), so, run your own tests and find if it’s useful in that way.
 
 `tcp_nopush` enables `TCP_CORK` (more specifically, the `TCP_NOPUSH` socket option on FreeBSD or the `TCP_CORK` socket option on Linux) which aggressively accumulates data and which tells TCP to wait for the application to remove the cork before sending any packets.
 
-If `TCP_NOPUSH/TCP_CORK` is enabled in a socket, it will not send data until the buffer fills to a fixed limit (allows application to control building of packet, e.g pack a packet with full HTTP response). To read more about it and get into the details of this option I recommend [TCP_CORK: More than you ever wanted to know](https://baus.net/on-tcp_cork/).
+If `TCP_NOPUSH/TCP_CORK` (are not the same!) is enabled in a socket, it will not send data until the buffer fills to a fixed limit (allows application to control building of packet, e.g pack a packet with full HTTP response). To read more about it and get into the details of this option I recommend [TCP_CORK: More than you ever wanted to know](https://baus.net/on-tcp_cork/).
 
-Once, I read that `tcp_nopush` is opposite to `tcp_nodelay`. I don't agree with that because, as I understand it, the first one aggregates data based on buffer pressure instead whereas Nagle's algorithm aggregates data while waiting for a return ACK, which the latter option disables.
+Once, I read that `tcp_nopush` is opposite to `tcp_nodelay`. I don't agree with that because, as I understand it, the first one aggregates data based on buffer pressure instead whereas Nagle's algorithm aggregates data while waiting for a return `ACK`, which the latter option disables.
 
 It may appear that `tcp_nopush` and `tcp_nodelay` are mutually exclusive but if all directives are turned on, NGINX manages them very wisely:
 
 - ensure packages are full before sending them to the client
 - for the last packet, `tcp_nopush` will be removed, allowing TCP to send it immediately, without the 200ms delay
+
+And let's also remember (take a look at [Tony Finch notes](http://dotat.at/writing/nopush.html) - this guy developed a kernel patch for FreeBSD which makes `TCP_NOPUSH` work like `TCP_CORK`):
+
+- on Linux, `sendfile()` depends on the `TCP_CORK` socket option to avoid undesirable packet boundaries
+- FreeBSD has a similar option called `TCP_NOPUSH`
+- when `TCP_CORK` is turned off any buffered data is sent immediately, but this is not the case for `TCP_NOPUSH`
 
 By default NGINX disable the use of `TCP_NOPUSH` option:
 
@@ -1131,11 +1137,17 @@ There are many opinions on this. My recommendation also says to set all to `on`.
 
   > _When set indicates to always queue non-full frames. Later the user clears this option and we transmit any pending partial frames in the queue. This is meant to be used alongside `sendfile()` to get properly filled frames when the user (for example) must write out headers with a `write()` call first and then use `sendfile` to send out the data parts. `TCP_CORK` can be set together with `TCP_NODELAY` and it is stronger than `TCP_NODELAY`._
 
+Summarizing:
+
+- `tcp_nodelay on;` is generaly at the odds with `tcp_nopush on;` as they are mutually exclusive
+- NGINX has special behavior that if you have `sendfile on;`, it uses `TCP_NOPUSH` for everything but the last package
+- and then turns `TCP_NOPUSH` off and enables `TCP_NODELAY` to avoid 200ms ACK delay
+
 So in fact, the most important changes are listed below:
 
 ```nginx
 sendfile on;
-tcp_nopush on;    # with this, the tcp_nodelay does not matter
+tcp_nopush on;    # with this, the tcp_nodelay does not really matter
 ```
 
 #### Request processing stages
