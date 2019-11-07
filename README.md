@@ -98,6 +98,7 @@
 
 - **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics"></a>
   * [Features and architecture](doc/HTTP_BASICS.md#features-and-architecture)
+  * [HTTP/2](doc/HTTP_BASICS.md#http2)
   * [URI vs URL](doc/HTTP_BASICS.md#uri-vs-url)
   * [HTTP Headers](doc/HTTP_BASICS.md#http-headers)
   * [HTTP Methods](doc/HTTP_BASICS.md#http-methods)
@@ -657,6 +658,7 @@ Existing chapters:
 <summary><b>HTTP Basics</b></summary><br>
 
   - [x] _Features and architecture_
+  - [x] _HTTP/2_
   - [x] _URI vs URL_
   - [x] _HTTP Headers_
   - [x] _HTTP Methods_

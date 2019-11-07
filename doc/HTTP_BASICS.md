@@ -4,6 +4,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
 
 - **[≡ HTTP Basics](#http-basics)**
   * [Features and architecture](#features-and-architecture)
+  * [HTTP/2](#http2)
   * [URI vs URL](#uri-vs-url)
   * [HTTP Headers](#http-headers)
   * [HTTP Methods](#http-methods)
@@ -22,7 +23,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
 
-HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
+Simply put, HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
 Some important information about HTTP:
 
@@ -77,6 +78,19 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 </p>
 
 <sup><i>This infographic comes from [www.ntu.edu.sg - HTTP (HyperText Transfer Protocol)](https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html).</i></sup>
+
+#### HTTP/2
+
+HTTP/2 is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
+
+I will not describe it because there are brilliant studies:
+
+- [RFC 7540 - HTTP/2](https://tools.ietf.org/html/rfc7540)
+- [HTTP/2 finalized - a quick overview](https://evertpot.com/http-2-finalized/)
+- [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2)
+- [HTTP/2: the difference between HTTP/1.1, benefits and how to use it](https://medium.com/@factoryhr/http-2-the-difference-between-http-1-1-benefits-and-how-to-use-it-38094fa0e95b)
+- [HTTP2 Explained](https://daniel.haxx.se/http2/)
+- [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 
 #### URI vs URL
 
