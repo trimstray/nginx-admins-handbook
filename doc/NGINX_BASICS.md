@@ -20,6 +20,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
     * [Multiple processes](#multiple-processes)
     * [Simultaneous connections](#simultaneous-connections)
     * [HTTP Keep-Alive connections](#http-keep-alive-connections)
+    * [sendfile, tcp_nodelay, and tcp_nopush](#sendfile-tcp_nodelay-and-tcp_nopush)
   * [Request processing stages](#request-processing-stages)
   * [Server blocks logic](#server-blocks-logic)
     * [Handle incoming connections](#handle-incoming-connections)
@@ -172,6 +173,10 @@ Some useful snippets for management of the NGINX daemon:
   /usr/local/etc/rc.d/nginx restart
   ```
 
+Something about testing configuration:
+
+  > You cannot test half-baked configurations, for example, you defined a server section for your domain in a separate file. Any attempt to test such a file will throw errors. The file has to be complete in all respects.
+
 #### Configuration syntax
 
   > **:bookmark: [Organising Nginx configuration - Base Rules - P2](RULES.md#beginner-organising-nginx-configuration)**<br>
@@ -256,6 +261,8 @@ Configuration options are called directives. We have four types of directives:
   ```nginx
   try_files $uri $uri/ /test/index.html;
   ```
+
+Valid directives begin with a variable name and then state an argument or series of arguments separated by spaces.
 
 Directives are organised into groups known as **blocks** or **contexts**. Generally, context is a block directive that can have other directives inside braces. It appears to be organised in a tree-like structure, defined by sets of brackets - `{` and `}`.
 
@@ -503,7 +510,12 @@ In general there are four types of event multiplexing:
 And the most efficient implementations of non-blocking I/O:
 
 - `epoll` - recommend if you're using GNU/Linux
-- `kqueue` - recommend if you're using BSD (is technically superior to `epoll`)
+
+- `kqueue` - recommend if you're using BSD (it is technically superior to `epoll`)
+
+The `select` method can be enabled or disabled using the `--with-select_module` or `--without-select_module` configuration parameter. Similarly, the `poll` method can be enabled or disabled using the `--with-poll_module` or `--without-poll_module` configuration parameter.
+
+  > `epoll` is an efficient method of processing connections available on Linux 2.6+. `kqueue` is an efficient method of processing connections available on FreeBSD 4.1+, OpenBSD 2.9+, and NetBSD 2.0+.
 
 There are also great resources (also makes comparisons) about them:
 
@@ -605,7 +617,7 @@ According to this: if you are running **4** worker processes with **4,096** work
 
   > At this point, I would like to mention about [Understanding socket and port in TCP](https://medium.com/fantageek/understanding-socket-and-port-in-tcp-2213dc2e9b0c). It is a great and short explanation. I also recommend to read [Theoretical maximum number of open TCP connections that a modern Linux box can have](https://stackoverflow.com/questions/2332741/what-is-the-theoretical-maximum-number-of-open-tcp-connections-that-a-modern-lin).
 
-I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. In my opinion, it is a mistake because certain of clients (e.g. browsers) **opens a number of parallel connections** (see [this](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) to confirm my words). Clients typically establish 4-8 TCP connections so that they can download resources in parallel (to download various components that compose a web page, for example, images, scripts, and so on). This increases the effective bandwidth and reduces latency.
+I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. In my opinion, it is a mistake because certain of clients (e.g. browsers which have different values for this) **opens a number of parallel connections** (see [this](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) to confirm my words). Clients typically establish 4-8 TCP connections so that they can download resources in parallel (to download various components that compose a web page, for example, images, scripts, and so on). This increases the effective bandwidth and reduces latency.
 
 Additionally, you must know that the `worker_connections` directive **includes all connections** per worker (e.g. connection structures are used for listen sockets, internal control sockets between NGINX processes, connections with proxied servers, and for upstream connections), not only incoming connections from clients.
 
@@ -815,6 +827,18 @@ for _pid in $(pgrep -f "nginx: [master,worker]") ; do
 done | xargs printf '%6s %10s\t%s\n%6s %10s\t%s\n' "PID" "SOFT" "HARD"
 ```
 
+or use the following:
+
+```bash
+# To determine the OS limits imposed on a process, read the file /proc/$pid/limits. $pid corresponds to the PID of the process:
+for _pid in $(pgrep -f "nginx: [master,worker]") ; do
+
+  echo -en ">>> $_pid\\n"
+  cat /proc/$_pid/limits
+
+done
+```
+
 To list the current open file descriptors for each NGINX process:
 
 ```bash
@@ -990,6 +1014,115 @@ server {
 ...
 
 }
+```
+
+##### `sendfile`, `tcp_nodelay`, and `tcp_nopush`
+
+Before starting read this chapter please review:
+
+- [Nginx optimization, understanding SENDFILE, TCP_NODELAY and TCP_NOPUSH](https://thoughts.t37.net/nginx-optimization-understanding-sendfile-tcp-nodelay-and-tcp-nopush-c55cdd276765)
+- [Nginx Tutorial #2: Performance](https://www.netguru.com/codestories/nginx-tutorial-performance)
+
+As you're making these changes, keep careful watch on your network traffic and see how each tweak impacts congestion.
+
+###### `sendfile`
+
+  > _By default, NGINX handles file transmission itself and copies the file into the buffer before sending it. Enabling the sendfile directive eliminates the step of copying the data into the buffer and enables direct copying data from one file descriptor to another._
+
+Normally, when a file needs to be sent, the following steps are required:
+
+- `malloc` - allocate a local buffer for storing object data
+- `read` - retrieve and copy the object into the local buffer
+- `write` - copy the object from the local buffer into the socket buffer
+
+Look at this great explanation (from [Nginx Tutorial #2: Performance](https://www.netguru.com/codestories/nginx-tutorial-performance)):
+
+  > _This involves two context switches (read, write) which make a second copy of the same object unnecessary. As you may see, it is not the optimal way. Thankfully, there is another system call that improves sending files, and it's called (surprise, surprise!): `sendfile(2)`. This call retrieves an object to the file cache, and passes the pointers (without copying the whole object) straight to the socket descriptor. Netflix states that using `sendfile(2)` increased the network throughput from [6Gbps to 30Gbps](https://people.freebsd.org/~rrs/asiabsd_2015_tls.pdf)._
+
+When a file is transferred by a process, the kernel first buffers the data and then sends the data to the process buffers. The process, in turn, sends the data to the destination.
+
+NGINX employs a solution that uses the `sendfile` system call to perform a zero-copy data flow from disk to socket and saves context switching from userspace on read/write. `sendfile` tell how NGINX buffers or reads the file (trying to stuff the contents directly into the network slot, or buffer its contents first).
+
+This method is an improved method of data transfer, in which data is copied between file descriptors within the OS kernel space, that is, without transferring data to the application buffers. No additional buffers or data copies are required, and the data never leaves the kernel memory address space.
+
+In my opinion enabling this really won't make any difference unless NGINX is reading from something which can be mapped into the virtual memory space like a file (i.e. the data is in the cache). But please... do not let me influence you because you should in the first place also be keeping an eye on this document: [Optimizing TLS for High–Bandwidth Applications in FreeBSD](https://people.freebsd.org/~rrs/asiabsd_2015_tls.pdf).
+
+By default NGINX disable the use of `sendfile`:
+
+```nginx
+# http, server, location, if in location contexts
+# To turn on sendfile (my recommendation):
+sendfile on;
+
+# To turn off sendfile:
+sendfile off;     # default
+```
+
+###### `tcp_nodelay`
+
+I recommend to read [The Caveats of TCP_NODELAY](https://eklitzke.org/the-caveats-of-tcp-nodelay) and [Rethinking the TCP Nagle Algorithm](http://ccr.sigcomm.org/archive/2001/jan01/ccr-200101-mogul.pdf). These great papers describes very interesting topics about `TCP_NODELAY` and `TCP_NOPUSH`.
+
+`tcp_nodelay` is used for disabling Nagle's algorithm (and then send the data as soon as it’s available) which is one mechanism for improving TCP efficiency by reducing the number of small packets sent over the network. If you set `tcp_nodelay on;`, NGINX adds the `TCP_NODELAY` options when opening a new socket.
+
+  > The option only affects keep-alive connections. Otherwise there is 100ms delay when NGINX sends response tail in the last incomplete TCP packet. Additionally, it is enabled on SSL connections, for unbuffered proxying, and for WebSocket proxying.
+
+Maybe you should think about enabling Nagle's algorithm (`tcp_nodelay off;`) but it really depends on what is your specific workload and dominant traffic patterns on a service. Typically LANs have less issues with traffic congestion as compared to the WANs. The Nagle algorithm is most effective if TCP/IP traffic is generated sporadically by user input, not by applications using stream oriented protocols like a HTTP traffic.
+
+So the recipe is simple:
+
+- small payloads
+- applications that require lower latency
+- non-interactive type of traffic
+
+There is no need for using Nagle's algorithm.
+
+You should also know [the Nagle’s algorithm author's interesting comment](https://news.ycombinator.com/item?id=9045125):
+
+  > _If you're doing bulk file transfers, you never hit that problem. If you're sending enough data to fill up outgoing buffers, there's no delay. If you send all the data and close the TCP connection, there's no delay after the last packet. If you do send, reply, send, reply, there's no delay. If you do bulk sends, there's no delay. If you do send, send, reply, there's a delay._
+
+And:
+
+  > _The real problem is ACK delays. The 200ms "ACK delay" timer is a bad idea that someone at Berkeley stuck into BSD around 1985 because they didn't really understand the problem. A delayed ACK is a bet that there will be a reply from the application level within 200ms. TCP continues to use delayed ACKs even if it's losing that bet every time._
+
+I think, if you are dealing with non-interactive type traffic or bulk transfers such as HTTP/web traffic then enabling `TCP_NODELAY` to disable Nagle's algorithm is unnecessary. This is especially relevant if you're running applications or environments that only sometimes have highly interactive traffic and chatty protocols.
+
+By default NGINX enable the use of `TCP_NODELAY` option:
+
+```nginx
+# http, server, location contexts
+# To turn on tcp_nodelay and at the same time to disable Nagle’s algorithm (my recommendation):
+tcp_nodelay on;   # default
+
+# To turn off tcp_nodelay and at the same time to enable Nagle’s algorithm:
+tcp_nodelay off;
+```
+
+###### `tcp_nopush`
+
+This option is only available if you are using `sendfile` (NGINX uses tcp_nopush for requests served with sendfile). It causes NGINX to attempt to send its HTTP response head in one packet, instead of using partial frames. This is useful for prepending headers before calling sendfile, or for throughput optimization.
+
+  > Normally, using `tcp_nopush` along with `sendfile` is very good. However, there are some cases where it can slow down things (specially from cache systems), so, run your own tests and find if it’s useful in that way.
+
+`tcp_nopush` enables `TCP_CORK` (more specifically, the `TCP_NOPUSH` socket option on FreeBSD or the `TCP_CORK` socket option on Linux) which aggressively accumulates data and which tells TCP to wait for the application to remove the cork before sending any packets.
+
+If `TCP_NOPUSH/TCP_CORK` is enabled in a socket, it will not send data until the buffer fills to a fixed limit (allows application to control building of packet, e.g pack a packet with full HTTP response). To read more about it and get into the details of this option I recommend [TCP_CORK: More than you ever wanted to know](https://baus.net/on-tcp_cork/).
+
+Once, I read that `tcp_nopush` is opposite to `tcp_nodelay`. I don't agree with that because, as I understand it, the first one aggregates data based on buffer pressure instead whereas Nagle's algorithm aggregates data while waiting for a return ACK, which the latter option disables.
+
+It may appear that `tcp_nopush` and `tcp_nodelay` are mutually exclusive but if all directives are turned on, NGINX manages them very wisely:
+
+- ensure packages are full before sending them to the client
+- for the last packet, `tcp_nopush` will be removed, allowing TCP to send it immediately, without the 200ms delay
+
+By default NGINX disable the use of `TCP_NOPUSH` option:
+
+```nginx
+# http, server, location contexts
+# To turn on tcp_nopush (my recommendation):
+tcp_nopush on;
+
+# To turn off tcp_nopush:
+tcp_nopush off;   # default
 ```
 
 #### Request processing stages

@@ -143,6 +143,7 @@
     * [Multiple processes](doc/NGINX_BASICS.md#multiple-processes)
     * [Simultaneous connections](doc/NGINX_BASICS.md#simultaneous-connections)
     * [HTTP Keep-Alive connections](doc/NGINX_BASICS.md#http-keep-alive-connections)
+    * [sendfile, tcp_nodelay, and tcp_nopush](doc/NGINX_BASICS.md#sendfile-tcp_nodelay-and-tcp_nopush)
   * [Request processing stages](doc/NGINX_BASICS.md#request-processing-stages)
   * [Server blocks logic](doc/NGINX_BASICS.md#server-blocks-logic)
     * [Handle incoming connections](doc/NGINX_BASICS.md#handle-incoming-connections)
@@ -708,6 +709,7 @@ Existing chapters:
     - [x] _Multiple processes_
     - [x] _Simultaneous connections_
     - [x] _HTTP Keep-Alive connections_
+    - [x] _sendfile, tcp_nodelay, and tcp_nopush_
   - _Server blocks logic_
     - [x] _Matching location_
       - [ ] _if in location_
@@ -1450,6 +1452,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://medium.freecodecamp.org/secure-your-web-application-with-these-http-headers-fd66e0367628"><b>Secure your web application with these HTTP headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://zinoui.com/blog/security-http-headers"><b>Security HTTP Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/weird_proxies/wiki"><b>Analysis of various reverse proxies, cache proxies, load balancers, etc.</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://howhttps.works/"><b>How HTTPS works ...in a comic!</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regular-expressions.info/"><b>Regular-Expressions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nickcraver.com/blog/2017/05/22/https-on-stack-overflow/#the-beginning"><b>HTTPS on Stack Overflow: The End of a Long Road</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.aosabook.org/en/nginx.html"><b>The Architecture of Open Source Applications - Nginx</b></a><br>
