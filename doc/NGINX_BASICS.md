@@ -1027,7 +1027,7 @@ As you're making these changes, keep careful watch on your network traffic and s
 
 ###### `sendfile`
 
-  > _By default, NGINX handles file transmission itself and copies the file into the buffer before sending it. Enabling the sendfile directive eliminates the step of copying the data into the buffer and enables direct copying data from one file descriptor to another._
+  > _By default, NGINX handles file transmission itself and copies the file into the buffer before sending it. Enabling the `sendfile` directive eliminates the step of copying the data into the buffer and enables direct copying data from one file descriptor to another._
 
 Normally, when a file needs to be sent, the following steps are required:
 
@@ -1068,9 +1068,9 @@ I recommend to read [The Caveats of TCP_NODELAY](https://eklitzke.org/the-caveat
 
 Maybe you should think about enabling Nagle's algorithm (`tcp_nodelay off;`) but it really depends on what is your specific workload and dominant traffic patterns on a service. `tcp_nodelay on;` is more reasonable for the modern web, the whole delay business of TCP was reasonable for terminals. Typically LANs have less issues with traffic congestion as compared to the WANs. The Nagle algorithm is most effective if TCP/IP traffic is generated sporadically by user input, not by applications using stream oriented protocols like a HTTP traffic.
 
-So, for me the recipe is simple:
+So, for me, the recipe is simple:
 
-- small payloads
+- bulk sends or HTTP traffic
 - applications that require lower latency
 - non-interactive type of traffic
 
@@ -1084,7 +1084,7 @@ And:
 
   > _The real problem is ACK delays. The 200ms "ACK delay" timer is a bad idea that someone at Berkeley stuck into BSD around 1985 because they didn't really understand the problem. A delayed ACK is a bet that there will be a reply from the application level within 200ms. TCP continues to use delayed ACKs even if it's losing that bet every time._
 
-I think, if you are dealing with non-interactive type traffic or bulk transfers such as HTTP/web traffic then enabling `TCP_NODELAY` to disable Nagle's algorithm is unnecessary. This is especially relevant if you're running applications or environments that only sometimes have highly interactive traffic and chatty protocols.
+I think, if you are dealing with non-interactive type of traffic or bulk transfers such as HTTP/web traffic then enabling `TCP_NODELAY` to disable Nagle's algorithm may be useful (is the default behavior of the NGINX). This is especially relevant if you're running applications or environments that only sometimes have highly interactive traffic and chatty protocols.
 
 By default NGINX enable the use of `TCP_NODELAY` option:
 
