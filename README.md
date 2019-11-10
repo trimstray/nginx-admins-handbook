@@ -1279,6 +1279,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/lebinh/nginx-conf"><b>A collection of useful Nginx configuration snippets</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/wmnnd/nginx-certbot"><b>Boilerplate configuration for nginx and certbot with docker-compose</b></a><br>
 </p>
 
 ##### Performance & Hardening
