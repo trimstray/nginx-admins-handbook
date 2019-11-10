@@ -929,7 +929,7 @@ Look also at this example that shows how a Keep-Alive header could be used:
    |                             |                              |
 ```
 
-NGINX official documentation say:
+NGINX official documentation says:
 
   > _All connections are independently negotiated. The client indicates a timeout of 600 seconds (10 minutes), but the proxy is only prepared to retain the connection for at least 120 seconds (2 minutes). On the link between proxy and server, the proxy requests a timeout of 1200 seconds and the server reduces this to 300 seconds. As this example shows, the timeout policies maintained by the proxy are different for each connection. Each connection hop is independent._
 
@@ -1133,7 +1133,7 @@ tcp_nopush off;   # default
 
 ###### Mixing all together
 
-There are many opinions on this. My recommendation also says to set all to `on`. However, I quote an interesting comment ([Mixing sendfile, tcp_nodelay and tcp_nopush illogical?](https://github.com/denji/nginx-tuning/issues/5)) that should dispel any doubts:
+There are many opinions on this. My recommendation is to set all to `on`. However, I quote an interesting comment ([Mixing sendfile, tcp_nodelay and tcp_nopush illogical?](https://github.com/denji/nginx-tuning/issues/5)) that should dispel any doubts:
 
   > _When set indicates to always queue non-full frames. Later the user clears this option and we transmit any pending partial frames in the queue. This is meant to be used alongside `sendfile()` to get properly filled frames when the user (for example) must write out headers with a `write()` call first and then use `sendfile` to send out the data parts. `TCP_CORK` can be set together with `TCP_NODELAY` and it is stronger than `TCP_NODELAY`._
 
@@ -1811,7 +1811,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
   }
   ```
 
-- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. The NGINX docs say:
+- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. The NGINX docs says:
 
   > _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
 
@@ -2280,7 +2280,7 @@ http {
 
 This is one of the greatest feature of the NGINX. In simplest terms, a reverse proxy is a server that comes in-between internal applications and external clients, forwarding client requests to the appropriate server. It takes a client request, passes it on to one or more servers, and subsequently delivers the server’s response back to the client.
 
-Official NGINX documentation say:
+Official NGINX documentation says:
 
   > _Proxying is typically used to distribute the load among several servers, seamlessly show content from different websites, or pass requests for processing to application servers over protocols other than HTTP._
 
