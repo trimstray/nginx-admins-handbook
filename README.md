@@ -1401,6 +1401,7 @@ _In this ebook you will learn:_
 ##### Development
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="http://agentzh.org/misc/code/nginx/"><b>Sample ebook generated from NGINX source code.</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.lua.org/pil/contents.html"><b>Programming in Lua (first edition)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://www.londonlua.org/scripting_nginx_with_lua/"><b>Scripting Nginx with Lua</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.evanmiller.org/nginx-modules-guide.html"><b>Emiller’s Guide To Nginx Module Development</b></a><br>
