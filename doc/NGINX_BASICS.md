@@ -390,7 +390,7 @@ Before start reading next chapters you should know what regular expressions are 
 
 Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skills of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
-NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives. Below is something interesting:
+NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives. Below is also something interesting:
 
 - [Learn PCRE in Y minutes](https://learnxinyminutes.com/docs/pcre/)
 - [PCRE Regex Cheatsheet](https://www.debuggex.com/cheatsheet/regex/pcre)
@@ -398,6 +398,7 @@ NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipula
 - [Regex cheatsheet](https://remram44.github.io/regex-cheatsheet/regex.html)
 - [Regular expressions in Perl](http://jkorpela.fi/perl/regexp.html)
 - [Regexp Security Cheatsheet](https://github.com/attackercan/regexp-security-cheatsheet)
+- [A regex cheatsheet for all those regex haters (and lovers)](https://dev.to/catherinecodes/a-regex-cheatsheet-for-all-those-regex-haters-and-lovers--2cj1)
 
 You can also use external tools for testing regular expressions. For more please see [online tools](https://github.com/trimstray/nginx-admins-handbook#online-tools) chapter.
 

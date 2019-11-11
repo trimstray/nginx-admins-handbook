@@ -1819,6 +1819,23 @@ location ~* ^.*(\.(?:git|svn|htaccess))$ {
 location ~ /\.(?!well-known\/) {
 
   deny all;
+  access_log /var/log/nginx/hidden-files.log main;
+
+}
+
+# Think also about the following rule (I haven't tested this but looks interesting). It comes from:
+#   - https://github.com/h5bp/server-configs-nginx/blob/master/h5bp/location/security_file_access.conf
+location ~* (?:#.*#|\.(?:bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)$ {
+
+  deny all;
+
+}
+
+# Based on the above:
+location ~* ^.*(\.(?:git|svn|bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op]|htaccess))$ {
+
+  deny all;
+  access_log /var/log/nginx/restricted-files.log main;
 
 }
 ```
