@@ -309,7 +309,7 @@ server {
   > - only one `server_name` definition, and...
   > - preventively I add it at the beginning of the configuration
 
-  > Also good point is `return 444;` for default server name because this will close the connection and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
+  > Also good point is `return 444;` for default server name because this will close the connection (which will kill the connection without sending any headers) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
 
 ###### Example
 
@@ -1784,6 +1784,14 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
   > Sensitive resources contains items that abusers can use to fully recreate the source code used by the site and look for bugs, vulnerabilities, and exposed passwords.
 
+  > In my opinion, a return 403 (or even a 404, as the [RFC2616 - 10.4.4 403 Forbidden](https://tools.ietf.org/html/rfc2616#section-10.4.4) suggests for purposes of no information disclosure) is less error prone if you know the resource should under no circumstances be accessed via http, even if "authorized" in a general context.
+
+  > NGINX process request in phases. `return` directive is from rewrite module, and `deny` is from access module. Rewrite module is processed in `NGX_HTTP_REWRITE_PHASE` phase (for `return` in `location` context), the access module is processed in `NGX_HTTP_ACCESS_PHASE` phase, rewrite phase (where `return` belongs) happens before access phase (where `deny` works), thus `return` stops request processing and returns 301 in rewrite phase.
+
+  > `deny all` will have the same consequence but leaves the possibilities of slip-ups. The issue is illustrated in [this](https://serverfault.com/questions/748320/protecting-a-location-by-ip-while-applying-basic-auth-everywhere-else/748373#748373) answer, suggesting not using the `satisfy` + `allow` + `deny` at `server { ... }` level because of inheritance.
+
+  > On the other hand, according to the NGINX documentation: _The `ngx_http_access_module` module allows limiting access to certain client addresses._ More specifically, you can't restrict access to another module (`return` is more used when you want to return other codes, not block access).
+
 ###### Example
 
 ```nginx
@@ -1818,6 +1826,7 @@ location ~ /\.(?!well-known\/) {
 ###### External resources
 
 - [Hidden directories and files as a source of sensitive information about web application](https://github.com/bl4de/research/tree/master/hidden_directories_leaks)
+- [1% of CMS-Powered Sites Expose Their Database Passwords](https://feross.org/cmsploit/)
 
 #### :beginner: Hide Nginx version number
 
