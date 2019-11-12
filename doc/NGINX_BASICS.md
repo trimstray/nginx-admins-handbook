@@ -1812,7 +1812,7 @@ The `ngx_http_rewrite_module` also provides additional directives:
   }
   ```
 
-- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. The NGINX docs says:
+- `if` - you can use `if` inside a `server` but not the other way around, also notice that you shouldn't use `if` inside `location` as it may not work as desired. For example, `if` statements aren't a good way of setting custom headers because they may cause statements outside the if block to be ignored. The NGINX docs says:
 
   > _There are cases where you simply cannot avoid using an `if`, for example if you need to test a variable which has no equivalent directive._
 
@@ -2656,9 +2656,13 @@ If you want to read about custom headers, take a look at [Why we need to depreca
 
   > **:bookmark: [Set and pass Host header only with $host variable - Reverse Proxy - P2](#beginner-set-and-pass-host-header-only-with-host-variable)**
 
-The `Host` header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
+The `Host` header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
 
-In NGINX, `$host` equals `$http_host`, lowercase and without the port number (if present), except when `HTTP_HOST` is absent or is an empty value. In that case, `$host` equals the value of the `server_name` directive of the server which processed the request
+In NGINX, `$host` equals `$http_host`, lowercase and without the port number (if present), except when `HTTP_HOST` is absent or is an empty value. In that case, `$host` equals the value of the `server_name` directive of the server which processed the request.
+
+But look at this:
+
+  > _An unchanged "Host" request header field can be passed with `$http_host`. However, if this field is not present in a client request header then nothing will be passed. In such a case it is better to use the `$host` variable - its value equals the server name in the "Host" request header field or the primary server name if this field is not present._
 
 For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be `MASTER:8080` as it just reflects the whole header).
 
