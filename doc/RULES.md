@@ -2575,6 +2575,12 @@ ssl_prefer_server_ciphers on;
 
   > You should put the `gzip_static on;` inside the blocks that configure static files, but if you’re only running one site, it’s safe to just put it in the http block.
 
+  > I also highly recommend you read this (it's interesting observation about gzip and performance by [Barry Pollard](https://serverfault.com/users/268936/barry-pollard)):
+  >
+  > _To be honest gzip is not very processor intensive these days and gzipping on the fly (and then unzipping in the browser) is often the norm. It’s something web browsers are very good at._
+  >
+  > _So unless you are getting huge volumes of traffic you’ll probably not notice any performance or CPU load impact due to on the fly gzipping for most web files._
+
 ###### Example
 
 ```nginx

@@ -3665,25 +3665,29 @@ ln -sf /usr/local/bin/goaccess /usr/bin/goaccess
 ###### Analyse log file and enable all recorded statistics
 
 ```bash
-goaccess -f access.log -a
+_fd="access.log"
+goaccess -f "$_fd" -a
 ```
 
 ###### Analyse compressed log file
 
 ```bash
-zcat access.log.1.gz | goaccess -a -p /etc/goaccess/goaccess.conf
+_fd="access.log.1.gz"
+zcat "$_fd" | goaccess -a -p /etc/goaccess/goaccess.conf
 ```
 
 ###### Analyse log file remotely
 
 ```bash
-ssh user@remote_host 'access.log' | goaccess -a
+_fd="access.log"
+ssh user@remote_host "$_fd" | goaccess -a
 ```
 
 ###### Analyse log file and generate html report
 
 ```bash
-goaccess -p /etc/goaccess/goaccess.conf -f access.log --log-format=COMBINED -o /var/www/index.html
+_fd="access.log"
+goaccess -p /etc/goaccess/goaccess.conf -f "$_fd" --log-format=COMBINED -o /var/www/index.html
 ```
 
 ##### Ngxtop
@@ -3691,19 +3695,22 @@ goaccess -p /etc/goaccess/goaccess.conf -f access.log --log-format=COMBINED -o /
 ###### Analyse log file
 
 ```bash
-ngxtop -l access.log
+_fd="access.log"
+ngxtop -l "$_fd"
 ```
 
 ###### Analyse log file and print requests with 4xx and 5xx
 
 ```bash
-ngxtop -l access.log -i 'status >= 400' print request status
+_fd="access.log"
+ngxtop -l "$_fd" -i 'status >= 400' print request status
 ```
 
 ###### Analyse log file remotely
 
 ```bash
-ssh user@remote_host tail -f access.log | ngxtop -f combined
+_fd="access.log"
+ssh user@remote_host tail -f "$_fd" | ngxtop -f combined
 ```
 
 #### Testing
@@ -5125,7 +5132,8 @@ nginx -V 2>&1 | grep -- 'http_geoip_module'
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "IP_ADDRESS"
-awk '{print $1}' access.log | sort | uniq -c | sort -nr
+_fd="access.log"
+awk '{print $1}' "$_fd" | sort | uniq -c | sort -nr
 ```
 
 ##### Show the top 5 visitors (IP addresses)
@@ -5133,7 +5141,8 @@ awk '{print $1}' access.log | sort | uniq -c | sort -nr
 ```bash
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%10s%20s\n%10s%10s%20s\n' "NUM" "AMOUNT" "IP_ADDRESS"
-cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
+_fd="access.log"
+cut -d ' ' -f1 "$_fd" | sort | uniq -c | sort -nr | head -5 | nl
 ```
 
 ##### Show the most requested urls
@@ -5142,7 +5151,8 @@ cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head -5 | nl
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
+_fd="access.log"
+awk -F\" '{print $2}' "$_fd" | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
 ##### Show the most requested urls containing 'string'
@@ -5151,7 +5161,8 @@ awk -F\" '{print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | uniq -c | sort -nr
+_fd="access.log"
+awk -F\" '($2 ~ "/string") {print $2}' "$_fd" | awk '{print $2}' | sort | uniq -c | sort -nr
 ```
 
 ##### Show the most requested urls with http methods
@@ -5160,7 +5171,8 @@ awk -F\" '($2 ~ "/string") { print $2}' access.log | awk '{print $2}' | sort | u
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s %8s\t%s\n%10s %8s\t%s\n' "AMOUNT" "METHOD" "URL"
-awk -F\" '{print $2}' access.log | awk '{print $1 "\t" $2}' | sort | uniq -c | sort -nr
+_fd="access.log"
+awk -F\" '{print $2}' "$_fd" | awk '{print $1 "\t" $2}' | sort | uniq -c | sort -nr
 ```
 
 ##### Show the most accessed response codes
@@ -5169,19 +5181,22 @@ awk -F\" '{print $2}' access.log | awk '{print $1 "\t" $2}' | sort | uniq -c | s
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "HTTP_CODE"
-awk '{print $9}' access.log | sort | uniq -c | sort -nr
+_fd="access.log"
+awk '{print $9}' "$_fd" | sort | uniq -c | sort -nr
 ```
 
 ##### Analyse web server log and show only 2xx http codes
 
 ```bash
-tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [2]"
+_fd="access.log"
+tail -n 100 -f "$_fd" | grep "HTTP/[1-2].[0-1]\" [2]"
 ```
 
 ##### Analyse web server log and show only 5xx http codes
 
 ```bash
-tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
+_fd="access.log"
+tail -n 100 -f "$_fd" | grep "HTTP/[1-2].[0-1]\" [5]"
 ```
 
 ##### Show requests which result 502 and sort them by number per requests by url
@@ -5190,7 +5205,8 @@ tail -n 100 -f access.log | grep "HTTP/[1-2].[0-1]\" [5]"
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
+_fd="access.log"
+awk '($9 ~ /502/)' "$_fd" | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
 ##### Show requests which result 404 for php files and sort them by number per requests by url
@@ -5199,31 +5215,36 @@ awk '($9 ~ /502/)' access.log | awk '{print $7}' | sort | uniq -c | sort -nr
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "URL"
-awk '($9 ~ /401/)' access.log | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -nr
+_fd="access.log"
+awk '($9 ~ /401/)' "$_fd" | awk -F\" '($2 ~ "/*.php")' | awk '{print $7}' | sort | uniq -c | sort -nr
 ```
 
 ##### Calculating amount of http response codes
 
 ```bash
 # Not less than 1 minute:
-tail -2000 access.log | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M") '$4 ~ date' | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
+_fd="access.log"
+tail -2000 "$_fd" | awk -v date=$(date -d '1 minutes ago' +"%d/%b/%Y:%H:%M") '$4 ~ date' | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 
 # Last 2000 requests from log file:
 # - add this to the end for print header:
 #   ... | xargs printf '%10s\t%s\n%10s\t%s\n' "AMOUNT" "HTTP_CODE"
-tail -2000 access.log | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
+_fd="access.log"
+tail -2000 "$_fd" | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 ```
 
 ##### Calculating requests per second
 
 ```bash
 # In real time:
-tail -F access.log | pv -lr >/dev/null
+_fd="access.log"
+tail -F "$_fd" | pv -lr >/dev/null
 
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP_ADDRESS"
-awk '{print $4}' access.log | uniq -c | sort -nr | tr -d "["
+_fd="access.log"
+awk '{print $4}' "$_fd" | uniq -c | sort -nr | tr -d "["
 ```
 
 ##### Calculating requests per second with IP addresses
@@ -5232,7 +5253,8 @@ awk '{print $4}' access.log | uniq -c | sort -nr | tr -d "["
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP_ADDRESS"
-awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
+_fd="access.log"
+awk '{print $4 " " $1}' "$_fd" | uniq -c | sort -nr | tr -d "["
 ```
 
 ##### Calculating requests per second with IP addresses and urls
@@ -5241,49 +5263,59 @@ awk '{print $4 " " $1}' access.log | uniq -c | sort -nr | tr -d "["
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\t%s\n%10s%24s%18s\t%s\n' "AMOUNT" "DATE" "IP_ADDRESS" "URL"
-awk '{print $4 " " $1 " " $7}' access.log | uniq -c | sort -nr | tr -d "["
+_fd="access.log"
+awk '{print $4 " " $1 " " $7}' "$_fd" | uniq -c | sort -nr | tr -d "["
 ```
 
 ##### Get entries within last n hours
 
 ```bash
-awk -v _date=`date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S` ' { if ($4 > _date) print $0}' access.log
+_fd="access.log"
+awk -v _date=`date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S` ' { if ($4 > _date) print $0}' "$_fd"
 
 # date command shows output for specific locale, for prevent this you should set LANG variable:
-awk -v _date=$(LANG=en_us.utf-8 date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' access.log
+_fd="access.log"
+awk -v _date=$(LANG=en_us.utf-8 date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' "$_fd"
 
 # or:
+_fd="access.log"
 export LANG=en_us.utf-8
-awk -v _date=$(date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' access.log
+awk -v _date=$(date -d 'now-6 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _date) print $0}' "$_fd"
 ```
 
 ##### Get entries between two timestamps (range of dates)
 
 ```bash
 # 1)
-awk '$4>"[05/Feb/2019:02:10" && $4<"[15/Feb/2019:08:20"' access.log
+_fd="access.log"
+awk '$4>"[05/Feb/2019:02:10" && $4<"[15/Feb/2019:08:20"' "$_fd"
 
 # 2)
 # date command shows output for specific locale, for prevent this you should set LANG variable:
-awk -v _dateB=$(LANG=en_us.utf-8 date -d '10:20' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(LANG=en_us.utf-8 date -d '20:30' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+_fd="access.log"
+awk -v _dateB=$(LANG=en_us.utf-8 date -d '10:20' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(LANG=en_us.utf-8 date -d '20:30' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' "$_fd"
 
 # or:
+_fd="access.log"
 export LANG=en_us.utf-8
-awk -v _dateB=$(date -d '10:20' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d '20:30' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+awk -v _dateB=$(date -d '10:20' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d '20:30' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' "$_fd"
 
 # 3)
 # date command shows output for specific locale, for prevent this you should set LANG variable:
-awk -v _dateB=$(LANG=en_us.utf-8 date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(LANG=en_us.utf-8 date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+_fd="access.log"
+awk -v _dateB=$(LANG=en_us.utf-8 date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(LANG=en_us.utf-8 date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' "$_fd"
 
 # or:
+_fd="access.log"
 export LANG=en_us.utf-8
-awk -v _dateB=$(date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' access.log
+awk -v _dateB=$(date -d 'now-12 hours' +[%d/%b/%Y:%H:%M:%S) -v _dateE=$(date -d 'now-2 hours' +[%d/%b/%Y:%H:%M:%S) ' { if ($4 > _dateB && $4 < _dateE) print $0}' "$_fd"
 ```
 
 ##### Get line rates from web server log
 
 ```bash
-tail -F access.log | pv -N RAW -lc 1>/dev/null
+_fd="access.log"
+tail -F "$_fd" | pv -N RAW -lc 1>/dev/null
 ```
 
 ##### Trace network traffic for all processes
