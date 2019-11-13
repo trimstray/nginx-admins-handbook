@@ -31,6 +31,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
     * [root vs alias](#root-vs-alias)
     * [internal directive](#internal-directive)
     * [External and internal redirects](#external-and-internal-redirects)
+    * [Allow and deny](#allow-and-deny)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -1708,14 +1709,15 @@ I use `return` directive in the following cases:
   }
   ```
 
-- and sometimes for reply with HTTP code without serving a file or body:
+- and sometimes for reply with HTTP code without serving a file or response body:
 
   ```nginx
   server {
 
     ...
 
-    # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response):
+    # NGINX will not allow a 200 with no response body (200's need to be with a resource in the response.
+    # '204 No Content' is meant to say "I've completed the request, but there is no body to return"):
     return 204 "it's all okay";
     # Or without body:
     return 204;
@@ -2075,6 +2077,46 @@ redirects is when using the `rewrite` directive, which allows you to rewrite the
 request URI
 
 - **sub-requests** - additional requests that are triggered internally to generate (insert or append to the body of the original request) content that is complementary to the main request (`addition` or `ssi` modules)
+
+##### Allow and deny
+
+Both comes from the `ngx_http_access_module` module allows limiting access to certain client addresses. You can combining `allow/deny` rules
+
+The easiest path would be to start out by denying all access, then only granting access to those locations you want.
+
+  > `deny` will always return 403 error code.
+
+Both directives may work unexpectedly! Look at the following example:
+
+```nginx
+server {
+
+  server_name example.com;
+
+  deny all;
+
+  location = /test {
+    return 200 "it's all okay";
+    more_set_headers 'Content-Type: text/plain';
+  }
+
+}
+```
+
+If you generate reqeust:
+
+```bash
+curl -i https://example.com
+HTTP/2 200
+date: Wed, 11 Nov 2018 10:02:45 GMT
+content-length: 13
+server: Unknown
+content-type: text/plain
+
+it's all okay
+```
+
+Why? Look at [Request processing stages](doc/NGINX_BASICS.md#request-processing-stages) chapter. That's because NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works).
 
 #### Log files
 

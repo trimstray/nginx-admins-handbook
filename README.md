@@ -155,6 +155,7 @@
     * [root vs alias](doc/NGINX_BASICS.md#root-vs-alias)
     * [internal directive](doc/NGINX_BASICS.md#internal-directive)
     * [External and internal redirects](doc/NGINX_BASICS.md#external-and-internal-redirects)
+    * [Allow and deny](doc/NGINX_BASICS.md#allow-and-deny)
   * [Log files](doc/NGINX_BASICS.md#log-files)
     * [Conditional logging](doc/NGINX_BASICS.md#conditional-logging)
     * [Manually log rotation](doc/NGINX_BASICS.md#manually-log-rotation)
@@ -722,6 +723,7 @@ Existing chapters:
     - [x] _root vs alias_
     - [x] _internal directive_
     - [x] _External and internal redirects_
+    - [x] _Allow and deny_
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_
