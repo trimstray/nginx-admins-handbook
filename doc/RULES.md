@@ -514,6 +514,8 @@ server {
 
   > `geo` module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
 
+  > If you use `*ACCESS_PHASE` (e.g. `allow/deny` directives) remember that NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works). See [Allow and deny](NGINX_BASICS.md#allow-and-deny) chapter to learn more.
+
   > I use both modules for a large lists. You should've thought about it because this rule requires to use several `if` conditions. I think that `allow/deny` directives are better solution for simple lists, after all. Take a look at the example below:
 
 ```nginx
