@@ -2086,6 +2086,8 @@ The easiest path would be to start out by denying all access, then only granting
 
   > `deny` will always return 403 error code.
 
+Putting `satisfy any;` in your configuration tells NGINX to accept either http authentication, or IP restriction. By default, when you define both, it will expect both.
+
 Both directives may work unexpectedly! Look at the following example:
 
 ```nginx
