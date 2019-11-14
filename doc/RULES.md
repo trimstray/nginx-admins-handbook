@@ -3095,6 +3095,8 @@ location ^~ /a/ {
 
   > You should almost always use `$host` as a incoming host variable, because it's the only one guaranteed to have something sensible regardless of how the user-agent behaves, unless you specifically need the semantics of one of the other variables.
 
+  > It’s always a good idea to modify the `Host` header to make sure that the virtual host resolution on the downstream server works as it should.
+
   > `$host` is simply `$http_host` with some processing (stripping port number and lowercasing) and a default value (of the `server_name`), so there's no less "exposure" to the `Host` header sent by the client when using `$http_host`. There's no danger in this though.
 
   > The variable `$host` is the host name from the request line or the http header. The variable `$server_name` is the name of the server block we are in right now.

@@ -2156,6 +2156,28 @@ Take a look at the following table:
 | `https://example.com/foo/bar?do=test` | `/foo/bar?do=test` | `/foo/bar` |
 | `https://example.com/rfc2616-sec3.html#sec3.2` | `/rfc2616-sec3.html` | `/rfc2616-sec3.html` |
 
+Remember:
+
+  > Another way to repeat the location is to use the `proxy_pass` directive.
+
+Which is quite easy:
+
+```nginx
+location /app/ {
+
+  proxy_pass http://127.0.0.1:5000;
+
+  # or:
+  proxy_pass http://127.0.0.1:5000/api/app/;
+
+}
+```
+
+| <b>LOCATION</b> | <b><code>proxy_pass</code></b> | <b>REQUEST</b> | <b>RECEIVED BY UPSTREAM</b> |
+| :---         | :---         | :---         |
+| `/app/` | `http://localhost:5000/api$request_uri` | `/app/foo?bar=baz` | `/api/webapp/foo?bar=baz` |
+| `/app/` | `http://localhost:5000/api$uri` | `/app/foo?bar=baz` | `/api/webapp/foo` |
+
 #### Log files
 
   > **:bookmark: [Use custom log formats - Debugging - P4](RULES.md#beginner-use-custom-log-formats)**
@@ -2637,6 +2659,20 @@ As stated in NGINX documentation if `proxy_pass` used without URI (i.e. without 
 
 Look also at the configuration snippets: [Using trailing slashes](#using-trailing-slashes).
 
+Below are additional examples:
+
+| <b>LOCATION</b> | <b>PROXY_PASS</b> | <b>REQUEST</b> | <b>RECEIVED BY UPSTREAM</b> |
+| :---         | :---         | :---         | :---         |
+| `/app/` | `http://localhost:5000/api/` | `/app/foo?bar=baz` | `/api/foo?bar=baz` |
+| `/app/` | `http://localhost:5000/api` | `/app/foo?bar=baz` | `/apifoo?bar=baz` |
+| `/app` | `http://localhost:5000/api/` | `/app/foo?bar=baz` | `/api//foo?bar=baz` |
+| `/app` | `http://localhost:5000/api` | `/app/foo?bar=baz` | `/api/foo?bar=baz` |
+| `/app` | `http://localhost:5000/api` | `/appfoo?bar=baz` | `/apifoo?bar=baz` |
+
+In other words:
+
+  > You usually always want a trailing slash, never want to mix with and without trailing slash, and only want without trailing slash when you want to concatenate a certain path component together (which I guess is quite rarely the case). Note how query parameters are preserved.
+
 ##### Passing headers
 
   > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
@@ -2678,7 +2714,7 @@ Ok, so look at following short explanation about proxy directives (for more info
   proxy_cache_bypass  $http_upgrade;
   ```
 
-- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (overrides the error page on the backend side):
+- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (as opposed to the error page on the backend side):
 
   ```nginx
   proxy_intercept_errors on;
