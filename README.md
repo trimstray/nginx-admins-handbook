@@ -156,6 +156,7 @@
     * [internal directive](doc/NGINX_BASICS.md#internal-directive)
     * [External and internal redirects](doc/NGINX_BASICS.md#external-and-internal-redirects)
     * [Allow and deny](doc/NGINX_BASICS.md#allow-and-deny)
+    * [uri vs request_uri](doc/NGINX_BASICS.md#uri-vs-request_uri)
   * [Log files](doc/NGINX_BASICS.md#log-files)
     * [Conditional logging](doc/NGINX_BASICS.md#conditional-logging)
     * [Manually log rotation](doc/NGINX_BASICS.md#manually-log-rotation)
@@ -725,6 +726,7 @@ Existing chapters:
     - [x] _internal directive_
     - [x] _External and internal redirects_
     - [x] _Allow and deny_
+    - [x] _uri vs request_uri_
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_

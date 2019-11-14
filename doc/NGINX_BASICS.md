@@ -32,6 +32,7 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
     * [internal directive](#internal-directive)
     * [External and internal redirects](#external-and-internal-redirects)
     * [Allow and deny](#allow-and-deny)
+    * [uri vs request_uri](#uri-vs-request_uri)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -2119,6 +2120,41 @@ it's all okay
 ```
 
 Why? Look at [Request processing stages](doc/NGINX_BASICS.md#request-processing-stages) chapter. That's because NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works).
+
+##### `uri` vs `request_uri`
+
+  > **:bookmark: [Use `$request_uri` to avoid using regular expressions - Performance - P2](RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)**
+
+`$request_uri` is the original request (for example, `/foo/bar.php?arg=baz` includes arguments and can't be modified) but `$uri` refers to the altered URI so `$uri` is not equivalent to `$request_uri`.
+
+See [this](https://stackoverflow.com/a/48709976) great and short explanation by [Richard Smith](https://stackoverflow.com/users/4862445/richard-smith):
+
+  > The `$uri` variable is set to the URI that NGINX is currently processing - but it is also subject to normalisation, including:
+  >
+  > - removal of the `?` and query string
+  > - consecutive `/` characters are replace by a single `/`
+  > - URL encoded characters are decoded
+  >
+  > The value of `$request_uri` is always the original URI and is not subject to any of the above normalisations.
+  >
+  > Most of the time you would use `$uri`, because it is normalised. Using `$request_uri` in the wrong place can cause URL encoded characters to become doubly encoded.
+
+Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC2616](https://tools.ietf.org/html/rfc2616#section-3.2.2) for the URL.
+
+```
+http_URL = "http(s):" "//" host [ ":" port ] [ abs_path [ "?" query ]]
+```
+
+Take a look at the following table:
+
+| <b>URL</b> | <b><code>$request_uri</code></b> | <b><code>$uri</code></b> |
+| :---         | :---         | :---         |
+| `https://example.com/foo` | `/foo` | `/foo` |
+| `https://example.com/foo/bar` | `/foo/bar` | `/foo/bar` |
+| `https://example.com/foo/bar/` | `/foo/bar/` | `/foo/bar/` |
+| `https://example.com/foo/bar?` | `/foo/bar?` | `/foo/bar` |
+| `https://example.com/foo/bar?do=test` | `/foo/bar?do=test` | `/foo/bar` |
+| `https://example.com/rfc2616-sec3.html#sec3.2` | `/rfc2616-sec3.html` | `/rfc2616-sec3.html` |
 
 #### Log files
 
