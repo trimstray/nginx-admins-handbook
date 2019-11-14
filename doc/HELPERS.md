@@ -77,6 +77,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
     * [Get the list of configure arguments](#get-the-list-of-configure-arguments)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
     * [Show the most accessed IP addresses](#show-the-most-accessed-ip-addresses)
+    * [Show the most accessed IP addresses (method, code, ip, and domain)](#show-the-most-accessed-ip-addresses-method-code-ip-and-domain)
     * [Show the top 5 visitors (IP addresses)](#show-the-top-5-visitors-ip-addresses)
     * [Show the most requested urls](#show-the-most-requested-urls)
     * [Show the most requested urls containing 'string'](#show-the-most-requested-urls-containing-string)
@@ -5134,6 +5135,16 @@ nginx -V 2>&1 | grep -- 'http_geoip_module'
 #   ... | xargs printf '%10s%20s\n%10s%20s\n' "AMOUNT" "IP_ADDRESS"
 _fd="access.log"
 awk '{print $1}' "$_fd" | sort | uniq -c | sort -nr
+```
+
+##### Show the most accessed IP addresses (method, code, ip, and domain)
+
+```bash
+# - add `head -n X` to the end to limit the result
+# - add this to the end for print header:
+#   ... | xargs printf '%10s%10s%10s%20s\t%s\n%10s%10s%10s%20s\t%s\n' "AMOUNT" "METHOD" "CODE" "IP" "DOMAIN"
+_fd="access.log"
+awk '{print $6 "\" " $9 " " $1 " " $7}' "$_fd" | sort | uniq -c | sort -nr
 ```
 
 ##### Show the top 5 visitors (IP addresses)
