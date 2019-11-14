@@ -2174,7 +2174,7 @@ location /app/ {
 ```
 
 | <b>LOCATION</b> | <b><code>proxy_pass</code></b> | <b>REQUEST</b> | <b>RECEIVED BY UPSTREAM</b> |
-| :---         | :---         | :---         |
+| :---         | :---         | :---         | :---         |
 | `/app/` | `http://localhost:5000/api$request_uri` | `/app/foo?bar=baz` | `/api/webapp/foo?bar=baz` |
 | `/app/` | `http://localhost:5000/api$uri` | `/app/foo?bar=baz` | `/api/webapp/foo` |
 
