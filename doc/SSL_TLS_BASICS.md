@@ -152,6 +152,8 @@ In this brief the author explain [Why you probably shouldn't use a wildcard cert
 
 No, it is not possible. By default, the wildcard cert is valid only for `*.example.com`, not `example.com`. A wildcard inside a name only reflects a single label and the wildcard can only be leftmost. Thus `*.*.example.org` or `www.*.example.org` are not possible. And `*.example.org` will neither match `example.org` nor `www.subdomain.example.org`, only `sub.example.org.`
 
+  > In order to secure the domain name itself and hosts within the domain, you need to get certificate with names in SAN extension.
+
 Technically, wildcard certs are issued based on the unknown children of a subdomain. Most wildcard certs are issued for 3-part domains (`*.domain.com`), but it's also very common to see them for 4-part domains (e.g. `*.domain.co.uk`).
 
 The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools.ietf.org/html/rfc2818#section-3.1):
