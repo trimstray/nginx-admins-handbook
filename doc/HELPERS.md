@@ -7481,6 +7481,8 @@ openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 
 ###### TLSv1.3 and CCM ciphers
 
+  > **:bookmark: [Use only strong ciphers - Hardening - P1](RULES.md#beginner-use-only-strong-ciphers)**
+
 By default, TLS 1.3 don't use the two missing CCM-mode suites. If you want enable them, e.g. in case anything decides to support them in the future you should edit `openssl-1.1.1*/include/openssl/ssl.h` file.
 
 Look for these lines (starting at these in OpenSSL 1.1.1d):

@@ -2189,9 +2189,9 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 ciphersuites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
-  > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order.
+  > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
-  > By default, OpenSSL 1.1.1* with TLSv1.3 disable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers. In my opinion, `ChaCha20+Poly1305` or `AES/GCM` are very efficient in the most cases; the latter is fast because the hardware provides dedicated opcodes that implement both AES itself (`aesenc`, `aesenclast` on x86 CPU). If you want to use above ciphers (for example on constrained systems which are usually constrained for everything) see [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers).
+  > By default, OpenSSL 1.1.1* with TLSv1.3 disable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers. In my opinion, `ChaCha20+Poly1305` or `AES/GCM` are very efficient in the most cases; the latter is fast because the hardware provides dedicated opcodes that implement both `AES` itself (`aesenc`, `aesenclast` on x86 CPU). If you want to use above ciphers (for example on constrained systems which are usually constrained for everything) see [TLSv1.3 and `CCM` ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers). But remember: `GCM` should be considered superior to `CCM` for most applications that require authenticated encryption.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
@@ -2209,7 +2209,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with below cipher suites (remember about min. `2048-bit` DH params for`DHE`!):
   ```nginx
-  ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
+  ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
   ```
 
 ###### Example
@@ -2217,6 +2217,9 @@ ssl_protocols TLSv1.2 TLSv1.1;
 Cipher suites for TLSv1.3:
 
 ```nginx
+# - it's only example because for TLS 1.3 the cipher suites are fixed so setting them will not affect
+# - if you have no explicit ciphersuite configuration then you will automatically use those three and will be able to negotiate TLSv1.3
+# - I recommend not setting ciphers for TLSv1.3 in NGINX
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384";
 ```
 
@@ -2231,6 +2234,9 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 Cipher suites for TLSv1.3:
 
 ```nginx
+# - it's only example because for TLS 1.3 the cipher suites are fixed so setting them will not affect
+# - if you have no explicit ciphersuite configuration then you will automatically use those three and will be able to negotiate TLSv1.3
+# - I recommend not setting ciphers for TLSv1.3 in NGINX
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ```
 
@@ -2255,6 +2261,7 @@ This will also give a baseline for comparison with [Mozilla SSL Configuration Ge
 
 ```nginx
 # However, Mozilla does not enable them in the configuration:
+#   - for TLS 1.3 the cipher suites are fixed unless an application explicitly defines them
 # ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ```
 
@@ -2262,6 +2269,7 @@ This will also give a baseline for comparison with [Mozilla SSL Configuration Ge
 
 ```nginx
 # However, Mozilla does not enable them in the configuration:
+#   - for TLS 1.3 the cipher suites are fixed unless an application explicitly defines them
 # ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
 ```
@@ -2563,7 +2571,6 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECD
 
 - SSLLabs suites in server-preferred order:
 
-
 ```
 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
@@ -2603,61 +2610,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 <details>
 <summary><b>Scan results for each cipher suite (TLSv1.3 offered)</b></summary>
 
-###### My recommendation
-
-- Cipher suites:
-
-```nginx
-ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
-```
-
-- DH: **2048-bit**
-
-- SSLLabs scores:
-
-  - Certificate: **100%**
-  - Protocol Support: **100%**
-  - Key Exchange: **90%**
-  - Cipher Strength: **90%**
-
-- SSLLabs suites in server-preferred order:
-
-
-```
-TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
-TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
-TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
-TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
-TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
-```
-
-- SSLLabs 'Handshake Simulation' errors:
-
-```
-IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
-Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
-Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
-Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
-Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
-Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
-```
-
-- testssl.sh:
-
-```
-› SSLv2
-› SSLv3
-› TLS 1
-› TLS 1.1
-› TLS 1.2
-›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
-›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-```
-
-###### Mozilla modern profile
+###### Mozilla modern profile (My recommendation)
 
 - Cipher suites: **not set**
 
@@ -2672,24 +2625,18 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 
 - SSLLabs suites in server-preferred order:
 
-
 ```
-TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
-TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
-TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
-TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
-TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+TLS_AES_256_GCM_SHA384 (0x1302)   ECDH x25519 (eq. 3072 bits RSA)   FS  256
+TLS_CHACHA20_POLY1305_SHA256 (0x1303)   ECDH x25519 (eq. 3072 bits RSA)   FS  256
+TLS_AES_128_GCM_SHA256 (0x1301)   ECDH x25519 (eq. 3072 bits RSA)   FS  128
 ```
 
 - SSLLabs 'Handshake Simulation' errors:
 
 ```
-IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
-Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
-Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
-Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
-Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
-Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+Chrome 69 / Win 7  R  Server sent fatal alert: protocol_version
+Firefox 62 / Win 7  R Server sent fatal alert: protocol_version
+OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 ```
 
 - testssl.sh:
@@ -2700,11 +2647,10 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 › TLS 1
 › TLS 1.1
 › TLS 1.2
-›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
-›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+› TLS 1.3
+›  x1302   TLS_AES_256_GCM_SHA384            ECDH 253   AESGCM      256      TLS_AES_256_GCM_SHA384
+›  x1303   TLS_CHACHA20_POLY1305_SHA256      ECDH 253   ChaCha20    256      TLS_CHACHA20_POLY1305_SHA256
+›  x1301   TLS_AES_128_GCM_SHA256            ECDH 253   AESGCM      128      TLS_AES_128_GCM_SHA256
 ```
 
 </details>
