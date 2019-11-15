@@ -162,6 +162,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
     * [Verification of the certificate](#verification-of-the-certificate)
     * [Verification of the CSR](#verification-of-the-csr)
     * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
+    * [TLSv1.3 and CCM ciphers](#tlsv13-and-ccm-ciphers)
 
 #### Installing from prebuilt packages
 
@@ -7475,4 +7476,41 @@ openssl req -text -noout -in ${_fd_csr} )
 ```bash
 (openssl rsa -noout -modulus -in private.key | openssl md5 ; \
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
+```
+
+###### TLSv1.3 and CCM ciphers
+
+By default, TLS 1.3 don't use the two missing CCM-mode suites. If you want enable them, e.g. in case anything decides to support them in the future you should edit `openssl-1.1.1*/include/openssl/ssl.h` file.
+
+Look for these lines (starting at these in OpenSSL 1.1.1d):
+
+```c
+#  if !defined(OPENSSL_NO_CHACHA) && !defined(OPENSSL_NO_POLY1305)
+#   define TLS_DEFAULT_CIPHERSUITES "TLS_AES_256_GCM_SHA384:" \
+                                    "TLS_CHACHA20_POLY1305_SHA256:" \
+                                    "TLS_AES_128_GCM_SHA256"
+#  else
+#   define TLS_DEFAULT_CIPHERSUITES "TLS_AES_256_GCM_SHA384:" \
+                                   "TLS_AES_128_GCM_SHA256"
+#  endif
+# endif
+```
+
+Once you've found them, modify both `#define` instructions to look like this (add `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256`), and be careful with the colons, quotes, and end-of-line escaping:
+
+```c
+# if !defined(OPENSSL_NO_CHACHA) && !defined(OPENSSL_NO_POLY1305)
+#  define TLS_DEFAULT_CIPHERSUITES "TLS_AES_128_GCM_SHA256:" \
+                                   "TLS_AES_128_CCM_SHA256:" \
+                                   "TLS_AES_128_CCM_8_SHA256:" \
+                                   "TLS_CHACHA20_POLY1305_SHA256:" \
+                                   "TLS_AES_256_GCM_SHA384"
+# else
+
+/* We're definitely building with ChaCha20-Poly1305,
+   so the "else" won't have any effect. Still... */
+#  define TLS_DEFAULT_CIPHERSUITES "TLS_AES_128_GCM_SHA256:" \
+                                   "TLS_AES_256_GCM_SHA384"
+
+#endif
 ```

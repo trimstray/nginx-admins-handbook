@@ -2092,7 +2092,7 @@ certbot certonly -d domain.com -d www.domain.com
 
 ###### Rationale
 
-  > It is recommended to run TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes).
+  > It is recommended to run TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes). By the way, the TLS 1.3 protocol is the latest and 'more robust' TLS protocol version and should be used where possible (and where don't need backward compatibility).
 
   > TLS 1.0 and TLS 1.1 must not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)) and were superceded by TLS 1.2, which has now itself been superceded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://csrc.nist.gov/CSRC/media/Publications/sp/800-52/rev-2/draft/documents/sp800-52r2-draft2.pdf)) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf).
 
@@ -2189,7 +2189,9 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 ciphersuites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
-  > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes).
+  > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order.
+
+  > By default, OpenSSL 1.1.1* with TLSv1.3 disable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers. In my opinion, `ChaCha20+Poly1305` or `AES/GCM` are very efficient in the most cases; the latter is fast because the hardware provides dedicated opcodes that implement both AES itself (`aesenc`, `aesenclast` on x86 CPU). If you want to use above ciphers (for example on constrained systems which are usually constrained for everything) see [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers).
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
@@ -2281,7 +2283,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECD
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
 ```
 
-- DH: 2048-bit
+- DH: **2048-bit**
 
 - SSLLabs scores:
 
@@ -2336,7 +2338,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
 ```
 
-- DH: not used
+- DH: **not used**
 
 - SSLLabs scores:
 
@@ -2389,7 +2391,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
 ```
 
-- DH: 2048-bit
+- DH: **2048-bit**
 
 - SSLLabs scores:
 
@@ -2444,7 +2446,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
 ```
 
-- DH: not used
+- DH: **not used**
 
 - SSLLabs scores:
 
@@ -2492,7 +2494,7 @@ No errors
 ssl_ciphers "EECDH+CHACHA20:EDH+AESGCM:AES256+EECDH:AES256+EDH";
 ```
 
-- DH: 2048-bit
+- DH: **2048-bit**
 
 - SSLLabs scores:
 
@@ -2550,7 +2552,116 @@ No errors.
 ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
 ```
 
-- DH: 2048-bit
+- DH: **2048-bit**
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+
+```
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
+Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
+Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
+Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
+Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
+Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+```
+
+</details>
+
+<details>
+<summary><b>Scan results for each cipher suite (TLSv1.3 offered)</b></summary>
+
+###### My recommendation
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+```
+
+- DH: **2048-bit**
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+
+```
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
+Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
+Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
+Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
+Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
+Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+```
+
+###### Mozilla modern profile
+
+- Cipher suites: **not set**
+
+- DH: **2048-bit**
 
 - SSLLabs scores:
 
@@ -2665,7 +2776,7 @@ ssl_ecdh_curve secp521r1:secp384r1:prime256v1;
 ```nginx
 # Alternative (this one doesn’t affect compatibility, by the way; it’s just a question of the preferred order).
 
-# This setup downgrade Key Exchange score but is recommended for TLS 1.2 + 1.3:
+# This setup downgrade Key Exchange score but is recommended for TLS 1.2 + TLS 1.3:
 ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 ```
 
@@ -2885,7 +2996,7 @@ ssl_prefer_server_ciphers on;
 
   > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
 
-  > CRIME exploits SSL/TLS compression which is disabled since nginx 1.3.2. BREACH exploits only HTTP compression.
+  > CRIME exploits SSL/TLS compression which is disabled since NGINX 1.3.2. BREACH exploits only HTTP compression.
 
   > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
 
