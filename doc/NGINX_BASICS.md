@@ -2202,6 +2202,14 @@ http {
                   '$status $body_bytes_sent "$http_referer" '
                   '"$http_user_agent" "$http_x_forwarded_for"';
 
+  # but I suggest you change:
+  log_format main
+                  '$remote_addr - $remote_user [$time_local] '
+                  '"$request_method $scheme://$host$request_uri '
+                  '$server_protocol" $status $body_bytes_sent '
+                  '"$http_referer" "$http_user_agent" '
+                  '$request_time';
+
 }
 ```
 
