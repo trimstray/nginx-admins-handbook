@@ -2762,7 +2762,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
 
-  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended) from Mozilla SSL Configuration Generator:
+  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in RFC 7919 are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
   >
   >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
   >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
