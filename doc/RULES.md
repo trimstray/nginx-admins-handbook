@@ -2201,11 +2201,13 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > We have a nice online tool for testing compatibility cipher suites with user agents: [CryptCheck](https://cryptcheck.fr/suite/). I think it will be very helpful for you.
 
+  > If in doubt, use one of the recommended Mozilla kits (see below).
+
   **My recommendation:**
 
   > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with below cipher suites (remember about min. `2048-bit` DH params for`DHE`!):
   ```nginx
-  ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
+  ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
   ```
 
 ###### Example
@@ -2247,14 +2249,14 @@ ssl_ciphers "EECDH+CHACHA20:EDH+AESGCM:AES256+EECDH:AES256+EDH";
 
 This will also give a baseline for comparison with [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/):
 
-- Modern profile with OpenSSL 1.1.1 (and variants) for TLSv1.3
+- Modern profile, OpenSSL 1.1.1 (and variants) for TLSv1.3
 
 ```nginx
 # However, Mozilla does not enable them in the configuration:
 # ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ```
 
-- Modern profile with OpenSSL 1.1.1 (and variants) for TLSv1.2 + TLSv1.3
+- Modern profile, OpenSSL 1.1.1 (and variants) for TLSv1.2 + TLSv1.3
 
 ```nginx
 # However, Mozilla does not enable them in the configuration:
@@ -2262,11 +2264,339 @@ This will also give a baseline for comparison with [Mozilla SSL Configuration Ge
 ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
 ```
 
-- Intermediate profile with OpenSSL 1.1.0b + 1.1.1 (and variants) for TLSv1.2
+- Intermediate profile, OpenSSL 1.1.0b + 1.1.1 (and variants) for TLSv1.2
 
 ```nginx
 ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
 ```
+
+<details>
+<summary><b>Scan results for each cipher suite (TLSv1.2 offered)</b></summary>
+
+### My recommendation
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
+```
+
+- DH: 2048-bit
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+```
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xccaa)   DH 2048 bits   FS  256
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
+Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
+Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
+Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
+Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
+Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xccaa   DHE-RSA-CHACHA20-POLY1305         DH 2048    ChaCha20    256      TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+```
+
+### SSLLabs 100%
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384";
+```
+
+- DH: not used
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **100%**
+
+- SSLLabs suites in server-preferred order:
+
+```
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+Android 5.0.0 Server sent fatal alert: handshake_failure
+Android 6.0 Server sent fatal alert: handshake_failure
+Firefox 31.3.0 ESR / Win 7  Server sent fatal alert: handshake_failure
+IE 11 / Win 7  R  Server sent fatal alert: handshake_failure
+IE 11 / Win 8.1  R  Server sent fatal alert: handshake_failure
+IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
+IE 11 / Win Phone 8.1 Update  R Server sent fatal alert: handshake_failure
+Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
+Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
+Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
+Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
+Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+```
+
+### 1) - SSLLabs 90%
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
+```
+
+- DH: 2048-bit
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+```
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xccaa)   DH 2048 bits   FS  256
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
+Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
+Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
+Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
+Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
+Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xccaa   DHE-RSA-CHACHA20-POLY1305         DH 2048    ChaCha20    256      TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+```
+
+### 2) - SSLLabs 90%
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
+```
+
+- DH: not used
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+```
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 (0xc028)   ECDH x25519 (eq. 3072 bits RSA)   FS   WEAK  256
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 (0xc027)   ECDH x25519 (eq. 3072 bits RSA)   FS   WEAK  128
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+No errors
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  xc028   ECDHE-RSA-AES256-SHA384           ECDH 521   AES         256      TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+›  xc027   ECDHE-RSA-AES128-SHA256           ECDH 521   AES         128      TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+```
+
+### 3) - SSLLabs 90%
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "EECDH+CHACHA20:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+```
+
+- DH: 2048-bit
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+```
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 (0xc028)   ECDH x25519 (eq. 3072 bits RSA)   FS   WEAK  256
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA (0xc014)   ECDH x25519 (eq. 3072 bits RSA)   FS   WEAK 256
+TLS_DHE_RSA_WITH_AES_256_CCM_8 (0xc0a3)   DH 2048 bits   FS 256
+TLS_DHE_RSA_WITH_AES_256_CCM (0xc09f)   DH 2048 bits   FS 256
+TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 (0x6b)   DH 2048 bits   FS   WEAK 256
+TLS_DHE_RSA_WITH_AES_256_CBC_SHA (0x39)   DH 2048 bits   FS   WEAK  256
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+No errors.
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  xc028   ECDHE-RSA-AES256-SHA384           ECDH 521   AES         256      TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+›  xc014   ECDHE-RSA-AES256-SHA              ECDH 521   AES         256      TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc0a3   DHE-RSA-AES256-CCM8               DH 2048    AESCCM8     256      TLS_DHE_RSA_WITH_AES_256_CCM_8
+›  xc09f   DHE-RSA-AES256-CCM                DH 2048    AESCCM      256      TLS_DHE_RSA_WITH_AES_256_CCM
+›  x6b     DHE-RSA-AES256-SHA256             DH 2048    AES         256      TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+›  x39     DHE-RSA-AES256-SHA                DH 2048    AES         256      TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+```
+
+### Mozilla modern profile
+
+- Cipher suites:
+
+```nginx
+ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+```
+
+- DH: 2048-bit
+
+- SSLLabs scores:
+
+  - Certificate: **100%**
+  - Protocol Support: **100%**
+  - Key Exchange: **90%**
+  - Cipher Strength: **90%**
+
+- SSLLabs suites in server-preferred order:
+
+
+```
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)   ECDH x25519 (eq. 3072 bits RSA)   FS 128
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)   ECDH x25519 (eq. 3072 bits RSA)   FS 256
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x9e)   DH 2048 bits   FS  128
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x9f)   DH 2048 bits   FS  256
+```
+
+- SSLLabs 'Handshake Simulation' errors:
+
+```
+IE 11 / Win Phone 8.1  R  Server sent fatal alert: handshake_failure
+Safari 6 / iOS 6.0.1  Server sent fatal alert: handshake_failure
+Safari 7 / iOS 7.1  R Server sent fatal alert: handshake_failure
+Safari 7 / OS X 10.9  R Server sent fatal alert: handshake_failure
+Safari 8 / iOS 8.4  R Server sent fatal alert: handshake_failure
+Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
+```
+
+- testssl.sh:
+
+```
+› SSLv2
+› SSLv3
+› TLS 1
+› TLS 1.1
+› TLS 1.2
+›  xc030   ECDHE-RSA-AES256-GCM-SHA384       ECDH 521   AESGCM      256      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+›  x9f     DHE-RSA-AES256-GCM-SHA384         DH 2048    AESGCM      256      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+›  xc02f   ECDHE-RSA-AES128-GCM-SHA256       ECDH 521   AESGCM      128      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+```
+
+</details>
 
 ###### External resources
 
