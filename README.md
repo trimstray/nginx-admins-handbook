@@ -351,6 +351,7 @@
     * [Verification of the certificate](doc/HELPERS.md#verification-of-the-certificate)
     * [Verification of the CSR](doc/HELPERS.md#verification-of-the-csr)
     * [Check whether the private key and the certificate match](doc/HELPERS.md#check-whether-the-private-key-and-the-certificate-match)
+    [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers)
 - **[Base Rules (14)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
   * [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](doc/RULES.md#beginner-format-prettify-and-indent-your-nginx-code)
@@ -897,6 +898,7 @@ Existing chapters:
     - [x] _Verification of the certificate_
     - [x] _Verification of the CSR_
     - [x] _Check whether the private key and the certificate match_
+    - [x] _TLSv1.3 and CCM ciphers_
 
 </details>
 

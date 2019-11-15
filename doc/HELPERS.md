@@ -404,7 +404,8 @@ pkg install jq git wget ncurses texinfo gettext gettext-tools
 
 ##### Patches
 
-- [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch) - to hide NGINX `Server` header (and more), see also rules: [Hide Nginx server signature](RULES.md#beginner-hide-nginx-server-signature)
+- [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch) - to hide NGINX `Server` header (and more), see also rule: [Hide Nginx server signature](RULES.md#beginner-hide-nginx-server-signature)
+- [TLSv1.3 and CCM ciphers](#tlsv13-and-ccm-ciphers) - to enable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` cipher suites
 
 ##### 3rd party modules
 
