@@ -2273,7 +2273,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECD
 <details>
 <summary><b>Scan results for each cipher suite (TLSv1.2 offered)</b></summary>
 
-### My recommendation
+###### My recommendation
 
 - Cipher suites:
 
@@ -2328,7 +2328,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 ›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
 ```
 
-### SSLLabs 100%
+###### SSLLabs 100%
 
 - Cipher suites:
 
@@ -2381,7 +2381,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 ›  xcca8   ECDHE-RSA-CHACHA20-POLY1305       ECDH 253   ChaCha20    256      TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
 ```
 
-### 1) - SSLLabs 90%
+###### 1) - SSLLabs 90%
 
 - Cipher suites:
 
@@ -2436,7 +2436,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 ›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
 ```
 
-### 2) - SSLLabs 90%
+###### 2) - SSLLabs 90%
 
 - Cipher suites:
 
@@ -2484,7 +2484,7 @@ No errors
 ›  xc027   ECDHE-RSA-AES128-SHA256           ECDH 521   AES         128      TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
 ```
 
-### 3) - SSLLabs 90%
+###### 3) - SSLLabs 90%
 
 - Cipher suites:
 
@@ -2542,7 +2542,7 @@ No errors.
 ›  x9e     DHE-RSA-AES128-GCM-SHA256         DH 2048    AESGCM      128      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
 ```
 
-### Mozilla modern profile
+###### Mozilla modern profile
 
 - Cipher suites:
 
