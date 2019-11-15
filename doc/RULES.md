@@ -2025,7 +2025,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most cpu time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
-  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner ECC certificates but still let visitors with older browsers browse your Web site.
+  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over RSA certificates) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner ECC certificates but still let visitors with older browsers browse your Web site.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2762,7 +2762,12 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
 
-  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended) from the [Mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096).
+  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended) from Mozilla SSL Configuration Generator:
+  >
+  >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
+  >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
+  >
+  > See also [RFC7919 A.1. ffdhe2048](https://tools.ietf.org/html/rfc7919#appendix-A.1).
 
   > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance You would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
 
@@ -2777,6 +2782,10 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
   Look also at this answer by [Matt Palmer](https://www.hezmatt.org/~mpalmer/blog/):
 
   > _Indeed, characterising `2048 bit` DH parameters as "weak as hell" is quite misleading. There are no known feasible cryptographic attacks against arbitrary strong 2048 bit DH groups. To protect against future disclosure of a session key due to breaking DH, sure, you want your DH parameters to be as long as is practical, but since `1024 bit` DH is only just getting feasible, `2048 bits` should be OK for most purposes for a while yet._
+
+  Take a look at this interesting answer comes from [Guide to Deploying Diffie-Hellman for TLS](https://weakdh.org/sysadmin.html):
+
+  > _2. Deploy (Ephemeral) Elliptic-Curve Diffie-Hellman (ECDHE). Elliptic-Curve Diffie-Hellman (ECDH) key exchange avoids all known feasible cryptanalytic attacks, and modern web browsers now prefer ECDHE over the original, finite field, Diffie-Hellman. The discrete log algorithms we used to attack standard Diffie-Hellman groups do not gain as strong of an advantage from precomputation, and individual servers do not need to generate unique elliptic curves._
 
   **My recommendation:**
 

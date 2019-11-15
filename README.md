@@ -1342,7 +1342,8 @@ _In this ebook you will learn:_
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://ssl-config.mozilla.org/"><b>Mozilla SSL Configuration Generator</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/ssl-config-generator"><b>Mozilla SSL Configuration Generator</b></a><br>
+
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/linkedin/nginx-config-builder"><b>nginx-config-builder</b></a><br>
 </p>
 
