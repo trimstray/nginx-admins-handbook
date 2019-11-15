@@ -2025,7 +2025,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most cpu time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
-  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break.
+  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner ECC certificates but still let visitors with older browsers browse your Web site.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2187,7 +2187,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 ciphersuites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+  > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 cipher suites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
@@ -2218,7 +2218,7 @@ Cipher suites for TLSv1.3:
 
 ```nginx
 # - it's only example because for TLS 1.3 the cipher suites are fixed so setting them will not affect
-# - if you have no explicit ciphersuite configuration then you will automatically use those three and will be able to negotiate TLSv1.3
+# - if you have no explicit cipher suites configuration then you will automatically use those three and will be able to negotiate TLSv1.3
 # - I recommend not setting ciphers for TLSv1.3 in NGINX
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384";
 ```
@@ -2235,7 +2235,7 @@ Cipher suites for TLSv1.3:
 
 ```nginx
 # - it's only example because for TLS 1.3 the cipher suites are fixed so setting them will not affect
-# - if you have no explicit ciphersuite configuration then you will automatically use those three and will be able to negotiate TLSv1.3
+# - if you have no explicit cipher suites configuration then you will automatically use those three and will be able to negotiate TLSv1.3
 # - I recommend not setting ciphers for TLSv1.3 in NGINX
 ssl_ciphers "TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256";
 ```
