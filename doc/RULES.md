@@ -2802,6 +2802,9 @@ openssl dhparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 # To produce "DSA-like" DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_4096.pem 4096
 
+# Use the pre-defined DH groups:
+curl https://ssl-config.mozilla.org/ffdhe4096.txt > /etc/nginx/ssl/ffdhe4096.pem
+
 # NGINX configuration only for DH/DHE:
 ssl_dhparam /etc/nginx/ssl/dhparams_4096.pem;
 ```
@@ -2814,6 +2817,9 @@ openssl dhparam -out /etc/nginx/ssl/dhparam_2048.pem 2048
 
 # To produce "DSA-like" DH parameters:
 openssl dhparam -dsaparam -out /etc/nginx/ssl/dhparam_2048.pem 2048
+
+# Use the pre-defined DH groups:
+curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/ssl/ffdhe2048.pem
 
 # NGINX configuration only for DH/DHE:
 ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
