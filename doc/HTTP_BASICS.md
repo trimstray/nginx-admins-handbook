@@ -92,6 +92,13 @@ I will not describe it because there are brilliant studies:
 - [HTTP2 Explained](https://daniel.haxx.se/http2/)
 - [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 
+But you should remember: A client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1. A client that supports HTTP/2 will ask the server (using HTTP1/1) for an HTTP/2 upgrade:
+
+  - if the server is HTTP/2 ready, then the server will notice the client as such: the communication between them will be switched to HTTP/2
+  - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP1/1: the communication between them should stay plenty HTTP1/1
+
+An HTTP/2 client never makes a HTTP/2 request by default. It always makes an HTTP/1.1 request with `Upgrade: HTTP/2.0` header.
+
 #### URI vs URL
 
 Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet. A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
