@@ -1256,7 +1256,7 @@ http {
 
 ##### Handle incoming connections
 
-  > **:bookmark: [Define the listen directives explicitly with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)**<br>
+  > **:bookmark: [Define the listen directives with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-with-addressport-pair)**<br>
   > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
   > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
   > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>

@@ -357,7 +357,7 @@
   * [Format, prettify and indent your Nginx code](doc/RULES.md#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](doc/RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)
   * [Separate listen directives for 80 and 443](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443)
-  * [Define the listen directives explicitly with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
+  * [Define the listen directives with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directives](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)
   * [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)
@@ -993,7 +993,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 | <b>RULE</b> | <b>CHAPTER</b> | <b>PRIORITY</b> |
 | :---         | :---         | :---:        |
-| [Define the listen directives explicitly with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-explicitly-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Define the listen directives with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors, e.g. traffic forwarding to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Never use a hostname in a listen or upstream directives](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)<br><sup>While this may work, it will comes with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |

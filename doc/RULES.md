@@ -9,7 +9,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
-  * [Define the listen directives explicitly with address:port pair](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
+  * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
@@ -429,7 +429,7 @@ server {
 ###### External resources
 
 - [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
-- [Define the listen directives explicitly with address:port pair (from this handbook)](#beginner-define-the-listen-directives-explicitly-with-addressport-pair)
+- [Define the listen directives with address:port pair (from this handbook)](#beginner-define-the-listen-directives-with-addressport-pair)
 
 #### :beginner: Use only one SSL config for the listen directive
 
@@ -2163,7 +2163,6 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
 - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
 - [This POODLE bites: exploiting the SSL 3.0 fallback](https://security.googleblog.com/2014/10/this-poodle-bites-exploiting-ssl-30.html)
-- [Are You Ready for 30 June 2018? Saying Goodbye to SSL/early TLS](https://blog.pcisecuritystandards.org/are-you-ready-for-30-june-2018-sayin-goodbye-to-ssl-early-tls)
 - [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)
 - [Are You Ready for 30 June 2018? Saying Goodbye to SSL/early TLS](https://blog.pcisecuritystandards.org/are-you-ready-for-30-june-2018-sayin-goodbye-to-ssl-early-tls)
 - [What Happens After 30 June 2018? New Guidance on Use of SSL/Early TLS](https://blog.pcisecuritystandards.org/what-happens-after-30-june-2018-new-guidance-on-use-of-ssl/early-tls-)
