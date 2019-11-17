@@ -1573,6 +1573,8 @@ server {
 
   > _The JIT is available in PCRE libraries starting from version 8.20 built with the `--enable-jit` configuration parameter. When the PCRE library is built with nginx (`--with-pcre=`), the JIT support is enabled via the `--with-pcre-jit` configuration parameter._
 
+  > But if you don't pass `--with-pcre-jit`, the NGINX configure scripts are smart enough to detect and enable it automatically. See [here](http://hg.nginx.org/nginx/file/abd40ce603fa/auto/lib/pcre/conf). So if your PCRE library is recent enough, a simple `./configure` with no switches will compile NGINX with `pcre_jit` enabled.
+
 ###### Example
 
 ```nginx
@@ -1789,6 +1791,8 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
   > Sensitive resources contains items that abusers can use to fully recreate the source code used by the site and look for bugs, vulnerabilities, and exposed passwords.
 
+  As for the denying method:
+
   > In my opinion, a return 403 (or even a 404, as the [RFC2616 - 10.4.4 403 Forbidden](https://tools.ietf.org/html/rfc2616#section-10.4.4) suggests for purposes of no information disclosure) is less error prone if you know the resource should under no circumstances be accessed via http, even if "authorized" in a general context.
 
   > NGINX process request in phases. `return` directive is from rewrite module, and `deny` is from access module. Rewrite module is processed in `NGX_HTTP_REWRITE_PHASE` phase (for `return` in `location` context), the access module is processed in `NGX_HTTP_ACCESS_PHASE` phase, rewrite phase (where `return` belongs) happens before access phase (where `deny` works), thus `return` stops request processing and returns 301 in rewrite phase.
@@ -1836,7 +1840,7 @@ location ~* (?:#.*#|\.(?:bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)
 
 }
 
-# Based on the above:
+# Based on the above (tested):
 location ~* ^.*(\.(?:git|svn|bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op]|htaccess))$ {
 
   deny all;
@@ -2834,7 +2838,8 @@ ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
 
 - [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
 - [Guide to Deploying Diffie-Hellman for TLS](https://weakdh.org/sysadmin.html)
-- [Pre-defined DHE groups](https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096)
+- [Pre-defined DHE groups](https://github.com/mozilla/ssl-config-generator/tree/master/docs)
+- [Why is Mozilla recommending predefined DHE groups?](https://security.stackexchange.com/questions/149811/why-is-mozilla-recommending-predefined-dhe-groups)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)
 - [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
 - [Public Diffie-Hellman Parameter Service/Tool](https://2ton.com.au/dhtool/)
@@ -2951,7 +2956,7 @@ ssl_prefer_server_ciphers on;
 
 - [An Illustrated Guide to the BEAST Attack](https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art027)
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
-- [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls)
+- [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls) <sup>[not found]</sup>
 - [Use only strong ciphers (from this handbook)](#beginner-use-only-strong-ciphers)
 
 #### :beginner: Mitigation of CRIME/BREACH attacks

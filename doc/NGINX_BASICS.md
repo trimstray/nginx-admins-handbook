@@ -555,7 +555,7 @@ You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 
 NGINX uses Event-Driven architecture which heavily relies on Non-Blocking I/O. One advantage of non-blocking/asynchronous operations is that you can maximize the usage of a single CPU as well as memory because is that your thread can continue it's work in parallel. The end result is that even as load increases, memory and CPU usage remain manageable.
 
-  > There is a perfectly good and brief [summary](https://stackoverflow.com/questions/8546273/is-non-blocking-i-o-really-faster-than-multi-threaded-blocking-i-o-how) about non-blocking I/O and multi-threaded blocking I/O by [Werner Henze](https://stackoverflow.com/users/1023911/werner-henze).
+  > There is a perfectly good and brief [summary](https://stackoverflow.com/questions/8546273/is-non-blocking-i-o-really-faster-than-multi-threaded-blocking-i-o-how) about non-blocking I/O and multi-threaded blocking I/O by [Werner Henze](https://stackoverflow.com/users/1023911/werner-henze). I also recommend [asynchronous vs non-blocking](https://stackoverflow.com/a/2625565) by [Daniel Earwicker](https://stackoverflow.com/users/27423/daniel-earwicker).
 
 Look what the official documentation says about it:
 
