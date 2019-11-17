@@ -557,7 +557,25 @@ NGINX uses Event-Driven architecture which heavily relies on Non-Blocking I/O. O
 
   > There is a perfectly good and brief [summary](https://stackoverflow.com/questions/8546273/is-non-blocking-i-o-really-faster-than-multi-threaded-blocking-i-o-how) about non-blocking I/O and multi-threaded blocking I/O by [Werner Henze](https://stackoverflow.com/users/1023911/werner-henze). I also recommend [asynchronous vs non-blocking](https://stackoverflow.com/a/2625565) by [Daniel Earwicker](https://stackoverflow.com/users/27423/daniel-earwicker).
 
-Look what the official documentation says about it:
+Take a look at this simple drawing:
+
+<p align="center">
+  <a href="http://faculty.salina.k-state.edu/tim/ossg/Device/blocking.html">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/io/blocking_non-blocking.jpg" alt="blocking_non-blocking">
+  </a>
+</p>
+
+<sup><i>This infographic comes from [Kansas State Polytechnic website](http://faculty.salina.k-state.edu/tim/ossg/Device/blocking.html).</i></sup>
+
+Blocking I/O system calls (a) do not return until the I/O is complete. Nonblocking I/O system calls return immediately. The process is later notified when the I/O is complete.
+
+There are forms of I/O and examples of POSIX functions:
+
+| <b>Blocking</b> | <b>Non-blocking</b> | <b>Asynchronous</b> |
+| :---         | :---         | :---         |
+| `write`, `read` | `write`, `read` + `poll/select` | `aio_write`, `aio_read` |
+
+Look also what the official documentation says about it:
 
   > _It’s well known that NGINX uses an asynchronous, event‑driven approach to handling connections. This means that instead of creating another dedicated process or thread for each request (like servers with a traditional architecture), it handles multiple connections and requests in one worker process. To achieve this, NGINX works with sockets in a non‑blocking mode and uses efficient methods such as epoll and kqueue._
 
@@ -579,11 +597,29 @@ For more information take a look at following resources:
 
 - [Asynchronous, Non-Blocking I/O](https://medium.com/@entzik/on-asynchronous-non-blocking-i-o-4a2ac0af5c50)
 - [Asynchronous programming. Blocking I/O and non-blocking I/O](https://luminousmen.com/post/asynchronous-programming-blocking-and-non-blocking)
+- [Blocking I/O and non-blocking I/O](https://medium.com/coderscorner/tale-of-client-server-and-socket-a6ef54a74763)
+- [Non-blocking I/O](https://www.hellsoft.se/non-blocking-io/)
 - [About High Concurrency, NGINX architecture and internals](http://www.aosabook.org/en/nginx.html)
 - [A little holiday present: 10,000 reqs/sec with Nginx!](https://blog.webfaction.com/2008/12/a-little-holiday-present-10000-reqssec-with-nginx-2/)
 - [Nginx vs Apache: Is it fast, if yes, why?](http://planetunknown.blogspot.com/2011/02/why-nginx-is-faster-than-apache.html)
 - [How is Nginx handling its requests in terms of tasks or threading?](https://softwareengineering.stackexchange.com/questions/256510/how-is-nginx-handling-its-requests-in-terms-of-tasks-or-threading)
 - [Why nginx is faster than Apache, and why you needn’t necessarily care](https://djangodeployment.com/2016/11/15/why-nginx-is-faster-than-apache-and-why-you-neednt-necessarily-care/)
+
+Finally, look at these great previews:
+
+<p align="center">
+  <a href="https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/io/NGINX_blocking.png" alt="NGINX_blocking">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/io/NGINX_nonblocking.png" alt="NGINX_nonblocking">
+  </a>
+</p>
+
+<sup><i>Both infographic comes from [Inside NGINX: How We Designed for Performance & Scale](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/).</i></sup>
 
 ##### Multiple processes
 
@@ -1258,7 +1294,7 @@ http {
 
   > **:bookmark: [Define the listen directives with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-with-addressport-pair)**<br>
   > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
-  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
+  > **:bookmark: [Never use a hostname in a listen or upstream directive - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)**<br>
   > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
   > **:bookmark: [Separate listen directives for 80 and 443 - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443)**<br>
   > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](#beginner-use-only-one-ssl-config-for-the-listen-directive)**

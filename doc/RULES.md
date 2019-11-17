@@ -11,7 +11,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
   * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
-  * [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)
+  * [Never use a hostname in a listen or upstream directive](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -374,7 +374,7 @@ server {
 - [How processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
-#### :beginner: Never use a hostname in a listen or upstream directives
+#### :beginner: Never use a hostname in a listen or upstream directive
 
 ###### Rationale
 
