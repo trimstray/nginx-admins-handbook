@@ -3587,7 +3587,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 
   > Setting the `$scheme` variable will cause distortions if it uses more than one proxy along the way. For example: if the client go to the `https://example.com`, the proxy stores the scheme value as HTTPS. If the communication between the proxy and the next-level proxy takes place over HTTP, then the backend sees the scheme as HTTP. So if you set `$scheme` for `X-Forwarded-Proto` on the next-level proxy, app will see a different value than the one the client came with.
 
-  > For resolve this problem you can also use [this](#set-correct-scheme-passed-in-x-forwarded-proto)) configuration snippet.
+  > For resolve this problem you can also use [this](#set-correct-scheme-passed-in-x-forwarded-proto) configuration snippet.
 
 ###### Example
 
