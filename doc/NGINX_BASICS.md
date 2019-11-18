@@ -609,10 +609,7 @@ Finally, look at these great previews:
 
 <p align="center">
   <a href="https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/io/NGINX_blocking.png" alt="NGINX_blocking">
-  </a>
-  <a href="https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/io/NGINX_nonblocking.png" alt="NGINX_nonblocking">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/io/NGINX_non-blocking.png" alt="NGINX_non-blocking">
   </a>
 </p>
 
