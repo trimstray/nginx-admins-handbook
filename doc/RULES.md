@@ -3041,10 +3041,11 @@ location ^~ /assets/ {
   > - always uses an `https://` connection, even when clicking on an `http://` link or after typing a domain into the location bar without specifying a protocol
   > - removes the ability for users to click through warnings about invalid certificates
 
+  > The HSTS header needs to be set inside the HTTP block with the `ssl` listen statement or you risk sending Strict-Transport-Security headers over HTTP sites you may also have configured on the server. Additionally, you should use `return 301` for the HTTP server block to be redirected to HTTPS.
+
   > I recommend to set the `max-age` to a big value like `31536000` (12 months) or `63072000` (24 months).
 
-  > There are a few simple best practices for HSTS (from [
-The Importance of a Proper HTTP Strict Transport Security Implementation on Your Web Server](https://blog.qualys.com/securitylabs/2016/03/28/the-importance-of-a-proper-http-strict-transport-security-implementation-on-your-web-server)):
+  > There are a few simple best practices for HSTS (from [The Importance of a Proper HTTP Strict Transport Security Implementation on Your Web Server](https://blog.qualys.com/securitylabs/2016/03/28/the-importance-of-a-proper-http-strict-transport-security-implementation-on-your-web-server)):
   >
   > - The strongest protection is to ensure that all requested resources use only TLS with a well-formed HSTS header. Qualys recommends providing an HSTS header on all HTTPS resources in the target domain
   >
