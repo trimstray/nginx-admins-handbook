@@ -1841,7 +1841,7 @@ location ~* (?:#.*#|\.(?:bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)
 }
 
 # Based on the above (tested):
-location ~* ^.*(\.(?:git|svn|bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op]|htaccess))$ {
+location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htaccess))$ {
 
   deny all;
   access_log /var/log/nginx/restricted-files.log main;
