@@ -82,6 +82,8 @@
   * [Presentations & Videos](#presentations--videos)
   * [Playgrounds](#playgrounds)
   * [Config generators](#config-generators)
+  * [Config parsers](#config-parsers)
+  * [Config managers](#config-managers)
   * [Static analyzers](#static-analyzers)
   * [Log analyzers](#log-analyzers)
   * [Performance analyzers](#performance-analyzers)
@@ -628,6 +630,18 @@ Existing chapters:
     - [x] _Nginx Scripting - Extending Nginx Functionalities with Lua_
     - [x] _How to handle over 1,200,000 HTTPS Reqs/Min_
     - [x] _Using ngx_lua / lua-nginx-module in pixiv_
+  - [x] _Cheatsheets & References_
+    - [x] _Nginx configurations for most popular CMS/CMF/Frameworks based on PHP_
+  - [x] _Performance & Hardening_
+    - [x] _Memorable site for testing clients against bad SSL configs_
+  - [x] _Config parsers_
+    - [x] _Quick and reliable way to convert NGINX configurations into JSON and back_
+    - [x] _Parses nginx configuration with Pyparsing_
+  - [x] _Config managers_
+    - [x] _Ansible role to install and manage nginx configuration_
+    - [x] _Ansible Role - Nginx_
+    - [x] _Ansible role for NGINX_
+    - [x] _Puppet Module to manage NGINX on various UNIXes_
   - _Static analyzers_
     - [x] _nginx-minify-conf_
   - _Comparison reviews_
@@ -1286,6 +1300,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/SimulatedGREG/nginx-cheatsheet"><b>Nginx Quick Reference</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/fcambus/nginx-resources"><b>A collection of resources covering Nginx and more</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/lebinh/nginx-conf"><b>A collection of useful Nginx configuration snippets</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/elasticweb/nginx-configs"><b>Nginx configurations for most popular CMS/CMF/Frameworks based on PHP</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/wmnnd/nginx-certbot"><b>Boilerplate configuration for nginx and certbot with docker-compose</b></a><br>
 </p>
 
@@ -1308,6 +1323,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet"><b>Transport Layer Protection Cheat Sheet</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://caniuse.com/#home"><b>Browser support tables for modern web technologies</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://badssl.com/"><b>Memorable site for testing clients against bad SSL configs</b></a><br>
 </p>
 
 ##### Presentations & Videos
@@ -1344,6 +1360,22 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/ssl-config-generator"><b>Mozilla SSL Configuration Generator</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/linkedin/nginx-config-builder"><b>nginx-config-builder</b></a><br>
+</p>
+
+##### Config parsers
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/crossplane"><b>Quick and reliable way to convert NGINX configurations into JSON and back</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/fatiherikli/nginxparser"><b>Parses nginx configuration with Pyparsing</b></a><br>
+</p>
+
+##### Config managers
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jdauphant/ansible-role-nginx"><b>Ansible role to install and manage nginx configuration</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/geerlingguy/ansible-role-nginx"><b>Ansible Role - Nginx</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/ansible-role-nginx"><b>Ansible role for NGINX</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/voxpupuli/puppet-nginx"><b>Puppet Module to manage NGINX on various UNIXes</b></a><br>
 </p>
 
 ##### Static analyzers
