@@ -1445,6 +1445,7 @@ To help you understand how does location match works:
 
 - [Nginx location match tester](https://nginx.viraptor.info/)
 - [Nginx location match visible](https://detailyang.github.io/nginx-location-match-visible/)
+- [NGINX Regular Expression Tester](https://github.com/nginxinc/NGINX-Demos/tree/master/nginx-regex-tester)
 
 The process of choosing NGINX location block is as follows (a detailed explanation):
 
