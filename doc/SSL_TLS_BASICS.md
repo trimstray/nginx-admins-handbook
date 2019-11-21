@@ -23,6 +23,8 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Cryptology ePrint Archive](https://eprint.iacr.org/)
 - [Every byte of a TLS connection explained and reproduced - TLS 1.2](https://tls.ulfheim.net/)
 
+If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/) or [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/) and it'll tell you if you need to fix or update your config.
+
 #### TLS versions
 
   > **:bookmark: [Keep only TLS 1.3 and TLS 1.2 - Hardening - P1](RULES.md#beginner-keep-only-tls-13-and-tls-12)**

@@ -1269,11 +1269,22 @@ server {
 
   > When using `ssl_session_cache`, the performance of keep-alive connections over SSL might be enormously increased. 10M value of this is a good starting point (1MB shared cache can hold approximately 4,000 sessions). With `shared` a cache shared between all worker processes (a cache with the same name can be used in several virtual servers).
 
+  > Enabling session caching helps to reduce NGINX server CPU load.
+
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
   [Ivan Ristić](https://twitter.com/ivanristic) (Founder of Hardenize) say:
 
   > _Session resumption either creates a large server-side cache that can be broken into or, with tickets, kills forward secrecy. So you have to balance performance (you don't want your users to use full handshakes on every connection) and security (you don't want to compromise it too much). Different projects dictate different settings. [...] One reason not to use a very large cache (just because you can) is that popular implementations don't actually delete any records from there; even the expired sessions are still in the cache and can be recovered. The only way to really delete is to overwrite them with a new session. [...] These days I'd probably reduce the maximum session duration to 4 hours, down from 24 hours currently in my book. But that's largely based on a gut feeling that 4 hours is enough for you to reap the performance benefits, and using a shorter lifetime is always better._
+
+  [Ilya Grigorik](https://www.igvita.com/) (Web performance engineer at google) say about SSL buffers:
+
+  > _1400 bytes (actually, it should probably be even a bit lower) is the recommended setting for interactive traffic where you want to avoid any unnecessary delays due to packet loss/jitter of fragments of the TLS record. However, packing each TLS record into dedicated packet does add some framing overhead and you probably want larger record sizes if you're streaming larger (and less latency sensitive) data. 4K is an in between value that's "reasonable" but not great for either case. For smaller records, we should also reserve space for various TCP options (timestamps, SACKs. up to 40 bytes), and account for TLS record overhead (another 20-60 bytes on average, depending on the negotiated ciphersuite). All in all: 1500 - 40 (IP) - 20 (TCP) - 40 (TCP options) - TLS overhead (60-100) ~= 1300 bytes. If you inspect records emitted by Google servers, you'll see that they carry ~1300 bytes of application data due to the math above._
+
+  It's also very interesting, the recommendation from Leif Hedstrom, Thomas Jackson, Brian Geffon etc is to use the below values:
+
+  > smaller TLS record size: MTU/MSS (1500) minus the TCP (20 bytes) and IP (40 bytes) overheads: 1500 - 40 - 20 = 1440 bytes
+  > larger TLS record size: maximum TLS record size which is 16383 (2^14 - 1)
 
 ###### Example
 
@@ -1289,6 +1300,7 @@ ssl_buffer_size     1400;
 - [SSL Session (cache)](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache)
 - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
 - [ssl_session_cache in Nginx and the ab benchmark](https://www.peterbe.com/plog/ssl_session_cache-ab)
+- [Improving OpenSSL Performance](https://software.intel.com/en-us/articles/improving-openssl-performance)
 
 #### :beginner: Use exact names in a `server_name` directive where possible
 
@@ -2188,6 +2200,8 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > For backward compatibility software components you should use less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2), you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
+  > Servers either use the client's most preferable ciphersuite or their own. Most servers use their own preference. Disabling `DHE` removes forward security, but results in substantially faster handshake times.
+
   > Also modern cipher suites (e.g. from Mozilla recommendations) suffers from compatibility troubles mainly because drops `SHA-1`. But be careful if you want to use ciphers with `HMAC-SHA-1` - there's a perfectly good [explanation](https://crypto.stackexchange.com/a/26518) why.
 
   > If you want to get **A+ with 100%s on SSL Lab** (for Cipher Strength) you should definitely disable `128-bit` ciphers. That's the main reason why you should not use them.
@@ -2676,6 +2690,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [Recommendations for a cipher string by OWASP](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/TLS_Cipher_String_Cheat_Sheet.md)
 - [Recommendations for TLS/SSL Cipher Hardening by Acunetix](https://www.acunetix.com/blog/articles/tls-ssl-cipher-hardening/)
 - [Mozilla’s Modern compatibility suite](https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility)
+- [TLS & Perfect Forward Secrecy](https://vincent.bernat.ch/en/blog/2011-ssl-perfect-forward-secrecy)
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
 - [Cipher Suite Breakdown](https://blogs.technet.microsoft.com/askpfeplat/2017/12/26/cipher-suite-breakdown/)
 - [Zombie POODLE and GOLDENDOODLE Vulnerabilities](https://blog.qualys.com/technology/2019/04/22/zombie-poodle-and-goldendoodle-vulnerabilities)
@@ -2688,7 +2703,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 
   > In my opinion your main source of knowledge should be [The SafeCurves web site](https://safecurves.cr.yp.to/). This site reports security assessments of various specific curves.
 
-  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm). NGINX provides directive to specifies a curve for `ECDHE` ciphers.
+  > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm). NGINX provides directive to specifies a curve for `ECDHE` ciphers (`ssl_ecdh_curve`).
 
   > `x25519` is a more secure (also with SafeCurves requirements) but slightly less compatible option. I think to maximise interoperability with existing browsers and servers, stick to `P-256` (`prime256v1`) and `P-384` (`secp384r1`) curves. Of course there's tons of different opinions about `P-256` and `P-384` curves.
 
