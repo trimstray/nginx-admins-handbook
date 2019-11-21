@@ -118,6 +118,8 @@
       * [Status codes and reason phrase](doc/HTTP_BASICS.md#status-codes-and-reason-phrase)
     * [Response header fields](doc/HTTP_BASICS.md#response-header-fields)
     * [Message body](doc/HTTP_BASICS.md#message-body-1)
+    * [HTTP client](doc/HTTP_BASICS.md#http-client)
+    * [Back-End web architecture](doc/HTTP_BASICS.md#back-end-web-architecture)
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics"></a>
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
@@ -694,6 +696,8 @@ Existing chapters:
       - [x] _Status codes and reason phrase_
     - [x] _Response header fields_
     - [x] _Message body_
+  - [x] _HTTP client_
+  - [x] _Back-End web architecture_
 
 </details>
 

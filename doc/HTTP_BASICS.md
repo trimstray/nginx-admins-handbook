@@ -22,6 +22,8 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
       * [Status codes and reason phrase](#status-codes-and-reason-phrase)
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
+  * [HTTP client](#http-client)
+  * [Back-End web architecture](#back-end-web-architecture)
 
 Simply put, HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
@@ -207,6 +209,13 @@ Example of form an HTTP request to fetch `/alerts/status` page from the web serv
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_request.png" alt="http_request">
 </p>
+
+Additional information about requests:
+
+- route to endpoint
+- rewrite path/query
+- deny access (acls)
+- headers modification
 
 ##### Request line
 
@@ -417,6 +426,12 @@ Example of form an HTTP response for a request to fetch the `/alerts/status` pag
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_response.png" alt="http_request">
 </p>
 
+Additional information about responses:
+
+- caching objects (browser/proxy)
+- headers modification
+- body modification
+
 ##### Status line
 
 The Status-line consisting of the protocol version followed by a numeric status code and its associated textual phrase.
@@ -460,3 +475,22 @@ The response-header fields allow the server to pass additional information about
 ##### Message body
 
 Contains the resource data that was requested by the client.
+
+#### HTTP client
+
+HTTP client is a client that is able to send a request to and get a response from the server in HTTP format. Clients also originates a connection, passes any necessary authentication tokens and delivers the request for a specific piece of data.
+
+  > The clients are anything that send requests to the back-end.
+
+#### Back-End web architecture
+
+  > Generaly I recommend to read these great repositories:
+  >
+  >   - [Learn how to design large-scale systems. Prep for the system design interview. Includes Anki flashcards.](https://github.com/donnemartin/system-design-primer)<br>
+  >   - [Web Architecture 101](https://engineering.videoblocks.com/web-architecture-101-a3224e126947)
+
+The back-end, or the "server side", is all of the technology required to process the incoming request and generate and send the response to the client. This typically includes three major parts:
+
+- **server** - this is the computer that receives requests (backend/origin server)
+- **app** - this is the application running on the server that listens for requests, retrieves information from the database, and sends a response
+- **databases** - are used to organize and persist data
