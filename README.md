@@ -1361,25 +1361,25 @@ _In this ebook you will learn:_
 ##### Config generators
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>Nginx config generator on steroids</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/ssl-config-generator"><b>Mozilla SSL Configuration Generator</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/linkedin/nginx-config-builder"><b>nginx-config-builder</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://nginxconfig.io/"><b>nginxconfig</b></a> - Nginx config generator on steroids.</a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/ssl-config-generator"><b>ssl-config-generator</b></a> - Mozilla SSL Configuration Generator.</a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/linkedin/nginx-config-builder"><b>nginx-config-builder</b></a> - is a python library for building nginx configuration files programatically.</a><br>
 </p>
 
 ##### Config parsers
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/crossplane"><b>Quick and reliable way to convert NGINX configurations into JSON and back</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/fatiherikli/nginxparser"><b>Parses nginx configuration with Pyparsing</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/crossplane"><b>crossplane</b></a> - quick and reliable way to convert NGINX configurations into JSON and back.</a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/fatiherikli/nginxparser"><b>nginxparser</b></a> - parses nginx configuration with Pyparsing.</a><br>
 </p>
 
 ##### Config managers
 
 <p>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jdauphant/ansible-role-nginx"><b>Ansible role to install and manage nginx configuration</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/geerlingguy/ansible-role-nginx"><b>Ansible Role - Nginx</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/ansible-role-nginx"><b>Ansible role for NGINX</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/voxpupuli/puppet-nginx"><b>Puppet Module to manage NGINX on various UNIXes</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/jdauphant/ansible-role-nginx"><b>ansible-role-nginx</b></a> - asible role to install and manage nginx configuration.</a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/geerlingguy/ansible-role-nginx"><b>ansible-role-nginx</b></a> - installs and configures the latest version of Nginx.</a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/ansible-role-nginx"><b>ansible-role-nginx</b></a> - installs NGINX, NGINX Plus, the NGINX Amplify agent, and more.</a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/voxpupuli/puppet-nginx"><b>puppet-nginx</b></a> - puppet module to manage NGINX on various UNIXes.</a><br>
 </p>
 
 ##### Static analyzers
