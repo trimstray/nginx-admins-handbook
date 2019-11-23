@@ -513,7 +513,6 @@ In general there are four types of event multiplexing:
 And the most efficient implementations of non-blocking I/O:
 
 - `epoll` - recommend if you're using GNU/Linux
-
 - `kqueue` - recommend if you're using BSD (it is technically superior to `epoll`)
 
 The `select` method can be enabled or disabled using the `--with-select_module` or `--without-select_module` configuration parameter. Similarly, the `poll` method can be enabled or disabled using the `--with-poll_module` or `--without-poll_module` configuration parameter.
@@ -548,6 +547,18 @@ You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
 
 - [FreeBSD NGINX Performance](https://devinteske.com/wp/freebsd-nginx-performance/)
 - [Why did Netflix use NGINX and FreeBSD to build their own CDN?](https://www.youtube.com/watch?v=KP_bKvXkoC4)
+
+NGINX means connections as follows (the following status information is provided by `ngx_http_stub_status_module`):
+
+- **Active connections** - the current number of active (open) client connections including waiting connections and connections to backends
+  - **accepts** - the total number of accepted client connections
+  - **handled** - the total number of handled connections. Generally, the parameter value is the same as `accepts` unless some resource limits have been reached (for example, the `worker_connections` limit)
+  - **requests** - the total number of client requests
+- **Reading** - the current number of connections where NGINX is reading the request header
+- **Writing** - the current number of connections where NGINX is writing the response back to the client (reads request body, processes request, or writes response to a client)
+- **Waiting** - the current number of idle client connections waiting for a request, i.e. connection still opened waiting for either a new request, or the keepalive expiration (actually it is Active - (Reading + Writing))
+
+  > Waiting connections those are keepalive connections. They are usually not a problem. But if you want lower the number reduce `keepalive_timeout`.
 
 ##### Event-Driven architecture
 
@@ -929,9 +940,9 @@ The original model of HTTP, and the default one in HTTP/1.0, is short-lived conn
 
 HTTP Keep-Alive connection or persistent connection is the idea of using a single TCP connection to send and receive multiple HTTP requests/responses (Keep Alive's work between requests), as opposed to opening a new connection for every single request/response pair.
 
-When using keep alive the browser does not have to make multiple connections. But uses the already established connection, this controls how long that stays active/open.
+When using keep alive the browser does not have to make multiple connections (keep in mind that establishing connections is expensive). But uses the already established connection, this controls how long that stays active/open. So, the keep alive is a way to reduce the overhead of creating the connection, as, most of the time, a user will navigate through the site etc. (plus the multiple requests from a single page, to download css, javascript, images etc.).
 
-This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because NGINX needs to close connections from time to time, even if you configure NGINX to allow infinite keep-alive-timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
+This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because NGINX needs to close connections from time to time, even if you configure NGINX to allow infinite keep alive timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/closed_vs_keepalive.png" alt="closed_vs_keepalive">
@@ -988,9 +999,12 @@ NGINX provides the two layers to enable Keep-Alive:
   ```nginx
   # Default: 75s
   keepalive_timeout   10s;
+
+  # Or tell the browser when it should close the connection by adding an optional second timeout in the header sent to the browser (some browsers do not care about the header):
+  keepalive_timeout   10s 25s;
   ```
 
-  > Increase this to allow the keepalive connection to stay open longer, resulting in faster subsequent requests. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible.
+  > Increase this to allow the keepalive connection to stay open longer, resulting in faster subsequent requests. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible. You could also decrease little by little the timeout (75s -> 50, then later 25...) and see how the server behaves.
 
 ###### Upstream layer
 

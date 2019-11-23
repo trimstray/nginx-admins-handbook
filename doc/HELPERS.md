@@ -73,6 +73,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
     * [Show information about processes](#show-information-about-nginx-processes)
     * [Check memory usage](#check-memoryusage)
     * [Show open files](#show-open-files)
+    * [Check segmentation fault messages](#check-segmentation-fault-messages)
     * [Dump configuration](#dump-configuration)
     * [Get the list of configure arguments](#get-the-list-of-configure-arguments)
     * [Check if the module has been compiled](#check-if-the-module-has-been-compiled)
@@ -5102,6 +5103,12 @@ lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print 
 
 # For multiple workers:
 lsof -n -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
+```
+
+##### Check segmentation fault messages
+
+```bash
+dmesg | grep nginx | grep segfault # | wc -l
 ```
 
 ##### Dump configuration

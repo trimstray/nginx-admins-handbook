@@ -266,6 +266,7 @@
     * [Show information about processes](doc/HELPERS.md#show-information-about-nginx-processes)
     * [Check memory usage](doc/HELPERS.md#check-memoryusage)
     * [Show open files](doc/HELPERS.md#show-open-files)
+    * [Check segmentation fault messages](doc/HELPERS.md#check-segmentation-fault-messages)
     * [Dump configuration](doc/HELPERS.md#dump-configuration)
     * [Get the list of configure arguments](doc/HELPERS.md#get-the-list-of-configure-arguments)
     * [Check if the module has been compiled](doc/HELPERS.md#check-if-the-module-has-been-compiled)
@@ -833,6 +834,7 @@ Existing chapters:
     - [x] _Show information about processes_
     - [x] _Check memory usage_
     - [x] _Show open files_
+    - [x] _Check segmentation fault messages_
     - [x] _Dump configuration_
     - [x] _Get the list of configure arguments_
     - [x] _Check if the module has been compiled_
