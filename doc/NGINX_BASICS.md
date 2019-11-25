@@ -1249,9 +1249,7 @@ You may feel lost now (me too...) so I let myself put this great and simple prev
 
 On every phase you can register any number of your handlers. Each phase has a list of handlers associated with it.
 
-I recommend a great explanation about [HTTP request processing phases in Nginx](http://scm.zoomquiet.top/data/20120312173425/index.html) and, of course, official [Development guide](http://nginx.org/en/docs/dev/development_guide.html).
-
-I have also prepared a simple diagram that can help you understand what modules are used in each phase. It also contains short descriptions:
+I recommend to read a great explanation about [HTTP request processing phases in Nginx](http://scm.zoomquiet.top/data/20120312173425/index.html) and, of course, official [Development guide](http://nginx.org/en/docs/dev/development_guide.html). I have also prepared a simple diagram that can help you understand what modules are used in each phase. It also contains short descriptions from official development guide:
 
 <p align="center">
   <a href="http://nginx.org/en/docs/dev/development_guide.html#http_phases">
