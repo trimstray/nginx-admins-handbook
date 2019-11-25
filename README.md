@@ -1493,6 +1493,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://infosec.mozilla.org/guidelines/web_security.html"><b>Mozilla Web Security</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://appsecwiki.com/#/"><b>Application Security Wiki</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/ASVS/tree/master/4.0"><b>OWASP ASVS 4.0</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/OWASP_Proactive_Controls"><b>OWASP Top 10 Proactive Controls 2018.</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/TLS-Redirection#technical-details"><b>TLS Redirection (and Virtual Host Confusion)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>

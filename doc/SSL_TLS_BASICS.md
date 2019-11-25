@@ -22,6 +22,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/)
 - [Cryptology ePrint Archive](https://eprint.iacr.org/)
 - [Every byte of a TLS connection explained and reproduced - TLS 1.2](https://tls.ulfheim.net/)
+- [SSL/TLS for dummies](https://www.wst.space/tag/https/)
 
 If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/) or [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/) and it'll tell you if you need to fix or update your config.
 
