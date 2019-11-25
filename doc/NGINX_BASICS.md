@@ -392,7 +392,11 @@ Before start reading next chapters you should know what regular expressions are 
 
 Why? Regular expressions can be used in both the `server_name` and `location` (also in other) directives, and sometimes you must have a great skills of reading them. I think you should create the most readable regular expressions that do not become spaghetti code - impossible to debug and maintain.
 
-NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` and `return` directives. Below is also something interesting:
+NGINX uses the [PCRE](https://www.pcre.org/) library to perform complex manipulations with your `location` blocks and use the powerful `rewrite` directive. To use a regular expression for string matching, it first needs to be compiled, which is usually done at the configuration phase.
+
+You can also enable `pcre_jit` to dynamic translation during execution (at run time) rather than prior to execution. This option can improve performance, however, in some cases `pcre_jit` may have a negative effect. So, before enabling it, I recommend you to read this great document: [PCRE Performance Project](https://zherczeg.github.io/sljit/pcre.html).
+
+Below is also something interesting about regular expressions and PCRE:
 
 - [Learn PCRE in Y minutes](https://learnxinyminutes.com/docs/pcre/)
 - [PCRE Regex Cheatsheet](https://www.debuggex.com/cheatsheet/regex/pcre)
@@ -1246,6 +1250,14 @@ You may feel lost now (me too...) so I let myself put this great and simple prev
 On every phase you can register any number of your handlers. Each phase has a list of handlers associated with it.
 
 I recommend a great explanation about [HTTP request processing phases in Nginx](http://scm.zoomquiet.top/data/20120312173425/index.html) and, of course, official [Development guide](http://nginx.org/en/docs/dev/development_guide.html).
+
+I have also prepared a simple diagram that can help you understand what modules are used in each phase. It also contains short descriptions:
+
+<p align="center">
+  <a href="http://nginx.org/en/docs/dev/development_guide.html#http_phases">
+    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_phases.png" alt="nginx_phases">
+  </a>
+</p>
 
 #### Server blocks logic
 
