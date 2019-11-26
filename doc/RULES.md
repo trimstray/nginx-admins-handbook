@@ -2831,7 +2831,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`). Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - 6.3. Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3).
 
-  > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with min. `2048 bit` size) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
+  > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with unique keys at least 2048 bits long) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
 
   > `DHE` is slower than `ECDHE`. If you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`. OWASP estimates that the TLS handshake with `DHE` hinders the CPU by a factor of 2.4 compared to `ECDHE`.
 
