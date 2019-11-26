@@ -1329,7 +1329,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://enable-cors.org/index.html"><b>Enable cross-origin resource sharing (CORS)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nbs-system/naxsi"><b>NAXSI - WAF for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet"><b>Transport Layer Protection Cheat Sheet</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html"><b>Transport Layer Protection Cheat Sheet by OWASP</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://caniuse.com/#home"><b>Browser support tables for modern web technologies</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://badssl.com/"><b>Memorable site for testing clients against bad SSL configs</b></a><br>
@@ -1443,6 +1443,10 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.gnu.org/software/gdb/"><b>GDB</b></a> - allows you to see what is going on `inside' another program while it executes.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://sourceware.org/systemtap/"><b>SystemTap</b></a> - provides infrastructure to simplify the gathering of information about the running Linux system.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/stapxx"><b>stapxx</b></a> - simple macro language extensions to SystemTap.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://testssl.sh/"><b>testssl.sh</b></a> - checks a server's service on any port for the support of TLS/SSL ciphers.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nabla-c0d3/sslyze"><b>sslyze</b></a> - is a fast and powerful SSL/TLS server scanning library.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/cipherscan"><b>cipherscan</b></a> - is a very simple way to find out which SSL ciphersuites are supported by a target.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/O-Saft"><b>O-Saft</b></a> - OWASP SSL advanced forensic tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/trimstray/htrace.sh"><b>htrace.sh</b></a> - is a simple Swiss Army knife for http/https troubleshooting and profiling.<br>
 </p>
 
