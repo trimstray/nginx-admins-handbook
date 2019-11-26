@@ -1181,6 +1181,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
   * [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)
   * [Use return directive instead of rewrite for redirects](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
   * [Enable PCRE JIT to speed up processing of regular expressions](#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
+  * [Activate the cache for connections to upstream servers](#beginner-activate-the-cache-for-connections-to-upstream-servers)
   * [Make an exact location match to speed up the selection process](#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening](#hardening)**
@@ -1597,6 +1598,57 @@ pcre_jit on;
 ###### External resources
 
 - [Core functionality - pcre jit](https://nginx.org/en/docs/ngx_core_module.html#pcre_jit)
+
+#### :beginner: Activate the cache for connections to upstream servers
+
+###### Rationale
+
+  > The idea behind keepalive is to address the latency of establishing TCP connections over high-latency networks. This connection cache is useful in situations where NGINX has to constantly maintain a certain number of open connections to an upstream server.
+
+  > Keep-Alive connections can have a major impact on performance by reducing the CPU and network overhead needed to open and close connections. With HTTP keepalive enabled in NGINX upstream servers reduces latency thus improves performance and it reduces the possibility that the NGINX runs out of ephemeral ports.
+
+  > This can greatly reduce the number of new TCP connections, as NGINX can now reuse its existing connections (`keepalive`) per upstream.
+
+  > If your upstream server supports Keep-Alive in its config, NGINX will now reuse existing TCP connections without creating new ones. This can greatly reduce the number of sockest in `TIME_WAIT` TCP connections on a busy servers (less work for OS to establish new connections, less packets on a network).
+
+  > Keep-Alive connections are only supported as of HTTP/1.1, an upgrade to the HTTP protocol.
+
+###### Example
+
+```nginx
+# Upstream context:
+upstream backend {
+
+  # Sets the maximum number of idle keepalive connections to upstream servers
+  # that are preserved in the cache of each worker process.
+  keepalive           16;
+
+}
+
+# Server/location contexts:
+server {
+
+  ...
+
+  location / {
+
+    # Default is HTTP/1, keepalive is only enabled in HTTP/1.1:
+    proxy_http_version  1.1;
+    # Remove the Connection header if the client sends it,
+    # it could be "close" to close a keepalive connection:
+    proxy_set_header    Connection "";
+
+    ...
+
+  }
+
+}
+```
+
+###### External resources
+
+- [NGINX keeps sending requests to offline upstream](https://serverfault.com/a/883019)
+- [HTTP Keep-Alive connections (from this handbook)](NGINX_BASICS.md#http-keep-alive-connections)
 
 #### :beginner: Make an exact location match to speed up the selection process
 

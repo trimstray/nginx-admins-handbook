@@ -383,7 +383,7 @@ proxy_read_timeout 20s;
 
 ##### Regular expressions with PCRE
 
-  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions - Performance - P1](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
+  > **:bookmark: [Enable PCRE JIT to speed up processing of regular expressions - Performance - P2](RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)**
 
 Before start reading next chapters you should know what regular expressions are and how they works (they are not a black magic really). I recommend two great and short write-ups about regular expressions created by [Jonny Fox](https://medium.com/@jonny.fox):
 
@@ -934,6 +934,8 @@ Look also at this great article about [Optimizing Nginx for High Traffic Loads](
 
 ##### HTTP Keep-Alive connections
 
+  > **:bookmark: [Activate the cache for connections to upstream servers - Performance - P2](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)**
+
 Before starting this section I recommend to read the following articles:
 
 - [HTTP Keepalive Connections and Web Performance](https://www.nginx.com/blog/http-keepalives-and-web-performance/)
@@ -945,6 +947,8 @@ The original model of HTTP, and the default one in HTTP/1.0, is short-lived conn
 HTTP Keep-Alive connection or persistent connection is the idea of using a single TCP connection to send and receive multiple HTTP requests/responses (Keep Alive's work between requests), as opposed to opening a new connection for every single request/response pair.
 
 When using keep alive the browser does not have to make multiple connections (keep in mind that establishing connections is expensive). But uses the already established connection, this controls how long that stays active/open. So, the keep alive is a way to reduce the overhead of creating the connection, as, most of the time, a user will navigate through the site etc. (plus the multiple requests from a single page, to download css, javascript, images etc.).
+
+It takes a 3-way handshake to establish a TCP connection, so, when there is a perceivable latency between the client and the server, keepalive would greatly speed things up by reusing existing connections.
 
 This mechanism hold open the TCP connection between the client and the server after an HTTP transaction has completed. It's important because NGINX needs to close connections from time to time, even if you configure NGINX to allow infinite keep alive timeouts and a huge amount of acceptable requests per connection, to return results and as well errors and success messages.
 
@@ -983,7 +987,7 @@ NGINX official documentation says:
 
 Keepalive connections reduce overhead, especially when SSL/TLS is in use but they also have drawbacks; even when idling they consume server resources, and under heavy load, DoS attacks can be conducted. In such cases, using non-persistent connections, which are closed as soon as they are idle, can provide better performance. So, Keep-Alives will improve SSL/TLS performance by quite a big deal if clients are doing multiple requests but if you don't have the resources to handle them then they kill your servers.
 
-  > NGINX closes keepalive connections when the `worker_connections` limit is reached.
+  > NGINX closes keepalive connections when the `worker_connections` limit is reached (connections are kept in the cache till the origin server closes them).
 
 To better understand how Keep-Alive works, please see amazing [explanation](https://stackoverflow.com/a/38190172) by [Barry Pollard](https://stackoverflow.com/users/2144578/barry-pollard).
 
@@ -1036,6 +1040,8 @@ upstream bk_x8080 {
 
   ...
 
+  # Sets the maximum number of idle keepalive connections to upstream servers
+  # that are preserved in the cache of each worker process.
   keepalive         16;
 
 }
@@ -1065,6 +1071,44 @@ server {
 ...
 
 }
+```
+
+There are two basic cases when keeping connections alive is really beneficial:
+
+- fast backends, which produce responses is a very short time, comparable to a TCP handshake
+- distant backends, when a TCP handshake takes a long time, comparable to a backend response time
+
+Look at the test:
+
+- without keepalive for upstream:
+
+```bash
+wrk -c 500 -t 6 -d 60s -R 15000 -H "Host: example.com" https://example.com/
+Running 1m test @ https://example.com/
+  6 threads and 500 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    24.13s    10.68s   49.55s    59.06%
+    Req/Sec   679.21     42.44   786.00     78.95%
+  228421 requests in 1.00m, 77.98MB read
+  Socket errors: connect 0, read 0, write 0, timeout 1152
+  Non-2xx or 3xx responses: 4
+Requests/sec:   3806.96
+Transfer/sec:      1.30MB
+```
+
+- with keepalive for upstream:
+
+```bash
+wrk -c 500 -t 6 -d 60s -R 15000 -H "Host: example.com" https://example.com/
+Running 1m test @ https://example.com/
+  6 threads and 500 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    23.40s     9.53s   47.25s    60.67%
+    Req/Sec     0.86k    50.19     0.94k    60.00%
+  294148 requests in 1.00m, 100.41MB read
+  Socket errors: connect 0, read 0, write 0, timeout 380
+Requests/sec:   4902.24
+Transfer/sec:      1.67MB
 ```
 
 ##### `sendfile`, `tcp_nodelay`, and `tcp_nopush`

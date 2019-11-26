@@ -387,6 +387,7 @@
   * [Use try_files directive to ensure a file exists](doc/RULES.md#beginner-use-try_files-directive-to-ensure-a-file-exists)
   * [Use return directive instead of rewrite for redirects](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)
   * [Enable PCRE JIT to speed up processing of regular expressions](doc/RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)
+  * [Activate the cache for connections to upstream servers](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)
   * [Make an exact location match to speed up the selection process](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](doc/RULES.md#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
@@ -956,6 +957,7 @@ Existing chapters:
   - [x] _Enable PCRE JIT to speed up processing of regular expressions_
   - [ ] _Set proxy timeouts for normal load and under heavy load_
   - [ ] _Configure kernel parameters for high load traffic_
+  - [x] _Activate the cache for connections to upstream servers_
 
 </details>
 
@@ -998,14 +1000,14 @@ If you have any idea, send it back to me or add a pull request.
 
 ## Checklist to rule them all
 
-  > This checklist contains [all rules (69)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (70)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 29 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 22 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 28 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 24 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
 
@@ -1018,7 +1020,6 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Never use a hostname in a listen or upstream directive](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)<br><sup>While this may work, it will comes with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](doc/RULES.md#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
-| [Enable PCRE JIT to speed up processing of regular expressions](doc/RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)<br><sup>NGINX with PCRE JIT is much faster than without it.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](doc/RULES.md#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](doc/RULES.md#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1052,6 +1053,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use $request_uri to avoid using regular expressions](doc/RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)<br><sup>By default, the regex is costly and will slow down the performance.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use try_files directive to ensure a file exists](doc/RULES.md#beginner-use-try_files-directive-to-ensure-a-file-exists)<br><sup>Use it if you need to search for a file, it saving duplication of code also.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use return directive instead of rewrite for redirects](doc/RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)<br><sup>Use return directive to more speedy response than rewrite.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Enable PCRE JIT to speed up processing of regular expressions](doc/RULES.md#beginner-enable-pcre-jit-to-speed-up-processing-of-regular-expressions)<br><sup>NGINX with PCRE JIT is much faster than without it.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Activate the cache for connections to upstream servers](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)<br><sup> Nginx can now reuse its existing connections (keepalive) per upstream.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Disable unnecessary modules](doc/RULES.md#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](doc/RULES.md#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](doc/RULES.md#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
