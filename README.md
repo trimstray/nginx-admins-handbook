@@ -496,7 +496,7 @@ In addition, I would like to recommend three great docs focuses on the concept o
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
-And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start with.
+And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start with. An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) as a excellent security guidance.
 
 ## Prologue
 
@@ -1331,6 +1331,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html"><b>Transport Layer Protection Cheat Sheet by OWASP</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://bettercrypto.org/"><b>Applied Crypto Hardening</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://caniuse.com/#home"><b>Browser support tables for modern web technologies</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://badssl.com/"><b>Memorable site for testing clients against bad SSL configs</b></a><br>
 </p>
