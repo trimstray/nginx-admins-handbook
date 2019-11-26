@@ -1171,7 +1171,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
-- **[≡ Performance (11)](#performance)**
+- **[≡ Performance (12)](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)

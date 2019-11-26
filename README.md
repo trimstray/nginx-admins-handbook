@@ -377,7 +377,7 @@
   * [Use debug mode to track down unexpected behaviour](doc/RULES.md#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
-- **[Performance (11)](doc/RULES.md#performance)**<a id="toc-performance"></a>
+- **[Performance (12)](doc/RULES.md#performance)**<a id="toc-performance"></a>
   * [Adjust worker processes](doc/RULES.md#beginner-adjust-worker-processes)
   * [Use HTTP/2](doc/RULES.md#beginner-use-http2)
   * [Maintaining SSL sessions](doc/RULES.md#beginner-maintaining-ssl-sessions)
@@ -1536,7 +1536,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
-- **[Performance (11)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
+- **[Performance (12](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.
