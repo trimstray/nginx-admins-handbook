@@ -496,7 +496,7 @@ In addition, I would like to recommend three great docs focuses on the concept o
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
-And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start with. An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) as a excellent security guidance.
+An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start with.
 
 ## Prologue
 
