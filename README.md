@@ -90,6 +90,7 @@
   * [Builder tools](#builder-tools)
   * [Benchmarking tools](#benchmarking-tools)
   * [Debugging tools](#debugging-tools)
+  * [Security & Web testing tools](#security--web-testing-tools)
   * [Development](#development)
   * [Online tools](#online-tools)
   * [Other stuff](#other-stuff)
@@ -665,6 +666,19 @@ Existing chapters:
     - [x] _SystemTap_
     - [x] _stapxx_
     - [x] _htrace.sh_
+  - _Security & Web testing tools_
+    - [x] _Burp Suite_
+    - [x] _w3af_
+    - [x] _nikto_
+    - [x] _ssllabs-scan_
+    - [x] _http-observatory_
+    - [x] _testssl.sh_
+    - [x] _sslyze_
+    - [x] _cipherscan_
+    - [x] _O-Saft_
+    - [x] _Arjun_
+    - [x] _Corsy_
+    - [x] _XSStrike_
   - _Other stuff_
     - [x] _OWASP Cheat Sheet Series_
     - [x] _Mozilla Web Security_
@@ -1444,11 +1458,24 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.gnu.org/software/gdb/"><b>GDB</b></a> - allows you to see what is going on `inside' another program while it executes.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://sourceware.org/systemtap/"><b>SystemTap</b></a> - provides infrastructure to simplify the gathering of information about the running Linux system.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/stapxx"><b>stapxx</b></a> - simple macro language extensions to SystemTap.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/trimstray/htrace.sh"><b>htrace.sh</b></a> - is a simple Swiss Army knife for http/https troubleshooting and profiling.<br>
+</p>
+
+##### Security & Web testing tools
+
+<p>
+&nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/burp"><b>Burp Suite</b></a> - is a graphical tool for testing Web application security.<br>
+&nbsp;&nbsp;:black_small_square: <a href="http://w3af.org/"><b>w3af</b></a> - is a Web Application Attack and Audit Framework.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/sullo/nikto"><b>nikto</b></a> - web server scanner which performs comprehensive tests.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/ssllabs/ssllabs-scan"><b>ssllabs-scan</b></a> - client for SSL Labs APIs, designed for automated and/or bulk testing.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/http-observatory"><b>http-observatory</b></a> - Mozilla HTTP Observatory.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://testssl.sh/"><b>testssl.sh</b></a> - checks a server's service on any port for the support of TLS/SSL ciphers.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nabla-c0d3/sslyze"><b>sslyze</b></a> - is a fast and powerful SSL/TLS server scanning library.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/cipherscan"><b>cipherscan</b></a> - is a very simple way to find out which SSL ciphersuites are supported by a target.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/O-Saft"><b>O-Saft</b></a> - OWASP SSL advanced forensic tool.<br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/trimstray/htrace.sh"><b>htrace.sh</b></a> - is a simple Swiss Army knife for http/https troubleshooting and profiling.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/Arjun"><b>Arjun</b></a> - HTTP parameter discovery suite.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/Corsy"><b>Corsy</b></a> - CORS misconfiguration scanner.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/XSStrike"><b>XSStrike</b></a> - most advanced XSS scanner.<br>
 </p>
 
 ##### Development
