@@ -634,14 +634,14 @@ Existing chapters:
     - [x] _Nginx Scripting - Extending Nginx Functionalities with Lua_
     - [x] _How to handle over 1,200,000 HTTPS Reqs/Min_
     - [x] _Using ngx_lua / lua-nginx-module in pixiv_
-  - [x] _Cheatsheets & References_
+  - _Cheatsheets & References_
     - [x] _Nginx configurations for most popular CMS/CMF/Frameworks based on PHP_
-  - [x] _Performance & Hardening_
+  - _Performance & Hardening_
     - [x] _Memorable site for testing clients against bad SSL configs_
-  - [x] _Config parsers_
+  - _Config parsers_
     - [x] _Quick and reliable way to convert NGINX configurations into JSON and back_
     - [x] _Parses nginx configuration with Pyparsing_
-  - [x] _Config managers_
+  - _Config managers_
     - [x] _Ansible role to install and manage nginx configuration_
     - [x] _Ansible Role - Nginx_
     - [x] _Ansible role for NGINX_
