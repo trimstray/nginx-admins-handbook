@@ -547,7 +547,7 @@ Look also at libevent benchmark (read about [libevent – an event notification 
 
 <sup><i>This infographic comes from [daemonforums - An interesting benchmark (kqueue vs. epoll)](http://daemonforums.org/showthread.php?t=2124).</i></sup>
 
-You may also view why big players use NGINX on FreeBSD instead of on GNU/Linux:
+You may also view why big players uses NGINX on FreeBSD instead of on GNU/Linux:
 
 - [FreeBSD NGINX Performance](https://devinteske.com/wp/freebsd-nginx-performance/)
 - [Why did Netflix use NGINX and FreeBSD to build their own CDN?](https://www.youtube.com/watch?v=KP_bKvXkoC4)

@@ -7,6 +7,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
   * [HTTP/2](#http2)
   * [URI vs URL](#uri-vs-url)
   * [HTTP Headers](#http-headers)
+    * [Header compression](#header-compression)
   * [HTTP Methods](#http-methods)
   * [Request](#request)
     * [Request line](#request-line)
@@ -156,6 +157,8 @@ See these articles about HTTP headers:
 
 HTTP headers allow the client and the server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).
 
+###### Header compression
+
 The role of header compression:
 
   > _Header compression resulted in an ~88% reduction in the size of request headers and an ~85% reduction in the size of response headers. On the lower-bandwidth DSL link, in which the upload link is only 375 Kbps, request header compression in particular, led to significant page load time improvements for certain sites (i.e. those that issued large number of resource requests). We found a reduction of 45 - 1142 ms in page load time simply due to header compression._
@@ -176,7 +179,7 @@ The HTTP protocol includes a set of methods that indicate which action to be don
 
 - `GET` - is used to retreive data from a server at the specified resource
 
-- `POST` - is used to create or append a resource to an existing collection
+- `POST` - is used to create or append a resource to an existing resource
 
 - `PUT` - is used to create or update (replace) the existing resource
 
@@ -485,7 +488,7 @@ HTTP client is a client that is able to send a request to and get a response fro
 
 #### Back-End web architecture
 
-  > Generaly I recommend to read these great repositories:
+  > I recommend to read these great repositories:
   >
   >   - [Learn how to design large-scale systems. Prep for the system design interview. Includes Anki flashcards.](https://github.com/donnemartin/system-design-primer)<br>
   >   - [Web Architecture 101](https://engineering.videoblocks.com/web-architecture-101-a3224e126947)

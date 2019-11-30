@@ -105,6 +105,7 @@
   * [HTTP/2](doc/HTTP_BASICS.md#http2)
   * [URI vs URL](doc/HTTP_BASICS.md#uri-vs-url)
   * [HTTP Headers](doc/HTTP_BASICS.md#http-headers)
+    * [Header compression](#header-compression)
   * [HTTP Methods](doc/HTTP_BASICS.md#http-methods)
   * [Request](doc/HTTP_BASICS.md#request)
     * [Request line](doc/HTTP_BASICS.md#request-line)
@@ -476,9 +477,9 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 
 Generally, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
-NGINX is also known as a _Apache Killer_ (mainly because of its lightness and much less RAM consumption). It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
-
 Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind - one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
+
+NGINX is also known as a _Apache Killer_ (mainly because of its lightness and much less RAM consumption). It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
 
 For me, it is a one of the best and most important service that I used in my SysAdmin career.
 
@@ -699,6 +700,7 @@ Existing chapters:
   - [x] _HTTP/2_
   - [x] _URI vs URL_
   - [x] _HTTP Headers_
+    - [x] _Header compression_
   - [x] _HTTP Methods_
   - [x] _Request_
     - [x] _Request line_
@@ -1135,7 +1137,7 @@ Look also at the following recommendations. In my opinion, the right configurati
 
 - **Recommended**
 
-  - A+
+  - A/A+
   - Certificate: 100/100
   - Protocol Support: 95/100
   - Key Exchange: 90/100
