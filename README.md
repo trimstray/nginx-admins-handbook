@@ -57,6 +57,7 @@
   * [Who this handbook is for](#who-this-handbook-is-for)
   * [Before you start](#before-you-start)
   * [Contributing & Support](#contributing--support)
+  * [RSS Feed & Updates](#rss-feed--updates)
   * [Checklist to rule them all](#checklist-to-rule-them-all)
 - **[Bonus Stuff](#bonus-stuff)**<a id="toc-bonus-stuff"></a>
   * [Reports: blkcipher.info](#reports-blkcipherinfo)
@@ -596,6 +597,7 @@ Existing chapters:
   - [x] _Who this handbook is for_
   - [x] _Before you start_
   - [x] _Contributing & Support_
+  - [x] _RSS Feed & Updates
   - [x] _Checklist to rule them all_
 
 </details>
@@ -1011,6 +1013,10 @@ Existing chapters:
 </details>
 
 If you have any idea, send it back to me or add a pull request.
+
+## RSS Feed & Updates
+
+GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/commits.atom) feed of the commits, which may also be useful if you want to be kept informed about all changes.
 
 ## Checklist to rule them all
 
