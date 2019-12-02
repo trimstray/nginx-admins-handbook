@@ -1171,7 +1171,7 @@ I also got the highest note on the Observatory:
 
 ## Printable hardening cheatsheets
 
-I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8200) based on recipes from this handbook:
+I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8800) based on recipes from this handbook:
 
   > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
