@@ -48,6 +48,8 @@ We have also some interesting books:
 - [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
 - [RESTful Web Services](https://www.crummy.com/writing/RESTful-Web-Services/)
 
+And finally look at [this](https://github.com/bigcompany/know-your-http) amazing series of A1-sized posters about the HTTP protocol.
+
 #### Features and architecture
 
 The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
