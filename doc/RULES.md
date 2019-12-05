@@ -1924,7 +1924,11 @@ location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htacces
 
   > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
 
-  But the Official Apache Documentation (yep, it's not a joke, in my opinion that's an interesting point of view) say:
+  > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions. For example, Shodan provides a widely used database of this info.
+
+  > Hiding your version information will not stop an attack from happening, but it will make you less of a target if attackers are looking for a specific version of hardware or software. It's far more efficient to just try the vulnerability on all random servers than asking them. Security by obscurity doesn't mean you're safe, but it does slow people down sometimes, and that's exactly what's needed for day zero vulnerabilities.
+
+  The Official Apache Documentation (yep, it's not a joke, in my opinion that's an interesting point of view) say:
 
   > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
 
@@ -1938,6 +1942,7 @@ server_tokens off;
 
 - [Remove Version from Server Header Banner in nginx](https://geekflare.com/remove-server-header-banner-nginx/)
 - [Reduce or remove server headers](https://www.tunetheweb.com/security/http-security-headers/server-header/)
+- [Fingerprint Web Server (OTG-INFO-002)](https://www.owasp.org/index.php/Fingerprint_Web_Server_(OTG-INFO-002))
 
 #### :beginner: Hide Nginx server signature
 
@@ -1945,7 +1950,7 @@ server_tokens off;
 
   > One of the easiest first steps to undertake, is to prevent the web server from showing its used software via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc.
 
-  > In my opinion there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number.
+  > In my opinion there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number. However, it's not information you need to give out, so I am generally in favour of removing it, where this can be accomplished with minimal effort.
 
   > You should compile NGINX from sources with `ngx_headers_more` to used `more_set_headers` directive or use a [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch).
 
@@ -1959,6 +1964,7 @@ more_set_headers "Server: Unknown";
 
 - [Shhh... don’t let your response headers talk too loudly](https://www.troyhunt.com/shhh-dont-let-your-response-headers/)
 - [How to change (hide) the Nginx Server Signature?](https://stackoverflow.com/questions/24594971/how-to-changehide-the-nginx-server-signature)
+- [Configuring Your Web Server to Not Disclose Its Identity](https://www.acunetix.com/blog/articles/configure-web-server-disclose-identity/)
 
 #### :beginner: Hide upstream proxy headers
 
