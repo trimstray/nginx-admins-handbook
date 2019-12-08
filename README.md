@@ -511,7 +511,7 @@ An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https:/
 
 When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
 
-I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me all documents treated the subject lightly.
+I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me some of the documents treated the subject lightly.
 
 Of course, [NGINX Official Documentation](https://nginx.org/en/docs/) is the best place but I know that we also have other great resources:
 
@@ -539,7 +539,7 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 ## Who this handbook is for
 
-If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of web-based applications.
+If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of Web-based applications.
 
 This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand that also discusses heavyweight topics for advanced users so there is something for everyone.
 

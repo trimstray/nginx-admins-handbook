@@ -378,7 +378,7 @@ Time intervals can be specified in:
 - `y`: Years (365 days)
 
 ```nginx
-proxy_read_timeout 20s;
+proxy_read_timeout 20 # =20s;
 ```
 
 ##### Regular expressions with PCRE
@@ -522,6 +522,12 @@ And the most efficient implementations of non-blocking I/O:
 The `select` method can be enabled or disabled using the `--with-select_module` or `--without-select_module` configuration parameter. Similarly, the `poll` method can be enabled or disabled using the `--with-poll_module` or `--without-poll_module` configuration parameter.
 
   > `epoll` is an efficient method of processing connections available on Linux 2.6+. `kqueue` is an efficient method of processing connections available on FreeBSD 4.1+, OpenBSD 2.9+, and NetBSD 2.0+.
+
+There is normally no need to specify it explicitly, because NGINX will by default use the most efficient method. But if you want to set this:
+
+```nginx
+use epoll;
+```
 
 There are also great resources (also makes comparisons) about them:
 
