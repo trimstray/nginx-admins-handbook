@@ -439,7 +439,7 @@ server {
 
   > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address).
 
-  > For sharing a single IP address between several HTTPS servers in my opinion you should use one SSL config (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
+  > In my opinion, for sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
 
   > Also remember about configuration for default server. It's important because if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address.
 
@@ -699,7 +699,7 @@ server {
 
   > It is simpler and faster because NGINX stops processing the request (and doesn't have to process a regular expressions). More than that, you can specify a code in the 3xx series.
 
-  > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use rewrite.
+  > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use `rewrite`.
 
 ###### Example
 
@@ -735,6 +735,7 @@ server {
 - [rewrite vs return (from this handbook)](NGINX_BASICS.md#rewrite-vs-return)
 - [Adding and removing the www prefix (from this handbook)](HELPERS.md#adding-and-removing-the-www-prefix)
 - [Avoid checks server_name with if directive (from this handbook)](#beginner-avoid-checks-server_name-with-if-directive)
+- [Use return directive instead of rewrite for redirects - Performance - P2 (from this handbook)](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
 
 #### :beginner: Configure log rotation policy
 
@@ -1522,7 +1523,7 @@ Recommended configuration:
 
   > You should use server blocks and `return` statements as they're way simpler and faster than evaluating RegEx via location blocks. This directive stops processing and returns the specified code to a client.
 
-  > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use rewrite.
+  > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use `rewrite`.
 
 ###### Example
 
@@ -1567,6 +1568,7 @@ server {
 - [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [NGINX - rewrite vs redirect](http://think-devops.com/blogs/nginx-rewrite-redirect.html)
 - [rewrite vs return (from this handbook)](NGINX_BASICS.md#rewrite-vs-return)
+- [Use return directive for URL redirection (301, 302) - Base Rules - P2 (from this handbook)](#beginner-use-return-directive-for-url-redirection-301-302)
 
 #### :beginner: Enable PCRE JIT to speed up processing of regular expressions
 
@@ -2072,8 +2074,6 @@ proxy_hide_header X-Drupal-Cache;
   >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
 
-  > Criteria for choosing OpenSSL version: It depends all on your use.
-
   > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1) but you should know one thing: OpenSSL 1.1.1 has a different API than the current 1.0.2 so that's not just a simple flick of the switch.
 
   > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
@@ -2179,7 +2179,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > I think the best way to deploy secure configuration is: enable TLS 1.2 without any `CBC` Ciphers (is safe enough) only TLS 1.3 is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
+  > I think the best way to deploy secure configuration is: enable TLS 1.2 without any `CBC` Ciphers (is safe enough) and/or TLS 1.3 because is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
@@ -2233,6 +2233,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [TLS 1.3 in a nutshell](https://assured.se/2018/08/29/tls-1-3-in-a-nut-shell/)
 - [TLS 1.3 is here to stay](https://www.ssl.com/article/tls-1-3-is-here-to-stay/)
 - [TLS 1.3: Everything you need to know](https://securityboulevard.com/2019/07/tls-1-3-everything-you-need-to-know/)
+- [TLS 1.3: better for individuals - harder for enterprises](https://www.ncsc.gov.uk/blog-post/tls-13-better-individuals-harder-enterprises)
 - [How to enable TLS 1.3 on Nginx](https://ma.ttias.be/enable-tls-1-3-nginx/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454)
 - [Deploying TLS 1.3: the great, the good and the bad](https://media.ccc.de/v/33c3-8348-deploying_tls_1_3_the_great_the_good_and_the_bad)
@@ -2251,7 +2252,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. You should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (really great source of knowledge; all Mozilla websites and deployments should follow the recommendations below).
+  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. In my opinion, in case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (really great source of knowledge; all Mozilla websites and deployments should follow the recommendations below).
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
@@ -2274,8 +2275,6 @@ ssl_protocols TLSv1.2 TLSv1.1;
   > By default, OpenSSL 1.1.1* with TLSv1.3 disable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers. In my opinion, `ChaCha20+Poly1305` or `AES/GCM` are very efficient in the most cases. On modern processors, the common `AES-GCM` cipher and mode are sped up by dedicated hardware, making that algorithm's implementation faster than anything by a wide margin. On older or cheaper processors that lack that feature, though, the `ChaCha20` cipher runs faster than `AES-GCM`, as was the `ChaCha20` designers' intention.
 
   > If you want to use `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers (for example on constrained systems which are usually constrained for everything) see [TLSv1.3 and `CCM` ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers). But remember: `GCM` should be considered superior to `CCM` for most applications that require authenticated encryption.
-
-  > On modern processors, the common `AES-GCM` cipher and mode are sped up by dedicated hardware, making that algorithm's implementation faster than anything by a wide margin. On older or cheaper processors that lack that feature, though, the ChaCha20 cipher runs faster than AES-GCM, as was the ChaCha designers' intention.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
@@ -2860,7 +2859,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
   >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
   >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
 
-  > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance You would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
+  > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance you would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
 
   > You should remember that the `4096 bit` modulus will make DH computations slower and won’t actually improve security.
 
