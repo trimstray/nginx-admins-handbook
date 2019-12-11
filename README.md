@@ -32,7 +32,7 @@
 
 <p align="center">
   <a href="https://github.com/trimstray/nginx-admins-handbook/pulls">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?longCache=true" alt="Pull Requests">
+    <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective"><img src="https://opencollective.com/nginx-admins-handbook/all/badge.svg?label=financial+contributors" /></a> <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?longCache=true" alt="Pull Requests">
   </a>
   <a href="LICENSE.md">
     <img src="https://img.shields.io/badge/License-MIT-lightgrey.svg?longCache=true" alt="MIT License">
@@ -1605,3 +1605,33 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
     <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_meme_2.png" alt="Meme" width="50%" height="50%">
   </a>
 </p>
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/trimstray/nginx-admins-handbook/graphs/contributors"><img src="https://opencollective.com/nginx-admins-handbook/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/nginx-admins-handbook/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/nginx-admins-handbook"><img src="https://opencollective.com/nginx-admins-handbook/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/nginx-admins-handbook/contribute)]
+
+<a href="https://opencollective.com/nginx-admins-handbook/organization/0/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/1/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/2/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/3/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/4/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/5/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/6/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/7/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/8/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/9/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/9/avatar.svg"></a>
