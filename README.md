@@ -1583,7 +1583,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
-- **[Performance (12](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
+- **[Performance (12)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.
