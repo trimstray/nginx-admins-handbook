@@ -589,10 +589,10 @@ This project exists thanks to all the people who contribute.
 
 <p align="left">
   <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective">
-    <img src="https://img.shields.io/opencollective/backers/nginx-admins-handbook?style=for-the-badge&color=orange&labelColor=C0C0C0"></a>
+    <img src="https://img.shields.io/opencollective/backers/nginx-admins-handbook?style=for-the-badge&color=FF4500&labelColor=111111"></a>
   </a>
   <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective">
-    <img src="https://img.shields.io/opencollective/sponsors/nginx-admins-handbook?style=for-the-badge&color=orange&labelColor=C0C0C0"></a>
+    <img src="https://img.shields.io/opencollective/sponsors/nginx-admins-handbook?style=for-the-badge&color=FF4500&labelColor=111111"></a>
   </a>
 </p>
 
