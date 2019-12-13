@@ -579,6 +579,46 @@ Before adding a pull request, please see the **[contributing guidelines](.github
 
 If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
 
+## Code Contributors
+
+This project exists thanks to all the people who contribute.
+
+<a href="https://github.com/trimstray/nginx-admins-handbook/graphs/contributors"><img src="https://opencollective.com/nginx-admins-handbook/contributors.svg?width=890&button=false"></a>
+
+### Financial Contributors
+
+<p align="left">
+  <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective">
+    <img src="https://img.shields.io/opencollective/backers/nginx-admins-handbook?style=for-the-badge&color=orange&labelColor=C0C0C0"></a>
+  </a>
+  <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective">
+    <img src="https://img.shields.io/opencollective/sponsors/nginx-admins-handbook?style=for-the-badge&color=orange&labelColor=C0C0C0"></a>
+  </a>
+</p>
+
+#### Individuals
+
+Become a financial contributor and help us sustain our community **[» contribute](https://opencollective.com/nginx-admins-handbook/contribute)**.
+
+<a href="https://opencollective.com/nginx-admins-handbook"><img src="https://opencollective.com/nginx-admins-handbook/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website **[» contribute](https://opencollective.com/nginx-admins-handbook/contribute)**.
+
+<a href="https://opencollective.com/nginx-admins-handbook/organization/0/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/1/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/2/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/3/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/4/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/5/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/6/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/7/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/8/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/nginx-admins-handbook/organization/9/website"><img src="https://opencollective.com/nginx-admins-handbook/organization/9/avatar.svg"></a>
+
+### ToDo
+
 What needs to be done? Look at the following ToDo list:
 
 New chapters:
