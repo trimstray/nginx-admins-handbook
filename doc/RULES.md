@@ -1231,13 +1231,11 @@ worker_processes 3;
 
   > HTTP/2 will make our applications faster, simpler, and more robust. The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimise protocol overhead via efficient compression of HTTP header fields, and add support for request prioritisation and server push.
 
-  > HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before because if the client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
+  > `http2` directive configures the port to accept HTTP/2 connections. This doesn't mean it accepts only HTTP/2 connections. HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before because if the client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
 
   > Note that HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
   > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption. Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
-
-  > `http2` directive configures the port to accept HTTP/2 connections. This doesn't mean it accepts only HTTP/2 connections. A client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
@@ -1279,7 +1277,7 @@ server {
 
   > _Session resumption either creates a large server-side cache that can be broken into or, with tickets, kills forward secrecy. So you have to balance performance (you don't want your users to use full handshakes on every connection) and security (you don't want to compromise it too much). Different projects dictate different settings. [...] One reason not to use a very large cache (just because you can) is that popular implementations don't actually delete any records from there; even the expired sessions are still in the cache and can be recovered. The only way to really delete is to overwrite them with a new session. [...] These days I'd probably reduce the maximum session duration to 4 hours, down from 24 hours currently in my book. But that's largely based on a gut feeling that 4 hours is enough for you to reap the performance benefits, and using a shorter lifetime is always better._
 
-  [Ilya Grigorik](https://www.igvita.com/) (Web performance engineer at google) say about SSL buffers:
+  [Ilya Grigorik](https://www.igvita.com/) (Web performance engineer at Google) say about SSL buffers:
 
   > _1400 bytes (actually, it should probably be even a bit lower) is the recommended setting for interactive traffic where you want to avoid any unnecessary delays due to packet loss/jitter of fragments of the TLS record. However, packing each TLS record into dedicated packet does add some framing overhead and you probably want larger record sizes if you're streaming larger (and less latency sensitive) data. 4K is an in between value that's "reasonable" but not great for either case. For smaller records, we should also reserve space for various TCP options (timestamps, SACKs. up to 40 bytes), and account for TLS record overhead (another 20-60 bytes on average, depending on the negotiated ciphersuite). All in all: 1500 - 40 (IP) - 20 (TCP) - 40 (TCP options) - TLS overhead (60-100) ~= 1300 bytes. If you inspect records emitted by Google servers, you'll see that they carry ~1300 bytes of application data due to the math above._
 
@@ -1742,8 +1740,8 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
-  * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)
+  * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
   * [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
@@ -1930,10 +1928,6 @@ location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htacces
 
   > Hiding your version information will not stop an attack from happening, but it will make you less of a target if attackers are looking for a specific version of hardware or software. It's far more efficient to just try the vulnerability on all random servers than asking them. Security by obscurity doesn't mean you're safe, but it does slow people down sometimes, and that's exactly what's needed for day zero vulnerabilities.
 
-  The Official Apache Documentation (yep, it's not a joke, in my opinion that's an interesting point of view) say:
-
-  > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
-
 ###### Example
 
 ```nginx
@@ -1952,9 +1946,13 @@ server_tokens off;
 
   > One of the easiest first steps to undertake, is to prevent the web server from showing its used software via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc.
 
-  > In my opinion there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number. However, it's not information you need to give out, so I am generally in favour of removing it, where this can be accomplished with minimal effort.
+  > And in my opinion, there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number. However, it's not information you need to give out, so I am generally in favour of removing it, where this can be accomplished with minimal effort.
 
   > You should compile NGINX from sources with `ngx_headers_more` to used `more_set_headers` directive or use a [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch).
+
+  The Official Apache Documentation (yep, it's not a joke, in my opinion that's an interesting point of view) say:
+
+  > _Setting ServerTokens to less than minimal is not recommended because it makes it more difficult to debug interoperational problems. Also note that disabling the Server: header does nothing at all to make your server more secure. The idea of "security through obscurity" is a myth and leads to a false sense of safety._
 
 ###### Example
 
@@ -1988,6 +1986,35 @@ proxy_hide_header X-Drupal-Cache;
 ###### External resources
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
+
+#### :beginner: Use only the latest supported OpenSSL version
+
+###### Rationale
+
+  > Before start see [Release Strategy Policies](https://www.openssl.org/policies/releasestrat.html) and [Changelog](https://www.openssl.org/news/changelog.html) on the OpenSSL website. Criteria for choosing OpenSSL version can vary and it depends all on your use.
+
+  > The latest versions of the major OpenSSL library are (may be changed):
+  >
+  >   - the next version of OpenSSL will be 3.0.0
+  >   - version 1.1.1 will be supported until 2023-09-11 (LTS)
+  >     - last minor version: 1.1.1d (September 10, 2019)
+  >   - version 1.1.0 will be supported until 2019-09-11
+  >     - last minor version: 1.1.0k (May 28, 2018)
+  >   - version 1.0.2 will be supported until 2019-12-31 (LTS)
+  >     - last minor version: 1.0.2s (May 28, 2018)
+  >   - any other versions are no longer supported
+
+  > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1) but you should know one thing: OpenSSL 1.1.1 has a different API than the current 1.0.2 so that's not just a simple flick of the switch.
+
+  > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
+
+  > I also recommend track the [Vulnerabilities](https://www.openssl.org/news/vulnerabilities.html) official newsletter, if you want to know a security bugs and issues fixed in OpenSSL.
+
+###### External resources
+
+- [OpenSSL Official Website](https://www.openssl.org/)
+- [OpenSSL Official Blog](https://www.openssl.org/blog/)
+- [OpenSSL Official Newslog](https://www.openssl.org/news/newslog.html)
 
 #### :beginner: Force all connections over TLS
 
@@ -2056,35 +2083,6 @@ proxy_hide_header X-Drupal-Cache;
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 - [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
 - [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
-
-#### :beginner: Use only the latest supported OpenSSL version
-
-###### Rationale
-
-  > Before start see [Release Strategy Policies](https://www.openssl.org/policies/releasestrat.html) and [Changelog](https://www.openssl.org/news/changelog.html) on the OpenSSL website. Criteria for choosing OpenSSL version can vary and it depends all on your use.
-
-  > The latest versions of the major OpenSSL library are (may be changed):
-  >
-  >   - the next version of OpenSSL will be 3.0.0
-  >   - version 1.1.1 will be supported until 2023-09-11 (LTS)
-  >     - last minor version: 1.1.1d (September 10, 2019)
-  >   - version 1.1.0 will be supported until 2019-09-11
-  >     - last minor version: 1.1.0k (May 28, 2018)
-  >   - version 1.0.2 will be supported until 2019-12-31 (LTS)
-  >     - last minor version: 1.0.2s (May 28, 2018)
-  >   - any other versions are no longer supported
-
-  > In my opinion the only safe way is based on the up-to-date and still supported version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1) but you should know one thing: OpenSSL 1.1.1 has a different API than the current 1.0.2 so that's not just a simple flick of the switch.
-
-  > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
-
-  > I also recommend track the [Vulnerabilities](https://www.openssl.org/news/vulnerabilities.html) official newsletter, if you want to know a security bugs and issues fixed in OpenSSL.
-
-###### External resources
-
-- [OpenSSL Official Website](https://www.openssl.org/)
-- [OpenSSL Official Blog](https://www.openssl.org/blog/)
-- [OpenSSL Official Newslog](https://www.openssl.org/news/newslog.html)
 
 #### :beginner: Use min. 2048-bit private keys
 
@@ -2169,7 +2167,7 @@ certbot certonly -d domain.com -d www.domain.com
 
 ###### Rationale
 
-  > It is recommended to enable TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes) which we really shouldn’t be using anymore. By the way, the TLS 1.3 protocol is the latest and 'more robust' TLS protocol version and should be used where possible (and where don't need backward compatibility).
+  > It is recommended to enable TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes) which we really shouldn’t be using anymore. By the way, the TLS 1.3 protocol is the latest and more robust TLS protocol version and should be used where possible (and where don't need backward compatibility).
 
   > TLS 1.0 and TLS 1.1 must not be used (see [Deprecating TLSv1.0 and TLSv1.1 (IETF)](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html)) and were superceded by TLS 1.2, which has now itself been superceded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://csrc.nist.gov/CSRC/media/Publications/sp/800-52/rev-2/draft/documents/sp800-52r2-draft2.pdf)) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf).
 
@@ -2179,7 +2177,7 @@ certbot certonly -d domain.com -d www.domain.com
 
   > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > I think the best way to deploy secure configuration is: enable TLS 1.2 without any `CBC` Ciphers (is safe enough) and/or TLS 1.3 because is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
+  > I think the best way to deploy secure configuration is: enable TLS 1.2 without any `CBC` Ciphers (is safe enough) and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up.
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
@@ -2836,9 +2834,9 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
 ###### Rationale
 
-  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use it, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters to define how performs the Diffie-Hellman (DH) key-exchange. This uses a weak key (by default: `1024 bit`) that gets lower scores.
+  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use it, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters to define how performs the Diffie-Hellman (DH) key-exchange. In older versions, NGINX used a weak key (by default: `1024 bit`) that gets lower scores.
 
-  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`). Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - 6.3. Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3).
+  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`) and if you want to retain support for older customers also `DHE`. Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - 6.3. Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3).
 
   > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with unique keys at least 2048 bits long) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
 
@@ -2852,9 +2850,9 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > Cipher suites using `DHE` key exchange in OpenSSL require `tmp_DH` parameters, which the `ssl_dhparam` directive provides. The same is true for `DH_anon` key exchange, but in practice nobody uses those. The OpenSSL wiki page for Diffie Hellman Parameters it says: _To use perfect forward secrecy cipher suites, you must set up Diffie-Hellman parameters (on the server side)._ Look also at [SSL_CTX_set_tmp_dh_callback](https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_tmp_dh.html).
 
-  > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
+  > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve - Hardening - P1](#beginner-use-more-secure-ecdh-curve) rule.
 
-  > Default key size in OpenSSL is `1024 bits` - it's vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919](https://tools.ietf.org/html/rfc7919#appendix-A) are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
+  > In older versions of OpenSSL, if no key size is specified, default key size was `512/1024 bits` - it was vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919](https://tools.ietf.org/html/rfc7919#appendix-A) are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
   >
   >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
   >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
@@ -2936,6 +2934,7 @@ ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
 - [RSA and ECDSA performance](https://securitypitfalls.wordpress.com/2014/10/06/rsa-and-ecdsa-performance/)
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [Diffie-Hellman and its TLS/SSL usage](https://security.stackexchange.com/questions/41205/diffie-hellman-and-its-tls-ssl-usage)
+- [Google Plans to Deprecate DHE Cipher Suites](https://www.digicert.com/blog/google-plans-to-deprecate-dhe-cipher-suites/)
 
 #### :beginner: Prevent Replay Attacks on Zero Round-Trip Time
 

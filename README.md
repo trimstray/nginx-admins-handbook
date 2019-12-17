@@ -407,8 +407,8 @@
   * [Hide Nginx version number](doc/RULES.md#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](doc/RULES.md#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)
-  * [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)
   * [Use only the latest supported OpenSSL version](doc/RULES.md#beginner-use-only-the-latest-supported-openssl-version)
+  * [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)
   * [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)
   * [Keep only TLS 1.3 and TLS 1.2](doc/RULES.md#beginner-keep-only-tls-13-and-tls-12)
   * [Use only strong ciphers](doc/RULES.md#beginner-use-only-strong-ciphers)
@@ -584,25 +584,6 @@ If this project is useful and important for you, you can bring **positive energy
 This project exists thanks to all the people who contribute.
 
 <a href="https://github.com/trimstray/nginx-admins-handbook/graphs/contributors"><img src="https://opencollective.com/nginx-admins-handbook/contributors.svg?width=890&button=false"></a>
-
-### Financial Contributors
-
-<p align="left">
-  <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective">
-    <img src="https://img.shields.io/opencollective/backers/nginx-admins-handbook?style=for-the-badge&color=FF4500&labelColor=A9A9A9"></a>
-  </a>
-  <a href="https://opencollective.com/nginx-admins-handbook" alt="Financial Contributors on Open Collective">
-    <img src="https://img.shields.io/opencollective/sponsors/nginx-admins-handbook?style=for-the-badge&color=FF4500&labelColor=A9A9A9"></a>
-  </a>
-</p>
-
-#### Individuals
-
-Become a financial contributor and help us sustain our community **[» contribute](https://opencollective.com/nginx-admins-handbook/contribute)**.
-
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website **[» contribute](https://opencollective.com/nginx-admins-handbook/contribute)**.
 
 ### ToDo
 
