@@ -672,6 +672,7 @@ Existing chapters:
   - _Builder tools_
     - [x] _Nginx-builder_
   - _Benchmarking tools_
+    - [x] _Nghttp2_
     - [x] _wrk2_
     - [x] _httperf_
     - [x] _slowloris_
@@ -1128,7 +1129,7 @@ Here you'll find a few of the different things I've worked and which included to
 
 ## Reports: blkcipher.info
 
-Many of these recipes have been applied to the configuration of my private website.
+Many of these recipes have been applied to the configuration of my old private website.
 
   > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png) version of printable high-res hardening cheatsheets.
 
@@ -1456,6 +1457,7 @@ _In this ebook you will learn:_
 ##### Benchmarking tools
 
 <p>
+&nbsp;&nbsp;:black_small_square: <a href="https://nghttp2.org/"><b>Nghttp2</b></a> - is an implementation of HTTP/2 and its header compression algorithm HPACK in C.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://httpd.apache.org/docs/2.4/programs/ab.html"><b>ab</b></a> - is a single-threaded command line tool for measuring the performance of HTTP web servers.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.joedog.org/siege-home/"><b>siege</b></a> - is an http load testing and benchmarking utility.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/wg/wrk"><b>wrk</b></a> - is a modern HTTP benchmarking tool capable of generating significant load.<br>

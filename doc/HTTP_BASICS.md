@@ -105,6 +105,8 @@ But you should remember: A client that does not support HTTP/2 will never ask th
 
 An HTTP/2 client never makes a HTTP/2 request by default. It always makes an HTTP/1.1 request with `Upgrade: HTTP/2.0` header.
 
+There is also great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/).
+
 #### URI vs URL
 
 Uniform Resource Identifier (URI) is a string of characters used to identify a name or a resource on the Internet. A URI identifies a resource either by location, or a name, or both. A URI has two specializations known as URL and URN.
