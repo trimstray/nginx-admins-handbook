@@ -3053,11 +3053,13 @@ ssl_prefer_server_ciphers on;
 
   > Disable HTTP compression or compress only zero sensitive content.
 
-  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively. A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
+  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively (libraries like OpenSSL built with compression disabled using `no-comp` configuration option). A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
 
   > CRIME exploits SSL/TLS compression which is disabled since NGINX 1.3.2. BREACH exploits only HTTP compression.
 
-  > Some attacks are possible (e.g. the real BREACH attack is a complicated) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests. In most cases, the best action is to simply disable gzip for SSL.
+  > Some attacks are possible (e.g. the real BREACH attack is a complicated and this only applies if specific information is returned in the HTTP responses) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests.
+
+  > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however there is a potential mitigation method which can be done on the NGINX. For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
 
   > Compression is not the only requirement for the attack to be done so using it does not mean that the attack will succeed. Generally you should consider whether having an accidental performance drop on HTTPS sites is better than HTTPS sites being accidentally vulnerable.
 

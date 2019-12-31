@@ -498,6 +498,8 @@ A short description of the modules that I used in this step-by-step tutorial:
 
 - [`ngx_http_ip2proxy`](https://github.com/ip2location/ip2location-nginx) - detects visitor IP addresses which are used as VPN anonymizer, open proxies, web proxies and Tor exits
 
+- [`nginx-length-hiding-filter-module`](https://github.com/nulab/nginx-length-hiding-filter-module) - provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token
+
 <sup><i>* Available in Tengine Web Server (but these modules may have been updated/patched by Tengine Team).</i></sup><br>
 <sup><i>** Is already being used in quite a few third party modules.</i></sup>
 
