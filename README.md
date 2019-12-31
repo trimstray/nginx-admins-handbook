@@ -672,7 +672,6 @@ Existing chapters:
   - _Builder tools_
     - [x] _Nginx-builder_
   - _Benchmarking tools_
-    - [x] _Nghttp2_
     - [x] _wrk2_
     - [x] _httperf_
     - [x] _slowloris_
@@ -694,6 +693,7 @@ Existing chapters:
     - [x] _sslyze_
     - [x] _cipherscan_
     - [x] _O-Saft_
+    - [x] _Nghttp2_
     - [x] _Arjun_
     - [x] _Corsy_
     - [x] _XSStrike_
