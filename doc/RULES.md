@@ -2760,6 +2760,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [Why TLS 1.3 is a Huge Improvement](https://securityboulevard.com/2018/12/why-tls-1-3-is-a-huge-improvement/)
 - [OpenSSL IANA Mapping](https://testssl.sh/openssl-iana.mapping.html)
 - [Testing for Weak SSL/TLS Ciphers, Insufficient Transport Layer Protection (OTG-CRYPST-001)](https://www.owasp.org/index.php/Testing_for_Weak_SSL/TLS_Ciphers,_Insufficient_Transport_Layer_Protection_(OTG-CRYPST-001))
+- [Bypassing Web-Application Firewalls by abusing SSL/TLS](https://0x09al.github.io/waf/bypass/ssl/2018/07/02/web-application-firewall-bypass.html)
 
 #### :beginner: Use more secure ECDH Curve
 
