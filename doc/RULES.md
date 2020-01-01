@@ -3060,9 +3060,9 @@ ssl_prefer_server_ciphers on;
 
   > Some attacks are possible (e.g. the real BREACH attack is a complicated and this only applies if specific information is returned in the HTTP responses) because of gzip (HTTP compression not TLS compression) being enabled on SSL requests.
 
-  > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however there is a potential mitigation method which can be done on the NGINX. For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
-
   > Compression is not the only requirement for the attack to be done so using it does not mean that the attack will succeed. Generally you should consider whether having an accidental performance drop on HTTPS sites is better than HTTPS sites being accidentally vulnerable.
+
+  > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however there is a potential mitigation method which can be done on the NGINX. For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
 
   > You shouldn't use HTTP compression on private responses when using TLS.
 

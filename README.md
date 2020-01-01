@@ -72,6 +72,7 @@
   * [Printable hardening cheatsheets](#printable-hardening-cheatsheets)
   * [Fully automatic installation](#fully-automatic-installation)
   * [Static error pages generator](#static-error-pages-generator)
+  * [Server names parser](#server-names-parser)
 - **[Books](#books)**<a id="toc-books"></a>
   * [Nginx Essentials](#nginx-essentials)
   * [Nginx Cookbook](#nginx-cookbook)
@@ -622,6 +623,7 @@ Existing chapters:
 
   - [x] _Fully automatic installation_
   - [x] _Static error pages generator_
+  - [x] _Server names parser_
 
 </details>
 
@@ -1217,6 +1219,44 @@ For more information please see [Installing from source - Automatic installation
 I created a simple to use generator for static pages with errors to replace the default error pages that comes with any web server like NGINX.
 
 For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
+
+## Server names parser
+
+I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts in NGINX.
+
+For example:
+
+```bash
+./snippets/server-name-parser/check-server-name.sh example.com
+Searching 'example.com' in '/usr/local/etc/nginx'
+
+/usr/local/etc/nginx/domains/example.com/servers.conf:79: return 301 https://example.com$request_uri;
+/usr/local/etc/nginx/domains/example.com/servers.conf:252: return 301 https://example.com$request_uri;
+/usr/local/etc/nginx/domains/example.com/servers.conf:3825: server_name example.com;
+
+Searching 'example.com' in server contexts
+
+>>>>>>>>>> BEG >>>>>>>>>>
+server {
+
+  include listen/192.168.252.10/https.example.com.conf;
+
+  server_name example.com;
+
+  location / {
+
+    return 204 "RFC 792";
+
+  }
+
+  access_log /var/log/nginx/example.com/access.log standard;
+  error_log /var/log/nginx/example.com/error.log warn;
+
+}
+<<<<<<<<<< END <<<<<<<<<<
+```
+
+For more information please see [snippets/server-name-parser](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/server-name-parser) directory.
 
 # Books
 
