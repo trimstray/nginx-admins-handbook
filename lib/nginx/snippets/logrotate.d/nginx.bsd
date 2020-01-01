@@ -1,0 +1,35 @@
+/var/log/nginx/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+  kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}
+
+/var/log/nginx/*/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+  kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}
+
+/var/log/nginx/domains/*/*.log {
+  daily
+  rotate 90
+  missingok
+  sharedscripts
+  compress
+  postrotate
+  kill -HUP `cat /var/run/nginx.pid`
+  endscript
+  dateext
+}

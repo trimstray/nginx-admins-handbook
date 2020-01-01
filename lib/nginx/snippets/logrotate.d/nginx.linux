@@ -17,7 +17,7 @@
   endscript
 }
 
-/var/log/nginx/defaults/*.log {
+/var/log/nginx/*/*.log {
   daily
   missingok
   rotate 14
@@ -36,26 +36,7 @@
   endscript
 }
 
-/var/log/nginx/localhost/*.log {
-  daily
-  missingok
-  rotate 14
-  compress
-  delaycompress
-  notifempty
-  create 0640 nginx nginx
-  sharedscripts
-  prerotate
-    if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-      run-parts /etc/logrotate.d/httpd-prerotate; \
-    fi \
-  endscript
-  postrotate
-    invoke-rc.d nginx reload >/dev/null 2>&1
-  endscript
-}
-
-/var/log/nginx/domains/blkcipher.info/*.log {
+/var/log/nginx/domains/*/*.log {
   daily
   missingok
   rotate 14
