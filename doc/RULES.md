@@ -597,7 +597,7 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Manage a large number of redirects with maps and use them to customise your key-value pairs.
+  > Manage a large number of redirects with maps and use them to customise your key-value pairs. If you are ever faced with using an if during a request, you should check to see if you can use a map instead.
 
   > The map directive maps strings, so it is possible to represent e.g. `192.168.144.0/24` as a regular expression and continue to use the map directive.
 
@@ -1235,7 +1235,7 @@ worker_processes 3;
 
   > Note that HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
-  > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption. Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
+  > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption (the h2 specification, allows for you to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 

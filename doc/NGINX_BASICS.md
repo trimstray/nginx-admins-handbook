@@ -675,6 +675,10 @@ According to this: if you are running **4** worker processes with **4,096** work
 
 I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. In my opinion, it is a mistake because certain of clients (e.g. browsers which have different values for this) **opens a number of parallel connections** (see [this](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) to confirm my words). Clients typically establish 4-8 TCP connections so that they can download resources in parallel (to download various components that compose a web page, for example, images, scripts, and so on). This increases the effective bandwidth and reduces latency.
 
+  > That is a HTTP/1.1 limit (6-8) of concurrent HTTP calls, the best solution to improve performance (without upgrade the hardware and use cache at the middle (e.g. CDN, Varnish)) is using HTTP/2 ([RFC 7540](https://tools.ietf.org/html/rfc7540)) instead of HTTP/1.1.
+  >
+  > HTTP/2 multiplex many HTTP requests on a single connection. When HTTP/1.1 has a limit of 6-8 roughly, HTTP/2 does not have a standard limit but say that "_It is recommended that this value (`SETTINGS_MAX_CONCURRENT_STREAMS`) be no smaller than 100_" (RFC 7540). That number is better than 6-8.
+
 Additionally, you must know that the `worker_connections` directive **includes all connections** per worker (e.g. connection structures are used for listen sockets, internal control sockets between NGINX processes, connections with proxied servers, and for upstream connections), not only incoming connections from clients.
 
   > Be aware that every worker connection (in the sleeping state) needs 256 bytes of memory, so you can increase it easily.
@@ -2246,7 +2250,7 @@ See [this](https://stackoverflow.com/a/48709976) great and short explanation by 
   >
   > Most of the time you would use `$uri`, because it is normalised. Using `$request_uri` in the wrong place can cause URL encoded characters to become doubly encoded.
 
-Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC2616](https://tools.ietf.org/html/rfc2616#section-3.2.2) for the URL.
+Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC2616](https://tools.ietf.org/html/rfc2616#section-3.2.2) for the URL:
 
 ```
 http_URL = "http(s):" "//" host [ ":" port ] [ abs_path [ "?" query ]]

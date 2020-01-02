@@ -52,7 +52,7 @@ And finally look at [this](https://github.com/bigcompany/know-your-http) amazing
 
 #### Features and architecture
 
-The HTTP protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
+The HTTP (HTTP/1.[0-1] = h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
 
 By its nature, HTTP is stateless. Stateless means that all requests are separate from each other. So each request from your browser must contain enough information on its own for the server to fulfill the request.
 
@@ -86,7 +86,13 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 #### HTTP/2
 
-HTTP/2 is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
+HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
+
+Look at the following comparison between HTTP/1.1 and HTTP/2:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_comparison.png" alt="http_comparison">
+</p>
 
 I will not describe it because there are brilliant studies:
 
@@ -97,15 +103,16 @@ I will not describe it because there are brilliant studies:
 - [HTTP2 Explained](https://daniel.haxx.se/http2/)
 - [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 - [HTTP/2 in Action](https://www.manning.com/books/http2-in-action)
+- [HTTP/2 Frequently Asked Questions](https://http2.github.io/faq/)
 
-But you should remember: A client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1. A client that supports HTTP/2 will ask the server (using HTTP1/1) for an HTTP/2 upgrade:
+However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1. A client that supports HTTP/2 will ask the server (using HTTP1/1) for an HTTP/2 upgrade:
 
   - if the server is HTTP/2 ready, then the server will notice the client as such: the communication between them will be switched to HTTP/2
-  - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP1/1: the communication between them should stay plenty HTTP1/1
+  - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP1/1: the communication between them should stay plenty HTTP/1.1
 
 An HTTP/2 client never makes a HTTP/2 request by default. It always makes an HTTP/1.1 request with `Upgrade: HTTP/2.0` header.
 
-There is also great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/).
+There is great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/). Look also at [Useful tools for HTTP/2 debugging](https://community.akamai.com/customers/s/article/Useful-tools-for-HTTP-2-debugging?language=en_US).
 
 #### URI vs URL
 
