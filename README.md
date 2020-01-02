@@ -1228,13 +1228,13 @@ For example:
 
 ```bash
 ./snippets/server-name-parser/check-server-name.sh example.com
-Searching 'example.com' in '/usr/local/etc/nginx'
+Searching 'example.com' in '/usr/local/etc/nginx' (from disk)
 
 /usr/local/etc/nginx/domains/example.com/servers.conf:79: return 301 https://example.com$request_uri;
 /usr/local/etc/nginx/domains/example.com/servers.conf:252: return 301 https://example.com$request_uri;
 /usr/local/etc/nginx/domains/example.com/servers.conf:3825: server_name example.com;
 
-Searching 'example.com' in server contexts
+Searching 'example.com' in server contexts (from a running process)
 
 >>>>>>>>>> BEG >>>>>>>>>>
 server {
