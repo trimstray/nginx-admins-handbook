@@ -70,7 +70,7 @@ fi
 if [[ -z "$config" ]] ; then
 
   printf "%s\\n" \
-         "Searching '$domain' in '$_ngx_root'"
+         "Searching '$domain' in '$_ngx_root' (from disk)"
 
   # _stdout=$(fgrep "$domain" "$_ngx_root"/* -R | tr -s '[:space:]' | sed 's/:/ -->/g')
   _stdout=$(fgrep -n "$domain" "$_ngx_root"/* -R | tr -s '[:space:]')
@@ -81,7 +81,7 @@ if [[ -z "$config" ]] ; then
 
   fi
 
-  printf "%s\\n\\n" "Searching '$domain' in server contexts"
+  printf "%s\\n\\n" "Searching '$domain' in server contexts (from a running process)"
 
   nginx -T -q -c "$_ngx_conf" > "$_dump_fd"
 
@@ -90,7 +90,7 @@ if [[ -z "$config" ]] ; then
 else
 
   printf "%s\\n" \
-         "Searching '$domain' in '$_ngx_root'"
+         "Searching '$domain' in '$_ngx_root' (from disk)"
 
   # _stdout=$(fgrep "$domain" "$_ngx_root"/* -R | tr -s '[:space:]' | sed 's/:/ -->/g')
   _stdout=$(fgrep -n "$domain" "$_ngx_root"/* -R | tr -s '[:space:]')
@@ -101,7 +101,7 @@ else
 
   fi
 
-  printf "%s\\n\\n" "Searching '$domain' in server contexts"
+  printf "%s\\n\\n" "Searching '$domain' in server contexts (from a running process)"
 
   ${_rel}/server-name-parser.py "$config" "$domain"
 
