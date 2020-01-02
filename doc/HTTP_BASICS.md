@@ -52,7 +52,7 @@ And finally look at [this](https://github.com/bigcompany/know-your-http) amazing
 
 #### Features and architecture
 
-The HTTP (HTTP/1.[0-1] = h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
+The HTTP/1 (h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
 
 By its nature, HTTP is stateless. Stateless means that all requests are separate from each other. So each request from your browser must contain enough information on its own for the server to fulfill the request.
 
@@ -88,13 +88,13 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
 
-Look at the following comparison between HTTP/1.1 and HTTP/2:
+Look at the following comparison between:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_comparison.png" alt="http_comparison">
 </p>
 
-I will not describe it because there are brilliant studies:
+I will not describe HTTP/2 because there are brilliant studies:
 
 - [RFC 7540 - HTTP/2](https://tools.ietf.org/html/rfc7540)
 - [HTTP/2 finalized - a quick overview](https://evertpot.com/http-2-finalized/)
@@ -104,6 +104,7 @@ I will not describe it because there are brilliant studies:
 - [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 - [HTTP/2 in Action](https://www.manning.com/books/http2-in-action)
 - [HTTP/2 Frequently Asked Questions](https://http2.github.io/faq/)
+- [How Does HTTP/2 Work?](https://sookocheff.com/post/networking/how-does-http-2-work/)
 
 However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1. A client that supports HTTP/2 will ask the server (using HTTP1/1) for an HTTP/2 upgrade:
 
@@ -467,13 +468,13 @@ For more information please see:
 - [HTTP Status Codes](https://httpstatuses.com/)
 - [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Status Code Definitions](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
 
-Be sure to take a look at this:
+Be sure to take a look at this (it's genius work!):
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_decision_diagram.png" alt="http_decision_diagram">
 </p>
 
-<sup><i>This amazing diagram comes from [for-GET/http-decision-diagram](https://github.com/for-GET/http-decision-diagram) repository.</i></sup>
+<sup><i>This diagram comes from [for-GET/http-decision-diagram](https://github.com/for-GET/http-decision-diagram) repository.</i></sup>
 
 ##### Response header fields
 
