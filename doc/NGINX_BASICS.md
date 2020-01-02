@@ -31,8 +31,10 @@ Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-ha
     * [root vs alias](#root-vs-alias)
     * [internal directive](#internal-directive)
     * [External and internal redirects](#external-and-internal-redirects)
-    * [Allow and deny](#allow-and-deny)
+    * [allow and deny](#allow-and-deny)
     * [uri vs request_uri](#uri-vs-request_uri)
+  * [Compression and decompression](#compression-and-decompression)
+    * [What is the best NGINX compression gzip level?](#what-is-the-best-nginx-compression-gzip-level)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -2184,7 +2186,7 @@ request URI
 
 - **sub-requests** - additional requests that are triggered internally to generate (insert or append to the body of the original request) content that is complementary to the main request (`addition` or `ssi` modules)
 
-##### Allow and deny
+##### `allow` and `deny`
 
 Both comes from the `ngx_http_access_module` module allows limiting access to certain client addresses. You can combining `allow/deny` rules
 
@@ -2282,6 +2284,75 @@ location /app/ {
 | :---         | :---         | :---         | :---         |
 | `/app/` | `http://localhost:5000/api$request_uri` | `/app/foo?bar=baz` | `/api/webapp/foo?bar=baz` |
 | `/app/` | `http://localhost:5000/api$uri` | `/app/foo?bar=baz` | `/api/webapp/foo` |
+
+#### Compression and decompression
+
+By default, NGINX compresses responses only with MIME type text/html using the `gzip` method. So, if you send request with `Accept-Encoding: gzip` header you will not see the `Content-Encoding: gzip` in the response.
+
+To enable `gzip` compression:
+
+```nginx
+gzip on
+```
+
+To compress responses with other MIME types, include the `gzip_types` directive and list the additional types:
+
+```nginx
+gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml;
+```
+
+  > Remember: by default, NGINX doesn't compress image files using its per-request gzip module.
+
+I also highly recommend you read this (it's interesting observation about gzip and performance by [Barry Pollard](https://serverfault.com/users/268936/barry-pollard)):
+
+  > _To be honest gzip is not very processor intensive these days and gzipping on the fly (and then unzipping in the browser) is often the norm. It’s something web browsers are very good at._
+  >
+  > _So unless you are getting huge volumes of traffic you’ll probably not notice any performance or CPU load impact due to on the fly gzipping for most web files._
+
+To test HTTP and Gzip compression I recommend two external tools:
+
+- [HTTP Compression Test](https://www.whatsmyip.org/http-compression-test/)
+- [HTTP Gzip Compression Test](http://www.visiospark.com/gzip-compression-test/)
+
+NGINX also compress large files and avoid the temptation to compress smaller files (such as images, executables, etc.), because very small files barely benefit from compression. You can tell NGINX not to compress files smaller than e.g. 128 bytes:
+
+```nginx
+gzip_min_length 128;
+```
+
+For more information see [Finding the Nginx gzip_comp_level Sweet Spot](https://mjanja.ch/2015/03/finding-the-nginx-gzip_comp_level-sweet-spot/).
+
+NGINX also provides static compression with static module. It is better, for 2 reasons:
+
+- you don't have to gzip for each request
+- you can use a higher gzip level
+
+For example:
+
+```nginx
+# Enable static gzip compression:
+location ^~ /assets/ {
+
+  gzip_static on;
+
+  ...
+
+}
+```
+
+You should put the `gzip_static on;` inside the blocks that configure static files, but if you’re only running one site, it’s safe to just put it in the http block.
+
+So, for example, to service a request for `/foo/bar/file`, NGINX tries to find and send the file `/foo/bar/file.gz`.
+
+##### What is the best NGINX compression gzip level?
+
+The level of gzip compression simply determines how compressed the data is on a scale from 1-9, where 9 is the most compressed. The trade-off is that the most compressed data usually requires the most work to compress/decompress but look also at [this](https://stackoverflow.com/questions/28452429/does-gzip-compression-level-have-any-impact-on-decompression/37892065#37892065) great answer. Author explains that the level of gzip compression doesn't affect the difficulty to decompress.
+
+I think the ideal compression level seems to be between 4 and 6. The following directive set how much files will be compressed:
+
+```nginx
+gzip_comp_level 6;
+```
 
 #### Log files
 

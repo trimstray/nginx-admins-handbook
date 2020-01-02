@@ -3052,7 +3052,9 @@ ssl_prefer_server_ciphers on;
 
 ###### Rationale
 
-  > Disable HTTP compression or compress only zero sensitive content.
+  > Disable HTTP compression or compress only zero sensitive content. Furthermore, you shouldn't use HTTP compression on private responses when using TLS.
+
+  > By default, the `gzip` compression modules are installed but not enabled in the NGINX.
 
   > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively (libraries like OpenSSL built with compression disabled using `no-comp` configuration option). A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2)).
 
@@ -3064,24 +3066,7 @@ ssl_prefer_server_ciphers on;
 
   > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however there is a potential mitigation method which can be done on the NGINX. For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
 
-  > You shouldn't use HTTP compression on private responses when using TLS.
-
   > I would gonna to prioritise security over performance but compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
-
-  > Remember: by default, NGINX doesn't compress image files using its per-request gzip module.
-
-  > Gzip static module is better, for 2 reasons:
-  >
-  >   - you don't have to gzip for each request
-  >   - you can use a higher gzip level
-
-  > You should put the `gzip_static on;` inside the blocks that configure static files, but if you’re only running one site, it’s safe to just put it in the http block.
-
-  > I also highly recommend you read this (it's interesting observation about gzip and performance by [Barry Pollard](https://serverfault.com/users/268936/barry-pollard)):
-  >
-  > _To be honest gzip is not very processor intensive these days and gzipping on the fly (and then unzipping in the browser) is often the norm. It’s something web browsers are very good at._
-  >
-  > _So unless you are getting huge volumes of traffic you’ll probably not notice any performance or CPU load impact due to on the fly gzipping for most web files._
 
 ###### Example
 
@@ -3090,18 +3075,9 @@ ssl_prefer_server_ciphers on;
 gzip off;
 
 # Enable dynamic HTTP compression for specific location context:
-location / {
-
-  gzip on;
-
-  ...
-
-}
-
-# Enable static gzip compression:
 location ^~ /assets/ {
 
-  gzip_static on;
+  gzip on;
 
   ...
 
