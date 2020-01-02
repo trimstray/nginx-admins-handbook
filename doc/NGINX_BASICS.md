@@ -2287,6 +2287,8 @@ location /app/ {
 
 #### Compression and decompression
 
+  > **:bookmark: [Mitigation of CRIME/BREACH attacks - Hardening Rules - P2](RULES.md#beginner-mitigation-of-crimebreach-attacks)**
+
 By default, NGINX compresses responses only with MIME type text/html using the `gzip` method. So, if you send request with `Accept-Encoding: gzip` header you will not see the `Content-Encoding: gzip` in the response.
 
 To enable `gzip` compression:

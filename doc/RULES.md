@@ -3064,7 +3064,7 @@ ssl_prefer_server_ciphers on;
 
   > Compression is not the only requirement for the attack to be done so using it does not mean that the attack will succeed. Generally you should consider whether having an accidental performance drop on HTTPS sites is better than HTTPS sites being accidentally vulnerable.
 
-  > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however there is a potential mitigation method which can be done on the NGINX. For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
+  > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however common mitigation is to add data of random length to any responses containing sensitive data (it's default behaviour of TLSv1.3 - [5.4.  Record Padding](https://tools.ietf.org/html/draft-ietf-tls-tls13-21#section-5.4)). For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
 
   > I would gonna to prioritise security over performance but compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
 
@@ -3089,9 +3089,11 @@ location ^~ /assets/ {
 - [Is HTTP compression safe?](https://security.stackexchange.com/questions/20406/is-http-compression-safe)
 - [HTTP compression continues to put encrypted communications at risk](https://www.pcworld.com/article/3051675/http-compression-continues-to-put-encrypted-communications-at-risk.html)
 - [SSL/TLS attacks: Part 2 – CRIME Attack](http://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-2-crime-attack/)
+- [How BREACH works (as I understand it)](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses/172646#172646)
 - [Defending against the BREACH Attack](https://blog.qualys.com/ssllabs/2013/08/07/defending-against-the-breach-attack)
 - [To avoid BREACH, can we use gzip on non-token responses?](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses)
 - [Don't Worry About BREACH](https://blog.ircmaxell.com/2013/08/dont-worry-about-breach.html)
+- [The current state of the BREACH attack](https://www.sjoerdlangkemper.nl/2016/11/07/current-state-of-breach-attack/)
 - [Module ngx_http_gzip_static_module](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html)
 - [Offline Compression with Nginx](https://theartofmachinery.com/2016/06/06/nginx_gzip_static.html)
 
