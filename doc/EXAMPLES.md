@@ -168,6 +168,7 @@ for _module in $(ls "${_mod_dir}/") ; do echo -en "load_module\t\t${_mod_dir}/$_
 include /etc/nginx/master/_server/domain.com/servers.conf;
 include /etc/nginx/master/_server/domain.com/backends.conf;
 ```
+
 ###### Init domain directory
 
 ```bash

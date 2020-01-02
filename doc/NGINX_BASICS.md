@@ -1757,9 +1757,9 @@ I use `return` directive in the following cases:
     ...
 
     # It's only example. You shouldn't use 'if' statement in the following case.
-    if ($host = www.domain.com) {
+    if ($host = www.example.com) {
 
-      return  301 https://domain.com$request_uri;
+      return  301 https://example.com$request_uri;
 
     }
 

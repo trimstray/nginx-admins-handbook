@@ -71,7 +71,7 @@ server {
 
   ...
 
-  server_name domain.com www.domain.com;
+  server_name example.com www.example.com;
 
   ...
 ```
@@ -351,7 +351,7 @@ server {
 
   listen 10.240.20.2:443 ssl;
 
-  server_name domain.com;
+  server_name example.com;
 
   ...
 
@@ -631,7 +631,7 @@ include maps/http_user_agent.conf
 # And turn on in a specific context (e.g. location):
 if ($device_redirect = "mobile") {
 
-  return 301 https://m.domain.com$request_uri;
+  return 301 https://m.example.com$request_uri;
 
 }
 ```
@@ -660,9 +660,9 @@ if ($device_redirect = "mobile") {
 ```nginx
 server {
 
-  server_name domain.com;
+  server_name example.com;
 
-  root /var/www/domain.com/public;
+  root /var/www/example.com/public;
 
   location / {
 
@@ -678,7 +678,7 @@ server {
 
   location /static {
 
-    root /var/www/domain.com/static;
+    root /var/www/example.com/static;
 
     ...
 
@@ -721,9 +721,9 @@ server {
 
   ...
 
-  server_name domain.com;
+  server_name example.com;
 
-  return      301 $scheme://www.domain.com$request_uri;
+  return      301 $scheme://www.example.com$request_uri;
 
 }
 ```
@@ -1092,9 +1092,9 @@ error_log /var/log/nginx/error-debug.log debug;
     server {
 
       # To enable debugging:
-      error_log /var/log/nginx/domain.com/domain.com-debug.log debug;
+      error_log /var/log/nginx/example.com/example.com-debug.log debug;
       # To disable debugging:
-      error_log /var/log/nginx/domain.com/domain.com-debug.log;
+      error_log /var/log/nginx/example.com/example.com-debug.log;
 
       ...
 
@@ -1360,15 +1360,15 @@ Not recommended configuration:
 ```nginx
 server {
 
-  server_name                 domain.com www.domain.com;
+  server_name                 example.com www.example.com;
 
-  if ($host = www.domain.com) {
+  if ($host = www.example.com) {
 
-    return                    301 https://domain.com$request_uri;
+    return                    301 https://example.com$request_uri;
 
   }
 
-  server_name                 domain.com;
+  server_name                 example.com;
 
   ...
 
@@ -1380,12 +1380,12 @@ Recommended configuration:
 ```nginx
 server {
 
-    server_name               www.domain.com;
+    server_name               www.example.com;
 
-    return                    301 $scheme://domain.com$request_uri;
+    return                    301 $scheme://example.com$request_uri;
 
     # If you force your web traffic to use HTTPS:
-    # return                  301 https://domain.com$request_uri;
+    # return                  301 https://example.com$request_uri;
 
     ...
 
@@ -1395,7 +1395,7 @@ server {
 
     listen                    192.168.252.10:80;
 
-    server_name               domain.com;
+    server_name               example.com;
 
     ...
 
@@ -1532,7 +1532,7 @@ server {
 
   ...
 
-  if ($host = api.domain.com) {
+  if ($host = api.example.com) {
 
     rewrite     ^/(.*)$ http://example.com/$1 permanent;
 
@@ -1548,12 +1548,12 @@ server {
 
   ...
 
-  if ($host = api.domain.com) {
+  if ($host = api.example.com) {
 
     return      403;
 
     # or other examples:
-    #   return    301 https://domain.com$request_uri;
+    #   return    301 https://example.com$request_uri;
     #   return    301 $scheme://$host$request_uri;
 
   }
@@ -1799,7 +1799,7 @@ Go back to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admi
 user nginx;   # or 'www' for example
 
 # Set owner and group for root (app, default) directory:
-chown -R nginx:nginx /var/www/domain.com
+chown -R nginx:nginx /var/www/example.com
 ```
 
 ###### External resources
@@ -2041,7 +2041,7 @@ proxy_hide_header X-Drupal-Cache;
 
     listen 10.240.20.2:80;
 
-    server_name domain.com;
+    server_name example.com;
 
     return 301 https://$host$request_uri;
 
@@ -2051,7 +2051,7 @@ proxy_hide_header X-Drupal-Cache;
 
     listen 10.240.20.2:443 ssl;
 
-    server_name domain.com;
+    server_name example.com;
 
     ...
 
@@ -2065,13 +2065,13 @@ proxy_hide_header X-Drupal-Cache;
 
     listen 10.240.20.2:80;
 
-    server_name domain.com;
+    server_name example.com;
 
     ...
 
     location ^~ /login {
 
-      return 301 https://domain.com$request_uri;
+      return 301 https://example.com$request_uri;
 
     }
 
@@ -2118,14 +2118,14 @@ proxy_hide_header X-Drupal-Cache;
 
 ```bash
 ### Example (RSA):
-( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
+( _fd="example.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
 
 # Let's Encrypt:
-certbot certonly -d domain.com -d www.domain.com --rsa-key-size 2048
+certbot certonly -d example.com -d www.example.com --rsa-key-size 2048
 
 ### Example (ECC):
 # _curve: prime256v1, secp521r1, secp384r1
-( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; \
+( _fd="example.com.key" ; _fd_csr="example.com.csr" ; _curve="prime256v1" ; \
 openssl ecparam -out ${_fd} -name ${_curve} -genkey ; \
 openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 
@@ -2143,10 +2143,10 @@ openssl genpkey -algorithm ${_curve} -out ${_fd} )
 &nbsp;&nbsp;:arrow_right: ssllabs score: <b>100%</b>
 
 ```bash
-( _fd="domain.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
+( _fd="example.com.key" ; _len="2048" ; openssl genrsa -out ${_fd} ${_len} )
 
 # Let's Encrypt:
-certbot certonly -d domain.com -d www.domain.com
+certbot certonly -d example.com -d www.example.com
 ```
 
 &nbsp;&nbsp;:arrow_right: ssllabs score: <b>90%</b>

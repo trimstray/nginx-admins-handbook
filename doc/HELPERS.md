@@ -6805,10 +6805,10 @@ server {
 
   ...
 
-  server_name www.domain.com;
+  server_name www.example.com;
 
   # $scheme will get the http or https protocol:
-  return 301 $scheme://domain.com$request_uri;
+  return 301 $scheme://example.com$request_uri;
 
 }
 ```
@@ -6897,10 +6897,10 @@ server {
 
   ...
 
-  server_name domain.com;
+  server_name example.com;
 
   # $scheme will get the http or https protocol:
-  return 301 $scheme://www.domain.com$request_uri;
+  return 301 $scheme://www.example.com$request_uri;
 
 }
 ```
@@ -7356,7 +7356,7 @@ openssl genpkey -algorithm ${_curve} -out ${_fd} )
 
 ```bash
 # _curve: prime256v1, secp521r1, secp384r1
-( _fd="domain.com.key" ; _fd_csr="domain.com.csr" ; _curve="prime256v1" ; \
+( _fd="example.com.key" ; _fd_csr="example.com.csr" ; _curve="prime256v1" ; \
 openssl ecparam -out ${_fd} -name ${_curve} -genkey ; \
 openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 ```
