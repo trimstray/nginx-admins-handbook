@@ -52,7 +52,7 @@ And finally look at [this](https://github.com/bigcompany/know-your-http) amazing
 
 #### Features and architecture
 
-The HTTP/1 (h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
+The HTTP (1.0/1.1 = h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
 
 By its nature, HTTP is stateless. Stateless means that all requests are separate from each other. So each request from your browser must contain enough information on its own for the server to fulfill the request.
 
@@ -88,7 +88,7 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
 
-Look at the following comparison between:
+Look at the following comparison:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_comparison.png" alt="http_comparison">
@@ -171,7 +171,7 @@ HTTP headers allow the client and the server to pass additional information with
 
 ###### Header compression
 
-The role of header compression:
+The role of header compression (HTTP/2):
 
   > _Header compression resulted in an ~88% reduction in the size of request headers and an ~85% reduction in the size of response headers. On the lower-bandwidth DSL link, in which the upload link is only 375 Kbps, request header compression in particular, led to significant page load time improvements for certain sites (i.e. those that issued large number of resource requests). We found a reduction of 45 - 1142 ms in page load time simply due to header compression._
 
