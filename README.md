@@ -475,7 +475,7 @@
 
   > Before you start playing with NGINX please read an official **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
-**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler. At this moment some high-profile companies using NGINX include Cisco, DuckDuckGo, Facebook, GitLab, Google, Twitter, Apple, Intel, and many more. In the April 2019 it was the most commonly used HTTP server (see [Netcraft survey](https://news.netcraft.com/archives/category/web-server-survey/)).
+**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler. At this moment some high-profile companies using NGINX include Cisco, DuckDuckGo, Facebook, GitLab, Google, Twitter, Apple, Intel, and many more. In the September 2019 it was the most commonly used HTTP server (see [Netcraft survey](https://news.netcraft.com/archives/category/web-server-survey/)).
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a:
 
@@ -530,7 +530,7 @@ These are definitely the best assets for us and in the first place you should se
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
-  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes and papers. Many of them refer to external resources._
+  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes, and papers. Many of them refer to external resources._
 
 There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
 
@@ -562,7 +562,7 @@ Remember about the following most important things:
 
   > **`There are no settings that are perfect for everyone.`**
 
-  > **`Always think about what is better and more important for you: security or compatibility.`**
+  > **`Always think about what is better and more important for you: security vs usability/compatibility.`**
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
 
@@ -1043,6 +1043,8 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 ## Checklist to rule them all
 
+This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
+
   > This checklist contains [all rules (70)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
@@ -1131,7 +1133,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 # Bonus Stuff
 
-Here you'll find a few of the different things I've worked and which included to this repository. I hope that these extras will be useful to you.
+You can be found here a few of the different things I've worked and which included to this repository. I hope that these extras will be useful to you.
 
 ## Reports: blkcipher.info
 
@@ -1226,7 +1228,7 @@ For more information please see [HTTP Static Error Pages Generator](https://gith
 
 ## Server names parser
 
-I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts in NGINX.
+I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as a `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts in NGINX.
 
 For example:
 
