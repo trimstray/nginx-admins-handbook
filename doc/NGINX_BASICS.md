@@ -1,6 +1,6 @@
 # NGINX Basics
 
-Go to the **[⬆ Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[⬆ What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
+Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
 - **[≡ NGINX Basics](#nginx-basics)**
   * [Directories and files](#directories-and-files)

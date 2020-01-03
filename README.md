@@ -100,7 +100,7 @@
   * [Debugging tools](#debugging-tools)
   * [Security & Web testing tools](#security--web-testing-tools)
   * [Development](#development)
-  * [Online tools](#online-tools)
+  * [Online & Web tools](#online--web-tools)
   * [Other stuff](#other-stuff)
 - **[What's next?](#whats-next)**
 
@@ -1133,7 +1133,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 # Bonus Stuff
 
-You can be found here a few of the different things I've worked and which included to this repository. I hope that these extras will be useful to you.
+You can find here a few of the different things I've worked and included to this repository. I hope that these extras will be useful to you.
 
 ## Reports: blkcipher.info
 
@@ -1565,7 +1565,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/openresty/programming-openresty"><b>Programming OpenResty</b></a><br>
 </p>
 
-##### Online tools
+##### Online & Web tools
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/"><b>SSL Server Test by SSL Labs</b></a><br>
@@ -1585,7 +1585,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://regex101.com/"><b>Online regex tester and debugger: PHP, PCRE, Python, Golang and JavaScript</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://regexr.com/"><b>Online tool to learn, build, & test Regular Expressions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.regextester.com/"><b>Online Regex Tester & Debugger</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos/tree/master/nginx-regex-tester"><b>nginx-regex-tester</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos/tree/master/nginx-regex-tester"><b>Tool for testing regular expressions directly within an NGINX configuration</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://gchq.github.io/CyberChef/"><b>A web app for encryption, encoding, compression and data analysis</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nginx.viraptor.info/"><b>Nginx location match tester</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://detailyang.github.io/nginx-location-match-visible/"><b>Nginx location match visible</b></a><br>
