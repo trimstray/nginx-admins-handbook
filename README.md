@@ -577,13 +577,19 @@ Remember about the following most important things:
 + Both are important, but one does not lead to the other.
 ```
 
-Finally, I think that in the age of phishing, cyber attacks, ransomware, etc., you should keep your infrastructure as safe as possible but don't forget about it...
+I think that in the age of phishing, cyber attacks, ransomware, etc., you should keep your infrastructure as safe as possible but don't forget about it...
 
 <br>
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
 </p>
+
+Finally, I would like to quote two very important comments found on the web about compliance with the standards and regulations:
+
+  > _I personally think the whole TLS 1.0 depreciation is a mess that's very representative of why cyber security is a mess and will never improve. A huge cargo cult telling to turn it off because it's broken, ignoring that it's breaking a lot of clients, and without a single explanation of what's the problems or how to mitigate them._ - by [ user5994461](https://news.ycombinator.com/user?id=user5994461)
+
+  > _Regulations that make sense are often not descriptive - capturing the intent and scope of a rule often requires technical expertise. More than that, it's the type of expertise most organisations do not have. And instead of improving themselves, these companies, who may form the grand majority of the industry, petition the regulators to provide a safe checklist of technical mitigations that can be implemented to remain compliant. [...] Instead of doing the right thing and meeting the planned intent, companies are instead ticking nonsensical boxes that the regulators and their auditors demand. Blindly. Mindlessly. Divorced from reality._ - by [bostik](https://news.ycombinator.com/user?id=bostik)
 
 ## Contributing & Support
 
