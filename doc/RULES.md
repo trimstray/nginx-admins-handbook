@@ -2266,7 +2266,7 @@ certbot certonly -d example.com -d www.example.com
 
   > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > I think the best way to deploy secure configuration is: enable TLS 1.2 (is safe enough) without any `CBC` Ciphers and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice.
+  > I think the best way to deploy secure configuration is: enable TLS 1.2 (is safe enough) without any `CBC` Ciphers and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice (all of industry standards like PCI-DSS, HIPAA, NIST, strongly suggest the use of TLS 1.2 than TLS 1.1/1.0).
 
   > TLS 1.2 is probably insufficient for legacy client support. The NIST guidelines are not applicable to all use cases, and you should always analyze your user base before deciding which protocols to support or drop.
 
@@ -2460,6 +2460,12 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECD
 
 ```nginx
 ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+```
+
+There is also recommended ciphers for HIPAA and TLS v1.2+:
+
+```nginx
+ssl_ciphers "TLS13-AES-256-GCM-SHA384:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-CCM:DHE-RSA-AES128-CCM:DHE-RSA-AES256-CCM8:DHE-RSA-AES128-CCM8:DH-RSA-AES256-GCM-SHA384:DH-RSA-AES128-GCM-SHA256:ECDH-RSA-AES256-GCM-SHA384:ECDH-RSA-AES128-GCM-SHA256";
 ```
 
 <details>
