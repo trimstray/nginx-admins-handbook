@@ -101,19 +101,19 @@ I will not describe HTTP/2 because there are brilliant studies:
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2)
 - [HTTP/2: the difference between HTTP/1.1, benefits and how to use it](https://medium.com/@factoryhr/http-2-the-difference-between-http-1-1-benefits-and-how-to-use-it-38094fa0e95b)
 - [HTTP2 Explained](https://daniel.haxx.se/http2/)
-- [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 - [HTTP/2 in Action](https://www.manning.com/books/http2-in-action)
 - [HTTP/2 Frequently Asked Questions](https://http2.github.io/faq/)
 - [How Does HTTP/2 Work?](https://sookocheff.com/post/networking/how-does-http-2-work/)
+- [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 
-However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1. A client that supports HTTP/2 will ask the server (using HTTP1/1) for an HTTP/2 upgrade:
+However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP/1.1. A client that supports HTTP/2 will ask the server (using HTTP/1.1) for an HTTP/2 upgrade:
 
   - if the server is HTTP/2 ready, then the server will notice the client as such: the communication between them will be switched to HTTP/2
-  - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP1/1: the communication between them should stay plenty HTTP/1.1
+  - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP/1.1: the communication between them should stay plenty HTTP/1.1
 
 An HTTP/2 client never makes a HTTP/2 request by default. It always makes an HTTP/1.1 request with `Upgrade: HTTP/2.0` header.
 
-There is great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/). Look also at [Useful tools for HTTP/2 debugging](https://community.akamai.com/customers/s/article/Useful-tools-for-HTTP-2-debugging?language=en_US).
+How to debug HTTP/2? There is great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/). Look also at [Useful tools for HTTP/2 debugging](https://community.akamai.com/customers/s/article/Useful-tools-for-HTTP-2-debugging?language=en_US).
 
 #### URI vs URL
 
@@ -235,7 +235,7 @@ Additional information about requests:
 
 ##### Request line
 
-The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF (`\r\n`). The elements are separated by space SP characters:
+The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF (`\r\n` or in hex `0d0a`). The elements are separated by space SP characters:
 
 ```
 Request-Line = Method SP Request-URI SP HTTP-Version CRLF

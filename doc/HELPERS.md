@@ -494,6 +494,8 @@ A short description of the modules that I used in this step-by-step tutorial:
 
 - [`ngx_chash_map`](https://github.com/Wine93/chash-map-nginx-module) - creates variables whose values are mapped to group by consistent hashing method
 
+- [`ngx_security_headers`](https://github.com/GetPageSpeed/ngx_security_headers) - adds security headers and removes insecure headers easily
+
 - [`ngx_http_ip2location_module`](https://github.com/ip2location/ip2location-nginx) - enables user to easily perform client's IP to geographical location lookup by using IP2Location database
 
 - [`ngx_http_ip2proxy`](https://github.com/ip2location/ip2location-nginx) - detects visitor IP addresses which are used as VPN anonymizer, open proxies, web proxies and Tor exits

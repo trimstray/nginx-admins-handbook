@@ -4,7 +4,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > :pushpin:&nbsp; These are the basic set of rules to keep NGINX in good condition.
 
-- **[≡ Base Rules (14)](#base-rules)**
+- **[≡ Base Rules (15)](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -12,6 +12,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directive](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
+  * [Set the HTTP headers with add_header directive properly](#beginner-set-the-http-headers-with-add_header-directive-properly)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -430,6 +431,94 @@ server {
 
 - [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
 - [Define the listen directives with address:port pair (from this handbook)](#beginner-define-the-listen-directives-with-addressport-pair)
+
+#### :beginner: Set the HTTP headers with `add_header` directive properly
+
+###### Rationale
+
+  > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. These directives are inherited from the previous level if and only if there are no `add_header` directives defined on the current level.
+
+  > You should define a common config snippet for all contexts and and use it on each level.
+
+  > In my opinion, the best solution is use an include file with your global headers and add it to the `http` context. Alternative, you should set up other include file with your server/domain specific configuration (but always with your global headers!) and add it to the `server` contexts.
+
+  > There are solutions to this such as using an alternative module such as [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) for define specific headers in you `server` or `location` blocks.
+
+  > There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
+  >
+  > _Therefore, let’s say you have an http block and have specified the add_header directive within that block. Then, within the http block you have 2 server blocks - one for HTTP and one for HTTPs._
+  >
+  > _Let’s say we don’t include an add_header directive within the HTTP server block, however we do include an additional add_header within the HTTPs server block. In this scenario, the add_header directive defined in the http block will only be inherited by the HTTP server block as it does not have any add_header directive defined on the current level. On the other hand, the HTTPS server block will not inherit the add_header directive defined in the http block._
+
+###### Example
+
+Some extra headers with `add_header` directive here but only if you include "global" headers first:
+
+```nginx
+http {
+
+  ...
+
+  include /etc/nginx/ngx_headers_global.conf;
+
+  server {
+
+    server_name example.com;
+
+    ...
+
+    include /etc/nginx/ngx_headers_global.conf;
+
+    location / {
+
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
+
+      ...
+
+    }
+
+  }
+
+}
+```
+
+Or some extra headers with `more_set_headers` directive here regardless of whether you include "global" headers first:
+
+```nginx
+http {
+
+  ...
+
+  include /etc/nginx/ngx_headers_global.conf;
+
+  server {
+
+    server_name example.com;
+
+    ...
+
+    include /etc/nginx/ngx_headers_global.conf;
+
+    location / {
+
+      more_set_headers 'Foo: bar;
+
+      ...
+
+    }
+
+  }
+
+}
+```
+
+###### External resources
+
+- [Module ngx_http_headers_module - add_header](http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header)
+- [Managing request headers](https://www.nginx.com/resources/wiki/start/topics/examples/headers_management/)
+- [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
+- [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
 
 #### :beginner: Use only one SSL config for the listen directive
 
@@ -3333,16 +3422,16 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
 ###### Rationale
 
-  > An ordinary web server supports the `HEAD`, `GET` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
+  > An ordinary web server supports the `GET`, `HEAD` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
   > However, some of the API (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
 
 ###### Example
 
 ```nginx
-add_header Allow "GET, POST, HEAD" always;
+add_header Allow "GET, HEAD, POST" always;
 
-if ($request_method !~ ^(GET|POST|HEAD)$) {
+if ($request_method !~ ^(GET|HEAD|POST)$) {
 
   return 405;
 
@@ -3351,6 +3440,7 @@ if ($request_method !~ ^(GET|POST|HEAD)$) {
 
 ###### External resources
 
+- [Hypertext Transfer Protocol (HTTP) Method Registry](https://www.iana.org/assignments/http-methods/http-methods.xhtml)
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
 
 #### :beginner: Prevent caching of sensitive data
@@ -3605,6 +3695,7 @@ proxy_set_header    Host    $host;
 - [Tip: keep the Host header via nginx proxy_pass](https://www.simplicidade.org/notes/2011/02/15/tip-keep-the-host-header-via-nginx-proxy_pass/)
 - [What is a Host Header Attack?](https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/)
 - [Practical HTTP Host header attacks](https://www.skeletonscribe.net/2013/05/practical-http-host-header-attacks.html)
+- [$10k host header](https://www.ezequiel.tech/p/10k-host-header.html)
 
 #### :beginner: Set properly values of the `X-Forwarded-For` header
 

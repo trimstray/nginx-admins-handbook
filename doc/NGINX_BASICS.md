@@ -44,8 +44,8 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
     * [Trailing slashes](#trailing-slashes)
-    * [Processing headers](#processing-headers)
-    * [Passing headers](#passing-headers)
+    * [Response headers](#response-headers)
+    * [Passing headers to the backend](#passing-headers-to-the-backend)
       * [Importance of the Host header](#importance-of-the-host-header)
       * [Redirects and X-Forwarded-Proto](#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](#a-warning-about-the-x-forwarded-for)
@@ -2863,7 +2863,35 @@ In other words:
 
   > You usually always want a trailing slash, never want to mix with and without trailing slash, and only want without trailing slash when you want to concatenate a certain path component together (which I guess is quite rarely the case). Note how query parameters are preserved.
 
-##### Passing headers
+##### Response headers
+
+  > **:bookmark: [Set the HTTP headers with add_header directive properly - Base Rules - P1](#beginner-set-the-http-headers-with-add_header-directive-properly)**
+
+`add_header` directive allows you to define an arbitrary response header (mostly for informational/debugging purposes) and value to be included in all response codes which are equal to:
+
+- 2xx series: 200, 201, 204, 206
+- 3xx series: 301, 302, 303, 304, 307, 308
+
+For example:
+
+```nginx
+add_header Custom-Header Value;
+```
+
+  > To change (adding or removing) existing headers you should use a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) module.
+
+There is one thing you must watch out for if you use `add_header` directive. See the following explanations:
+
+- [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
+- [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
+
+This is described in the official documentation:
+
+  > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no add_header directives defined on the current level._
+
+However - and this is important - as you now have defined a header in your `server` context, all the remaining headers defined in the `http` context will no longer be inherited. Means, you’ve to define them in your `server` context again (or alternatively ignore them if they’re not important for your site).
+
+##### Passing headers to the backend
 
   > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
   > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](#beginner-use-reload-option-to-change-configurations-on-the-fly)**
@@ -2958,7 +2986,7 @@ Ok, so look at following short explanation about proxy directives (for more info
 
 If you want to read about custom headers, take a look at [Why we need to deprecate x prefix for HTTP headers?](https://tonyxu.io/posts/2018/http-deprecate-x-prefix/) and [this](https://stackoverflow.com/a/3561399) great answer by [BalusC](https://stackoverflow.com/users/157882/balusc).
 
-###### Importancy of the `Host` header
+###### Importance of the `Host` header
 
   > **:bookmark: [Set and pass Host header only with $host variable - Reverse Proxy - P2](#beginner-set-and-pass-host-header-only-with-host-variable)**
 
@@ -2971,6 +2999,8 @@ But look at this:
   > _An unchanged "Host" request header field can be passed with `$http_host`. However, if this field is not present in a client request header then nothing will be passed. In such a case it is better to use the `$host` variable - its value equals the server name in the "Host" request header field or the primary server name if this field is not present._
 
 For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be `MASTER:8080` as it just reflects the whole header).
+
+Look also at [$10k host header](https://www.ezequiel.tech/p/10k-host-header.html) and [What is a Host Header Attack?](https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/).
 
 ###### Redirects and `X-Forwarded-Proto`
 

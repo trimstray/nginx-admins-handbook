@@ -182,8 +182,8 @@
   * [Reverse proxy](doc/NGINX_BASICS.md#reverse-proxy)
     * [Passing requests](doc/NGINX_BASICS.md#passing-requests)
     * [Trailing slashes](doc/NGINX_BASICS.md#trailing-slashes)
-    * [Processing headers](doc/NGINX_BASICS.md#processing-headers)
-    * [Passing headers](doc/NGINX_BASICS.md#passing-headers)
+    * [Response headers](doc/NGINX_BASICS.md#response-headers)
+    * [Passing headers to the backend](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
       * [Importance of the Host header](doc/NGINX_BASICS.md#importance-of-the-host-header)
       * [Redirects and X-Forwarded-Proto](doc/NGINX_BASICS.md#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](doc/NGINX_BASICS.md#a-warning-about-the-x-forwarded-for)
@@ -369,7 +369,7 @@
     * [Verification of the CSR](doc/HELPERS.md#verification-of-the-csr)
     * [Check whether the private key and the certificate match](doc/HELPERS.md#check-whether-the-private-key-and-the-certificate-match)
     [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers)
-- **[Base Rules (14)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
+- **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
   * [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](doc/RULES.md#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](doc/RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -377,6 +377,7 @@
   * [Define the listen directives with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directive](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
+  * [Set the HTTP headers with add_header directive properly](doc/RULES.md#beginner-set-the-http-headers-with-add_header-directive-properly)
   * [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](doc/RULES.md#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](doc/RULES.md#beginner-map-all-the-things)
@@ -793,7 +794,8 @@ Existing chapters:
   - _Reverse proxy_
     - [x] _Passing requests_
     - [x] _Trailing slashes_
-    - [x] _Processing headers_
+    - [ ] _Processing headers_
+    - [x] _Response headers_
     - [x] _Passing headers_
       - [x] _Importance of the Host header_
       - [x] _Redirects and X-Forwarded-Proto_
@@ -967,6 +969,7 @@ Existing chapters:
 
   - [x] _Format, prettify and indent your Nginx code_
   - [x] _Never use a hostname in a listen or upstream directive_
+  - [x] _Set the HTTP headers with add_header directive properly_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [x] _Use return directive for URL redirection (301, 302)_
   - [x] _Configure log rotation policy_
@@ -1045,13 +1048,13 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
 
-  > This checklist contains [all rules (70)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (71)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 28 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 29 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 24 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
@@ -1063,6 +1066,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Define the listen directives with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-with-addressport-pair)<br><sup>Prevents soft mistakes which may be difficult to debug.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Prevent processing requests with undefined server names](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)<br><sup>It protects against configuration errors, e.g. traffic forwarding to incorrect backends.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Never use a hostname in a listen or upstream directive](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)<br><sup>While this may work, it will comes with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Set the HTTP headers with add_header directive properly](doc/RULES.md#beginner-set-the-http-headers-with-add_header-directive-properly)<br><sup>Set the right security headers for all contexts.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](doc/RULES.md#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](doc/RULES.md#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
