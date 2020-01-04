@@ -66,7 +66,7 @@
   * [RSS Feed & Updates](#rss-feed--updates)
   * [Checklist to rule them all](#checklist-to-rule-them-all)
 - **[Bonus Stuff](#bonus-stuff)**<a id="toc-bonus-stuff"></a>
-  * [Reports: blkcipher.info](#reports-blkcipherinfo)
+  * [Configuration reports](#configuration-reports)
     * [SSL Labs](#ssl-labs)
     * [Mozilla Observatory](#mozilla-observatory)
   * [Printable hardening cheatsheets](#printable-hardening-cheatsheets)
@@ -134,12 +134,14 @@
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
+    * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
     * [Single-domain](doc/SSL_TLS_BASICS.md#single-domain)
     * [Multi-domain](doc/SSL_TLS_BASICS.md#multi-domain)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
     * [Wildcard SSL doesn't handle root domain?](doc/SSL_TLS_BASICS.md#wildcard-ssl-doesnt-handle-root-domain)
+  * [Verify your SSL, TLS & Ciphers implementation](doc/SSL_TLS_BASICS.md#verify-your-ssl-tls--ciphers-implementation)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
   * [Directories and files](doc/NGINX_BASICS.md#directories-and-files)
   * [Commands](doc/NGINX_BASICS.md#commands)
@@ -757,12 +759,14 @@ Existing chapters:
   - [x] _TLS versions_
   - [x] _TLS handshake_
   - [x] _Cipher suites_
+    - [x] _Authenticated encryption (AEAD) cipher suites_
   - [x] _Diffie-Hellman key exchange_
   - [x] _Certificates_
     - [x] _Single-domain_
     - [x] _Multi-domain_
     - [x] _Wildcard_
     - [x] _Wildcard SSL doesn't handle root domain?_
+  - [x] _Verify your SSL, TLS & Ciphers implementation_
 
 </details>
 
@@ -1149,7 +1153,7 @@ Remember, these are only guidelines. My point of view may be different from your
 
 You can find here a few of the different things I've worked and included to this repository. I hope that these extras will be useful to you.
 
-## Reports: blkcipher.info
+## Configuration reports
 
 Many of these recipes have been applied to the configuration of my old private website.
 
@@ -1189,9 +1193,7 @@ Look also at the following recommendations. In my opinion, the right configurati
   - Cipher Strength: 100/100
 
 <p align="center">
-  <a href="https://www.ssllabs.com/ssltest/analyze.html?d=blkcipher.info&hideResults=on">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_ssllabs_preview.png" alt="blkcipher_ssllabs_preview">
-  </a>
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_ssllabs_preview.png" alt="blkcipher_ssllabs_preview">
 </p>
 
 ### Mozilla Observatory
@@ -1201,9 +1203,7 @@ Look also at the following recommendations. In my opinion, the right configurati
 I also got the highest note on the Observatory:
 
 <p align="center">
-  <a href="https://observatory.mozilla.org/analyze/blkcipher.info?third-party=false">
-    <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
-  </a>
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
 </p>
 
 ## Printable hardening cheatsheets

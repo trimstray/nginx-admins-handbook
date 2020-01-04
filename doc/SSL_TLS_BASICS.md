@@ -6,12 +6,14 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
   * [Cipher suites](#cipher-suites)
+    * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
   * [Certificates](#certificates)
     * [Single-domain](#single-domain)
     * [Multi-domain](#multi-domain)
     * [Wildcard](#wildcard)
     * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
+  * [Verify your SSL, TLS & Ciphers implementation](#verify-your-ssl-tls--ciphers-implementation)
 
 TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
@@ -22,7 +24,9 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/)
 - [Cryptology ePrint Archive](https://eprint.iacr.org/)
 - [Every byte of a TLS connection explained and reproduced - TLS 1.2](https://tls.ulfheim.net/)
+- [Every byte of a TLS connection explained and reproduced - TLS 1.3](https://tls13.ulfheim.net/)
 - [SSL/TLS for dummies](https://www.wst.space/tag/https/)
+- [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 
 If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/). It is one of the best (if not the best) tools to verify the SSL/TLS configuration of the HTTP server. I also recommend [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/). Both will tell you if you need to fix or update your config.
 
@@ -89,6 +93,8 @@ Various cryptographic algorithms are used during establishing and later during t
 
 These four types of algorithms are combined into so-called cipher sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
 
+  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate. To use `RSA` cipher suites, you need an `RSA` certificate.
+
 Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
 | <b>PROTOCOL</b> | <b>KEY EXCHANGE</b> | <b>AUTHENTICATION</b> | <b>CIPHER</b> | <b>HASHING</b> |
@@ -100,6 +106,52 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
 Look also at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions.
+
+##### Authenticated encryption (AEAD) cipher suites
+
+AEAD algorithms generally come with a security proof. These security proofs are of course dependent on the underlying primitives, but it gives more confidence in the full scheme none-the-less. The AEAD ciphers - regardless of the internal structure - should be immune to the problems caused by authenticate-then-encrypt.
+
+Advantages of AEAD ciphers:
+
+- trust only one algorithm, not two
+- perform only one pass (an ideal in the world of AEAD, not a consequence of it)
+- save on code and sometimes on computation as well
+
+Any with `GCM`, `CCM`, or `POLY1305` are AEAD cipher suites, for example:
+
+```
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_128_CCM
+TLS_ECDHE_ECDSA_WITH_AES_256_CCM
+TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8
+TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8
+TLS_ECDHE_ECDSA_WITH_CAMELLIA_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_CAMELLIA_256_GCM_SHA384
+TLS_ECDHE_ECDSA_WITH_ARIA_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_ARIA_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_RSA_WITH_CAMELLIA_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_ARIA_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_ARIA_256_GCM_SHA384
+TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_DHE_RSA_WITH_AES_128_CCM
+TLS_DHE_RSA_WITH_AES_256_CCM
+TLS_DHE_RSA_WITH_AES_128_CCM_8
+TLS_DHE_RSA_WITH_AES_256_CCM_8
+TLS_DHE_RSA_WITH_CAMELLIA_128_GCM_SHA256
+TLS_DHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
+TLS_DHE_RSA_WITH_ARIA_128_GCM_SHA256
+TLS_DHE_RSA_WITH_ARIA_256_GCM_SHA384
+```
+
+These are the current AEAD ciphers which don't trigger the ROBOT warning.
 
 #### Diffie-Hellman key exchange
 
@@ -194,3 +246,10 @@ san: *.example.com example.com
 ```
 
 Another interesting thing is that you can have multiple wildcard names inside the same certificate, that is you can have `*.example.org` and `*.subdomain.example.org` inside the same certificate. You should have little trouble finding a Certificate Authority that will issue such a certificate, and most clients should accept it.
+
+#### Verify your SSL, TLS & Ciphers implementation
+
+| <b>TOOL</b> | <b>DESCRIPTION</b> |
+| :---         | :---         |
+| **[SSL Labs by Qualys](https://www.ssllabs.com/ssltest/)** | Check all latest vulnerability & misconfiguration |
+| **[ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/)** | Verify configuration with PCI DSS, HIPAA & NIST |
