@@ -33,12 +33,12 @@ If you have any objections to your SSL configuration put your site into [SSL Lab
 | <b>PROTOCOL</b> | <b>RFC</b> | <b>PUBLISHED</b> | <b>STATUS</b> |
 | :---:        | :---:        | :---:        | :---         |
 | SSL 1.0 | | Unpublished | Unpublished |
-| SSL 2.0 | | 1995 | Depracated in 2011 ([RFC 6176](https://tools.ietf.org/html/rfc6176)) |
-| SSL 3.0 | | 1996 | Depracated in 2015 ([RFC 7568](https://tools.ietf.org/html/rfc7568)) |
-| TLS 1.0 | [RFC 2246](https://tools.ietf.org/html/rfc2246) | 1999 | Deprecation in 2020 |
-| TLS 1.1 | [RFC 4346](https://tools.ietf.org/html/rfc4346) | 2006 | Deprecation in 2020 |
-| TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) | 2008 | Still secure |
-| TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) | 2018 | Still secure |
+| SSL 2.0 | | 1995 | Depracated in 2011 ([RFC 6176](https://tools.ietf.org/html/rfc6176)) <sup>[IETF]</sup> |
+| SSL 3.0 | | 1996 | Depracated in 2015 ([RFC 7568](https://tools.ietf.org/html/rfc7568)) <sup>[IETF]</sup> |
+| TLS 1.0 | [RFC 2246](https://tools.ietf.org/html/rfc2246) <sup>[IETF]</sup> | 1999 | Deprecation in 2020 |
+| TLS 1.1 | [RFC 4346](https://tools.ietf.org/html/rfc4346) <sup>[IETF]</sup> | 2006 | Deprecation in 2020 |
+| TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) <sup>[IETF]</sup> | 2008 | Still secure |
+| TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) <sup>[IETF]</sup> | 2018 | Still secure |
 
 Useful resources:
 
@@ -109,7 +109,7 @@ The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shar
 
 The protocol makes use of modular arithmetic and especially exponentials. The security of the protocol relies on the fact that solving a discrete logarithm (the inverse of an exponential) is practically impossible when large enough values are used.
 
-`DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5)) and `EDH` are the same (`EDH` in OpenSSL-speak, `DHE` elsewhere). `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
+`DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5) <sup>[IETF]</sup>) and `EDH` are the same (`EDH` in OpenSSL-speak, `DHE` elsewhere). `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
 
 | <b>TYPE</b> | <b>ELLIPTIC CURVE</b> | <b>EPHERMAL</b> | <b>KEY ROTATION</b> | <b>PFS</b> | <b>DHPARAM FILE</b> |
 | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
@@ -159,7 +159,7 @@ No, it is not possible. By default, the wildcard cert is valid only for `*.examp
 
 Technically, wildcard certs are issued based on the unknown children of a subdomain. Most wildcard certs are issued for 3-part domains (`*.domain.com`), but it's also very common to see them for 4-part domains (e.g. `*.domain.co.uk`).
 
-The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools.ietf.org/html/rfc2818#section-3.1):
+The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools.ietf.org/html/rfc2818#section-3.1) <sup>[IETF]</sup>:
 
   > _Matching is performed using the matching rules specified by
     RFC2459. If more than one identity of a given type is present in
@@ -169,7 +169,7 @@ The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools
     component or component fragment. E.g., `*.a.com` matches `foo.a.com` but
     not `bar.foo.a.com`. `f*.com` matches `foo.com` but not `bar.com`._
 
-[RFC2459 (2.4. Server Identity Check)](https://tools.ietf.org/html/rfc2595#section-2.4) says:
+[RFC2459 (2.4. Server Identity Check)](https://tools.ietf.org/html/rfc2595#section-2.4) <sup>[IETF]</sup> says:
 
   > _A "`*`" wildcard character MAY be used as **the left-most name
     component** in the certificate.  For example, `*.example.com` would

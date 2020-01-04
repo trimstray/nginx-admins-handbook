@@ -675,7 +675,7 @@ According to this: if you are running **4** worker processes with **4,096** work
 
 I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. In my opinion, it is a mistake because certain of clients (e.g. browsers which have different values for this) **opens a number of parallel connections** (see [this](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) to confirm my words). Clients typically establish 4-8 TCP connections so that they can download resources in parallel (to download various components that compose a web page, for example, images, scripts, and so on). This increases the effective bandwidth and reduces latency.
 
-  > That is a HTTP/1.1 limit (6-8) of concurrent HTTP calls, the best solution to improve performance (without upgrade the hardware and use cache at the middle (e.g. CDN, Varnish)) is using HTTP/2 ([RFC 7540](https://tools.ietf.org/html/rfc7540)) instead of HTTP/1.1.
+  > That is a HTTP/1.1 limit (6-8) of concurrent HTTP calls, the best solution to improve performance (without upgrade the hardware and use cache at the middle (e.g. CDN, Varnish)) is using HTTP/2 ([RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>) instead of HTTP/1.1.
   >
   > HTTP/2 multiplex many HTTP requests on a single connection. When HTTP/1.1 has a limit of 6-8 roughly, HTTP/2 does not have a standard limit but say that "_It is recommended that this value (`SETTINGS_MAX_CONCURRENT_STREAMS`) be no smaller than 100_" (RFC 7540). That number is better than 6-8.
 
@@ -2250,7 +2250,7 @@ See [this](https://stackoverflow.com/a/48709976) great and short explanation by 
   >
   > Most of the time you would use `$uri`, because it is normalised. Using `$request_uri` in the wrong place can cause URL encoded characters to become doubly encoded.
 
-Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC2616](https://tools.ietf.org/html/rfc2616#section-3.2.2) for the URL:
+Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC2616](https://tools.ietf.org/html/rfc2616#section-3.2.2) <sup>[IETF]</sup> for the URL:
 
 ```
 http_URL = "http(s):" "//" host [ ":" port ] [ abs_path [ "?" query ]]
@@ -3119,7 +3119,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
 ###### Improve extensibility with `Forwarded`
 
-Since 2014, the IETF has approved a standard header definition for proxy, called `Forwarded`, documented [here](https://tools.ietf.org/html/rfc7239) and [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded) that should be use instead of `X-Forwarded` headers. This is the one you should use reliably to get originating IP in case your request is handled by a proxy. Official NGINX documentation also gives you how to [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/).
+Since 2014, the IETF has approved a standard header definition for proxy, called `Forwarded`, documented [here](https://tools.ietf.org/html/rfc7239) <sup>[IETF]</sup> and [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded) that should be use instead of `X-Forwarded` headers. This is the one you should use reliably to get originating IP in case your request is handled by a proxy. Official NGINX documentation also gives you how to [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/).
 
 In general, the proxy headers (Forwarded or X-Forwarded-For) are the right way to get your client IP only when you are sure they come to you via a proxy. If there is no proxy header or no usable value in, you should default to the `REMOTE_ADDR` server variable.
 

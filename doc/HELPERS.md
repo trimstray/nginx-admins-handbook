@@ -6941,7 +6941,7 @@ server {
 
 ##### Modify 301/302 response body
 
-By default, NGINX sent small document body for 301 and 302 redirects. [RFC 2616 - 10.3.2 301 Moved Permanently](https://tools.ietf.org/html/rfc2616#section-10.3.2) and [RFC 2616 - 10.3.3 302 Found](https://tools.ietf.org/html/rfc2616#section-10.3.3) specifies that the entity bodies should be present.
+By default, NGINX sent small document body for 301 and 302 redirects. [RFC 2616 - 10.3.2 301 Moved Permanently](https://tools.ietf.org/html/rfc2616#section-10.3.2) <sup>[IETF]</sup> and [RFC 2616 - 10.3.3 302 Found](https://tools.ietf.org/html/rfc2616#section-10.3.3) <sup>[IETF]</sup> specifies that the entity bodies should be present.
 
 Here you have an excellent explanation of the problem by [Michael Hampton](https://serverfault.com/users/126632/michael-hampton): [NGINX 301 and 302 serving small nginx document body. Any way to remove this behaviour?](https://serverfault.com/a/423685).
 

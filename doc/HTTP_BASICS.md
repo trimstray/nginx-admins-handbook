@@ -37,7 +37,7 @@ Some important information about HTTP:
 
 I will not describe the HTTP protocol meticulously so you have to look at this as an introduction. I will discuss only the most important things because we have some great documents which describe this protocol in a great deal of detail:
 
-- [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616)
+- [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616) <sup>[IETF]</sup>
 - [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)
 - [MDN web docs - An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview)
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
@@ -96,7 +96,7 @@ Look at the following comparison:
 
 I will not describe HTTP/2 because there are brilliant studies:
 
-- [RFC 7540 - HTTP/2](https://tools.ietf.org/html/rfc7540)
+- [RFC 7540 - HTTP/2](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>
 - [HTTP/2 finalized - a quick overview](https://evertpot.com/http-2-finalized/)
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2)
 - [HTTP/2: the difference between HTTP/1.1, benefits and how to use it](https://medium.com/@factoryhr/http-2-the-difference-between-http-1-1-benefits-and-how-to-use-it-38094fa0e95b)
