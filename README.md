@@ -567,6 +567,16 @@ Remember about the following most important things:
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
 
+  > **`Regularly test your deployments to make sure that a regression is not introduced.`**
+
+```diff
++ Security is important for ethical reasons. Compliance is important for legal reasons.
++ The key to workplace contentment is understanding they are unrelated to each other.
++ Both are important, but one does not lead to the other.
+```
+
+Finally, I think that in the age of phishing, cyber attacks, ransomware, etc., you should keep your infrastructure as safe as possible but don't forget about it...
+
 <br>
 
 <p align="center">
