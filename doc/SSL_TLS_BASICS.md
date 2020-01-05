@@ -26,6 +26,8 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Every byte of a TLS connection explained and reproduced - TLS 1.2](https://tls.ulfheim.net/)
 - [Every byte of a TLS connection explained and reproduced - TLS 1.3](https://tls13.ulfheim.net/)
 - [SSL/TLS for dummies](https://www.wst.space/tag/https/)
+- [Transport Layer Security (TLS) - High Performance Browser Networking](https://hpbn.co/transport-layer-security-tls/)
+- [The Sorry State Of SSL](https://hynek.me/talks/tls/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 
 If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/). It is one of the best (if not the best) tools to verify the SSL/TLS configuration of the HTTP server. I also recommend [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/). Both will tell you if you need to fix or update your config.

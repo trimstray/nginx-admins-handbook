@@ -46,7 +46,7 @@ I will not describe the HTTP protocol meticulously so you have to look at this a
 We have also some interesting books:
 
 - [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
-- [RESTful Web Services](https://www.crummy.com/writing/RESTful-Web-Services/)
+- [High Performance Browser Networking](https://hpbn.co/)
 
 And finally look at [this](https://github.com/bigcompany/know-your-http) amazing series of A1-sized posters about the HTTP protocol.
 

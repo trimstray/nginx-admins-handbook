@@ -2333,13 +2333,14 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [End of Life for TLS 1.0/1.1](https://support.umbrella.com/hc/en-us/articles/360033350851-End-of-Life-for-TLS-1-0-1-1-)
 - [TLS/SSL Explained – Examples of a TLS Vulnerability and Attack, Final Part](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)
 - [A Challenging but Feasible Blockwise-Adaptive Chosen-Plaintext Attack on SSL](https://eprint.iacr.org/2006/136)
-- [TLS/SSL hardening and compatibility Report 2011](http://www.g-sec.lu/sslharden/SSL_comp_report2011.pdf) <sup>pdf</sup>
+- [TLS/SSL hardening and compatibility Report 2011](http://www.g-sec.lu/sslharden/SSL_comp_report2011.pdf) <sup>[pdf]</sup>
 - [This POODLE bites: exploiting the SSL 3.0 fallback](https://security.googleblog.com/2014/10/this-poodle-bites-exploiting-ssl-30.html)
 - [Are You Ready for 30 June 2018? Saying Goodbye to SSL/early TLS](https://blog.pcisecuritystandards.org/are-you-ready-for-30-june-2018-sayin-goodbye-to-ssl-early-tls)
 - [What Happens After 30 June 2018? New Guidance on Use of SSL/Early TLS](https://blog.pcisecuritystandards.org/what-happens-after-30-june-2018-new-guidance-on-use-of-ssl/early-tls-)
 - [Recommended Cloudflare SSL configurations for PCI compliance](https://support.cloudflare.com/hc/en-us/articles/205043158-PCI-compliance-and-Cloudflare-SSL#h_8d214b26-c3e5-4632-8056-d2ccd08790dd)
 - [Cloudflare SSL cipher, browser, and protocol support](https://support.cloudflare.com/hc/en-us/articles/203041594-Cloudflare-SSL-cipher-browser-and-protocol-support)
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
+- [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
 
 #### :beginner: Use only strong ciphers
 
@@ -2867,6 +2868,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [Bypassing Web-Application Firewalls by abusing SSL/TLS](https://0x09al.github.io/waf/bypass/ssl/2018/07/02/web-application-firewall-bypass.html)
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
 - [Cryptographic Right Answers](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html)
+- [ImperialViolet - ChaCha20 and Poly1305 for TLS](https://www.imperialviolet.org/2013/10/07/chacha20.html)
 
 #### :beginner: Use more secure ECDH Curve
 
@@ -2901,7 +2903,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 
   **My recommendation:**
 
-  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) and [only strong ciphers](#use-only-strong-ciphers) with above curves:
+  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) and [only strong ciphers](#use-only-strong-ciphers) with the following curves:
   ```nginx
   ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
   ```
@@ -2936,6 +2938,8 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 - [Elliptic Curve performance: NIST vs Brainpool](https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool)
 - [Which elliptic curve should I use?](https://security.stackexchange.com/questions/78621/which-elliptic-curve-should-i-use/91562)
 - [Elliptic Curve Cryptography for those who are afraid of maths](http://www.lapsedordinary.net/files/ECC_BSidesLDN_2015.pdf)
+- [Security dangers of the NIST curves](http://cr.yp.to/talks/2013.05.31/slides-dan+tanja-20130531-4x3.pdf) <sup>[pdf]</sup>
+- [How to design an elliptic-curve signature system](http://blog.cr.yp.to/20140323-ecdsa.html)
 
 #### :beginner: Use strong Key Exchange with Perfect Forward Secrecy
 
@@ -3154,6 +3158,7 @@ ssl_prefer_server_ciphers on;
 - [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls) <sup>[not found]</sup>
 - [Duong and Rizzo's paper on the BEAST attack)](https://images.techhive.com/downloads/idge/imported/article/ifw/2011/09/26/beast_duong_rizzo.pdf) <sup>[pdf]</sup>
 - [Use only strong ciphers (from this handbook)](#beginner-use-only-strong-ciphers)
+- [ImperialViolet - Real World Crypto 2013](https://www.imperialviolet.org/2013/01/13/rwc03.html)
 
 #### :beginner: Mitigation of CRIME/BREACH attacks
 
@@ -3203,6 +3208,7 @@ location ^~ /assets/ {
 - [The current state of the BREACH attack](https://www.sjoerdlangkemper.nl/2016/11/07/current-state-of-breach-attack/)
 - [Module ngx_http_gzip_static_module](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html)
 - [Offline Compression with Nginx](https://theartofmachinery.com/2016/06/06/nginx_gzip_static.html)
+- [ImperialViolet - Real World Crypto 2013](https://www.imperialviolet.org/2013/01/13/rwc03.html)
 
 #### :beginner: HTTP Strict Transport Security
 
@@ -3220,6 +3226,8 @@ location ^~ /assets/ {
   > The HSTS header needs to be set inside the HTTP block with the `ssl` listen statement or you risk sending Strict-Transport-Security headers over HTTP sites you may also have configured on the server. Additionally, you should use `return 301` for the HTTP server block to be redirected to HTTPS.
 
   > I recommend to set the `max-age` to a big value like `31536000` (12 months) or `63072000` (24 months).
+
+  > Ideally, you should always use `includeSubdomains` with HSTS. This will provide robust security for the main hostname as well as all subdomains. The issue here is that (without `includeSubdomains`) a man in the middle attacker can create arbitrary subdomains and use them inject cookies into your application. In some cases, even leakage might occur. The drawback of `includeSubdomains`, of course, is that you will have to deploy all subdomains over SSL.
 
   > There are a few simple best practices for HSTS (from [The Importance of a Proper HTTP Strict Transport Security Implementation on Your Web Server](https://blog.qualys.com/securitylabs/2016/03/28/the-importance-of-a-proper-http-strict-transport-security-implementation-on-your-web-server)):
   >
