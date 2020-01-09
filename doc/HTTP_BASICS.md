@@ -107,6 +107,7 @@ I will not describe HTTP/2 because there are brilliant studies:
 - [HTTP/2 in Action](https://www.manning.com/books/http2-in-action)
 - [HTTP/2 Frequently Asked Questions](https://http2.github.io/faq/)
 - [How Does HTTP/2 Work?](https://sookocheff.com/post/networking/how-does-http-2-work/)
+- [HTTP2 Vs. HTTP1 – Let’s Understand The Two Protocols](https://cheapsslsecurity.com/p/http2-vs-http1/)
 - [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 
 However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP/1.1. A client that supports HTTP/2 will ask the server (using HTTP/1.1) for an HTTP/2 upgrade:

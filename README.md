@@ -184,12 +184,12 @@
   * [Reverse proxy](doc/NGINX_BASICS.md#reverse-proxy)
     * [Passing requests](doc/NGINX_BASICS.md#passing-requests)
     * [Trailing slashes](doc/NGINX_BASICS.md#trailing-slashes)
-    * [Response headers](doc/NGINX_BASICS.md#response-headers)
     * [Passing headers to the backend](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
       * [Importance of the Host header](doc/NGINX_BASICS.md#importance-of-the-host-header)
       * [Redirects and X-Forwarded-Proto](doc/NGINX_BASICS.md#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](doc/NGINX_BASICS.md#a-warning-about-the-x-forwarded-for)
       * [Improve extensibility with Forwarded](doc/NGINX_BASICS.md#improve-extensibility-with-forwarded)
+* [Response headers](doc/NGINX_BASICS.md#response-headers)
   * [Load balancing algorithms](doc/NGINX_BASICS.md#load-balancing-algorithms)
     * [Backend parameters](doc/NGINX_BASICS.md#backend-parameters)
     * [Upstream servers with SSL](doc/NGINX_BASICS.md#upstream-servers-with-ssl)
@@ -405,7 +405,7 @@
   * [Activate the cache for connections to upstream servers](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)
   * [Make an exact location match to speed up the selection process](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](doc/RULES.md#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
-- **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
+- **[Hardening (29)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
   * [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](doc/RULES.md#beginner-disable-unnecessary-modules)
@@ -413,6 +413,7 @@
   * [Hide Nginx version number](doc/RULES.md#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](doc/RULES.md#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)
+  * [Remove support for legacy and risky HTTP headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)
   * [Use only the latest supported OpenSSL version](doc/RULES.md#beginner-use-only-the-latest-supported-openssl-version)
   * [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)
   * [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)
@@ -567,6 +568,8 @@ Remember about the following most important things:
 
   > **`Always think about what is better and more important for you: security vs usability/compatibility.`**
 
+  > **`Change one thing may opens a whole new set of problems.`**
+
   > **`The only correct approach is to understand your exposure, measure and tune.`**
 
   > **`Regularly test your deployments to make sure that a regression is not introduced.`**
@@ -717,6 +720,8 @@ Existing chapters:
     - [x] _cipherscan_
     - [x] _O-Saft_
     - [x] _Nghttp2_
+    - [x] _h2spec_
+    - [x] _http2fuzz_
     - [x] _Arjun_
     - [x] _Corsy_
     - [x] _XSStrike_
@@ -815,12 +820,12 @@ Existing chapters:
     - [x] _Passing requests_
     - [x] _Trailing slashes_
     - [ ] _Processing headers_
-    - [x] _Response headers_
     - [x] _Passing headers_
       - [x] _Importance of the Host header_
       - [x] _Redirects and X-Forwarded-Proto_
       - [x] _A warning about the X-Forwarded-For_
       - [x] _Improve extensibility with Forwarded_
+    - [x] _Response headers_
   - _Load balancing algorithms_
     - [x] _Backend parameters_
     - [x] _Upstream servers with SSL_
@@ -1028,6 +1033,7 @@ Existing chapters:
 
   - [x] _Keep NGINX up-to-date_
   - [x] _Use only the latest supported OpenSSL version_
+  - [x] _Remove support for legacy and risky HTTP headers_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
   - [ ] _Enable OCSP Stapling_
   - [x] _Prevent caching of sensitive data_
@@ -1068,13 +1074,13 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
 
-  > This checklist contains [all rules (71)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (72)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 29 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 30 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 24 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
@@ -1093,6 +1099,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](doc/RULES.md#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Remove support for legacy and risky HTTP headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)<br><sup>Supports for the offending headers should be removed.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)<br><sup>Protects your website for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Keep only TLS 1.3 and TLS 1.2](doc/RULES.md#beginner-keep-only-tls-13-and-tls-12)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1565,6 +1572,8 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/mozilla/cipherscan"><b>cipherscan</b></a> - is a very simple way to find out which SSL ciphersuites are supported by a target.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/O-Saft"><b>O-Saft</b></a> - OWASP SSL advanced forensic tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nghttp2.org/"><b>Nghttp2</b></a> - is an implementation of HTTP/2 and its header compression algorithm HPACK in C.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/summerwind/h2spec"><b>h2spec</b></a> - is a conformance testing tool for HTTP/2 implementation.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/c0nrad/http2fuzz"><b>http2fuzz</b></a> - HTTP/2 fuzzer written in Golang.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/Arjun"><b>Arjun</b></a> - HTTP parameter discovery suite.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/Corsy"><b>Corsy</b></a> - CORS misconfiguration scanner.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/XSStrike"><b>XSStrike</b></a> - most advanced XSS scanner.<br>
@@ -1656,13 +1665,13 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > Explanation of the NGINX mechanisms.
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers-2"></a>
   > One-liners, commands, utilities for building NGINX, and more
-- **[Base Rules (14)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
+- **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
   > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
 - **[Performance (12)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
-- **[Hardening (28)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
+- **[Hardening (29)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.
 - **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.

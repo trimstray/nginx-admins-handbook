@@ -254,7 +254,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
-- [Force all connections over TLS (from this handbook)](https://github.com/trimstray/nginx-admins-handbook/blob/master/doc/RULES.md#beginner-force-all-connections-over-tls)
+- [Force all connections over TLS (from this handbook)](doc/RULES.md#beginner-force-all-connections-over-tls)
 
 #### :beginner: Define the `listen` directives with `address:port` pair
 
@@ -1383,6 +1383,12 @@ worker_processes 3;
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
+  > To test your server with [RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup> (HTTP/2) and [RFC 7541](https://tools.ietf.org/html/rfc7541) <sup>[IETF]</sup> (HPACK) use [h2spec](https://github.com/summerwind/h2spec) tool.
+
+  > Obviously, there is no pleasure without pain. There are serious vulnerabilities detected in the HTTP/2 protocol. For more information please see [HTTP/2 can shut you down!](https://www.secpod.com/blog/http2-dos-vulnerabilities/), [On the recent HTTP/2 DoS attacks](https://blog.cloudflare.com/on-the-recent-http-2-dos-attacks/), and [HTTP/2: In-depth analysis of the top four flaws of the next generation web protocol](https://www.imperva.com/docs/Imperva_HII_HTTP2.pdf) <sup>[pdf]</sup>.
+
+  > Let's not forget about backwards-compatible with HTTP/1.1, also when it comes to security. Many of the vulnerabilities for HTTP/1.1 may be present in HTTP/2.
+
 ###### Example
 
 ```nginx
@@ -1395,11 +1401,14 @@ server {
 
 ###### External resources
 
+- [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>
+- [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2) - Security Considerations](https://tools.ietf.org/html/rfc7540#section-10) <sup>[IETF]</sup>
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/)
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 - [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
 - [HTTP/2 Compatibility with old Browsers and Servers](http://qnimate.com/http2-compatibility-with-old-browsers-and-servers/)
 - [HTTP Headers (from this handbook)](HTTP_BASICS.md#http-headers)
+- [HTTP/2 Denial of Service Advisory](https://github.com/Netflix/security-bulletins/blob/master/advisories/third-party/2019-002.md)
 
 #### :beginner: Maintaining SSL sessions
 
@@ -1427,8 +1436,8 @@ server {
 
   The recommendation from Leif Hedstrom, Thomas Jackson, Brian Geffon etc is to use the below values:
 
-  > smaller TLS record size: MTU/MSS (1500) minus the TCP (20 bytes) and IP (40 bytes) overheads: 1500 - 40 - 20 = 1440 bytes<br>
-  > larger TLS record size: maximum TLS record size which is 16383 (2^14 - 1)
+  > - smaller TLS record size: MTU/MSS (1500) minus the TCP (20 bytes) and IP (40 bytes) overheads: 1500 - 40 - 20 = 1440 bytes<br>
+  > - larger TLS record size: maximum TLS record size which is 16383 (2^14 - 1)
 
 ###### Example
 
@@ -1590,9 +1599,6 @@ return 301 https://example.com$request_uri;
 ###### External resources
 
 - [Pitfalls and Common Mistakes - Taxing Rewrites](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites)
-
-###### External resources
-
 - [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 
 #### :beginner: Use `try_files` directive to ensure a file exists
@@ -1876,7 +1882,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
-- **[≡ Hardening (28)](#hardening)**
+- **[≡ Hardening (29)](#hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -1884,6 +1890,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
+  * [Remove support for legacy and risky HTTP headers](#beginner-remove-support-for-legacy-and-risky-http-headers)
   * [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
@@ -2130,6 +2137,41 @@ proxy_hide_header X-Drupal-Cache;
 ###### External resources
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
+
+#### :beginner: Remove support for legacy and risky HTTP headers
+
+###### Rationale
+
+  > In my opinion, support of these headers is not a vulnerability itself, but more like misconfiguration which in some circumstances could lead to a vulnerability.
+
+  > It is good manners to definitely remove (or normalize of their values) support for risky HTTP request headers. None of them never should get to your application or go through a proxy server without not factor the contents of them.
+
+  > The ability to use of the `X-Original-URL` or `X-Rewrite-URL` can have serious consequences. These headers allows a user to access one URL but have your app (e.g. uses PHP/Symfony) return a different one which can bypass restrictions on higher level caches and web servers.
+
+  > If one or more of your backends uses the contents of the `X-Forwarded-Host`, `X-Rewrite-Url` or `X-Original-Url` HTTP request headers to decide which of your users (or which security domain) it sends an HTTP response, you may be impacted by this class of vulnerability. If you passes these headers to your backend an attacker could potentially cause to store a response with arbitrary content inserted to a victim’s cache.
+
+Look at the following explanation taken from [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning):
+
+  > _This revealed the headers `X-Original-URL` and `X-Rewrite-URL` which override the request's path. I first noticed them affecting targets running Drupal, and digging through Drupal's code revealed that the support for this header comes from the popular PHP framework Symfony, which in turn took the code from Zend. The end result is that a huge number of PHP applications unwittingly support these headers. Before we try using these headers for cache poisoning, I should point out they're also great for bypassing WAFs and security rules [...]_
+
+###### Example
+
+```nginx
+# Remove risky headers:
+proxy_set_header X-Original-URL "";
+proxy_set_header X-Rewrite-URL "";
+
+# Or consider setting the vulnerable headers to a known-safe value or unsetting the header:
+proxy_set_header X-Original-URL $request_uri;
+proxy_set_header X-Rewrite-URL $original_uri;
+proxy_set_header X-Forwarded-Host $host;
+```
+
+###### External resources
+
+- [CVE-2018-14773: Remove support for legacy and risky HTTP headers](https://symfony.com/blog/cve-2018-14773-remove-support-for-legacy-and-risky-http-headers)
+- [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning)
+- [Passing headers to the backend (from this handbook)](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
 
 #### :beginner: Use only the latest supported OpenSSL version
 

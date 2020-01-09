@@ -44,12 +44,12 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
     * [Trailing slashes](#trailing-slashes)
-    * [Response headers](#response-headers)
     * [Passing headers to the backend](#passing-headers-to-the-backend)
       * [Importance of the Host header](#importance-of-the-host-header)
       * [Redirects and X-Forwarded-Proto](#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](#a-warning-about-the-x-forwarded-for)
       * [Improve extensibility with Forwarded](#improve-extensibility-with-forwarded)
+    * [Response headers](#response-headers)
   * [Load balancing algorithms](#load-balancing-algorithms)
     * [Backend parameters](#backend-parameters)
     * [Upstream servers with SSL](#upstream-servers-with-ssl)
@@ -947,7 +947,7 @@ Look also at this great article about [Optimizing Nginx for High Traffic Loads](
 
 ##### HTTP Keep-Alive connections
 
-  > **:bookmark: [Activate the cache for connections to upstream servers - Performance - P2](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)**
+  > **:bookmark: [Activate the cache for connections to upstream servers - Performance - P2](RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)**
 
 Before starting this section I recommend to read the following articles:
 
@@ -1376,7 +1376,7 @@ http {
   > **:bookmark: [Never use a hostname in the listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-the-listen-or-upstream-directives)**<br>
   > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
   > **:bookmark: [Separate listen directives for 80 and 443 ports - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)**<br>
-  > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](#beginner-use-only-one-ssl-config-for-the-listen-directive)**
+  > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)**
 
 NGINX uses the following logic to determining which virtual server (server block) should be used:
 
@@ -1915,7 +1915,7 @@ On the other hand, `try_files` is relatively primitive. When encountered, NGINX 
 
 ##### `if`, `break` and `set`
 
-  > **:bookmark: [Avoid checks server_name with if directive - Performance - P2](#beginner-avoid-checks-server_name-with-if-directive)**
+  > **:bookmark: [Avoid checks server_name with if directive - Performance - P2](RULES.md#beginner-avoid-checks-server_name-with-if-directive)**
 
 The `ngx_http_rewrite_module` also provides additional directives:
 
@@ -2868,38 +2868,11 @@ In other words:
 
   > You usually always want a trailing slash, never want to mix with and without trailing slash, and only want without trailing slash when you want to concatenate a certain path component together (which I guess is quite rarely the case). Note how query parameters are preserved.
 
-##### Response headers
-
-  > **:bookmark: [Set the HTTP headers with add_header directive properly - Base Rules - P1](#beginner-set-the-http-headers-with-add_header-directive-properly)**
-
-`add_header` directive allows you to define an arbitrary response header (mostly for informational/debugging purposes) and value to be included in all response codes which are equal to:
-
-- 2xx series: 200, 201, 204, 206
-- 3xx series: 301, 302, 303, 304, 307, 308
-
-For example:
-
-```nginx
-add_header Custom-Header Value;
-```
-
-  > To change (adding or removing) existing headers you should use a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) module.
-
-There is one thing you must watch out for if you use `add_header` directive. See the following explanations:
-
-- [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
-- [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
-
-This is described in the official documentation:
-
-  > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no add_header directives defined on the current level._
-
-However - and this is important - as you now have defined a header in your `server` context, all the remaining headers defined in the `http` context will no longer be inherited. Means, you’ve to define them in your `server` context again (or alternatively ignore them if they’re not important for your site).
-
 ##### Passing headers to the backend
 
-  > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
-  > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](#beginner-use-reload-option-to-change-configurations-on-the-fly)**
+  > **:bookmark: [Remove support for legacy and risky HTTP headers - Hardening - P1](RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)**
+  > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
+  > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
 By default, NGINX redefines two header fields in proxied requests:
 
@@ -2919,7 +2892,7 @@ It is important to pass more than just the URI if you expect the upstream server
 
 NGINX use the `proxy_set_header` directive to sets headers that sends to the backend servers.
 
-  > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser) and will work on successful requests only, unless you set up `always` parameter. `proxy_set_header` sends headers to the backend server.
+  > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser) and will work on successful requests only, unless you set up `always` parameter. `proxy_set_header` sends headers to the backend server. If the value of a header field is an empty string then this field will not be passed to a proxied server.
 
 It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
 
@@ -2993,7 +2966,7 @@ If you want to read about custom headers, take a look at [Why we need to depreca
 
 ###### Importance of the `Host` header
 
-  > **:bookmark: [Set and pass Host header only with $host variable - Reverse Proxy - P2](#beginner-set-and-pass-host-header-only-with-host-variable)**
+  > **:bookmark: [Set and pass Host header only with $host variable - Reverse Proxy - P2](RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)**
 
 The `Host` header tells the webserver which virtual host to use (if set up). You can even have the same virtual host using several aliases (domains and wildcard-domains). This why the host header exists. The host header specifies which website or web application should process an incoming HTTP request.
 
@@ -3009,7 +2982,7 @@ Look also at [$10k host header](https://www.ezequiel.tech/p/10k-host-header.html
 
 ###### Redirects and `X-Forwarded-Proto`
 
-  > **:bookmark: [Don't use X-Forwarded-Proto with $scheme behind reverse proxy - Reverse Proxy - P1](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)**
+  > **:bookmark: [Don't use X-Forwarded-Proto with $scheme behind reverse proxy - Reverse Proxy - P1](RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)**
 
 This header is very important because it prevent a redirect loop. When used inside HTTPS server block each HTTP response from the proxied server will be rewritten to HTTPS. Look at the following example:
 
@@ -3034,7 +3007,7 @@ You can read about how to set it up correctly here:
 
 ###### A warning about the `X-Forwarded-For`
 
-  > **:bookmark: [Set properly values of the X-Forwarded-For header - Reverse Proxy - P1](#beginner-set-properly-values-of-the-x-forwarded-for-header)**
+  > **:bookmark: [Set properly values of the X-Forwarded-For header - Reverse Proxy - P1](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)**
 
 I think, we should just maybe stop for a second. `X-Forwarded-For` is a one of the most important header that has the security implications.
 
@@ -3131,6 +3104,34 @@ Since 2014, the IETF has approved a standard header definition for proxy, called
 
 In general, the proxy headers (Forwarded or X-Forwarded-For) are the right way to get your client IP only when you are sure they come to you via a proxy. If there is no proxy header or no usable value in, you should default to the `REMOTE_ADDR` server variable.
 
+##### Response headers
+
+  > **:bookmark: [Set the HTTP headers with add_header directive properly - Base Rules - P1](RULES.md#beginner-set-the-http-headers-with-add_header-directive-properly)**
+
+`add_header` directive allows you to define an arbitrary response header (mostly for informational/debugging purposes) and value to be included in all response codes which are equal to:
+
+- 2xx series: 200, 201, 204, 206
+- 3xx series: 301, 302, 303, 304, 307, 308
+
+For example:
+
+```nginx
+add_header Custom-Header Value;
+```
+
+  > To change (adding or removing) existing headers you should use a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) module.
+
+There is one thing you must watch out for if you use `add_header` directive. See the following explanations:
+
+- [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
+- [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
+
+This is described in the official documentation:
+
+  > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no add_header directives defined on the current level._
+
+However - and this is important - as you now have defined a header in your `server` context, all the remaining headers defined in the `http` context will no longer be inherited. Means, you’ve to define them in your `server` context again (or alternatively ignore them if they’re not important for your site).
+
 #### Load balancing algorithms
 
 Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course, load balancing is not the only reason - think also about maintenance tasks without downtime.
@@ -3143,8 +3144,8 @@ The configuration is very simple. NGINX includes a `ngx_http_upstream_module` to
 
 ##### Backend parameters
 
-  > **:bookmark: [Tweak passive health checks - Load Balancing - P3](#beginner-tweak-passive-health-checks)**<br>
-  > **:bookmark: [Don't disable backends by comments, use down parameter - Load Balancing - P4](#beginner-dont-disable-backends-by-comments-use-down-parameter)**
+  > **:bookmark: [Tweak passive health checks - Load Balancing - P3](RULES.md#beginner-tweak-passive-health-checks)**<br>
+  > **:bookmark: [Don't disable backends by comments, use down parameter - Load Balancing - P4](RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)**
 
 Before we start talking about the load balancing techniques you should know something about `server` directive. It defines the address and other parameters of a backend servers.
 
