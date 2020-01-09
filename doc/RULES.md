@@ -8,7 +8,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
-  * [Separate listen directives for 80 and 443 ports](#beginner-separate-listen-directives-for-80-and-443 ports)
+  * [Separate listen directives for 80 and 443 ports](#beginner-separate-listen-directives-for-80-and-443-ports)
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directive](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
