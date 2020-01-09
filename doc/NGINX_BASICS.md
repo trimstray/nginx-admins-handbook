@@ -2870,6 +2870,7 @@ In other words:
 
 ##### Passing headers to the backend
 
+  > **:bookmark: [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1](RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)**
   > **:bookmark: [Remove support for legacy and risky HTTP headers - Hardening - P1](RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)**
   > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
   > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
@@ -3106,7 +3107,7 @@ In general, the proxy headers (Forwarded or X-Forwarded-For) are the right way t
 
 ##### Response headers
 
-  > **:bookmark: [Set the HTTP headers with add_header directive properly - Base Rules - P1](RULES.md#beginner-set-the-http-headers-with-add_header-directive-properly)**
+  > **:bookmark: [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1](RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)**
 
 `add_header` directive allows you to define an arbitrary response header (mostly for informational/debugging purposes) and value to be included in all response codes which are equal to:
 

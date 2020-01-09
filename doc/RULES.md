@@ -12,7 +12,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in the listen or upstream directives](#beginner-never-use-a-hostname-in-the-listen-or-upstream-directives)
-  * [Set the HTTP headers with add_header directive properly](#beginner-set-the-http-headers-with-add_header-directive-properly)
+  * [Set the HTTP headers with add_header and proxy_*_header directives properly](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
   * [Map all the things...](#beginner-map-all-the-things)
@@ -482,15 +482,15 @@ server {
 - [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
 - [Define the listen directives with address:port pair (from this handbook)](#beginner-define-the-listen-directives-with-addressport-pair)
 
-#### :beginner: Set the HTTP headers with `add_header` directive properly
+#### :beginner: Set the HTTP headers with `add_header` and `proxy_*_header` directives properly
 
 ###### Rationale
 
-  > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. These directives are inherited from the previous level if and only if there are no `add_header` directives defined on the current level.
+  > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` contexts. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
-  > You should define a common config snippet for all contexts and use it on each level.
+  > But if you use it in multiple contexes only the "lowest" occurrences are used. So if you specify it in the `server` and `location` contexts (even if you hide different header) only the `proxy_hide_header` in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
 
-  > In my opinion, the best solution is use an include file with your global headers and add it to the `http` context. Alternative, you should set up other include file with your server/domain specific configuration (but always with your global headers!) and add it to the `server` contexts.
+  > In my opinion, the best solution is use an include file with your global headers and add it to the `http` context. Alternative, you should set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server` contexts.
 
   > There are solutions to this such as using an alternative module like a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) for define specific headers in you `server` or `location` blocks.
 
@@ -549,6 +549,42 @@ http {
     ...
 
     include /etc/nginx/ngx_headers_global.conf;
+
+    location / {
+
+      more_set_headers 'Foo: bar';
+
+      ...
+
+    }
+
+  }
+
+}
+```
+
+Example for `proxy_hide_header` and `proxy_set_header` (but I also recommend to use them from included file):
+
+```nginx
+http {
+
+  ...
+
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_hide_header X-Powered-By;
+
+  server {
+
+    server_name example.com;
+
+    ...
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_hide_header X-Powered-By;
 
     location / {
 
