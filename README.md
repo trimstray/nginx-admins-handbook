@@ -1206,7 +1206,7 @@ Look also at the following recommendations. In my opinion, the right configurati
 
   > Read about Mozilla Observatory [here](https://observatory.mozilla.org/faq/) and about [Observatory Scoring Methodology](https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/scoring.md).
 
-I also got the highest note (**A+**) on the Observatory with a very high possible score (120/100, max. 135/100):
+I also got the highest summary note (**A+**) on the Observatory with a very high test score (120/100, max. 135/100):
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_mozilla_observatory_preview.png" alt="blkcipher_mozilla_observatory_preview">
