@@ -305,11 +305,13 @@ server {
 
   > It protects against configuration errors, e.g. traffic forwarding to incorrect backends, bypassing filters like an ACLs or WAFs. The problem is easily solved by creating a default dummy vhost that catches all requests with unrecognized `Host` headers.
 
-  > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
+  > If none of the `listen` directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
-  > The server name `_` is not required in modern versions of NGINX (it is not really required so you can put anything there). If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
+  > The server name `_` is not required in modern versions of NGINX (so you can put anything there). In fact, the `default_server` does not need a `server_name` statement because it match anything that the other server blocks does not explicitly match.
+
+  > If a server with a matching `listen` and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
 
   > NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed.
 
@@ -318,7 +320,7 @@ server {
   > - one `server` block, with...
   > - complete `listen` directive, with...
   > - `default_server` parameter, with...
-  > - only one `server_name` definition, and...
+  > - only one `server_name` (but not required) definition, and...
   > - preventively I add it at the beginning of the configuration
 
   > Also good point is `return 444;` for default server name because this will close the connection (which will kill the connection without sending any headers) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
