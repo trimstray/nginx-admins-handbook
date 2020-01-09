@@ -488,7 +488,7 @@ server {
 
   > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` contexts. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
-  > But if you use it in multiple contexes only the "lowest" occurrences are used. So if you specify it in the `server` and `location` contexts (even if you hide different header) only the `proxy_hide_header` in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
+  > But if you use it in multiple contexes only the lowest occurrences are used. So if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
 
   > In my opinion, the best solution is use an include file with your global headers and add it to the `http` context. Alternative, you should set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server` contexts.
 
