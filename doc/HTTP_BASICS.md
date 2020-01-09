@@ -38,6 +38,7 @@ Some important information about HTTP:
 I will not describe the HTTP protocol meticulously so you have to look at this as an introduction. I will discuss only the most important things because we have some great documents which describe this protocol in a great deal of detail:
 
 - [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616) <sup>[IETF]</sup>
+- [RFC 7230 - Hypertext Transfer Protocol - HTTP/1.1: Message Syntax and Routing](https://tools.ietf.org/html/rfc7230) <sup>[IETF]</sup>
 - [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)
 - [MDN web docs - An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview)
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
@@ -59,6 +60,8 @@ By its nature, HTTP is stateless. Stateless means that all requests are separate
 Here is a brief explanation:
 
 - most often the HTTP communication uses the TCP protocol
+
+- HTTP allow multiple requests and responses to be carried over a single (persistent) connection ([RFC 7230](https://tools.ietf.org/html/rfc7230#section-6.3) <sup>[IETF]</sup>)
 
 - HTTP protocol is stateless (all requests are separate from each other)
 
@@ -235,7 +238,7 @@ Additional information about requests:
 
 ##### Request line
 
-The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF (`\r\n` or in hex `0d0a`). The elements are separated by space SP characters:
+The Request-line begins with a method, followed by the Request-URI and the protocol version, and ending with CRLF (`\r\n` or `0d0a` in a hex). The elements are separated by space SP characters:
 
 ```
 Request-Line = Method SP Request-URI SP HTTP-Version CRLF

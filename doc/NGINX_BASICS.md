@@ -212,7 +212,7 @@ set $var "value";
 
 Some interesting things about variables:
 
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail. I also recommend [nginx built-in variables](http://siwei.me/blog/posts/nginx-built-in-variables).
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a NGINX Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail. I also recommend [nginx built-in variables](http://siwei.me/blog/posts/nginx-built-in-variables).
 
 - the most variables in NGINX only exist at runtime, not during configuration time
 - the scope of variables spreads out all over configuration
@@ -335,7 +335,7 @@ NGINX also provides other contexts (e.g. used for mapping) such as:
 
 - `limit_except` - is used to restrict the use of certain HTTP methods within a location context
 
-Also look at the graphic below. It presents the most important contexts with reference to the configuration:
+Look also at the graphic below. It presents the most important contexts with reference to the configuration:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_contexts.png" alt="nginx-contexts">
@@ -570,7 +570,7 @@ NGINX means connections as follows (the following status information is provided
 - **Writing** - the current number of connections where NGINX is writing the response back to the client (reads request body, processes request, or writes response to a client)
 - **Waiting** - the current number of idle client connections waiting for a request, i.e. connection still opened waiting for either a new request, or the keepalive expiration (actually it is Active - (Reading + Writing))
 
-  > Waiting connections those are keepalive connections. They are usually not a problem. But if you want lower the number reduce `keepalive_timeout`.
+  > Waiting connections those are keepalive connections. They are usually not a problem. But if you want to lower the number reduce `keepalive_timeout` directive.
 
 ##### Event-Driven architecture
 
@@ -628,7 +628,7 @@ For more information take a look at following resources:
 - [How is Nginx handling its requests in terms of tasks or threading?](https://softwareengineering.stackexchange.com/questions/256510/how-is-nginx-handling-its-requests-in-terms-of-tasks-or-threading)
 - [Why nginx is faster than Apache, and why you needn’t necessarily care](https://djangodeployment.com/2016/11/15/why-nginx-is-faster-than-apache-and-why-you-neednt-necessarily-care/)
 
-Finally, look at these great previews:
+Finally, look at these great preview:
 
 <p align="center">
   <a href="https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/">
@@ -890,7 +890,8 @@ done | xargs printf '%6s %10s\t%s\n%6s %10s\t%s\n' "PID" "SOFT" "HARD"
 or use the following:
 
 ```bash
-# To determine the OS limits imposed on a process, read the file /proc/$pid/limits. $pid corresponds to the PID of the process:
+# To determine the OS limits imposed on a process, read the file /proc/$pid/limits.
+# $pid corresponds to the PID of the process:
 for _pid in $(pgrep -f "nginx: [master,worker]") ; do
 
   echo -en ">>> $_pid\\n"
@@ -976,6 +977,8 @@ Persistent connection model keeps connections opened between successive requests
 
 <sup><i>This infographic comes from [Mozilla MDN - Connection management in HTTP/1.x](https://developer.mozilla.org/en-US/docs/Web/HTTP/Connection_management_in_HTTP_1.x).</i></sup>
 
+However, at present, browsers are not using pipelined HTTP requests. For more information please see [Why is pipelining disabled in modern browsers?](https://stackoverflow.com/questions/30477476/why-is-pipelining-disabled-in-modern-browsers).
+
 Look also at this example that shows how a Keep-Alive header could be used:
 
 ```
@@ -1020,7 +1023,8 @@ NGINX provides the two layers to enable Keep-Alive:
   # Default: 75s
   keepalive_timeout   10s;
 
-  # Or tell the browser when it should close the connection by adding an optional second timeout in the header sent to the browser (some browsers do not care about the header):
+  # Or tell the browser when it should close the connection by adding an optional second timeout
+  # in the header sent to the browser (some browsers do not care about the header):
   keepalive_timeout   10s 25s;
   ```
 
@@ -1197,7 +1201,8 @@ By default NGINX enable the use of `TCP_NODELAY` option:
 
 ```nginx
 # http, server, location contexts
-# To turn on tcp_nodelay and at the same time to disable Nagle’s algorithm (my recommendation, unless you turn tcp_nopush on):
+# To turn on tcp_nodelay and at the same time to disable Nagle’s algorithm
+# (my recommendation, unless you turn tcp_nopush on):
 tcp_nodelay on;   # default
 
 # To turn off tcp_nodelay and at the same time to enable Nagle’s algorithm:
@@ -1253,7 +1258,7 @@ Summarizing:
 So in fact, the most important changes are listed below:
 
 ```nginx
-sendfile on;
+sendfile   on;
 tcp_nopush on;    # with this, the tcp_nodelay does not really matter
 ```
 
@@ -2192,7 +2197,7 @@ request URI
 
 ##### `allow` and `deny`
 
-Both comes from the `ngx_http_access_module` module allows limiting access to certain client addresses. You can combining `allow/deny` rules
+Both comes from the `ngx_http_access_module` module allows limiting access to certain client addresses. You can combining `allow/deny` rules.
 
 The easiest path would be to start out by denying all access, then only granting access to those locations you want.
 
@@ -2217,7 +2222,7 @@ server {
 }
 ```
 
-If you generate reqeust:
+If you generate a reqeust:
 
 ```bash
 curl -i https://example.com
@@ -2505,7 +2510,7 @@ So you really need to either add the `proxy_pass` or `fastcgi_pass` directives t
 # 1) Set log format:
 log_format req_body_logging '$remote_addr - $remote_user [$time_local] '
                             '"$request" $status $body_bytes_sent '
-                            '"$http_referer" "$http_user_agent"' "$request_body"';
+                            '"$http_referer" "$http_user_agent" "$request_body"';
 
 # 2) Limit the request body size:
 client_max_body_size 1k;
@@ -2918,7 +2923,7 @@ NGINX use the `proxy_set_header` directive to sets headers that sends to the bac
 
 It's also important to distinguish between request headers and response headers. Request headers are for traffic inbound to the webserver or backend app. Response headers are going the other way (in the HTTP response you get back using client, e.g. curl or browser).
 
-Ok, so look at following short explanation about proxy directives (for more information about valid header values please see [this](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend) rule):
+Ok, so look at the following short explanation about proxy directives (for more information about valid header values please see [this](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-stack-headers-to-the-backend) rule):
 
 - `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1:
 
@@ -2996,7 +3001,7 @@ In NGINX, `$host` equals `$http_host`, lowercase and without the port number (if
 
 But look at this:
 
-  > _An unchanged "Host" request header field can be passed with `$http_host`. However, if this field is not present in a client request header then nothing will be passed. In such a case it is better to use the `$host` variable - its value equals the server name in the "Host" request header field or the primary server name if this field is not present._
+  > _An unchanged `Host` request header field can be passed with `$http_host`. However, if this field is not present in a client request header then nothing will be passed. In such a case it is better to use the `$host` variable - its value equals the server name in the `Host` request header field or the primary server name if this field is not present._
 
 For example, if you set `Host: MASTER:8080`, `$host` will be "master" (while `$http_host` will be `MASTER:8080` as it just reflects the whole header).
 
@@ -3055,17 +3060,20 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
     First of all, you should add the following lines to the configuration:
 
     ```nginx
-    # Add these to the set_real_ip.conf, there are the real IPs where your traffic is coming from (front proxy/lb):
+    # Add these to the set_real_ip.conf, there are the real IPs where your traffic
+    # is coming from (front proxy/lb):
     set_real_ip_from    192.168.20.10; # IP address of master
     set_real_ip_from    192.168.20.11; # IP address of slave
 
     # You can also add an entire subnet:
     set_real_ip_from    192.168.40.0/24;
 
-    # Defines a request header field used to send the address for a replacement, in this case We use X-Forwarded-For:
+    # Defines a request header field used to send the address for a replacement,
+    # in this case We use X-Forwarded-For:
     real_ip_header      X-Forwarded-For;
 
-    # The real IP from your client address that matches one of the trusted addresses is replaced by the last non-trusted address sent in the request header field:
+    # The real IP from your client address that matches one of the trusted addresses
+    # is replaced by the last non-trusted address sent in the request header field:
     real_ip_recursive   on;
 
     # Include it to the appropriate context:

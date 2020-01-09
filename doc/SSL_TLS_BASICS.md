@@ -15,7 +15,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
   * [Verify your SSL, TLS & Ciphers implementation](#verify-your-ssl-tls--ciphers-implementation)
 
-TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing Secure Socket Layer (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
+TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing _Secure Socket Layer_ (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
 TLS ensures that a connection to a remote endpoint is the intended endpoint through encryption and endpoint identity verification. The versions of TLS, to date, are TLS 1.3, 1.2, 1.1, and 1.0.
 
@@ -153,7 +153,7 @@ TLS_DHE_RSA_WITH_ARIA_128_GCM_SHA256
 TLS_DHE_RSA_WITH_ARIA_256_GCM_SHA384
 ```
 
-These are the current AEAD ciphers which don't trigger the ROBOT warning.
+These are the current AEAD ciphers which don't trigger the [ROBOT](https://robotattack.org/) warning.
 
 #### Diffie-Hellman key exchange
 
