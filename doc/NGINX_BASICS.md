@@ -1320,7 +1320,7 @@ I recommend to read a great explanation about [HTTP request processing phases in
 
 #### Server blocks logic
 
-  > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` and `server_name` directives to bind to TCP sockets.
+  > NGINX does have **server blocks** (like a virtual hosts in an Apache) that use `listen` directive to bind to TCP sockets and `server_name` directive to identify virtual hosts.
 
 It's a short example of two server block contexts with several regular expressions:
 
@@ -1373,7 +1373,7 @@ http {
 
   > **:bookmark: [Define the listen directives with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-with-addressport-pair)**<br>
   > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
-  > **:bookmark: [Never use a hostname in a listen or upstream directive - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)**<br>
+  > **:bookmark: [Never use a hostname in the listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-the-listen-or-upstream-directives)**<br>
   > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
   > **:bookmark: [Separate listen directives for 80 and 443 ports - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)**<br>
   > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](#beginner-use-only-one-ssl-config-for-the-listen-directive)**

@@ -11,7 +11,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Separate listen directives for 80 and 443 ports](#beginner-separate-listen-directives-for-80-and-443-ports)
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
-  * [Never use a hostname in a listen or upstream directive](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
+  * [Never use a hostname in the listen or upstream directives](#beginner-never-use-a-hostname-in-the-listen-or-upstream-directives)
   * [Set the HTTP headers with add_header directive properly](#beginner-set-the-http-headers-with-add_header-directive-properly)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
@@ -37,7 +37,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to move and to split common server settings into a multiple files and to attach your specific code to global config, contexts and other. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
+  > Use `include` directive to move and to split common server settings into a multiple files and to attach your specific code to global config or contexts. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
 
   > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`). I prefer the following structure:
   >
@@ -61,6 +61,8 @@ listen 10.240.20.2:443 ssl;
 ssl_certificate /etc/nginx/master/_server/example.com/certs/nginx_example.com_bundle.crt;
 ssl_certificate_key /etc/nginx/master/_server/example.com/certs/example.com.key;
 
+...
+
 # Include 'https.conf' to the server section:
 server {
 
@@ -79,7 +81,9 @@ server {
 
 ###### External resources
 
+- [How I Manage Nginx Config](https://tylergaw.com/articles/how-i-manage-nginx-config/)
 - [Organize your data and code](https://kbroman.org/steps2rr/pages/organize.html)
+- [How to keep your R projects organized](https://richpauloo.github.io/2018-10-17-How-to-keep-your-R-projects-organized/)
 
 #### :beginner: Format, prettify and indent your Nginx code
 
@@ -94,7 +98,9 @@ server {
   > Choose your formatter style and setup a common config for it. Some rules are universal, but the most important thing is to keep a consistent NGINX code style throughout your code base:
   >
   > - use whitespaces and blank lines to arrange and separate code blocks
-  > - use tabs for indents - they are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
+  > - tabs vs spaces - more important to be consistent throughout your code than to use any specific type
+  >   - tabs are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
+  >   - a space is always one column, use it if you want your beautiful work to appear right for everyone.
   > - use comments to explain why things are done not what is done
   > - use meaningful naming conventions
   > - simple is better than complex but complex is better than complicated
@@ -156,6 +162,8 @@ http {
 
 - [Programming style](https://en.wikipedia.org/wiki/Programming_style)
 - [Toward Developing Good Programming Style](https://www2.cs.arizona.edu/~mccann/style_c.html)
+- [Death to the Space Infidels!](https://blog.codinghorror.com/death-to-the-space-infidels/)
+- [Tabs versus Spaces: An Eternal Holy War](https://www.jwz.org/doc/tabs-vs-spaces.html)
 - [nginx-config-formatter](https://github.com/1connect/nginx-config-formatter)
 - [Format and beautify nginx config files](https://github.com/vasilevich/nginxbeautifier)
 
@@ -212,9 +220,9 @@ kill -HUP $(pgrep -f "nginx: master")
 
   > If you served HTTP and HTTPS with the exact same config (a single server that handles both HTTP and HTTPS requests) NGINX is intelligent enough to ignore the SSL directives if loaded over port 80.
 
-  > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration.
+  > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration. I always split the configuration if I want to redirect from HTTP to HTTPS.
 
-  > It's useful if you pin multiple domains to one IP address. This allows you to attach one listen directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
+  > It's useful if you pin multiple domains to one IP address. This allows you to attach one `listen` directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
 
   > It may also be necessary to hardcode the domains if you're using HTTPS, because you have to know upfront which certificates you'll be providing.
 
@@ -246,6 +254,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
+- [Force all connections over TLS (from this handbook)](https://github.com/trimstray/nginx-admins-handbook/blob/master/doc/RULES.md#beginner-force-all-connections-over-tls)
 
 #### :beginner: Define the `listen` directives with `address:port` pair
 
@@ -328,7 +337,8 @@ server {
   #   - invalid domain names
   #   - requests without the "Host" header
   #   - and all others (also due to the above setting)
-  #   - default_server in server_name directive is not required - I add this for a better understanding and I think it's an unwritten standard
+  #   - default_server in server_name directive is not required
+  #     I add this for a better understanding and I think it's an unwritten standard
   # ...but you should know that it's irrelevant, really, you can put in everything there.
   server_name _ "" default_server;
 
@@ -377,13 +387,11 @@ server {
 - [How processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
-#### :beginner: Never use a hostname in a listen or upstream directive
+#### :beginner: Never use a hostname in the `listen` or `upstream` directives
 
 ###### Rationale
 
-  > Generaly, uses of hostnames in the listen or upstream directives is a bad practice.
-
-  > In the worst case NGINX won't be able to bind to the desired TCP socket which will prevent NGINX from starting at all.
+  > Generaly, uses of hostnames in the `listen` or `upstream` directives is a bad practice. In the worst case NGINX won't be able to bind to the desired TCP socket which will prevent NGINX from starting at all.
 
   > The best and safer way is to know the IP address that needs to be bound to and use that address instead of the hostname. This also prevents NGINX from needing to look up the address and removes dependencies on external and internal resolvers.
 
@@ -486,9 +494,9 @@ server {
 
 There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
 
-  > _Therefore, let’s say you have an http block and have specified the add_header directive within that block. Then, within the http block you have 2 server blocks - one for HTTP and one for HTTPs._
+  > _Therefore, let’s say you have an http block and have specified the `add_header` directive within that block. Then, within the http block you have 2 server blocks - one for HTTP and one for HTTPs._
   >
-  > _Let’s say we don’t include an add_header directive within the HTTP server block, however we do include an additional add_header within the HTTPs server block. In this scenario, the add_header directive defined in the http block will only be inherited by the HTTP server block as it does not have any add_header directive defined on the current level. On the other hand, the HTTPS server block will not inherit the add_header directive defined in the http block._
+  > _Let’s say we don’t include an `add_header` directive within the HTTP server block, however we do include an additional `add_header` within the HTTPs server block. In this scenario, the `add_header` directive defined in the http block will only be inherited by the HTTP server block as it does not have any `add_header` directive defined on the current level. On the other hand, the HTTPS server block will not inherit the `add_header` directive defined in the http block._
 
 ###### Example
 
@@ -581,8 +589,6 @@ http {
   Also take a look at this:
 
   > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, [RFC6066 - Transport Layer Security (TLS) Extensions: Extension Definitions](https://tools.ietf.org/html/rfc6066) <sup>[IETF]</sup>), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
-
-  > Another good idea is to move common server settings into a separate file, i.e. `common/example.com.conf` and then include it in separate `server` blocks.
 
 ###### Example
 
@@ -730,9 +736,9 @@ geo $globals_internal_geo_acl {
 
 ###### Rationale
 
-  > Manage a large number of redirects with maps and use them to customise your key-value pairs. If you are ever faced with using an if during a request, you should check to see if you can use a map instead.
+  > Manage a large number of redirects with maps and use them to customise your key-value pairs. If you are ever faced with using an if during a request, you should check to see if you can use a `map` instead.
 
-  > The map directive maps strings, so it is possible to represent e.g. `192.168.144.0/24` as a regular expression and continue to use the map directive.
+  > The `map` directive maps strings, so it is possible to represent e.g. `192.168.144.0/24` as a regular expression and continue to use the `map` directive.
 
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
@@ -759,7 +765,7 @@ map $http_user_agent $device_redirect {
 }
 
 # Include to the server context:
-include maps/http_user_agent.conf
+include maps/http_user_agent.conf;
 
 # And turn on in a specific context (e.g. location):
 if ($device_redirect = "mobile") {
@@ -780,13 +786,13 @@ if ($device_redirect = "mobile") {
 
   > Set global `root` inside server directive for requests. It specifies the root directory for undefined locations.
 
-  > If you define root in a location block it will only be available in that location. This almost always leads to duplication of either root directives of file paths, neither of which is good.
+  > If you define `root` in a `location` block it will only be available in that `location`. This almost always leads to duplication of either `root` directives of file paths, neither of which is good.
 
-  > If you define it in the server block it is always inherited by the location blocks so it will always be available in the `$document_root` variable, thus avoiding the duplication of file paths.
+  > If you define it in the `server` block it is always inherited by the `location` blocks so it will always be available in the `$document_root` variable, thus avoiding the duplication of file paths.
 
   From official documentation:
 
-  > _If you add a root to every location block then a location block that isn’t matched will have no root. Therefore, it is important that a root directive occur prior to your location blocks, which can then override this directive if they need to._
+  > _If you add a `root` to every location block then a location block that isn’t matched will have no `root`. Therefore, it is important that a `root` directive occur prior to your location blocks, which can then override this directive if they need to._
 
 ###### Example
 
@@ -824,7 +830,7 @@ server {
 
 - [Nginx Pitfalls: Root inside location block](http://wiki.nginx.org/Pitfalls#Root_inside_Location_Block)
 
-#### :beginner: Use return directive for URL redirection (301, 302)
+#### :beginner: Use `return` directive for URL redirection (301, 302)
 
 ###### Rationale
 
@@ -995,11 +1001,11 @@ server {
 - [nginx and Logrotate](https://drumcoder.co.uk/blog/2012/feb/03/nginx-and-logrotate/)
 - [nginx log rotation](https://wincent.com/wiki/nginx_log_rotation)
 
-#### :beginner: Don't duplicate index directive, use it only in the http block
+#### :beginner: Don't duplicate `index` directive, use it only in the http block
 
 ###### Rationale
 
-  > Use the index directive one time. It only needs to occur in your `http` context and it will be inherited below.
+  > Use the `index` directive one time. It only needs to occur in your `http` context and it will be inherited below.
 
   > I think we should be careful about duplicating the same rules. But, of course, rules duplication is sometimes okay or not necessarily a great evil.
 
@@ -1125,6 +1131,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > This is extremely helpful for debugging specific `location` directives.
 
+  > I also use custom log formats for analyze of the users traffic profiles (e.g. SSL/TLS version, ciphers, and many more).
+
 ###### Example
 
 ```nginx
@@ -1238,6 +1246,7 @@ error_log /var/log/nginx/error-debug.log debug;
 
 ###### External resources
 
+- [Debugging NGINX](https://docs.nginx.com/nginx/admin-guide/monitoring/debugging/)
 - [A debugging log](https://nginx.org/en/docs/debugging_log.html)
 - [A little note to all nginx admins there - debug log](https://www.reddit.com/r/sysadmin/comments/7bofyp/a_little_note_to_all_nginx_admins_there/)
 - [Error log severity levels (from this hadnbook)](NGINX_BASICS.md#error-log-severity-levels)
