@@ -375,7 +375,7 @@
   * [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](doc/RULES.md#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](doc/RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)
-  * [Separate listen directives for 80 and 443](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443)
+  * [Separate listen directives for 80 and 443 ports](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)
   * [Define the listen directives with address:port pair](doc/RULES.md#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](doc/RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directive](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
@@ -423,7 +423,7 @@
   * [Prevent Replay Attacks on Zero Round-Trip Time](doc/RULES.md#beginner-prevent-replay-attacks-on-zero-round-trip-time)
   * [Defend against the BEAST attack](doc/RULES.md#beginner-defend-against-the-beast-attack)
   * [Mitigation of CRIME/BREACH attacks](doc/RULES.md#beginner-mitigation-of-crimebreach-attacks)
-  * [HTTP Strict Transport Security](doc/RULES.md#beginner-http-strict-transport-security)
+  * [Enable HTTP Strict Transport Security](doc/RULES.md#beginner-enable-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](doc/RULES.md#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behaviour of the Referer header (Referrer-Policy)](doc/RULES.md#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)
   * [Provide clickjacking protection (X-Frame-Options)](doc/RULES.md#beginner-provide-clickjacking-protection-x-frame-options)
@@ -487,9 +487,9 @@ NGINX is a fast, light-weight and powerful web server that can also be used as a
 - high performance caching server
 - full-fledged web platform
 
-Generally, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
+So, to be brief, it provides the core of complete web stacks and is designed to help build scalable web applications. When it comes to performance, NGINX can easily handle a huge amount of traffic. The other main advantage of the NGINX is that allows you to do the same thing in different ways.
 
-Unlike traditional servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind - one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
+Unlike traditional HTTP servers, NGINX doesn't rely on threads to handle requests and it was written with a different architecture in mind - one which is much more suitable for nonlinear scalability in both the number of simultaneous connections and requests per second.
 
 NGINX is also known as a _Apache Killer_ (mainly because of its lightness and much less RAM consumption). It is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. Generally, it was created to solve the [C10K problem](http://www.kegel.com/c10k.html).
 
@@ -509,9 +509,9 @@ In addition, I would like to recommend three great docs focuses on the concept o
 - **[Hypertext Transfer Protocol Specification](https://www.w3.org/Protocols/)**
 - **[Web technology for developers - HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)**
 
-If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
+If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read the [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
-An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start with.
+An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start learning about web application security.
 
 ## Prologue
 
@@ -577,7 +577,7 @@ Remember about the following most important things:
 + Both are important, but one does not lead to the other.
 ```
 
-I think that in the age of phishing, cyber attacks, ransomware, etc., you should keep your infrastructure as safe as possible but don't forget about it...
+I think, in the age of phishing, cyber attacks, ransomware, etc., you should keep your infrastructure as safe as possible but don't forget about it...
 
 <br>
 
@@ -1089,18 +1089,18 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Set the HTTP headers with add_header directive properly](doc/RULES.md#beginner-set-the-http-headers-with-add_header-directive-properly)<br><sup>Set the right security headers for all contexts.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](doc/RULES.md#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
-| [Always keep NGINX up-to-date](doc/RULES.md#always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](doc/RULES.md#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)<br><sup>Protects your website especially for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)<br><sup>Protects your website for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Keep only TLS 1.3 and TLS 1.2](doc/RULES.md#beginner-keep-only-tls-13-and-tls-12)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use only strong ciphers](doc/RULES.md#beginner-use-only-strong-ciphers)<br><sup>Use only strong and not vulnerable cipher suites.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use more secure ECDH Curve](doc/RULES.md#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use strong Key Exchange with Perfect Forward Secrecy](doc/RULES.md#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)<br><sup>Establishes a shared secret between two parties that can be used for secret communication.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Defend against the BEAST attack](doc/RULES.md#beginner-defend-against-the-beast-attack)<br><sup>The server ciphers should be preferred over the client ciphers.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [HTTP Strict Transport Security](doc/RULES.md#beginner-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Enable HTTP Strict Transport Security](doc/RULES.md#beginner-enable-http-strict-transport-security)<br><sup>Tells browsers that it should only be accessed using HTTPS, instead of using HTTP.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reduce XSS risks (Content-Security-Policy)](doc/RULES.md#beginner-reduce-xss-risks-content-security-policy)<br><sup>CSP is best used as defence-in-depth. It reduces the harm that a malicious injection can cause.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Control the behaviour of the Referer header (Referrer-Policy)](doc/RULES.md#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)<br><sup>The default behaviour of referrer leaking puts websites at risk of privacy and security breaches.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Provide clickjacking protection (X-Frame-Options)](doc/RULES.md#beginner-provide-clickjacking-protection-x-frame-options)<br><sup>Defends against clickjacking attack.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1127,7 +1127,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Disable unnecessary modules](doc/RULES.md#beginner-disable-unnecessary-modules)<br><sup>Limits vulnerabilities, improve performance and memory efficiency.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx version number](doc/RULES.md#beginner-hide-nginx-version-number)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Hide Nginx server signature](doc/RULES.md#beginner-hide-nginx-server-signature)<br><sup>Don't disclose sensitive information about NGINX.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
-| [Use only the latest supported OpenSSL version](doc/RULES.md#beginner-use-only-the-latest-supported-openssl-version)<br><sup>Stay protected from SSL security threats and don't miss out new features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
+| [Use only the latest supported OpenSSL version](doc/RULES.md#beginner-use-only-the-latest-supported-openssl-version)<br><sup>Stay protected from SSL security threats and don't miss out of new features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Prevent Replay Attacks on Zero Round-Trip Time](doc/RULES.md#beginner-prevent-replay-attacks-on-zero-round-trip-time)<br><sup>0-RTT is disabled by default but you should know that enabling this option creates a significant security risks.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Mitigation of CRIME/BREACH attacks](doc/RULES.md#beginner-mitigation-of-crimebreach-attacks)<br><sup>Disable HTTP compression or compress only zero sensitive content.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Deny the use of browser features (Feature-Policy)](doc/RULES.md#beginner-deny-the-use-of-browser-features-feature-policy)<br><sup>A mechanism to allow and deny the use of browser features.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
@@ -1136,8 +1136,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](doc/RULES.mdbeginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
-| [Separate listen directives for 80 and 443](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
-| [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>The most of the SSL changes will affect only the default server.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
+| [Separate listen directives for 80 and 443 ports](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
+| [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>Prevents multiple configurations on the same listening address.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead of allow/deny](doc/RULES.md#beginner-use-geomap-modules-instead-of-allowdeny)<br><sup>Provides the perfect way to block invalid visitors.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Set global root directory for unmatched locations](doc/RULES.md#beginner-set-global-root-directory-for-unmatched-locations)<br><sup>Specifies the root directory for an undefined locations.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Don't duplicate index directive, use it only in the http block](doc/RULES.md#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)<br><sup>Watch out for duplicating the same rules.</sup> | Base Rules | ![low](static/img/priorities/low.png) |

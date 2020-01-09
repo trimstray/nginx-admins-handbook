@@ -8,7 +8,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
-  * [Separate listen directives for 80 and 443](#beginner-separate-listen-directives-for-80-and-443)
+  * [Separate listen directives for 80 and 443 ports](#beginner-separate-listen-directives-for-80-and-443 ports)
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
   * [Never use a hostname in a listen or upstream directive](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)
@@ -206,19 +206,19 @@ kill -HUP $(pgrep -f "nginx: master")
 - [Changing Configuration](https://nginx.org/en/docs/control.html#reconfiguration)
 - [Commands (from this handbook)](NGINX_BASICS.md#commands)
 
-#### :beginner: Separate `listen` directives for 80 and 443
+#### :beginner: Separate `listen` directives for 80 and 443 ports
 
 ###### Rationale
 
   > If you served HTTP and HTTPS with the exact same config (a single server that handles both HTTP and HTTPS requests) NGINX is intelligent enough to ignore the SSL directives if loaded over port 80.
-
-  > Best practice with NGINX is to use a separate server for a redirect like this (not shared with the server of your main configuration), to hardcode everything, and not use regular expressions at all.
 
   > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration.
 
   > It's useful if you pin multiple domains to one IP address. This allows you to attach one listen directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
 
   > It may also be necessary to hardcode the domains if you're using HTTPS, because you have to know upfront which certificates you'll be providing.
+
+  > You should also use `return` directive for redirect from HTTP to HTTPS (to hardcode everything, and not use regular expressions at all).
 
 ###### Example
 
@@ -253,7 +253,7 @@ server {
 
   > NGINX translates all incomplete `listen` directives by substituting missing values with their default values.
 
-  > And what's more, will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the listen directive.
+  > And what's more, will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the `listen` directive.
 
   > Set IP address and port number to prevents soft mistakes which may be difficult to debug.
 
@@ -292,13 +292,15 @@ server {
 
 ###### Rationale
 
-  > NGINX should prevent processing requests with undefined server names (also on IP address). It protects against configuration errors, e.g. traffic forwarding to incorrect backends. The problem is easily solved by creating a default dummy vhost that catches all requests with unrecognized Host headers.
+  > The `Host` header tells the server which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This header can also be modified so NGINX should prevent processing requests with undefined server names (also on IP address).
+
+  > It protects against configuration errors, e.g. traffic forwarding to incorrect backends, bypassing filters like an ACLs or WAFs. The problem is easily solved by creating a default dummy vhost that catches all requests with unrecognized `Host` headers.
 
   > If none of the listen directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
 
   > If someone makes a request using an IP address instead of a server name, the `Host` request header field will contain the IP address and the request can be handled using the IP address as the server name.
 
-  > The server name `_` is not required in modern versions of NGINX. If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
+  > The server name `_` is not required in modern versions of NGINX (it is not really required so you can put anything there). If a server with a matching listen and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
 
   > NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed.
 
@@ -394,9 +396,9 @@ server {
 Not recommended configuration:
 
 ```nginx
-upstream {
+upstream bk_01 {
 
-  server http://x-9s-web01-prod:8080;
+  server http://x-9s-web01-prod.int:8080;
 
 }
 
@@ -406,13 +408,32 @@ server {
 
   ...
 
+  location / {
+
+    # It's OK, bk_01 is the internal name:
+    proxy_pass http://bk_01;
+
+    ...
+
+  }
+
+  location /api {
+
+    proxy_pass http://x-9s-web01-prod-api.int:80;
+
+    ...
+
+  }
+
+  ...
+
 }
 ```
 
 Recommended configuration:
 
 ```nginx
-upstream {
+upstream bk_01 {
 
   server http://192.168.252.200:8080;
 
@@ -421,6 +442,25 @@ upstream {
 server {
 
   listen 10.10.100.20:80;
+
+  ...
+
+  location / {
+
+    # It's OK, bk_01 is the internal name:
+    proxy_pass http://bk_01;
+
+    ...
+
+  }
+
+  location /api {
+
+    proxy_pass http://192.168.253.10:80;
+
+    ...
+
+  }
 
   ...
 
@@ -438,11 +478,11 @@ server {
 
   > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. These directives are inherited from the previous level if and only if there are no `add_header` directives defined on the current level.
 
-  > You should define a common config snippet for all contexts and and use it on each level.
+  > You should define a common config snippet for all contexts and use it on each level.
 
   > In my opinion, the best solution is use an include file with your global headers and add it to the `http` context. Alternative, you should set up other include file with your server/domain specific configuration (but always with your global headers!) and add it to the `server` contexts.
 
-  > There are solutions to this such as using an alternative module such as [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) for define specific headers in you `server` or `location` blocks.
+  > There are solutions to this such as using an alternative module like a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) for define specific headers in you `server` or `location` blocks.
 
 There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
 
@@ -502,7 +542,7 @@ http {
 
     location / {
 
-      more_set_headers 'Foo: bar;
+      more_set_headers 'Foo: bar';
 
       ...
 
@@ -524,13 +564,15 @@ http {
 
 ###### Rationale
 
-  > For me, this rule making it easier to debug and maintain.
+  > For me, this rule making it easier to debug and maintain. It also prevents multiple TLS configurations on the same listening address.
 
-  > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address).
+  > You should use one SSL config for sharing a single IP address between several HTTPS servers (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
 
-  > In my opinion, for sharing a single IP address between several HTTPS servers you should use one SSL config (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
+  > Using a common TLS configuration (stored in one file and added using the include directive) for all `server` contexts prevents strange behaviors. I think, no better cure for a possible configuration clutter.
 
-  > Also remember about configuration for default server. It's important because if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup with several names on the same IP address.
+  > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address). Also some of the TLS parameters may be different.
+
+  > Also remember about configuration for default server. It's important because if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup for several server names on the same IP address.
 
   From NGINX documentation:
 
@@ -546,8 +588,6 @@ http {
 
 ```nginx
 # Store this configuration in e.g. https.conf:
-listen 192.168.252.10:443 default_server ssl http2;
-
 ssl_protocols TLSv1.2;
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
 
@@ -559,6 +599,8 @@ ssl_ecdh_curve secp521r1:secp384r1;
 
 # Include this file to the server context (attach domain-a.com for specific listen directive):
 server {
+
+  listen 192.168.252.10:443 default_server ssl http2;
 
   include             /etc/nginx/https.conf;
 
@@ -573,6 +615,8 @@ server {
 
 # Include this file to the server context (attach domain-b.com for specific listen directive):
 server {
+
+  listen 192.168.252.10:443 ssl http2;
 
   include             /etc/nginx/https.conf;
 
@@ -1324,7 +1368,7 @@ worker_processes 3;
 
   > Note that HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
-  > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption (the h2 specification, allows for you to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
+  > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption (the h2 specification, allows to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
@@ -1839,7 +1883,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Prevent Replay Attacks on Zero Round-Trip Time](#beginner-prevent-replay-attacks-on-zero-round-trip-time)
   * [Defend against the BEAST attack](#beginner-defend-against-the-beast-attack)
   * [Mitigation of CRIME/BREACH attacks](#beginner-mitigation-of-crimebreach-attacks)
-  * [HTTP Strict Transport Security](#beginner-http-strict-transport-security)
+  * [Enable HTTP Strict Transport Security](#beginner-enable-http-strict-transport-security)
   * [Reduce XSS risks (Content-Security-Policy)](#beginner-reduce-xss-risks-content-security-policy)
   * [Control the behaviour of the Referer header (Referrer-Policy)](#beginner-control-the-behaviour-of-the-referer-header-referrer-policy)
   * [Provide clickjacking protection (X-Frame-Options)](#beginner-provide-clickjacking-protection-x-frame-options)
@@ -2093,11 +2137,13 @@ proxy_hide_header X-Drupal-Cache;
   >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
 
-  > In my opinion the only safe way is based on the up-to-date, still supported and production-ready version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1) but you should know one thing: OpenSSL 1.1.1 has a different API than the current 1.0.2 so that's not just a simple flick of the switch.
+  > In my opinion, the only safe way is based on the up-to-date, still supported and production-ready version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1d).
+
+  > You should know one thing before start using OpenSSL 1.1.1: it has a different API than the current 1.0.2 so that's not just a simple flick of the switch. NGINX started supporting TLS 1.3 with the release of version 1.13.0, but when the OpenSSL devs released OpenSSL 1.1.1, that NGINX had support for the brand new protocol version.
 
   > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
 
-  > I also recommend track the [Vulnerabilities](https://www.openssl.org/news/vulnerabilities.html) official newsletter, if you want to know a security bugs and issues fixed in OpenSSL.
+  > I also recommend track the [OpenSSL Vulnerabilities](https://www.openssl.org/news/vulnerabilities.html) official newsletter, if you want to know a security bugs and issues fixed in OpenSSL.
 
 ###### External resources
 
@@ -2117,7 +2163,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
 
-  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-http-strict-transport-security).
+  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-enable-http-strict-transport-security).
 
   > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
 
@@ -3210,7 +3256,7 @@ location ^~ /assets/ {
 - [Offline Compression with Nginx](https://theartofmachinery.com/2016/06/06/nginx_gzip_static.html)
 - [ImperialViolet - Real World Crypto 2013](https://www.imperialviolet.org/2013/01/13/rwc03.html)
 
-#### :beginner: HTTP Strict Transport Security
+#### :beginner: Enable HTTP Strict Transport Security
 
 ###### Rationale
 

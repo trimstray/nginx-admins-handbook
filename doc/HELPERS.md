@@ -6696,7 +6696,7 @@ server {
 }
 ```
 
-  > Look also at [HTTP Strict Transport Security (from this handbook)](RULES.md#beginner-http-strict-transport-security).
+  > Look also at [Enable HTTP Strict Transport Security (from this handbook)](RULES.md#beginner-enable-http-strict-transport-security).
 
 ##### Proxy/rewrite and keep the original URL
 
