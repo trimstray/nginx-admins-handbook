@@ -6,6 +6,8 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
   * [Directories and files](#directories-and-files)
   * [Commands](#commands)
   * [Processes](#processes)
+    * [CPU pinning](#cpu-pinning)
+    * [Shutdown of worker processes](#shutdown-of-worker-processes)
   * [Configuration syntax](#configuration-syntax)
     * [Comments](#comments)
     * [End of lines](#end-of-lines)
@@ -483,9 +485,11 @@ The main purposes of the master process is to read and evaluate configuration fi
 
 Master process should be started as root user, because this will allow NGINX to open sockets below 1024 (it needs to be able to listen on port 80 for HTTP and 443 for HTTPS).
 
+  > To defines the number of worker processes you should set `worker_processes` directive.
+
 The worker processes do the actual processing of requests and get commands from master process. They runs in an event loop (registering events and responding when one occurs), handle network connections, read and write content to disk, and communicate with upstream servers. These are spawned by the master process, and the user and group will as specified (unprivileged).
 
-  > NGINX has also cache loader and cache manager processes but only if you enable caching.
+  > The worker processes spend most of the time just sleeping and waiting for new events (they are in `S` state in `top`).
 
 The following signals can be sent to the NGINX master process:
 
@@ -506,6 +510,47 @@ There’s no need to control the worker processes yourself. However, they suppor
 | `TERM`, `INT` | **15**, **2** | quick shutdown |
 | `QUIT` | **3** | graceful shutdown |
 | `USR1` | **10** | reopen the log files |
+
+  > NGINX has also cache loader and cache manager processes but only if you enable caching.
+
+###### CPU pinning
+
+Moreover, it is important to mention about `worker_cpu_affinity` directive (it's only supported on GNU/Linux). CPU affinity is used to control which CPUs NGINX utilizes for individual worker processes. By default, worker processes are not bound to any specific CPUs. What's more, system might schedule all worker processes to run on the same CPU which may not be efficient enough.
+
+CPU affinity is represented as a bitmask (given in hexadecimal), with the lowest order bit corresponding to the first logical CPU and the highest order bit corresponding to the last logical CPU.
+
+[Here](https://www.kutukupret.com/2010/11/18/nginx-worker_cpu_affinity/) you will find an amazing explanation of this. There is a [worker_cpu_affinity configuration generator](https://github.com/cubicdaiya/nwcagen) for NGINX.
+
+After all, I would recommend to let the OS scheduler to do the work.
+
+###### Shutdown of worker processes
+
+This directive should come in useful if you want to tweak NGINX’s shutdown process, particularly if other servers or load balancers are relying upon predictable restart times or if it takes a long time to close worker processes.
+
+The `worker_shutdown_timeout` directive configures a timeout to be used when gracefully shutting down worker processes.  When the timer expires, NGINX will try to close all the connections currently open to facilitate shutdown.
+
+NGINX’s [Maxim Dounin](https://twitter.com/mdounin) explains:
+
+  > _The `worker_shutdown_timeout` directive is not expected to delay shutdown if there are no active connections. It was introduced to limit possible time spent in shutdown, that is, to ensure fast enough shutdown even if there are active connections._
+
+When a worker process enters the "exiting" state, it does a few things:
+
+  - mark itself as an exiting process
+  - set a shutdown timer, if `worker_shutdown_timeout` is defined
+  - close listening sockets
+  - close idle connections
+
+Then, if the shutdown timer was set, after the `worker_shutdown_timeout` interval, all connections are closed.
+
+Sometimes, you can see `nginx: worker process is shutting down` in your log file. The problem occurs when reloading the configuration - where NGINX usually exits the existing worker processes gracefully. Some of these processes were sticking around for hours. Every config reload was dropping a zombie workers, permanently eating up all of your system's memory.
+
+Setting `worker_shutdown_timeout` solve the issue:
+
+```nginx
+worker_shutdown_timeout 60s;
+```
+
+60 seconds matches our request and connect timeouts so nothing valid should last longer than that.
 
 #### Connection processing
 
@@ -1167,6 +1212,17 @@ sendfile on;
 
 # To turn off sendfile:
 sendfile off;     # default
+```
+
+Look also at `sendfile_max_chunk` directive. NGINX documentation say:
+
+  > _When set to a non-zero value, limits the amount of data that can be transferred in a single `sendfile()` call. Without the limit, one fast connection may seize the worker process entirely._
+
+On fast local connection `sendfile()` in Linux may send tens of megabytes per one syscall blocking other connections. `sendfile_max_chunk` allows to limit the maximum size per one `sendfile()` operation. So, with this NGINX  can reduce the maximum time spent in blocking sendfile() calls, since NGINX won’t try to send the whole file at once, but will do it in chunks. For example:
+
+```nginx
+sendfile on;
+sendfile_max_chunk 512k;
 ```
 
 ###### `tcp_nodelay`
@@ -2473,6 +2529,8 @@ The following is a list of all severity levels:
 | `emerg` | the system is in an unusable state and requires immediate attention |
 
 For example: if you set `crit` error log level, messages of `crit`, `alert`, and `emerg` levels are logged.
+
+  > For debug logging to work, NGINX needs to be built with `--with-debug`.
 
 Default values for the error level:
 

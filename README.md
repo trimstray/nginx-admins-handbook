@@ -146,6 +146,8 @@
   * [Directories and files](doc/NGINX_BASICS.md#directories-and-files)
   * [Commands](doc/NGINX_BASICS.md#commands)
   * [Processes](doc/NGINX_BASICS.md#processes)
+    * [CPU pinning](doc/NGINX_BASICS.md#cpu-pinning)
+    * [Shutdown of worker processes](doc/NGINX_BASICS.md#shutdown-of-worker-processes)
   * [Configuration syntax](doc/NGINX_BASICS.md#configuration-syntax)
     * [Comments](doc/NGINX_BASICS.md#comments)
     * [End of lines](doc/NGINX_BASICS.md#end-of-lines)
@@ -479,7 +481,9 @@
 
   > Before you start playing with NGINX please read an official **[Beginner’s Guide](http://nginx.org/en/docs/beginners_guide.html)**. It's a great introduction for everyone.
 
-**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. It is originally written by [Igor Sysoev](http://sysoev.ru/en/). For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler. At this moment some high-profile companies using NGINX include Cisco, DuckDuckGo, Facebook, GitLab, Google, Twitter, Apple, Intel, and many more. In the September 2019 it was the most commonly used HTTP server (see [Netcraft survey](https://news.netcraft.com/archives/category/web-server-survey/)).
+**Nginx** (_/ˌɛndʒɪnˈɛks/ EN-jin-EKS_, stylized as NGINX or nginx) is an open source HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server with a strong focus on high concurrency, performance and low memory usage. It is originally written by [Igor Sysoev](http://sysoev.ru/en/).
+
+For a long time, it has been running on many heavily loaded Russian sites including Yandex, Mail.Ru, VK, and Rambler. At this moment some high-profile companies using NGINX include Cisco, DuckDuckGo, Facebook, GitLab, Google, Twitter, Apple, Intel, and many more. In the September 2019 it was the most commonly used HTTP server (see [Netcraft survey](https://news.netcraft.com/archives/category/web-server-survey/)).
 
 NGINX is a fast, light-weight and powerful web server that can also be used as a:
 
@@ -784,6 +788,9 @@ Existing chapters:
 <details>
 <summary><b>NGINX Basics</b></summary><br>
 
+  - _Processes_
+    - [x] _CPU pinning_
+    - [x] _Shutdown of worker processes_
   - _Configuration syntax_
     - [x] _Comments_
     - [x] _End of lines_
@@ -1389,6 +1396,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos"><b>NGINX-Demos
 </b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/blog/thread-pools-boost-performance-9x/"><b>Thread Pools in NGINX Boost Performance 9x!</b></a><br>
 </p>
 
 ##### Nginx distributions
@@ -1428,6 +1436,7 @@ _In this ebook you will learn:_
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/denji/nginx-tuning"><b>Nginx Tuning For Best Performance by Denji</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://thoughts.t37.net/nginx-optimization-understanding-sendfile-tcp-nodelay-and-tcp-nopush-c55cdd276765"><b>Nginx Optimization: understanding sendfile, tcp_nodelay and tcp_nopush</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://blog.cloudflare.com/how-we-scaled-nginx-and-saved-the-world-54-years-every-day/"><b>How we scaled nginx and saved the world 54 years every day</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://istlsfastyet.com/"><b>TLS has exactly one performance problem: it is not used widely enough</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/projects/best-practices/"><b>SSL/TLS Deployment Best Practices</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/projects/rating-guide/index.html"><b>SSL Server Rating Guide</b></a><br>

@@ -1248,11 +1248,12 @@ error_log /var/log/nginx/error-debug.log debug;
 
   > You can read more about that in the [Show debug log in memory](HELPERS.md#show-debug-log-in-memory) chapter.
 
-- Debugging log for a IP address/range:
+- Debugging log for selected client connections:
 
   ```nginx
   events {
 
+    # Other connections will use logging level set by the error_log directive.
     debug_connection    192.168.252.15/32;
     debug_connection    10.10.10.0/24;
 
@@ -1404,6 +1405,7 @@ worker_processes 3;
 ###### External resources
 
 - [Nginx Core Module - worker_processes](https://nginx.org/en/docs/ngx_core_module.html#worker_processes)
+- [Processes (from this handbook)](NGINX_BASICS.md#processes)
 
 #### :beginner: Use HTTP/2
 
@@ -1982,8 +1984,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 ###### Example
 
 ```bash
-# Edit nginx.conf:
-user nginx;   # or 'www' for example
+# Edit/check nginx.conf:
+user nginx;   # or 'www' for example; if group is omitted, a group whose name equals that of user is used
 
 # Set owner and group for root (app, default) directory:
 chown -R nginx:nginx /var/www/example.com
