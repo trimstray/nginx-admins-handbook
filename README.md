@@ -542,7 +542,7 @@ For me, however, there hasn't been a truly in-depth and reasonably simple cheats
 
   > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes, and papers with countless examples. Many of them refer to external resources._
 
-There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible. I think, the configuration you provided should work without any talisman. That's why I created this repository.
+There are a lot of things you can do to improve and this guide will attempt to cover as many of them as possible. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
 With this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here a few best tips to avoid pitfalls and configuration mistakes.
 

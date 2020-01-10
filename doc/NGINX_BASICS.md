@@ -489,7 +489,7 @@ cabal update
   > **:bookmark: [Adjust worker processes - Performance - P3](RULES.md#beginner-adjust-worker-processes)**<br>
   > **:bookmark: [Improve debugging by disable daemon, master process, and all workers except one - Debugging - P4](RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)**
 
-NGINX has **one master process** and **one or more worker processes**.
+NGINX has **one master process** and **one or more worker processes**. It has also cache loader and cache manager processes but only if you enable caching.
 
 The main purposes of the master process is to read and evaluate configuration files, as well as maintain the worker processes (respawn when a worker dies), handle signals, notify workers, opens log files, and, of course binding to ports.
 
@@ -521,17 +521,13 @@ There’s no need to control the worker processes yourself. However, they suppor
 | `QUIT` | **3** | graceful shutdown |
 | `USR1` | **10** | reopen the log files |
 
-  > NGINX has also cache loader and cache manager processes but only if you enable caching.
-
 ###### CPU pinning
 
 Moreover, it is important to mention about `worker_cpu_affinity` directive (it's only supported on GNU/Linux). CPU affinity is used to control which CPUs NGINX utilizes for individual worker processes. By default, worker processes are not bound to any specific CPUs. What's more, system might schedule all worker processes to run on the same CPU which may not be efficient enough.
 
 CPU affinity is represented as a bitmask (given in hexadecimal), with the lowest order bit corresponding to the first logical CPU and the highest order bit corresponding to the last logical CPU.
 
-[Here](https://www.kutukupret.com/2010/11/18/nginx-worker_cpu_affinity/) you will find an amazing explanation of this. There is a [worker_cpu_affinity configuration generator](https://github.com/cubicdaiya/nwcagen) for NGINX.
-
-After all, I would recommend to let the OS scheduler to do the work.
+[Here](https://www.kutukupret.com/2010/11/18/nginx-worker_cpu_affinity/) you will find an amazing explanation of this. There is a [worker_cpu_affinity configuration generator](https://github.com/cubicdaiya/nwcagen) for NGINX. After all, I would recommend to let the OS scheduler to do the work.
 
 ###### Shutdown of worker processes
 
@@ -1258,8 +1254,6 @@ There is no need for using Nagle's algorithm.
 You should also know [the Nagle’s algorithm author's interesting comment](https://news.ycombinator.com/item?id=9045125):
 
   > _If you're doing bulk file transfers, you never hit that problem. If you're sending enough data to fill up outgoing buffers, there's no delay. If you send all the data and close the TCP connection, there's no delay after the last packet. If you do send, reply, send, reply, there's no delay. If you do bulk sends, there's no delay. If you do send, send, reply, there's a delay._
-
-And:
 
   > _The real problem is ACK delays. The 200ms "ACK delay" timer is a bad idea that someone at Berkeley stuck into BSD around 1985 because they didn't really understand the problem. A delayed ACK is a bet that there will be a reply from the application level within 200ms. TCP continues to use delayed ACKs even if it's losing that bet every time._
 
@@ -2371,7 +2365,7 @@ By default, NGINX compresses responses only with MIME type text/html using the `
 To enable `gzip` compression:
 
 ```nginx
-gzip on
+gzip on;
 ```
 
 To compress responses with other MIME types, include the `gzip_types` directive and list the additional types:
@@ -2435,15 +2429,15 @@ gzip_comp_level 6;
 
 #### Hash tables
 
-  > Before start reading this chapter I recommend [Hash tables explained](https://yourbasic.org/algorithms/hash-tables-explained/) step-by-step example.
+  > Before start reading this chapter I recommend [Hash tables explained](https://yourbasic.org/algorithms/hash-tables-explained/).
 
 To assist with the rapid processing of requests, NGINX uses hash tables. NGINX hash, though in principle is same as typical hash lists, but it has significant differences.
 
-They are not meant for applications that add and remove elements dynamicall but are specifically designed to hold set of "init time" elements arranged in hash list. All elements that are put in the hash list are known while creating the hash list itself. No dynamic addtion or deletion is possible here.
+They are not meant for applications that add and remove elements dynamicall but are specifically designed to hold set of init time elements arranged in hash list. All elements that are put in the hash list are known while creating the hash list itself. No dynamic addtion or deletion is possible here.
 
 This hash table is constructed and compiled during restart or reload and afterwards it's running very fast. Main purpose seems to be speeding up the lookup of one time added elements.
 
-Look at the [Setting up hashes](http://nginx.org/en/docs/hash.html) official documentation:
+Look at the [Setting up hashes](http://nginx.org/en/docs/hash.html) from official documentation:
 
   > _To quickly process static sets of data such as server names, map directive’s values, MIME types, names of request header strings, NGINX uses hash tables. During the start and each re-configuration NGINX selects the minimum possible sizes of hash tables such that the bucket size that stores keys with identical hash values does not exceed the configured parameter (hash bucket size). The size of a table is expressed in buckets. The adjustment is continued until the table size exceeds the hash max size parameter. Most hashes have the corresponding directives that allow changing these parameters._
 
@@ -2471,9 +2465,9 @@ Some important information (based on [this](https://serverfault.com/questions/41
 
 - `hash_max_size` is not related to number of server names directly, if number of servers doubles, you may need to increase `hash_max_size` 10 times or even more to avoid collisions. If you cannot avoid them, you have to increase `hash_bucket_size`
 
-- if you have `hash_max_size` less than 10000 and small `hash_bucket_size`, you can expect long loading time because NGINX would try to find optimal hash size in a loop (see [this](https://github.com/nginx/nginx/blob/c3aed0a23392a509f64b740064f5f6633e8c89d8/src/core/ngx_hash.c#L289))
+- if you have `hash_max_size` less than 10000 and small `hash_bucket_size`, you can expect long loading time because NGINX would try to find optimal hash size in a loop (see [src/core/ngx_hash.c](https://github.com/nginx/nginx/blob/c3aed0a23392a509f64b740064f5f6633e8c89d8/src/core/ngx_hash.c#L289))
 
-- if you have `hash_max_size` bigger than 10000, there will be "only" 1000 loops performed before it would complain
+- if you have `hash_max_size` bigger than 10000, there will be only 1000 loops performed before it would complain
 
 ##### Server names hash table
 
@@ -3011,8 +3005,8 @@ In other words:
 
 ##### Passing headers to the backend
 
-  > **:bookmark: [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1](RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)**
-  > **:bookmark: [Remove support for legacy and risky HTTP headers - Hardening - P1](RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)**
+  > **:bookmark: [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1](RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)**<br>
+  > **:bookmark: [Remove support for legacy and risky HTTP headers - Hardening - P1](RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)**<br>
   > **:bookmark: [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend - Reverse Proxy - P2](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)**<br>
   > **:bookmark: [Use custom headers without X- prefix - Reverse Proxy - P3](RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)**
 
@@ -3244,7 +3238,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
 
 Since 2014, the IETF has approved a standard header definition for proxy, called `Forwarded`, documented [here](https://tools.ietf.org/html/rfc7239) <sup>[IETF]</sup> and [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded) that should be use instead of `X-Forwarded` headers. This is the one you should use reliably to get originating IP in case your request is handled by a proxy. Official NGINX documentation also gives you how to [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/).
 
-In general, the proxy headers (Forwarded or X-Forwarded-For) are the right way to get your client IP only when you are sure they come to you via a proxy. If there is no proxy header or no usable value in, you should default to the `REMOTE_ADDR` server variable.
+In general, the proxy headers (`Forwarded` or `X-Forwarded-For`) are the right way to get your client IP only when you are sure they come to you via a proxy. If there is no proxy header or no usable value in, you should default to the `REMOTE_ADDR` server variable.
 
 ##### Response headers
 
@@ -3270,7 +3264,7 @@ There is one thing you must watch out for if you use `add_header` directive. See
 
 This is described in the official documentation:
 
-  > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no add_header directives defined on the current level._
+  > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no `add_header` directives defined on the current level._
 
 However - and this is important - as you now have defined a header in your `server` context, all the remaining headers defined in the `http` context will no longer be inherited. Means, you’ve to define them in your `server` context again (or alternatively ignore them if they’re not important for your site).
 
@@ -3537,9 +3531,9 @@ and directives:
 | `limit_req` | in combination with a `limit_conn_zone` sets the shared memory zone and the maximum burst size of requests |
 | `limit_conn` | in combination with a `limit_req_zone` sets the shared memory zone and the maximum allowed number of (simultaneous) connections to the server per a client IP |
 
-  > You can enablee the dry run mode with `limit_req_dry_run on;`. In this mode, requests processing rate is not limited, however, in the shared memory zone, the number of excessive requests is accounted as usual.
-
 Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all NGINX worker processes.
+
+  > You can enable the dry run mode with `limit_req_dry_run on;`. In this mode, requests processing rate is not limited, however, in the shared memory zone, the number of excessive requests is accounted as usual.
 
 Both keys also provides response status parameters indicating too many requests or connections with specific http code (default **503**).
 

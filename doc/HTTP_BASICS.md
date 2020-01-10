@@ -102,11 +102,11 @@ I will not describe HTTP/2 because there are brilliant studies:
 - [RFC 7540 - HTTP/2](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>
 - [HTTP/2 finalized - a quick overview](https://evertpot.com/http-2-finalized/)
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2)
-- [HTTP/2: the difference between HTTP/1.1, benefits and how to use it](https://medium.com/@factoryhr/http-2-the-difference-between-http-1-1-benefits-and-how-to-use-it-38094fa0e95b)
 - [HTTP2 Explained](https://daniel.haxx.se/http2/)
 - [HTTP/2 in Action](https://www.manning.com/books/http2-in-action)
 - [HTTP/2 Frequently Asked Questions](https://http2.github.io/faq/)
 - [How Does HTTP/2 Work?](https://sookocheff.com/post/networking/how-does-http-2-work/)
+- [HTTP/2: the difference between HTTP/1.1, benefits and how to use it](https://medium.com/@factoryhr/http-2-the-difference-between-http-1-1-benefits-and-how-to-use-it-38094fa0e95b)
 - [HTTP2 Vs. HTTP1 – Let’s Understand The Two Protocols](https://cheapsslsecurity.com/p/http2-vs-http1/)
 - [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 

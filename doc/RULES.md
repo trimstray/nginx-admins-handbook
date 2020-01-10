@@ -563,7 +563,7 @@ http {
 }
 ```
 
-Example for `proxy_hide_header` and `proxy_set_header` (but I also recommend to use them from included file):
+Example for `proxy_hide_header` and `proxy_set_header` (but I also recommend using them from the attached file):
 
 ```nginx
 http {
@@ -606,7 +606,7 @@ http {
 - [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
 - [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
 
-#### :beginner: Use only one SSL config for the listen directive
+#### :beginner: Use only one SSL config for the `listen` directive
 
 ###### Rationale
 
@@ -1232,13 +1232,13 @@ log_format debug-level-0
 
 - Debugging log to a file:
 
-```nginx
-# Turn on in a specific context, e.g.:
-#   - global    - for global logging
-#   - http      - for http and all locations logging
-#   - location  - for specific location
-error_log /var/log/nginx/error-debug.log debug;
-```
+  ```nginx
+  # Turn on in a specific context, e.g.:
+  #   - global    - for global logging
+  #   - http      - for http and all locations logging
+  #   - location  - for specific location
+  error_log /var/log/nginx/error-debug.log debug;
+  ```
 
 - Debugging log to memory:
 
@@ -1296,13 +1296,13 @@ error_log /var/log/nginx/error-debug.log debug;
 
   > These directives with following values are mainly used during development and debugging, e.g. while testing a bug/feature.
 
-  > For example, `daemon off` and `master_process off` lets me test configurations rapidly.
+  > For example, `daemon off;` and `master_process off;` lets me test configurations rapidly.
 
-  > For normal production the NGINX server will start in the background (`daemon on`). In this way NGINX and other services are running and talking to each other. One server runs many services.
+  > For normal production the NGINX server will start in the background (`daemon on;`). In this way NGINX and other services are running and talking to each other. One server runs many services.
 
-  > In a development or debugging environment (you should never run NGINX in production with this), using `master_process off`, I usually run NGINX in the foreground without the master process and press `^C` (`SIGINT`) to terminated it simply.
+  > In a development or debugging environment (you should never run NGINX in production with this), using `master_process off;`, I usually run NGINX in the foreground without the master process and press `^C` (`SIGINT`) to terminated it simply.
 
-  > `worker_processes 1` is also very useful because can reduce number of worker processes and the data they generate, so that is pretty comfortable for us to debug.
+  > `worker_processes 1;` is also very useful because can reduce number of worker processes and the data they generate, so that is pretty comfortable for us to debug.
 
 ###### Example
 
@@ -1452,15 +1452,13 @@ server {
 
 ###### Rationale
 
-  > This improves performance from the clients’ perspective, because it eliminates the need for a new (and time-consuming) SSL handshake to be conducted each time a request is made.
+  > Enabling session caching helps to reduce NGINX server CPU load. This also improves performance from the clients’ perspective because it eliminates the need for a new (and time-consuming) SSL handshake to be conducted each time a request is made.
 
-  > The TLS RFC recommends that sessions are not kept alive for more than 24 hours (it is the maximum time). But a while ago, I found `ssl_session_timeout` with less time (e.g. 15 minutes) for prevent abused by advertisers like Google and Facebook.
+  > The TLS RFC recommends that sessions are not kept alive for more than 24 hours (it is the maximum time). But a while ago, I found `ssl_session_timeout` with less time (e.g. 15 minutes) for prevent abused by advertisers like Google and Facebook, I don't know, I guess it makes sense.
 
   > Default, "built-in" session cache is not optimal as it can be used by only one worker process and can cause memory fragmentation. It is much better to use shared cache.
 
   > When using `ssl_session_cache`, the performance of keep-alive connections over SSL might be enormously increased. 10M value of this is a good starting point (1MB shared cache can hold approximately 4,000 sessions). With `shared` a cache shared between all worker processes (a cache with the same name can be used in several virtual servers).
-
-  > Enabling session caching helps to reduce NGINX server CPU load.
 
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
@@ -1511,7 +1509,7 @@ server {
 
     listen       192.168.252.10:80;
 
-    server_name  example.org  www.example.org  *.example.org;
+    server_name  example.org www.example.org *.example.org;
 
     ...
 
@@ -1602,7 +1600,7 @@ server {
 
 ###### Rationale
 
-  > With built-in variable `$request_uri` we can effectively avoid doing any capturing or matching at all. By default, the regex is costly and will slow down the performance.
+  > With built-in `$request_uri` we can effectively avoid doing any capturing or matching at all. By default, the regex is costly and will slow down the performance.
 
   > This rule is addressing passing the URL unchanged to a new host, sure return is more efficient just passing through the existing URI.
 
@@ -1707,7 +1705,7 @@ Recommended configuration:
 
 ###### Rationale
 
-  > You should use server blocks and `return` statements as they're way simpler and faster than evaluating RegEx via location blocks. This directive stops processing and returns the specified code to a client.
+  > You should use `server` blocks and `return` statements as they're way simpler and faster than evaluating RegEx via `location` blocks. This directive stops processing and returns the specified code to a client.
 
   > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use `rewrite`.
 
@@ -1774,7 +1772,7 @@ server {
 
   > _The JIT is available in PCRE libraries starting from version 8.20 built with the `--enable-jit` configuration parameter. When the PCRE library is built with nginx (`--with-pcre=`), the JIT support is enabled via the `--with-pcre-jit` configuration parameter._
 
-  > But if you don't pass `--with-pcre-jit`, the NGINX configure scripts are smart enough to detect and enable it automatically. See [here](http://hg.nginx.org/nginx/file/abd40ce603fa/auto/lib/pcre/conf). So if your PCRE library is recent enough, a simple `./configure` with no switches will compile NGINX with `pcre_jit` enabled.
+  > But if you don't pass `--with-pcre-jit`, the NGINX configure scripts are smart enough to detect and enable it automatically. See [here](http://hg.nginx.org/nginx/file/abd40ce603fa/auto/lib/pcre/conf). So, if your PCRE library is recent enough, a simple `./configure` with no switches will compile NGINX with `pcre_jit` enabled.
 
 ###### Example
 
@@ -1797,9 +1795,9 @@ pcre_jit on;
 
   > This can greatly reduce the number of new TCP connections, as NGINX can now reuse its existing connections (`keepalive`) per upstream.
 
-  > If your upstream server supports Keep-Alive in its config, NGINX will now reuse existing TCP connections without creating new ones. This can greatly reduce the number of sockest in `TIME_WAIT` TCP connections on a busy servers (less work for OS to establish new connections, less packets on a network).
+  > If your upstream server supports Keep-Alive in its config, NGINX will now reuse existing TCP connections without creating new ones. This can greatly reduce the number of sockets in `TIME_WAIT` TCP connections on a busy servers (less work for OS to establish new connections, less packets on a network).
 
-  > Keep-Alive connections are only supported as of HTTP/1.1, an upgrade to the HTTP protocol.
+  > Keep-Alive connections are only supported as of HTTP/1.1.
 
 ###### Example
 
@@ -1820,7 +1818,8 @@ server {
 
   location / {
 
-    # Default is HTTP/1, keepalive is only enabled in HTTP/1.1:
+    # By default only talks HTTP/1 to the upstream,
+    # keepalive is only enabled in HTTP/1.1:
     proxy_http_version  1.1;
     # Remove the Connection header if the client sends it,
     # it could be "close" to close a keepalive connection:
@@ -1960,11 +1959,11 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > NGINX is a very secure and stable but vulnerabilities in the main binary itself do pop up from time to time. It's the main reason for keep NGINX up-to-date as hard as you can.
 
-  > A very safe way to plan the update is once a new stable version is released but for me the most common way to handle NGINX updates is to wait a few weeks after the stable release.
-
-  > Before update/upgrade NGINX remember about do it on the testing environment.
+  > The installation of the new stable version is a very safe way to plan the update, but for me the most common way to handle NGINX updates is to wait a few weeks after the stable release (and reading community comments after the release of the new NGINX version about all issues).
 
   > Most modern GNU/Linux distros will not push the latest version of NGINX into their default package lists so maybe you should consider install it from sources.
+
+  > Before update/upgrade NGINX remember about do it on the testing environment.
 
 ###### External resources
 
@@ -1985,7 +1984,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
 ```bash
 # Edit/check nginx.conf:
-user nginx;   # or 'www' for example; if group is omitted, a group whose name equals that of user is used
+user nginx;   # or 'www' for example; if group is omitted,
+              # a group whose name equals that of user is used
 
 # Set owner and group for root (app, default) directory:
 chown -R nginx:nginx /var/www/example.com
