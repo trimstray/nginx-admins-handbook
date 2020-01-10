@@ -177,6 +177,8 @@
     * [uri vs request_uri](doc/NGINX_BASICS.md#uri-vs-request_uri)
   * [Compression and decompression](doc/NGINX_BASICS.md#compression-and-decompression)
     * [What is the best NGINX compression gzip level?](doc/NGINX_BASICS.md#what-is-the-best-nginx-compression-gzip-level)
+  * [Hash tables](doc/NGINX_BASICS.md#hash-tables)
+    * [Server names hash table](doc/NGINX_BASICS.md#server-names-hash-table)
   * [Log files](doc/NGINX_BASICS.md#log-files)
     * [Conditional logging](doc/NGINX_BASICS.md#conditional-logging)
     * [Manually log rotation](doc/NGINX_BASICS.md#manually-log-rotation)
@@ -536,11 +538,11 @@ These are definitely the best assets for us and in the first place you should se
 
 ## Why I created this handbook
 
-For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. I think, the configuration you provided should work without any talisman. That's why I created this repository.
+For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. Configuration of the NGINX can be tricky sometimes. The documentation isn't as pretty as other projects and should certainly include more robust examples.
 
-  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes, and papers. Many of them refer to external resources._
+  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes, and papers with countless examples. Many of them refer to external resources._
 
-There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible.
+There are a lot of things you can do to improve NGINX server and this guide will attempt to cover as many of them as possible. I think, the configuration you provided should work without any talisman. That's why I created this repository.
 
 With this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here a few best tips to avoid pitfalls and configuration mistakes.
 
@@ -820,6 +822,8 @@ Existing chapters:
     - [x] _uri vs request_uri_
   - _Compression and decompression_
     - [x] _What is the best NGINX compression gzip level?_
+  - _Hash tables_
+    - [x] _Server names hash table_
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_
@@ -1673,7 +1677,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics-2"></a>
   > Explanation of the NGINX mechanisms.
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers-2"></a>
-  > One-liners, commands, utilities for building NGINX, and more
+  > One-liners, commands, utilities for building NGINX, and more.
 - **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
   > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>

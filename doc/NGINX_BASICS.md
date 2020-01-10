@@ -37,6 +37,8 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
     * [uri vs request_uri](#uri-vs-request_uri)
   * [Compression and decompression](#compression-and-decompression)
     * [What is the best NGINX compression gzip level?](#what-is-the-best-nginx-compression-gzip-level)
+  * [Hash tables](#hash-tables)
+    * [Server names hash table](#server-names-hash-table)
   * [Log files](#log-files)
     * [Conditional logging](#conditional-logging)
     * [Manually log rotation](#manually-log-rotation)
@@ -360,20 +362,24 @@ include /etc/nginx/conf/*.conf;
 
 ##### Measurement units
 
+  > It is recommended to always specify a suffix for greater transparency.
+
 Sizes can be specified in:
 
+- without a suffix: Bytes
 - `k` or `K`: Kilobytes
 - `m` or `M`: Megabytes
 - `g` or `G`: Gigabytes
 
 ```nginx
-client_max_body_size 2M;
+client_max_body_size 2m;
 ```
 
 Time intervals can be specified in:
 
+- without a suffix: Seconds
 - `ms`: Milliseconds
-- `s`: Seconds (default, without a suffix)
+- `s`: Seconds
 - `m`: Minutes
 - `h`: Hours
 - `d`: Days
@@ -382,8 +388,12 @@ Time intervals can be specified in:
 - `y`: Years (365 days)
 
 ```nginx
-proxy_read_timeout 20 # =20s;
+proxy_read_timeout 20; # =20s, default
 ```
+
+Some of the time intervals can be specified only with a seconds resolution. You should also remember about this:
+
+  > _Multiple units can be combined in a single value by specifying them in the order from the most to the least significant, and optionally separated by whitespace. For example, `1h 30m` specifies the same time as `90m` or `5400s`_.
 
 ##### Regular expressions with PCRE
 
@@ -699,7 +709,7 @@ Multiplexing works by using a loop to increment through a program chunk by chunk
 
   > See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of the NGINX.
 
-NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
+NGINX does not fork a process or thread per connection (like Apache) so memory usage is very conservative and extremely efficient in the vast majority of cases. NGINX is a faster and consumes less memory than Apache and performs very well under load. It is also very friendly for CPU because there's no ongoing create-destroy pattern for processes or threads.
 
 Finally and in summary:
 
@@ -2422,6 +2432,73 @@ I think the ideal compression level seems to be between 4 and 6. The following d
 ```nginx
 gzip_comp_level 6;
 ```
+
+#### Hash tables
+
+  > Before start reading this chapter I recommend [Hash tables explained](https://yourbasic.org/algorithms/hash-tables-explained/) step-by-step example.
+
+To assist with the rapid processing of requests, NGINX uses hash tables. NGINX hash, though in principle is same as typical hash lists, but it has significant differences.
+
+They are not meant for applications that add and remove elements dynamicall but are specifically designed to hold set of "init time" elements arranged in hash list. All elements that are put in the hash list are known while creating the hash list itself. No dynamic addtion or deletion is possible here.
+
+This hash table is constructed and compiled during restart or reload and afterwards it's running very fast. Main purpose seems to be speeding up the lookup of one time added elements.
+
+Look at the [Setting up hashes](http://nginx.org/en/docs/hash.html) official documentation:
+
+  > _To quickly process static sets of data such as server names, map directive’s values, MIME types, names of request header strings, NGINX uses hash tables. During the start and each re-configuration NGINX selects the minimum possible sizes of hash tables such that the bucket size that stores keys with identical hash values does not exceed the configured parameter (hash bucket size). The size of a table is expressed in buckets. The adjustment is continued until the table size exceeds the hash max size parameter. Most hashes have the corresponding directives that allow changing these parameters._
+
+I also recommend [Optimizations](https://www.nginx.com/resources/wiki/start/topics/tutorials/optimizations/) section and [nginx - Hashing scheme](http://netsecinfo.blogspot.com/2010/01/nginx-hashing-scheme.html) explanation.
+
+Some important information (based on [this](https://serverfault.com/questions/419847/nginx-setting-server-names-hash-max-size-and-server-names-hash-bucket-size/786726#786726) amazing research by [brablc](https://serverfault.com/users/94256/brablc)):
+
+- the general recommendation would be to keep both values as small as possible and as less collisions as possible (during startup and with each reconfiguration, NGINX selects the smallest possible size for the hash tables)
+
+- it depends on your setup, you can reduce the number of server from the table and `reload` the NGINX instead of `restart`
+
+- if NGINX gave out communication about the need for increasing `hash_max_size` or `hash_bucket_size`, then it is first necessary to increase the first parameter
+
+- bigger `hash_max_size` uses more memory, bigger `hash_bucket_size` uses more CPU cycles during lookup and more transfers from main memory to cache. If you have enough memory increase `hash_max_size` and try to keep `hash_bucket_size` as low as possible
+
+- each hash table entry consumes space in a bucket. The space required is the length of the key (with some overhead to store the domain’s actual length as well), e.g. domain name
+
+  > Since `stage.api.example.com` is 21 characters, all entries consume at least 24 bytes in a bucket, and most consume 32 bytes or more.
+
+- as you increase the number of entries, you have to increase the size of the hash table and/or the number of hash buckets in the table
+
+  > If NGINX complains increase `hash_max_size` first as long as it complains. If the number exceeds some big number (32769 for instance), increase `hash_bucket_size` to multiple of default value on your platform as long as it complains. If it does not complain anymore, decrease `hash_max_size` back as long as it does not complain. Now you have the best setup for your set of server names (each set of server names may need different setup).
+
+- with a hash bucket size of 64 or 128, a bucket is full after 4 or 5 entries hash to it
+
+- `hash_max_size` is not related to number of server names directly, if number of servers doubles, you may need to increase `hash_max_size` 10 times or even more to avoid collisions. If you cannot avoid them, you have to increase `hash_bucket_size`
+
+- if you have `hash_max_size` less than 10000 and small `hash_bucket_size`, you can expect long loading time because NGINX would try to find optimal hash size in a loop (see [this](https://github.com/nginx/nginx/blob/c3aed0a23392a509f64b740064f5f6633e8c89d8/src/core/ngx_hash.c#L289))
+
+- if you have `hash_max_size` bigger than 10000, there will be "only" 1000 loops performed before it would complain
+
+##### Server names hash table
+
+The hash with the names of servers are controlled by the following directives (inside `http` context):
+
+- `server_names_hash_max_size` - sets the maximum size of the server names hash tables; default value: 512
+- `server_names_hash_bucket_size` - sets the bucket size for the server names hash tables; default values: 32, 64, or 128 (the default value depends on the size of the processor’s cache line)
+
+  > Parameter `server_names_hash_bucket_size` is always equalized to the size, multiple to the size of the line of processor cache.
+
+If server name is defined as `too.long.server.name.example.com` then NGINX will fail to start and display the error message like:
+
+```
+nginx: [emerg] could not build server_names_hash, you should increase server_names_hash_bucket_size: 64
+```
+
+To fix this, you should `reload` the NGINX or increase the `server_names_hash_bucket_size` directive value to the next power of two (in this case to 128).
+
+If a large number of server names are defined, and NGINX complained with the following error:
+
+```
+nginx: [emerg] could not build the server_names_hash, you should increase either server_names_hash_max_size: 512 or server_names_hash_bucket_size: 32
+```
+
+Try to set the `server_names_hash_max_size` to a number close to the number of server names. Only if this does not help, or if NGINX's start time is unacceptably long, try to increase the `server_names_hash_bucket_size` parameter.
 
 #### Log files
 
