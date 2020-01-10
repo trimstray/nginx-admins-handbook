@@ -1417,7 +1417,7 @@ worker_processes 3;
 
   > Note that HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
-  > You should also enable the `ssl` parameter, required because browsers do not support HTTP/2 without encryption (the h2 specification, allows to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
+  > You should also enable the `ssl` parameter (but NGINX can also be configured to accept HTTP/2 connections without SSL), required because browsers do not support HTTP/2 without encryption (the h2 specification, allows to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 

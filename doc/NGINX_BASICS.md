@@ -542,6 +542,8 @@ When a worker process enters the "exiting" state, it does a few things:
 
 Then, if the shutdown timer was set, after the `worker_shutdown_timeout` interval, all connections are closed.
 
+  > By default, NGINX to wait for and process additional data from a client before fully closing a connection, but only if heuristics suggests that a client may be sending more data.
+
 Sometimes, you can see `nginx: worker process is shutting down` in your log file. The problem occurs when reloading the configuration - where NGINX usually exits the existing worker processes gracefully. Some of these processes were sticking around for hours. Every config reload was dropping a zombie workers, permanently eating up all of your system's memory.
 
 Setting `worker_shutdown_timeout` solve the issue:
@@ -2458,6 +2460,10 @@ http {
 
 For more information please see [Configuring Logging](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/).
 
+  > If you don't want 404 errors to show in your NGINX error logs, you should set `log_not_found off;`.
+
+  > If you want to enable logging of subrequests into `access_log`, you should set `log_subrequest on;` and change the default logging format (you have to log `$uri` to see the difference). There is [great explanation](https://serverfault.com/questions/904396/how-to-identify-subrequests-in-nginx-log-files/922956#922956) about how to identify subrequests in NGINX log files.
+
 I also recommend to read:
 
 - [ngx_http_log_module](http://nginx.org/en/docs/http/ngx_http_log_module.html)
@@ -3454,6 +3460,8 @@ and directives:
 | `limit_req` | in combination with a `limit_conn_zone` sets the shared memory zone and the maximum burst size of requests |
 | `limit_conn` | in combination with a `limit_req_zone` sets the shared memory zone and the maximum allowed number of (simultaneous) connections to the server per a client IP |
 
+  > You can enablee the dry run mode with `limit_req_dry_run on;`. In this mode, requests processing rate is not limited, however, in the shared memory zone, the number of excessive requests is accounted as usual.
+
 Keys are used to store the state of each IP address and how often it has accessed a limited object. This information are stored in shared memory available from all NGINX worker processes.
 
 Both keys also provides response status parameters indicating too many requests or connections with specific http code (default **503**).
@@ -3559,6 +3567,8 @@ Documentation:
 This module makes available variables, whose values depend on the IP address of the client. When combined with GeoIP module allows for very elaborate rules serving content according to the geolocation context.
 
 By default, the IP address used for doing the lookup is `$remote_addr`, but it is possible to specify an another variable.
+
+  > If the value of a variable does not represent a valid IP address then the `255.255.255.255` address is used.
 
 ###### Performance
 
