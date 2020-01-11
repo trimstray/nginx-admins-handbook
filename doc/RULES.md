@@ -488,13 +488,15 @@ server {
 
   > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` contexts. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
-  > But if you use it in multiple contexes only the lowest occurrences are used. So if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
+  > If you use them in multiple contexes only the lowest occurrences are used. So if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
 
-  > In my opinion, the best solution is use an include file with your global headers and add it to the `http` context. Alternative, you should set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server` contexts.
+  > The most predictable solution is include your file with all headers at the `location` level. So, you should only include it in each individual `location` where you want these headers to be sent.
+
+  > In my opinion, also good solution is use an include file with your global headers and add it to the `http` context. You should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts.
 
   > There are solutions to this such as using an alternative module like a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) for define specific headers in you `server` or `location` blocks.
 
-There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
+  There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
 
   > _Therefore, let’s say you have an http block and have specified the `add_header` directive within that block. Then, within the http block you have 2 server blocks - one for HTTP and one for HTTPs._
   >
@@ -523,6 +525,20 @@ http {
 
       include /etc/nginx/ngx_headers_global.conf;
       add_header Foo bar;
+
+      ...
+
+    }
+
+  }
+
+  server {
+
+    server_name blog.example.com;
+
+    ...
+
+    location / {
 
       ...
 
@@ -596,6 +612,22 @@ http {
 
   }
 
+  server {
+
+    server_name blog.example.com;
+
+    ...
+
+    location / {
+
+      more_set_headers 'Foo: bar';
+
+      ...
+
+    }
+
+  }
+
 }
 ```
 
@@ -614,7 +646,7 @@ http {
 
   > You should use one SSL config for sharing a single IP address between several HTTPS servers (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
 
-  > Using a common TLS configuration (stored in one file and added using the include directive) for all `server` contexts prevents strange behaviors. I think, no better cure for a possible configuration clutter.
+  > Using a common TLS configuration (stored in one file and added using the include directive) for all `server` contexts prevents strange behaviors. I think no better cure for a possible configuration clutter.
 
   > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address). Also some of the TLS parameters may be different.
 
@@ -1959,11 +1991,26 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > NGINX is a very secure and stable but vulnerabilities in the main binary itself do pop up from time to time. It's the main reason for keep NGINX up-to-date as hard as you can.
 
-  > The installation of the new stable version is a very safe way to plan the update, but for me the most common way to handle NGINX updates is to wait a few weeks after the stable release (and reading community comments after the release of the new NGINX version about all issues).
+  > When planning the NGINX update/upgrade process, the best way is simply to install the newly released version. But for me, the most common way to handle NGINX updates is to wait a few weeks after the stable release (and reading community comments about all issues after the release of the new NGINX version).
 
   > Most modern GNU/Linux distros will not push the latest version of NGINX into their default package lists so maybe you should consider install it from sources.
 
-  > Before update/upgrade NGINX remember about do it on the testing environment.
+  > Before update/upgrade NGINX remember about:
+  >   - do it on the testing environment in the first place
+  >   - make sure to make a backup of your current configuration before updating
+
+###### Example
+
+```bash
+# RedHat/CentOS
+yum install <pkgname>
+
+# Debian/Ubuntu
+apt-get install <pkgname>
+
+# FreeBSD/OpenBSD
+pkg -f install <pkgname>
+```
 
 ###### External resources
 
@@ -1976,7 +2023,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > It is an important general principle that programs have the minimal amount of privileges necessary to do its job. That way, if the program is broken, its damage is limited. The most extreme example is to simply not write a secure program at all - if this can be done, it usually should be.
 
-  > There is no real difference in security just by changing the process owner name. On the other hand in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
+  > There is no real difference in security just by changing the process owner name. On the other hand, in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
 
   > NGINX meets these requirements and it is the default behaviour, but remember to check it.
 
@@ -2003,9 +2050,11 @@ chown -R nginx:nginx /var/www/example.com
 
   > It is recommended to disable any modules which are not required as this will minimise the risk of any potential attacks by limiting the operations allowed by the web server.
 
+  > Disable unneeded modules in order to reduce the memory utilized and improve performance. Modules that are not needed just make loading times longer.
+
   > The best way to unload unused modules is use the `configure` option during installation. If you have static linking a shared module you should re-compile NGINX.
 
-Use only high quality modules and remember about that:
+  Use only high quality modules and remember about that:
 
   > _Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs._
 
@@ -2047,6 +2096,8 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
   As for the denying method:
 
   > In my opinion, a return 403 (or even a 404, as the [RFC2616 - 10.4.4 403 Forbidden](https://tools.ietf.org/html/rfc2616#section-10.4.4) <sup>[IETF]</sup> suggests for purposes of no information disclosure) is less error prone if you know the resource should under no circumstances be accessed via http, even if "authorized" in a general context.
+
+  Note also this:
 
   > NGINX process request in phases. `return` directive is from rewrite module, and `deny` is from access module. Rewrite module is processed in `NGX_HTTP_REWRITE_PHASE` phase (for `return` in `location` context), the access module is processed in `NGX_HTTP_ACCESS_PHASE` phase, rewrite phase (where `return` belongs) happens before access phase (where `deny` works), thus `return` stops request processing and returns 301 in rewrite phase.
 
@@ -2113,13 +2164,20 @@ location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htacces
 
   > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
 
-  > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions. For example, Shodan provides a widely used database of this info.
+  > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions. For example, Shodan provides a widely used database of this info. It's far more efficient to just try the vulnerability on all random servers than asking them.
 
-  > Hiding your version information will not stop an attack from happening, but it will make you less of a target if attackers are looking for a specific version of hardware or software. It's far more efficient to just try the vulnerability on all random servers than asking them. Security by obscurity doesn't mean you're safe, but it does slow people down sometimes, and that's exactly what's needed for day zero vulnerabilities.
+  > Hiding your version information will not stop an attack from happening, but it will make you less of a target if attackers are looking for a specific version of hardware or software. I take the data broadcast by the HTTP server as a personal information.
+
+  > Security by obscurity doesn't mean you're safe, but it does slow people down sometimes, and that's exactly what's needed for day zero vulnerabilities.
+
+  Maybe it's a very restrictive approach but the guidelines from [RFC 2616 - 15.1 Personal Information](https://tools.ietf.org/html/rfc2616#section-15.1) are always very helpful to me:
+
+  > _History shows that errors in this area often create serious security and/or privacy problems and generate highly adverse publicity for the implementor's company. [...] Like any generic data transfer protocol, HTTP cannot regulate the content of the data that is transferred, nor is there any a priori method of determining the sensitivity of any particular piece of information within the context of any given request. Therefore, applications SHOULD supply as much control over this information as possible to the provider of that information. Four header fields are worth special mention in this context: `Server`, `Via`, `Referer` and `From`._
 
 ###### Example
 
 ```nginx
+# This disables emitting NGINX version on error pages and in the "Server" response header field:
 server_tokens off;
 ```
 
@@ -2132,6 +2190,8 @@ server_tokens off;
 #### :beginner: Hide Nginx server signature
 
 ###### Rationale
+
+  > The `Server` response-header field contains information about the software used by the origin server to handle the request. This string is used by places like Alexa and Netcraft to collect statistics about how many and of what type of web server are live on the Internet.
 
   > One of the easiest first steps to undertake, is to prevent the web server from showing its used software via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc.
 
@@ -2146,7 +2206,10 @@ server_tokens off;
 ###### Example
 
 ```nginx
-more_set_headers "Server: Unknown";
+more_set_headers "Server: Unknown"; # or whatever else, e.g. 'WOULDN'T YOU LIKE TO KNOW!'
+
+# or:
+more_clear_headers 'Server';
 ```
 
 ###### External resources
@@ -2175,6 +2238,7 @@ proxy_hide_header X-Drupal-Cache;
 ###### External resources
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Remove support for legacy and risky HTTP headers
 
@@ -2188,7 +2252,7 @@ proxy_hide_header X-Drupal-Cache;
 
   > If one or more of your backends uses the contents of the `X-Forwarded-Host`, `X-Rewrite-Url` or `X-Original-Url` HTTP request headers to decide which of your users (or which security domain) it sends an HTTP response, you may be impacted by this class of vulnerability. If you passes these headers to your backend an attacker could potentially cause to store a response with arbitrary content inserted to a victim’s cache.
 
-Look at the following explanation taken from [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning):
+  Look at the following explanation taken from [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning):
 
   > _This revealed the headers `X-Original-URL` and `X-Rewrite-URL` which override the request's path. I first noticed them affecting targets running Drupal, and digging through Drupal's code revealed that the support for this header comes from the popular PHP framework Symfony, which in turn took the code from Zend. The end result is that a huge number of PHP applications unwittingly support these headers. Before we try using these headers for cache poisoning, I should point out they're also great for bypassing WAFs and security rules [...]_
 
@@ -2211,6 +2275,7 @@ proxy_set_header X-Forwarded-Host $host;
 - [Local File Inclusion Vulnerability in Concrete5 version 5.7.3.1](https://hackerone.com/reports/59665)
 - [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning)
 - [Passing headers to the backend (from this handbook)](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Use only the latest supported OpenSSL version
 
@@ -2229,11 +2294,11 @@ proxy_set_header X-Forwarded-Host $host;
   >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
 
-  > In my opinion, the only safe way is based on the up-to-date, still supported and production-ready version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1d).
+  > In my opinion, the only safe way is based on the up-to-date, still supported and production-ready version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1 or 1.1.1d at this moment).
 
   > You should know one thing before start using OpenSSL 1.1.1: it has a different API than the current 1.0.2 so that's not just a simple flick of the switch. NGINX started supporting TLS 1.3 with the release of version 1.13.0, but when the OpenSSL devs released OpenSSL 1.1.1, that NGINX had support for the brand new protocol version.
 
-  > If your system repositories do not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
+  > If your repositories system does not have the newest OpenSSL, you can do the [compilation](https://github.com/trimstray/nginx-admins-handbook#installing-from-source) process (see OpenSSL sub-section).
 
   > I also recommend track the [OpenSSL Vulnerabilities](https://www.openssl.org/news/vulnerabilities.html) official newsletter, if you want to know a security bugs and issues fixed in OpenSSL.
 
@@ -2310,6 +2375,7 @@ proxy_set_header X-Forwarded-Host $host;
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 - [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
 - [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
+- [Enable HTTP Strict Transport Security (from this handbook)](#beginner-enable-http-strict-transport-security)
 
 #### :beginner: Use min. 2048-bit private keys
 
@@ -2317,7 +2383,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > The truth is, the industry/community are split on this topic. I am in the "_use 2048, because 4096 gives us almost nothing, while costing us quite a lot_" camp myself.
 
-  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per NIST). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
+  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per [NIST](https://www.keylength.com/en/4/)). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
 
   > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage and higher power consumption.
 
@@ -2327,7 +2393,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most CPU time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
-  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over RSA certificates) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner ECC certificates but still let visitors with older browsers browse your Web site.
+  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over `RSA` certificates) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your Web site.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2400,13 +2466,13 @@ certbot certonly -d example.com -d www.example.com
 
   > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, and `CBC` ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
-  > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions and doesn't require any particular configuration, as all of the ciphers are secure, and by default OpenSSL only enables `GCM` and `Chacha20/Poly1305` for TLSv1.3, without enabling CCM. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
+  > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions and doesn't require any particular configuration, as all of the ciphers are secure, and by default OpenSSL only enables `GCM` and `Chacha20/Poly1305` for TLSv1.3, without enabling `CCM`. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
 
-  > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
+  > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So, if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > I think the best way to deploy secure configuration is: enable TLS 1.2 (is safe enough) without any `CBC` Ciphers and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice (all of industry standards like PCI-DSS, HIPAA, NIST, strongly suggest the use of TLS 1.2 than TLS 1.1/1.0).
+  > I think the best way to deploy secure configuration is: enable TLS 1.2 (is safe enough) without any `CBC` ciphers and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice (all of industry standards like PCI-DSS, HIPAA, NIST, strongly suggest the use of TLS 1.2 than TLS 1.1/1.0).
 
-  > TLS 1.2 is probably insufficient for legacy client support. The NIST guidelines are not applicable to all use cases, and you should always analyze your user base before deciding which protocols to support or drop.
+  > TLS 1.2 is probably insufficient for legacy client support. The NIST guidelines are not applicable to all use cases, and you should always analyze your user base before deciding which protocols to support or drop (for example, by adding variables responsible for TLS versions and ciphers to the log format).
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
@@ -2484,7 +2550,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. In my opinion, in case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (really great source of knowledge; all Mozilla websites and deployments should follow the recommendations below).
+  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. In my opinion, in case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (it's really great source; all Mozilla websites and deployments should follow the recommendations from this document).
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
@@ -2514,7 +2580,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Recently new vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.2 or TLS 1.1 or TLS 1.0 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) presentation from Black Hat Asia 2019.
 
-  > Disable TLS cipher modes (all ciphers that start with `TLS_RSA_WITH_*`) that use RSA encryption because they are really vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support RSA key exchange are vulnerable, but it is recommended to disable RSA key exchange ciphers as it does not support forward secrecy. TLS 1.3 doesn’t use RSA key exchanges because they’re not forward secret.
+  > Disable TLS cipher modes (all ciphers that start with `TLS_RSA_WITH_*`) that use RSA encryption because they are really vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support `RSA` key exchange are vulnerable, but it is recommended to disable `RSA` key exchange ciphers as it does not support forward secrecy. TLS 1.3 doesn’t use `RSA` key exchanges because they’re not forward secret.
 
   > You should also absolutely disable weak ciphers regardless of the TLS version do you use, like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
 
@@ -3012,17 +3078,17 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 
 ###### Rationale
 
+  > Keep an eye also on this: _Secure implementations of the standard curves are theoretically possible but very hard._
+
   > In my opinion your main source of knowledge should be [The SafeCurves web site](https://safecurves.cr.yp.to/). This site reports security assessments of various specific curves.
 
   > For a SSL server certificate, an "elliptic curve" certificate will be used only with digital signatures (`ECDSA` algorithm). NGINX provides directive to specifies a curve for `ECDHE` ciphers (`ssl_ecdh_curve`).
 
-  > `x25519` is a more secure (also with SafeCurves requirements) but slightly less compatible option. I think to maximise interoperability with existing browsers and servers, stick to `P-256` (`prime256v1`) and `P-384` (`secp384r1`) curves. Of course there's tons of different opinions about `P-256` and `P-384` curves.
+  > `x25519` is a more secure (also with SafeCurves requirements) but slightly less compatible option. I think to maximise interoperability with existing browsers and servers, stick to `P-256` (`prime256v1`) and `P-384` (`secp384r1`) curves. Of course there's tons of different opinions about them.
 
   > NSA Suite B says that NSA uses curves `P-256` and `P-384` (in OpenSSL, they are designated as, respectively, `prime256v1` and `secp384r1`). There is nothing wrong with `P-521`, except that it is, in practice, useless. Arguably, `P-384` is also useless, because the more efficient `P-256` curve already provides security that cannot be broken through accumulation of computing power.
 
   > Bernstein and Lange believe that the NIST curves are not optimal and there are better (more secure) curves that work just as fast, e.g. `x25519`.
-
-  > Keep an eye also on this: _Secure implementations of the standard curves are theoretically possible but very hard._
 
   > The SafeCurves say:
   >   - `NIST P-224`, `NIST P-256` and `NIST P-384` are **UNSAFE**
@@ -3095,18 +3161,18 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
 
-  > Elliptic curve Diffie-Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
+  > Elliptic curve Diffie-Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So, while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
 
   > Cipher suites using `DHE` key exchange in OpenSSL require `tmp_DH` parameters, which the `ssl_dhparam` directive provides. The same is true for `DH_anon` key exchange, but in practice nobody uses those. The OpenSSL wiki page for Diffie Hellman Parameters it says: _To use perfect forward secrecy cipher suites, you must set up Diffie-Hellman parameters (on the server side)._ Look also at [SSL_CTX_set_tmp_dh_callback](https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_tmp_dh.html).
 
-  > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve - Hardening - P1](#beginner-use-more-secure-ecdh-curve) rule.
+  > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
 
   > In older versions of OpenSSL, if no key size is specified, default key size was `512/1024 bits` - it was vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919](https://tools.ietf.org/html/rfc7919#appendix-A) <sup>[IETF]</sup> are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
   >
   >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
   >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
 
-  > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However years ago people expected 1024 bit to be safe so if you are after long term resistance you would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
+  > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However, years ago people expected 1024 bit to be safe so if you are after long term resistance you would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
 
   > You should remember that the `4096 bit` modulus will make DH computations slower and won’t actually improve security.
 
@@ -3133,6 +3199,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 To set DH params:
 
 ```nginx
+# curl https://ssl-config.mozilla.org/ffdhe2048.txt --output ffdhe2048.pem
 ssl_dhparam ffdhe2048.pem;
 ```
 
@@ -3363,23 +3430,21 @@ location ^~ /assets/ {
 
   > The HSTS header needs to be set inside the HTTP block with the `ssl` listen statement or you risk sending Strict-Transport-Security headers over HTTP sites you may also have configured on the server. Additionally, you should use `return 301` for the HTTP server block to be redirected to HTTPS.
 
-  > I recommend to set the `max-age` to a big value like `31536000` (12 months) or `63072000` (24 months).
-
   > Ideally, you should always use `includeSubdomains` with HSTS. This will provide robust security for the main hostname as well as all subdomains. The issue here is that (without `includeSubdomains`) a man in the middle attacker can create arbitrary subdomains and use them inject cookies into your application. In some cases, even leakage might occur. The drawback of `includeSubdomains`, of course, is that you will have to deploy all subdomains over SSL.
 
   > There are a few simple best practices for HSTS (from [The Importance of a Proper HTTP Strict Transport Security Implementation on Your Web Server](https://blog.qualys.com/securitylabs/2016/03/28/the-importance-of-a-proper-http-strict-transport-security-implementation-on-your-web-server)):
   >
   > - The strongest protection is to ensure that all requested resources use only TLS with a well-formed HSTS header. Qualys recommends providing an HSTS header on all HTTPS resources in the target domain
   >
-  > - It is advisable to assign the `max-age` directive’s value to be greater than `10368000` seconds (120 days) and ideally to `31536000` (one year). Websites should aim to ramp up the max-age value to ensure heightened security for a long duration for the current domain and/or subdomains
+  > - It is advisable to assign the `max-age` directive’s value to be greater than `10368000` seconds (120 days) and ideally to `31536000` (one year). Websites should aim to ramp up the `max-age` value to ensure heightened security for a long duration for the current domain and/or subdomains
   >
-  > - [RFC 6797](https://tools.ietf.org/html/rfc6797) <sup>[IETF]</sup>, section 14.4 advocates that a web application must aim to add the `includeSubDomain` directive in the policy definition whenever possible. The directive’s presence ensures the HSTS policy is applied to the domain of the issuing host and all of its subdomains, e.g. `example.com` and `www.example.com`
+  > - [RFC 6797 14.4. The Need for includeSubDomains](https://tools.ietf.org/html/rfc6797) <sup>[IETF]</sup>, advocates that a web application must aim to add the `includeSubDomain` directive in the policy definition whenever possible. The directive’s presence ensures the HSTS policy is applied to the domain of the issuing host and all of its subdomains, e.g. `example.com` and `www.example.com`
   >
   > - The application should never send an HSTS header over a plaintext HTTP header, as doing so makes the connection vulnerable to SSL stripping attacks
   >
-  > - It is not recommended to provide an HSTS policy via the `http-equiv` attribute of a meta tag. According to HSTS [RFC 6797](https://tools.ietf.org/html/rfc6797) <sup>[IETF]</sup>, user agents don’t heed `http-equiv="Strict-Transport-Security"` attribute on `<meta>` elements on the received content`
+  > - It is not recommended to provide an HSTS policy via the `http-equiv` attribute of a meta tag. According to [RFC 6797](https://tools.ietf.org/html/rfc6797) <sup>[IETF]</sup>, user agents don’t heed `http-equiv="Strict-Transport-Security"` attribute on `<meta>` elements on the received content`
 
-  > To meet the HSTS preload list standard a root domain needs to return a `strict-transport-security` header that includes both the `includeSubDomains` and `preload` directives and has a minimum `max-age` of one year. Your site must also serve a valid SSL certificate on the root domain and all subdomains, as well as redirect all HTTP requests to HTTPS on the same host.
+  > To meet the [HSTS preload list](https://hstspreload.org/) standard a root domain needs to return a `strict-transport-security` header that includes both the `includeSubDomains` and `preload` directives and has a minimum `max-age` of one year. Your site must also serve a valid SSL certificate on the root domain and all subdomains, as well as redirect all HTTP requests to HTTPS on the same host.
 
   > You had better be pretty sure that your website is indeed all HTTPS before you turn this on because HSTS adds complexity to your rollback strategy. Google recommend enabling HSTS this way:
   >
@@ -3387,6 +3452,10 @@ location ^~ /assets/ {
   >   2) Start sending HSTS headers with a short `max-age`. Monitor your traffic both from users and other clients, and also dependents' performance, such as ads
   >   3) Slowly increase the HSTS `max-age`
   >   4) If HSTS doesn't affect your users and search engines negatively, you can, if you wish, ask your site to be added to the HSTS preload list used by most major browsers
+
+  **My recommendation:**
+
+  > Set the `max-age` to a big value like `31536000` (12 months) or `63072000` (24 months) with `includeSubdomains` parameter.
 
 ###### Example
 
@@ -3405,14 +3474,17 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 - [HTTP Strict Transport Security Cheat Sheet](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet)
 - [HSTS Cheat Sheet](https://scotthelme.co.uk/hsts-cheat-sheet/)
 - [HSTS Preload and Subdomains](https://textslashplain.com/2018/04/09/hsts-preload-and-subdomains/)
+- [Check HSTS preload status and eligibility](https://hstspreload.org/)
 - [HTTP Strict Transport Security (HSTS) and NGINX](https://www.nginx.com/blog/http-strict-transport-security-hsts-and-nginx/)
 - [Is HSTS as a proper substitute for HTTP-to-HTTPS redirects?](https://www.reddit.com/r/bigseo/comments/8zw45d/is_hsts_as_a_proper_substitute_for_httptohttps/)
 - [How to configure HSTS on www and other subdomains](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
 - [HSTS: Is includeSubDomains on main domain sufficient?](https://serverfault.com/questions/927336/hsts-is-includesubdomains-on-main-domain-sufficient)
 - [The HSTS preload list eligibility](https://www.danielmorell.com/blog/how-to-configure-hsts-on-www-and-other-subdomains)
-- [Check HSTS preload status and eligibility](https://hstspreload.org/)
 - [HSTS Deployment Recommendations](https://hstspreload.org/#deployment-recommendations)
 - [How does HSTS handle mixed content?](https://serverfault.com/questions/927145/how-does-hsts-handle-mixed-content)
+- [Broadening HSTS to secure more of the Web](https://security.googleblog.com/2017/09/broadening-hsts-to-secure-more-of-web.html)
+- [The Road To HSTS](https://engineeringblog.yelp.com/2017/09/the-road-to-hsts.html)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
 
@@ -3461,6 +3533,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 - [Content Security Policy (CSP) Validator](https://cspvalidator.org/)
 - [Can I Use CSP](https://caniuse.com/#search=CSP)
 - [CSP Is Dead, Long Live CSP!](https://ai.google/research/pubs/pub45542)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Control the behaviour of the Referer header (Referrer-Policy)
 
@@ -3489,6 +3562,7 @@ add_header Referrer-Policy "no-referrer";
 - [A new security header: Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
 - [Security HTTP Headers - Referrer-Policy](https://zinoui.com/blog/security-http-headers#referrer-policy)
 - [What you need to know about Referrer Policy](https://searchengineland.com/need-know-referrer-policy-276185)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Provide clickjacking protection (X-Frame-Options)
 
@@ -3516,6 +3590,7 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
 - [Security HTTP Headers - X-Frame-Options](https://zinoui.com/blog/security-http-headers#x-frame-options)
 - [X-Frame-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-frame-options)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Prevent some categories of XSS attacks (X-XSS-Protection)
 
@@ -3540,6 +3615,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 - [DOM based XSS Prevention Cheat Sheet](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
 - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
 - [Security HTTP Headers - X-XSS-Protection](https://zinoui.com/blog/security-http-headers#x-xss-protection)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Prevent Sniff Mimetype middleware (X-Content-Type-Options)
 
@@ -3562,6 +3638,7 @@ add_header X-Content-Type-Options "nosniff" always;
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
 - [Security HTTP Headers - X-Content-Type-Options](https://zinoui.com/blog/security-http-headers#x-content-type-options)
 - [X-Content-Type-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-content-type-options)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Deny the use of browser features (Feature-Policy)
 
@@ -3581,6 +3658,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 - [Policy Controlled Features](https://github.com/w3c/webappsec-feature-policy/blob/master/features.md)
 - [Security HTTP Headers - Feature-Policy](https://zinoui.com/blog/security-http-headers#feature-policy)
 - [Feature policy playground](https://featurepolicy.info/)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Reject unsafe HTTP methods
 
@@ -3588,7 +3666,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
   > An ordinary web server supports the `GET`, `HEAD` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
-  > However, some of the API (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
+  > However, some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
 
 ###### Example
 
@@ -3606,6 +3684,7 @@ if ($request_method !~ ^(GET|HEAD|POST)$) {
 
 - [Hypertext Transfer Protocol (HTTP) Method Registry](https://www.iana.org/assignments/http-methods/http-methods.xhtml) <sup>[IANA]</sup>
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Prevent caching of sensitive data
 
@@ -3642,6 +3721,7 @@ location /api {
 - [Caching best practices & max-age gotchas](https://jakearchibald.com/2016/caching-best-practices/)
 - [Increasing Application Performance with HTTP Cache Headers](https://devcenter.heroku.com/articles/increasing-application-performance-with-http-cache-headers)
 - [HTTP Caching](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Control Buffer Overflow attacks
 
@@ -3651,9 +3731,9 @@ location /api {
 
   > Corresponding values depends on your server memory and how many traffic you have. Long ago I found an interesting formula:
   >
-  > `MAX_MEMORY = client_body_buffer_size x CONCURRENT_TRAFFIC - OS_RAM - FS_CACHE`
+  > &nbsp;&nbsp;`MAX_MEMORY = client_body_buffer_size x CONCURRENT_TRAFFIC - OS_RAM - FS_CACHE`
   >
-  > I think, the key is to monitor all the things (MEMORY/CPU/Traffic) and change settings according your usage, star little of course then increase until you can.
+  > I think the key is to monitor all the things (MEMORY/CPU/Traffic) and change settings according your usage, star little of course then increase until you can.
 
   > In my opinion, using a smaller `client_body_buffer_size` (a little bigger than 10k but not so much) is definitely better, since a bigger buffer could ease DoS attack vectors, since you would allocate more memory for it.
 
@@ -3912,7 +3992,7 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 
   > Setting the `$scheme` variable will cause distortions if it uses more than one proxy along the way. For example: if the client go to the `https://example.com`, the proxy stores the scheme value as HTTPS. If the communication between the proxy and the next-level proxy takes place over HTTP, then the backend sees the scheme as HTTP. So if you set `$scheme` for `X-Forwarded-Proto` on the next-level proxy, app will see a different value than the one the client came with.
 
-  > For resolve this problem you can also use [this](#set-correct-scheme-passed-in-x-forwarded-proto) configuration snippet.
+  > For resolve this problem you can also use [this](HELPERS.md#set-correct-scheme-passed-in-x-forwarded-proto) configuration snippet.
 
 ###### Example
 
@@ -4001,7 +4081,7 @@ location / {
 
   > The use of custom headers with `X-` prefix is not forbidden but discouraged. In other words, you can keep using `X-` prefixed headers, but it's not recommended and you may not document them as if they are public standard.
 
-  > Internet Engineering Task Force released a new RFC ([RFC-6648](https://tools.ietf.org/html/rfc6648) <sup>[IETF]</sup>), recommending deprecation of `X-` prefix.
+  > Internet Engineering Task Force released in [RFC-6648](https://tools.ietf.org/html/rfc6648) <sup>[IETF]</sup> recommended deprecation of `X-` prefix.
 
   > The `X-` in front of a header name customarily has denoted it as experimental/non-standard/vendor-specific. Once it's a standard part of HTTP, it'll lose the prefix.
 
@@ -4025,22 +4105,23 @@ add_header Backend-Server   $hostname;
 
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00) <sup>[IETF]</sup>
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Always use `$request_uri` instead of `$uri` in `proxy_pass`
 
 ###### Rationale
 
-  > Naturally, there are exceptions to what I'm going to say about this. I think, the best rule for pass unchanged URI to the backend layer is use `proxy_pass http://<backend>` without any arguments.
-
-  Look what the NGINX documentation says about it:
-
-  > _If proxy_pass is specified without a URI, the request URI is passed to the server in the same form as sent by a client when the original request is processed [...]_
+  > Naturally, there are exceptions to what I'm going to say about this. I think the best rule for pass unchanged URI to the backend layer is use `proxy_pass http://<backend>` without any arguments.
 
   > If you add something more at the end of `proxy_pass` directive, you should always pass unchanged URI to the backend layer unless you know what you're doing. For example, using `$uri` accidentally in `proxy_pass` directives opens you up to http header injection vulnerabilities because URL encoded characters are decoded (this sometimes matters and is not equivalent to `$request_uri`). And what's more, the value of `$uri` may change during request processing, e.g. when doing internal redirects, or when using index files.
 
   > The `request_uri` is equal to the original request URI as received from the client including the arguments. In this case (pass variable like a `$request_uri`), if URI is specified in the directive, it is passed to the server as is, replacing the original request URI.
 
   > Note also that using `proxy_pass` with variables implies various other side effects, notably use of resolver for dynamic name resolution, and generally less effective than using names in a configuration.
+
+  Look also what the NGINX documentation say about it:
+
+  > _If proxy_pass is specified without a URI, the request URI is passed to the server in the same form as sent by a client when the original request is processed [...]_
 
 ###### Example
 
@@ -4230,3 +4311,4 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 
 - [A Method for Web Security Policies](https://tools.ietf.org/html/draft-foudil-securitytxt-05) <sup>[IETF]</sup>
 - [security.txt](https://securitytxt.org/)
+- [Say hello to security.txt](https://scotthelme.co.uk/say-hello-to-security-txt/)

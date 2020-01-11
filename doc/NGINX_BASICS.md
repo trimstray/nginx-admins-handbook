@@ -1257,7 +1257,7 @@ You should also know [the Nagle’s algorithm author's interesting comment](http
 
   > _The real problem is ACK delays. The 200ms "ACK delay" timer is a bad idea that someone at Berkeley stuck into BSD around 1985 because they didn't really understand the problem. A delayed ACK is a bet that there will be a reply from the application level within 200ms. TCP continues to use delayed ACKs even if it's losing that bet every time._
 
-I think, if you are dealing with non-interactive type of traffic or bulk transfers such as HTTP/web traffic then enabling `TCP_NODELAY` to disable Nagle's algorithm may be useful (is the default behavior of the NGINX). This is especially relevant if you're running applications or environments that only sometimes have highly interactive traffic and chatty protocols.
+I think if you are dealing with non-interactive type of traffic or bulk transfers such as HTTP/web traffic then enabling `TCP_NODELAY` to disable Nagle's algorithm may be useful (is the default behavior of the NGINX). This is especially relevant if you're running applications or environments that only sometimes have highly interactive traffic and chatty protocols.
 
 By default NGINX enable the use of `TCP_NODELAY` option:
 
@@ -3026,7 +3026,7 @@ It is important to pass more than just the URI if you expect the upstream server
 
   > Please read [Managing request headers](https://www.nginx.com/resources/wiki/start/topics/examples/headers_management/) from the official wiki.
 
-NGINX use the `proxy_set_header` directive to sets headers that sends to the backend servers.
+Use the `proxy_set_header` directive to sets headers that sends to the backend servers.
 
   > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser) and will work on successful requests only, unless you set up `always` parameter. `proxy_set_header` sends headers to the backend server. If the value of a header field is an empty string then this field will not be passed to a proxied server.
 
@@ -3145,7 +3145,7 @@ You can read about how to set it up correctly here:
 
   > **:bookmark: [Set properly values of the X-Forwarded-For header - Reverse Proxy - P1](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)**
 
-I think, we should just maybe stop for a second. `X-Forwarded-For` is a one of the most important header that has the security implications.
+I think we should just maybe stop for a second. `X-Forwarded-For` is a one of the most important header that has the security implications.
 
 Where a connection passes through a chain of proxy servers, `X-Forwarded-For` can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user).
 
@@ -3257,7 +3257,7 @@ add_header Custom-Header Value;
 
   > To change (adding or removing) existing headers you should use a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) module.
 
-There is one thing you must watch out for if you use `add_header` directive. See the following explanations:
+There is one thing you must watch out for if you use `add_header` directive (also applies to `proxy_*_header` directives). See the following explanations:
 
 - [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
 - [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
@@ -3267,6 +3267,12 @@ This is described in the official documentation:
   > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no `add_header` directives defined on the current level._
 
 However - and this is important - as you now have defined a header in your `server` context, all the remaining headers defined in the `http` context will no longer be inherited. Means, you’ve to define them in your `server` context again (or alternatively ignore them if they’re not important for your site).
+
+At the end, summary about directives to manipulate headers:
+
+- `proxy_set_header` - is to set a request header
+- `add_header` is to add header to response
+- `proxy_hide_header` is to hide a response header
 
 #### Load balancing algorithms
 
