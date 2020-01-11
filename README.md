@@ -314,6 +314,7 @@
     * [Extract User Agent from the http packets](doc/HELPERS.md#extract-user-agent-from-the-http-packets)
     * [Capture only http GET and POST packets](doc/HELPERS.md#capture-only-http-get-and-post-packets)
     * [Capture requests and filter by source ip and destination port](doc/HELPERS.md#capture-requests-and-filter-by-source-ip-and-destination-port)
+    * [Capture HTTP requests/responses in real time, filter by GET, HEAD and save to a file](doc/HELPERS.md#capture-http-requests--responses-in-real-time-filter-by-get-head-and-save-to-a-file)
     * [Dump a process's memory](doc/HELPERS.md#dump-a-processs-memory)
     * [GNU Debugger (gdb)](doc/HELPERS.md#gnu-debugger-gdb)
       * [Dump configuration from a running process](doc/HELPERS.md#dump-configuration-from-a-running-process)
@@ -451,9 +452,10 @@
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing"></a>
   * [Tweak passive health checks](doc/RULES.md#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)
-- **[Others (2)](doc/RULES.md#others)**<a id="toc-others"></a>
+- **[Others (3)](doc/RULES.md#others)**<a id="toc-others"></a>
   * [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](doc/RULES.md#beginner-define-security-policies-with-securitytxt)
+  * [Use tcpdump to monitor HTTP traffic](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples"></a>
   * [Reverse Proxy](doc/EXAMPLES.md#reverse-proxy)
     * [Installation](doc/EXAMPLES.md#installation)
@@ -925,6 +927,7 @@ Existing chapters:
     - [x] _Extract User Agent from the http packets_
     - [x] _Capture only http GET and POST packets_
     - [x] _Capture requests and filter by source ip and destination port_
+    - [x] _Capture HTTP requests/responses in real time, filter by GET, HEAD and save to a file_
     - [ ] _Server Side Include (SSI) debugging_
     - [x] _Dump a process's memory_
     - _GNU Debugger (gdb)_
@@ -1072,6 +1075,7 @@ Existing chapters:
 <summary><b>Others</b></summary><br>
 
   - [x] _Define security policies with security.txt_
+  - [x] _Use tcpdump to monitor HTTP traffic_
 
 </details>
 
@@ -1085,7 +1089,7 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
 
-  > This checklist contains [all rules (72)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (73)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
@@ -1094,7 +1098,7 @@ Generally, I think that each of these principles is important and should be cons
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 30 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 24 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
-| ![info](static/img/priorities/info.png) | <i>minor</i> | 6 | as an option to implement or use (not required) |
+| ![info](static/img/priorities/info.png) | <i>minor</i> | 7 | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
 
@@ -1172,6 +1176,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)<br><sup>Is a good solution to marks the server as permanently unavailable.</sup> | Load Balancing | ![info](static/img/priorities/info.png) |
+| [Use tcpdump to monitor HTTP traffic](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)<br><sup>Use tcpdump for troubleshooting HTTP.</sup> | Others | ![info](static/img/priorities/info.png) |
 
 # Bonus Stuff
 
@@ -1690,7 +1695,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > A few rules about the NGINX proxy server.
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing-2"></a>
   > You may improve of some rules about the NGINX working as a load balancer.
-- **[Others (2)](doc/RULES.md#others)**<a id="toc-others-2"></a>
+- **[Others (3)](doc/RULES.md#others)**<a id="toc-others-2"></a>
   > Something about other interesting rules.
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples-2"></a>
   > Here are some configuration examples.

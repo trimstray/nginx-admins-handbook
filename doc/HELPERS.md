@@ -103,6 +103,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Extract User Agent from the http packets](#extract-user-agent-from-the-http-packets)
     * [Capture only http GET and POST packets](#capture-only-http-get-and-post-packets)
     * [Capture requests and filter by source ip and destination port](#capture-requests-and-filter-by-source-ip-and-destination-port)
+    * [Capture HTTP requests/responses in real time, filter by GET, HEAD and save to a file](#capture-http-requests--responses-in-real-time-filter-by-get-head-and-save-to-a-file)
     * [Dump a process's memory](#dump-a-processs-memory)
     * [GNU Debugger (gdb)](#gnu-debugger-gdb)
       * [Dump configuration from a running process](#dump-configuration-from-a-running-process)
@@ -5417,6 +5418,15 @@ tcpdump -ei eth0 -s 0 -v -n -l | egrep -i "POST /|GET /|Host:"
 ```bash
 ngrep -d eth0 "<server_name>" src host 10.10.252.1 and dst port 80
 ```
+
+##### Capture HTTP requests/responses in real time, filter by GET, HEAD and save to a file
+
+```bash
+httpry -i eth0 -o output.dump -m get,head
+```
+
+  * `-m` - monitor only specific HTTP methods
+  * `-o` - output txt file, `-b` - output binary file (raw HTTP packets)
 
 ##### Dump a process's memory
 

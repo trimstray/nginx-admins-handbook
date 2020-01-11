@@ -1254,6 +1254,10 @@ log_format debug-level-0
 
   > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in a `http`, `server`, or `location` contexts.
 
+  > A while ago, I found this interesting comment:
+  >
+  > _`notice` is much better than `debug` as the error level for debugging rewrites because it will skip a lot of low-level irrelevant debug info (e.g. SSL or gzip details; 50+ lines per request)._
+
   > Words of caution:
   >
   >   - never leave debug logging to a file on in production
@@ -4236,9 +4240,10 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
-- **[≡ Others (2)](#others)**
+- **[≡ Others (3)](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
+  * [Use tcpdump to monitor HTTP traffic](#beginner-use-tcpdump-to-monitor-http-traffic)
 
 #### :beginner: Enable DNS CAA Policy
 
@@ -4312,3 +4317,80 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 - [A Method for Web Security Policies](https://tools.ietf.org/html/draft-foudil-securitytxt-05) <sup>[IETF]</sup>
 - [security.txt](https://securitytxt.org/)
 - [Say hello to security.txt](https://scotthelme.co.uk/say-hello-to-security-txt/)
+
+#### :beginner: Use tcpdump to monitor HTTP traffic
+
+###### Rationale
+
+  > Tcpdump is a swiss army knife (is a well known command line packet analyzer/protocol decoding) for all the administrators and developers when it comes to troubleshooting. You can use it to monitor HTTP traffic between a proxy (or clients) and your backends.
+
+  > I use tcpdump for a quick inspection. If I need a more in-depth inspection I capture everything to a file and open it with powerfull sniffer which can decode lots of protocols, lots of filters like a wireshark.
+
+  > Run `man tcpdump | less -Ip examples` to see some examples.
+
+###### Example
+
+Capture everything and write to a file:
+
+```bash
+tcpdump -X -s0 -w dump.pcap <tcpdump_params>
+```
+
+Monitor incoming (on interface) traffic, filter by `<ip:port>`:
+
+```bash
+tcpdump -ne -i eth0 -Q in host 192.168.252.1 and port 443
+```
+
+  * `-n` - don't convert addresses (`-nn` will not resolve hostnames or ports)
+  * `-e` - print the link-level headers
+  * `-i [iface|any]` - set interface
+  * `-Q|-D [in|out|inout]` - choose send/receive direction (`-D` - for old tcpdump versions)
+  * `host [ip|hostname]` - set host, also `[host not]`
+  * `[and|or]` - set logic
+  * `port [1-65535]` - set port number, also `[port not]`
+
+Monitor incoming (on interface) traffic, filter by `<ip:port>` and write to a file:
+
+```bash
+tcpdump -ne -i eth0 -Q in host 192.168.252.10 and port 80 -c 5 -w dump.pcap
+```
+
+  * `-c [num]` - capture only num number of packets
+  * `-w [filename]` - write packets to file, `-r [filename]` - reading from file
+
+Monitor all HTTP GET traffic/requests:
+
+```bash
+tcpdump -i eth0 -s 0 -A -vv 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
+```
+
+  * `tcp[((tcp[12:1] & 0xf0) >> 2):4]` - first determines the location of the bytes we are interested in (after the TCP header) and then selects the 4 bytes we wish to match against
+  * `0x47455420` - represents the ASCII value of characters 'G', 'E', 'T', ' '
+
+Monitor all HTTP POST traffic/requests, filter by destination port:
+
+```bash
+tcpdump -i eth0 -s 0 -A -vv 'tcp dst port 80 and (tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x504f5354)'
+```
+
+  * `0x504F5354` - represents the ASCII value of characters 'P', 'O', 'S', 'T', ' '
+
+Monitor HTTP traffic including request and response headers and message body, filter by port:
+
+```bash
+tcpdump -A -s 0 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+```
+
+Monitor HTTP traffic including request and response headers and message body, filter by `<src-ip:port>`:
+
+```bash
+tcpdump -A -s 0 'src 192.168.252.10 and tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+```
+
+###### External resources
+
+- [TCPDump Capture HTTP GET/POST requests – Apache, Weblogic & Websphere](https://www.middlewareinventory.com/blog/tcpdump-capture-http-get-post-requests-apache-weblogic-websphere/)
+- [Wireshark tcp filter: `tcp[((tcp[12:1] & 0xf0) >> 2):4]`](https://security.stackexchange.com/questions/121011/wireshark-tcp-filter-tcptcp121-0xf0-24)
+- [How to Use tcpdump Commands with Examples](https://linoxide.com/linux-how-to/14-tcpdump-commands-capture-network-traffic-linux/)
+- [Helpers - Debugging (from this handbook)](https://github.com/trimstray/nginx-admins-handbook/blob/master/doc/HELPERS.md#debugging)
