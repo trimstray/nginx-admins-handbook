@@ -557,9 +557,11 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of Web-based applications.
 
-This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, that also discusses heavyweight topics for advanced users so there is something for everyone.
+This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, that also discusses heavyweight topics for advanced users so there is something for everyone. I tried to put external resources in many places in this handbook in order to dispel any suspicion that may exist.
 
-I did my best to make this handbook a single and consistent. It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
+I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Many of the topics described here can certainly be done better (different?). Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
+
+Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248). Don't need to be an expert (I'm not, definitely!) to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the nuances of a topic or skill you’re passionate about and understand the recommendations of real experts.
 
 ## Before you start
 
