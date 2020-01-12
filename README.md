@@ -392,11 +392,12 @@
   * [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)
   * [Don't duplicate index directive, use it only in the http block](doc/RULES.md#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
-- **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging"></a>
+- **[Debugging (5)](doc/RULES.md#debugging)**<a id="toc-debugging"></a>
   * [Use custom log formats](doc/RULES.md#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](doc/RULES.md#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
+  * [Use mirror module to copy requests to another backend](doc/RULES.md#beginner-use-mirror-module-to-copy-requests-to-another-backend)
 - **[Performance (12)](doc/RULES.md#performance)**<a id="toc-performance"></a>
   * [Adjust worker processes](doc/RULES.md#beginner-adjust-worker-processes)
   * [Use HTTP/2](doc/RULES.md#beginner-use-http2)
@@ -1021,7 +1022,7 @@ Existing chapters:
 
   - [x] _Improve debugging by disable daemon, master process, and all workers except one_
   - [x] _Use core dumps to figure out why NGINX keep crashing_
-  - [ ] _Use mirror module to copy requests to another backend_
+  - [x] _Use mirror module to copy requests to another backend_
   - [ ] _Dynamic debugging with echo module_
   - [ ] _Dynamic debugging with SSI_
 
@@ -1089,7 +1090,7 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
 
-  > This checklist contains [all rules (73)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (74)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
@@ -1098,7 +1099,7 @@ Generally, I think that each of these principles is important and should be cons
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 30 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 24 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
-| ![info](static/img/priorities/info.png) | <i>minor</i> | 7 | as an option to implement or use (not required) |
+| ![info](static/img/priorities/info.png) | <i>minor</i> | 8 | as an option to implement or use (not required) |
 
 Remember, these are only guidelines. My point of view may be different from yours so if you feel these priority levels do not reflect your configurations commitment to security, performance or whatever else, you should adjust them as you see fit.
 
@@ -1175,6 +1176,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use debug mode to track down unexpected behaviour](doc/RULES.md#beginner-use-debug-mode-to-track-down-unexpected-behaviour)<br><sup>There's probably more detail than you want, but that can sometimes be a lifesaver.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)<br><sup>This simplifies the debugging and lets test configurations rapidly.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
+| [Use mirror module to copy requests to another backend](doc/RULES.md#beginner-use-mirror-module-to-copy-requests-to-another-backend)<br><sup>Use mirroring for investigation and debugging of any original request.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)<br><sup>Is a good solution to marks the server as permanently unavailable.</sup> | Load Balancing | ![info](static/img/priorities/info.png) |
 | [Use tcpdump to monitor HTTP traffic](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)<br><sup>Use tcpdump for troubleshooting HTTP.</sup> | Others | ![info](static/img/priorities/info.png) |
 
@@ -1695,7 +1697,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > A few rules about the NGINX proxy server.
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing-2"></a>
   > You may improve of some rules about the NGINX working as a load balancer.
-- **[Others (3)](doc/RULES.md#others)**<a id="toc-others-2"></a>
+- **[Others (4)](doc/RULES.md#others)**<a id="toc-others-2"></a>
   > Something about other interesting rules.
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples-2"></a>
   > Here are some configuration examples.

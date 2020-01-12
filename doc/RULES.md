@@ -1182,11 +1182,12 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   > :pushpin:&nbsp; NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
 
 - **[Base Rules](#base-rules)**
-- **[≡ Debugging (4)](#debugging)**
+- **[≡ Debugging (5)](#debugging)**
   * [Use custom log formats](#beginner-use-custom-log-formats)
   * [Use debug mode to track down unexpected behaviour](#beginner-use-debug-mode-to-track-down-unexpected-behaviour)
   * [Improve debugging by disable daemon, master process, and all workers except one](#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
+  * [Use mirror module to copy requests to another backend](#beginner-use-mirror-module-to-copy-requests-to-another-backend)
 - **[Performance](#performance)**
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
@@ -1380,6 +1381,72 @@ working_directory     /var/dump/nginx;
 
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
 - [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory)
+
+#### :beginner: Use mirror module to copy requests to another backend
+
+###### Rationale
+
+  > Traffic mirroring is very useful to:
+  >
+  >   - analyze and debug original request
+  >   - content inspection
+  >   - troubleshooting (diagnose errors)
+  >   - copy real traffic to a test envrionment without considerable changes to the production system
+
+  > Mirroring itself doesn’t affect original requests (only requests are analyzed, responses are not analyzed). And what's more, errors in the mirror backend don’t affect the main backend.
+
+  If you use mirroring, keep in mind:
+
+  > _Delayed processing of the next request is a known side-effect of how mirroring is implemented in NGINX, and this is unlikely to change. The point was to make sure this was actually the case._
+  >
+  > _Usually a mirror subrequest does not affect the main request. However there are two issues with mirroring:_
+  >
+  >   _- the next request on the same connection will not be processed until all mirror subrequests finish. Try disabling keepalive for the primary location and see if it helps_
+  >
+  >   _- if you use `sendfile` and `tcp_nopush`, it's possible that the response is not pushed properly because of a mirror subrequest, which may result in a delay. Turn off `sendfile` and see if it helps_
+
+###### Example
+
+```nginx
+location / {
+
+  log_subrequest on;
+
+  mirror /backend-mirror;
+  mirror_request_body on;
+
+  proxy_pass http://bk_web01;
+
+  # Indicates whether the header fields of the original request
+  # and original request body are passed to the proxied server:
+  proxy_pass_request_headers on;
+  proxy_pass_request_body on;
+
+  # Uncomment if you have problems with latency:
+  # keepalive_timeout 0;
+
+}
+
+location = /backend-mirror {
+
+  internal;
+  proxy_pass http://bk_web01_debug$request_uri;
+
+  # Pass the headers that will be sent to the mirrored backend:
+  proxy_set_header M-Server-Port $server_port;
+  proxy_set_header M-Server-Addr $server_addr;
+  proxy_set_header M-Host $host; # or $http_host for <host:port>
+  proxy_set_header M-Real-IP $remote_addr;
+  proxy_set_header M-Request-ID $request_id;
+  proxy_set_header M-Original-URI $request_uri;
+
+}
+```
+
+###### External resources
+
+- [Module ngx_http_mirror_module](http://nginx.org/en/docs/http/ngx_http_mirror_module.html)
+- [nginx mirroring tips and tricks](https://alex.dzyoba.com/blog/nginx-mirror/)
 
 # Performance
 
@@ -1671,7 +1738,7 @@ return 301 https://example.com$request_uri;
 ###### External resources
 
 - [Pitfalls and Common Mistakes - Taxing Rewrites](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites)
-- [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+- [Module ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 
 #### :beginner: Use `try_files` directive to ensure a file exists
 
@@ -3903,7 +3970,7 @@ location ^~ /a/ {
 
 ###### External resources
 
-- [ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+- [Module ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 - [Trailing slashes (from this handbook)](NGINX_BASICS.md#trailing-slashes)
 
 #### :beginner: Set and pass `Host` header only with `$host` variable
@@ -3936,7 +4003,7 @@ proxy_set_header    Host    $host;
 
 - [RFC2616 - 5.2 The Resource Identified by a Request](http://tools.ietf.org/html/rfc2616#section-5.2) <sup>[IETF]</sup>
 - [RFC2616 - 14.23 Host](http://tools.ietf.org/html/rfc2616#section-14.23) <sup>[IETF]</sup>
-- [Nginx proxy_set_header - Host header](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header)
+- [Module ngx_http_proxy_module - proxy_set_header](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header)
 - [What is the difference between Nginx variables $host, $http_host, and $server_name?](https://serverfault.com/questions/706438/what-is-the-difference-between-nginx-variables-host-http-host-and-server-na/706439#706439)
 - [HTTP_HOST and SERVER_NAME Security Issues](https://expressionengine.com/blog/http-host-and-server-name-security-issues)
 - [Reasons to use '$http_host' instead of '$host' with 'proxy_set_header Host' in template?](https://github.com/jwilder/nginx-proxy/issues/763#issuecomment-286481168)
