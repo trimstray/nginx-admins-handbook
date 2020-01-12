@@ -4320,7 +4320,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[≡ Others (3)](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
-  * [Use tcpdump to monitor HTTP traffic](#beginner-use-tcpdump-to-monitor-http-traffic)
+  * [Use tcpdump to diagnose and troubleshoot the HTTP issues](#beginner-use-tcpdump-to-diagnose-and-troubleshoot-the-http-issues)
 
 #### :beginner: Enable DNS CAA Policy
 
@@ -4395,7 +4395,7 @@ Hiring: https://g.co/SecurityPrivacyEngJobs
 - [security.txt](https://securitytxt.org/)
 - [Say hello to security.txt](https://scotthelme.co.uk/say-hello-to-security-txt/)
 
-#### :beginner: Use tcpdump to monitor HTTP traffic
+#### :beginner: Use tcpdump to diagnose and troubleshoot the HTTP issues
 
 ###### Rationale
 

@@ -456,7 +456,7 @@
 - **[Others (3)](doc/RULES.md#others)**<a id="toc-others"></a>
   * [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)
   * [Define security policies with security.txt](doc/RULES.md#beginner-define-security-policies-with-securitytxt)
-  * [Use tcpdump to monitor HTTP traffic](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)
+  * [Use tcpdump to diagnose and troubleshoot the HTTP issues](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples"></a>
   * [Reverse Proxy](doc/EXAMPLES.md#reverse-proxy)
     * [Installation](doc/EXAMPLES.md#installation)
@@ -543,7 +543,7 @@ These are definitely the best assets for us and in the first place you should se
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. Configuration of the NGINX can be tricky sometimes. The documentation isn't as pretty as other projects and should certainly include more robust examples.
 
-  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes, and papers with countless examples. Many of them refer to external resources._
+  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, notes, and helpers with countless examples. Many of them refer to external resources._
 
 There are a lot of things you can do to improve in your NGINX instance and this guide will attempt to cover as many of them as possible. For the most part, it contains the most important things about NGINX for me. I think the configuration you provided should work without any talisman. That's why I created this repository.
 
@@ -557,11 +557,11 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of Web-based applications.
 
-This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, that also discusses heavyweight topics for advanced users so there is something for everyone. I tried to put external resources in many places in this handbook in order to dispel any suspicion that may exist.
+This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, that also discusses heavyweight topics so there is something for advanced users. I tried to put external resources in many places in this handbook in order to dispel any suspicion that may exist.
 
-I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Many of the topics described here can certainly be done better (different?). Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
+I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Many of the topics described here can certainly be done better or different. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
-Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248). Don't need to be an expert (I'm not, definitely!) to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the nuances of a topic or skill you’re passionate about and understand the recommendations of real experts.
+Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248) (I really like this quote!). Don't need to be an expert (I'm not, definitely!) to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the nuances of a topic or skill you’re passionate about and understand the recommendations of real experts.
 
 ## Before you start
 
@@ -579,7 +579,7 @@ Remember about the following most important things:
 
   > **`Always think about what is better and more important for you: security vs usability/compatibility.`**
 
-  > **`Change one thing may opens a whole new set of problems.`**
+  > **`Change one thing may open a whole new set of problems.`**
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
 
@@ -591,7 +591,7 @@ Remember about the following most important things:
 + Both are important, but one does not lead to the other.
 ```
 
-I think, in the age of phishing, cyber attacks, ransomware, etc., you should take care of security of your infrastructure as hard as possible but don't forget about this one...
+I think, in the age of phishing, cyber attacks, ransomware, etc., you should take care of security of your infrastructure as hard as possible but don't ever forget about this one...
 
 <br>
 
@@ -599,7 +599,7 @@ I think, in the age of phishing, cyber attacks, ransomware, etc., you should tak
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
 </p>
 
-Finally, I would like to quote two very important comments found on the web about compliance with the standards and regulations:
+Lastly, I would like to quote two very important comments found on the web about compliance with the standards and regulations:
 
   > _I personally think the whole TLS 1.0 depreciation is a mess that's very representative of why cyber security is a mess and will never improve. A huge cargo cult telling to turn it off because it's broken, ignoring that it's breaking a lot of clients, and without a single explanation of what's the problems or how to mitigate them._ - by [ user5994461](https://news.ycombinator.com/user?id=user5994461)
 
@@ -1078,7 +1078,7 @@ Existing chapters:
 <summary><b>Others</b></summary><br>
 
   - [x] _Define security policies with security.txt_
-  - [x] _Use tcpdump to monitor HTTP traffic_
+  - [x] _Use tcpdump to diagnose and troubleshoot the HTTP issues_
 
 </details>
 
@@ -1180,7 +1180,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)<br><sup>Enable core dumps when your NGINX instance receive an unexpected error or when it crashed.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Use mirror module to copy requests to another backend](doc/RULES.md#beginner-use-mirror-module-to-copy-requests-to-another-backend)<br><sup>Use mirroring for investigation and debugging of any original request.</sup> | Debugging | ![info](static/img/priorities/info.png) |
 | [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)<br><sup>Is a good solution to marks the server as permanently unavailable.</sup> | Load Balancing | ![info](static/img/priorities/info.png) |
-| [Use tcpdump to monitor HTTP traffic](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)<br><sup>Use tcpdump for troubleshooting HTTP.</sup> | Others | ![info](static/img/priorities/info.png) |
+| [Use tcpdump to diagnose and troubleshoot the HTTP issues](doc/RULES.md#beginner-use-tcpdump-to-diagnose-and-troubleshoot-the-http-issues)<br><sup>Use tcpdump to monitor HTTP.</sup> | Others | ![info](static/img/priorities/info.png) |
 
 # Bonus Stuff
 
@@ -1207,7 +1207,7 @@ I finally got **A+** grade and following scores:
 - Key Exchange = **90%**
 - Cipher Strength = **90%**
 
-Look also at the following recommendations. I believe the right configuration of NGINX should give the following SSL Labs scores and provides the best security for the most people:
+Look also at the following recommendations. I believe the right configuration of NGINX should give the following SSL Labs scores and provides the best security for the most cases:
 
 - **Recommended**
 
@@ -1265,11 +1265,11 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
 
-For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter.
+For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter. Describes the installation of NGINX on systems such as Ubuntu, Debian, CentOS, and FreeBSD (also from ports).
 
 ## Static error pages generator
 
-I created a simple to use generator for static pages with errors to replace the default error pages that comes with any web server like NGINX.
+I created a simple to use generator for static pages to replace the default error pages that comes with any web server like NGINX.
 
 For more information please see [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
@@ -1277,9 +1277,9 @@ For more information please see [HTTP Static Error Pages Generator](https://gith
 
 I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as a `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts in NGINX.
 
-For example:
+Example of use:
 
-```bash
+```
 ./snippets/server-name-parser/check-server-name.sh example.com
 Searching 'example.com' in '/usr/local/etc/nginx' (from disk)
 
