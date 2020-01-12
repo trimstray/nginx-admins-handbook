@@ -2385,7 +2385,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > TLS provides two main services. For one, it validates the identity of the server that the user is connecting to for the user. It also protects the transmission of sensitive information from the user to the server.
 
-  > In my opinion you should always use HTTPS instead of HTTP to protect your website, even if it doesn’t handle sensitive communications. The application can have many sensitive places that should be protected.
+  > In my opinion you should always use HTTPS instead of HTTP (use HTTP only for redirection to HTTPS) to protect your website, even if it doesn’t handle sensitive communications and don’t have any mixed content. The application can have many sensitive places that should be protected.
 
   > Always put login page, registration forms, all subsequent authenticated pages, contact forms, and payment details forms in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
 
@@ -2543,7 +2543,7 @@ certbot certonly -d example.com -d www.example.com
 
   > I think the best way to deploy secure configuration is: enable TLS 1.2 (is safe enough) without any `CBC` ciphers and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice (all of industry standards like PCI-DSS, HIPAA, NIST, strongly suggest the use of TLS 1.2 than TLS 1.1/1.0).
 
-  > TLS 1.2 is probably insufficient for legacy client support. The NIST guidelines are not applicable to all use cases, and you should always analyze your user base before deciding which protocols to support or drop (for example, by adding variables responsible for TLS versions and ciphers to the log format).
+  > TLS 1.2 is probably insufficient for legacy client support. The NIST guidelines are not applicable to all use cases, and you should always analyze your user base before deciding which protocols to support or drop (for example, by adding variables responsible for TLS versions and ciphers to the log format). It's important to remember that not every client supports the latest and greatest that TLS has to offer.
 
   > If you told NGINX to use TLS 1.3, it will use TLS 1.3 only where is available. NGINX supports TLS 1.3 since version 1.13.0 (released in April 2017), when built against OpenSSL 1.1.1 or more.
 
@@ -2616,6 +2616,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [Cloudflare SSL cipher, browser, and protocol support](https://support.cloudflare.com/hc/en-us/articles/203041594-Cloudflare-SSL-cipher-browser-and-protocol-support)
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
 - [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
+- [Downgrade Attack on TLS 1.3 and Vulnerabilities in Major TLS Libraries](https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2019/february/downgrade-attack-on-tls-1.3-and-vulnerabilities-in-major-tls-libraries/)
 
 #### :beginner: Use only strong ciphers
 
@@ -2625,11 +2626,13 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list. The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy. If you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`.
+  > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to an insecure cipher suite that may be compromised. If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
 
-  > For backward compatibility software components you should use less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) <sup>[IETF]</sup>, you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers). The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy. `ECDHE-ECDSA` is about the same as `RSA` in performance, but much more secure. `ECDHE` with `RSA` is slower, but still much more secure than alone `RSA`.
 
-  > Servers either use the client's most preferable ciphersuite or their own. Most servers use their own preference. Disabling `DHE` removes forward security, but results in substantially faster handshake times.
+  > For backward compatibility software components think about less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) <sup>[IETF]</sup>, you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
+
+  > Servers either use the client's most preferable ciphersuite or their own. Most servers use their own preference. Disabling `DHE` removes forward security, but results in substantially faster handshake times. I think, so long as you only control one side of the conversation, it would be ridiculous to restrict your system to only supporting one cipher suite (it would cut off too many clients and too much traffic). On the other hand, look at what [David Benjamin](https://davidben.net/) (from Chrome networking) sad about it: _Servers should also disable `DHE` ciphers. Even if `ECDHE` is preferred, merely supporting a weak group leaves `DHE`-capable clients vulnerable._
 
   > Also modern cipher suites (e.g. from Mozilla recommendations) suffers from compatibility troubles mainly because drops `SHA-1` (see what Google said about it in 2014: [Gradually sunsetting SHA-1](https://security.googleblog.com/2014/09/gradually-sunsetting-sha-1.html)). But be careful if you want to use ciphers with `HMAC-SHA-1` - there's a perfectly good [explanation](https://crypto.stackexchange.com/a/26518) why.
 
@@ -2651,13 +2654,17 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Recently new vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.2 or TLS 1.1 or TLS 1.0 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) presentation from Black Hat Asia 2019.
 
-  > Disable TLS cipher modes (all ciphers that start with `TLS_RSA_WITH_*`) that use RSA encryption because they are really vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support `RSA` key exchange are vulnerable, but it is recommended to disable `RSA` key exchange ciphers as it does not support forward secrecy. TLS 1.3 doesn’t use `RSA` key exchanges because they’re not forward secret.
+  > Disable TLS cipher modes that use RSA encryption (all ciphers that start with `TLS_RSA_WITH_*`) because they are really vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support `RSA` key exchange are vulnerable, but it is recommended to disable `RSA` key exchange ciphers as it does not support forward secrecy. TLS 1.3 doesn’t use `RSA` key exchanges because they’re not forward secret.
 
   > You should also absolutely disable weak ciphers regardless of the TLS version do you use, like those with `DSS`, `DSA`, `DES/3DES`, `RC4`, `MD5`, `SHA1`, `null`, anon in the name.
 
   > We have a nice online tool for testing compatibility cipher suites with user agents: [CryptCheck](https://tls.imirhil.fr/suite). I think it will be very helpful for you.
 
   > If in doubt, use one of the recommended Mozilla kits (see below).
+
+  At the end, some interesting statistics [Logjam: the latest TLS vulnerability explained](https://blog.cloudflare.com/logjam-the-latest-tls-vulnerability-explained/):
+
+  > _94% of the TLS connections to CloudFlare customer sites uses `ECDHE` (more precisely 90% of them being `ECDHE-RSA-AES` of some sort and 10% `ECDHE-RSA-CHACHA20-POLY1305`) and provides Forward Secrecy. The rest use static `RSA` (5.5% with `AES`, 0.6% with `3DES`)._
 
   **My recommendation:**
 
@@ -3135,6 +3142,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [Why use Ephemeral Diffie-Hellman](https://tls.mbed.org/kb/cryptography/ephemeral-diffie-hellman)
 - [Cipher Suite Breakdown](https://blogs.technet.microsoft.com/askpfeplat/2017/12/26/cipher-suite-breakdown/)
 - [Zombie POODLE and GOLDENDOODLE Vulnerabilities](https://blog.qualys.com/technology/2019/04/22/zombie-poodle-and-goldendoodle-vulnerabilities)
+- [Logjam: the latest TLS vulnerability explained](https://blog.cloudflare.com/logjam-the-latest-tls-vulnerability-explained/)
 - [Goodbye TLS_RSA](https://lightshipsec.com/goodbye-tls_rsa/)
 - [IETF drops RSA key transport from TLS 1.3](https://www.theinquirer.net/inquirer/news/2343117/ietf-drops-rsa-key-transport-from-ssl)
 - [Why TLS 1.3 is a Huge Improvement](https://securityboulevard.com/2018/12/why-tls-1-3-is-a-huge-improvement/)
@@ -3228,7 +3236,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > `DHE` is slower than `ECDHE`. If you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`. OWASP estimates that the TLS handshake with `DHE` hinders the CPU by a factor of 2.4 compared to `ECDHE`.
 
-  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack.
+  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack (both the client and the server need to be vulnerable in order for the attack to succeed because the server must accept to sign small `DHE_EXPORT` parameters, and the client must accept them as valid `DHE` parameters).
 
   > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
 
@@ -3310,8 +3318,10 @@ ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
 
 ###### External resources
 
-- [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
 - [Guide to Deploying Diffie-Hellman for TLS](https://weakdh.org/sysadmin.html)
+- [Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice](https://weakdh.org/imperfect-forward-secrecy-ccs15.pdf) <sup>[pdf]</sup>
+- [Weak Diffie-Hellman and the Logjam Attack](https://weakdh.org/)
+- [Logjam: the latest TLS vulnerability explained](https://blog.cloudflare.com/logjam-the-latest-tls-vulnerability-explained/)
 - [Pre-defined DHE groups](https://github.com/mozilla/ssl-config-generator/tree/master/docs)
 - [Why is Mozilla recommending predefined DHE groups?](https://security.stackexchange.com/questions/149811/why-is-mozilla-recommending-predefined-dhe-groups)
 - [Instructs OpenSSL to produce "DSA-like" DH parameters](https://security.stackexchange.com/questions/95178/diffie-hellman-parameters-still-calculating-after-24-hours/95184#95184)

@@ -545,7 +545,7 @@ For me, however, there hasn't been a truly in-depth and reasonably simple cheats
 
   > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, helpers, notes, and papers with countless examples. Many of them refer to external resources._
 
-There are a lot of things you can do to improve in your NGINX instance and this guide will attempt to cover as many of them as possible. For the most part it contains the most important things about NGINX for me. I think the configuration you provided should work without any talisman. That's why I created this repository.
+There are a lot of things you can do to improve in your NGINX instance and this guide will attempt to cover as many of them as possible. For the most part, it contains the most important things about NGINX for me. I think the configuration you provided should work without any talisman. That's why I created this repository.
 
 With this handbook you will explore the many features and capabilities of the NGINX. You'll find out, for example, how to testing the performance or how to resolve debugging problems. You will learn configuration guidelines, security design patterns, ways to handle common issues and how to stay out of them. I explained here a few best tips to avoid pitfalls and configuration mistakes.
 
@@ -557,7 +557,7 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of Web-based applications.
 
-This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand that also discusses heavyweight topics for advanced users so there is something for everyone.
+This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, that also discusses heavyweight topics for advanced users so there is something for everyone.
 
 I did my best to make this handbook a single and consistent. It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
@@ -589,7 +589,7 @@ Remember about the following most important things:
 + Both are important, but one does not lead to the other.
 ```
 
-I think, in the age of phishing, cyber attacks, ransomware, etc., you should keep your infrastructure as safe as possible but don't forget about it...
+I think, in the age of phishing, cyber attacks, ransomware, etc., you should take care of security of your infrastructure as hard as possible but don't forget about this one...
 
 <br>
 
@@ -1205,7 +1205,7 @@ I finally got **A+** grade and following scores:
 - Key Exchange = **90%**
 - Cipher Strength = **90%**
 
-Look also at the following recommendations. In my opinion, the right configuration of NGINX should give the following SSL Labs scores:
+Look also at the following recommendations. I believe the right configuration of NGINX should give the following SSL Labs scores and provides the best security for the most people:
 
 - **Recommended**
 

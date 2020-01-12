@@ -29,8 +29,9 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Transport Layer Security (TLS) - High Performance Browser Networking](https://hpbn.co/transport-layer-security-tls/)
 - [The Sorry State Of SSL](https://hynek.me/talks/tls/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
+- [Keyless SSL: The Nitty Gritty Technical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)
 
-If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/). It is one of the best (if not the best) tools to verify the SSL/TLS configuration of the HTTP server. I also recommend [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/). Both will tell you if you need to fix or update your config.
+If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/). It is one of the best (if not the best) tools to verify the SSL/TLS configuration of the HTTP server. I also recommend [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/). Both will tell you if you need to fix or update your config. For testing clients against bad SSL configs I always use [badssl.com](https://badssl.com/).
 
 #### TLS versions
 
@@ -95,7 +96,7 @@ Various cryptographic algorithms are used during establishing and later during t
 
 These four types of algorithms are combined into so-called cipher sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve.
 
-  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate. To use `RSA` cipher suites, you need an `RSA` certificate.
+  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate. To use `RSA` cipher suites, you need an `RSA` certificate. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`) (recommended), or `RSA` (2048 bits).
 
 Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 

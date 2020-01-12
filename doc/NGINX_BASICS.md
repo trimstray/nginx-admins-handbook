@@ -1326,6 +1326,8 @@ tcp_nopush on;    # with this, the tcp_nodelay does not really matter
 
 #### Request processing stages
 
+  > When building filtering rules (e.g. with `allow/deny`) you should always remember to test them and what is happening on each of phases (which modules are used). For additional information, look at [allow and deny](#allow-and-deny) section.
+
 There can be altogether 11 phases when NGINX handles (processes) a request:
 
 - `NGX_HTTP_POST_READ_PHASE` - first phase, read the request header
