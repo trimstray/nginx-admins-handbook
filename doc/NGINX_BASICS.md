@@ -2006,6 +2006,10 @@ The `ngx_http_rewrite_module` also provides additional directives:
 
   > _The `if` context in NGINX is provided by the rewrite module and this is the primary intended use of this context. Since NGINX will test conditions of a request with many other purpose-made directives, `if` **should not** be used for most forms of conditional execution. This is such an important note that the NGINX community has created a page called [if is evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/) (yes, it's really evil and in most cases not needed)._
 
+  A long time ago I found this:
+
+  > _That’s actually not true and shows you don’t understand the problem with it. When the `if` statement ends with `return` directive, there is no problem and it’s safe to use._
+
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
 Example of usage `if` and `set` directives:

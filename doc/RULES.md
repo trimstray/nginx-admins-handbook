@@ -711,7 +711,7 @@ server {
 - [Nginx one ip and multiple ssl certificates](https://serverfault.com/questions/766831/nginx-one-ip-and-multiple-ssl-certificates)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
 
-#### :beginner: Use geo/map modules instead of allow/deny
+#### :beginner: Use `geo/map` modules instead of `allow/deny`
 
 ###### Rationale
 
@@ -721,41 +721,9 @@ server {
 
   > These directives provides the perfect way to block invalid visitors e.g. with `ngx_http_geoip_module`. For example, `geo` module is great for conditionally allow or deny IP.
 
-  > `geo` module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast. If you have many unique values per networks, then this long load time is caused by searching duplicates of data in array. Otherwise, it may be caused by insertions to a radix tree.
+  > `geo` module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast.
 
-  > If you use `*ACCESS_PHASE` (e.g. `allow/deny` directives) remember that NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works). See [Allow and deny](NGINX_BASICS.md#allow-and-deny) chapter to learn more.
-
-  > I use both modules for a large lists. You should've thought about it because this rule requires to use several `if` conditions. I think that `allow/deny` directives are better solution for simple lists, after all. Take a look at the example below:
-
-```nginx
-# Allow/deny:
-location /internal {
-
-  include acls/internal.conf;
-  allow   192.168.240.0/24;
-  deny    all;
-
-  ...
-
-# vs geo/map:
-location /internal {
-
-  if ($globals_internal_map_acl) {
-    set $pass 1;
-  }
-
-  if ($pass = 1) {
-    proxy_pass http://localhost:80;
-  }
-
-  if ($pass != 1) {
-    return 403;
-  }
-
-  ...
-
-}
-```
+  > I use both modules for a large lists. For me, `allow/deny` directives are better solution (more plain) for simple lists. Remember that these directives may require the use of several `if` conditions.
 
 ###### Example
 
@@ -793,6 +761,38 @@ geo $globals_internal_geo_acl {
 }
 ```
 
+Take a look also at the example below (`allow/deny` vs `geo + if` statement):
+
+```nginx
+# allow/deny:
+location /internal {
+
+  include acls/internal.conf;
+  allow   192.168.240.0/24;
+  deny    all;
+
+  ...
+
+# vs geo/map:
+location /internal {
+
+  if ($globals_internal_map_acl) {
+    set $pass 1;
+  }
+
+  if ($pass = 1) {
+    proxy_pass http://localhost:80;
+  }
+
+  if ($pass != 1) {
+    return 403;
+  }
+
+  ...
+
+}
+```
+
 ###### External resources
 
 - [Nginx Basic Configuration (Geo Ban)](https://www.axivo.com/resources/nginx-basic-configuration.3/update?update=27)
@@ -800,6 +800,7 @@ geo $globals_internal_geo_acl {
 - [How Radix trees made blocking IPs 5000 times faster](https://blog.sqreen.com/demystifying-radix-trees/)
 - [Compressing Radix Trees Without (Too Many) Tears](https://medium.com/basecs/compressing-radix-trees-without-too-many-tears-a2e658adb9a0)
 - [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
+- [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
 - [ngx_http_geoip_module (from this handbook)](NGINX_BASICS.md#ngx-http-geoip-module)
 
 #### :beginner: Map all the things...
@@ -2089,11 +2090,12 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
-- **[≡ Hardening (29)](#hardening)**
+- **[≡ Hardening (30)](#hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
   * [Protect sensitive resources](#beginner-protect-sensitive-resources)
+  * [Take care about your ACL rules](#beginner-take-care-about-your-acl-rules)
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
@@ -2295,6 +2297,45 @@ location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htacces
 
 - [Hidden directories and files as a source of sensitive information about web application](https://github.com/bl4de/research/tree/master/hidden_directories_leaks)
 - [1% of CMS-Powered Sites Expose Their Database Passwords](https://feross.org/cmsploit/)
+
+#### :beginner: Take care about your ACL rules
+
+###### Rationale
+
+  > When planning for access control, consider several access options. NGINX provides `ngx_http_access_module`, `ngx_http_geo_module`, `ngx_http_map_module` or `ngx_http_auth_basic_module` modules for allow and deny permissions. Each of them secure sensitive directories.
+
+  > You should always test your rules:
+  >
+  >   - check all used directives and their occurrence/priorites at all [levels of request processing](NGINX_BASICS.md#request-processing-stages)
+  >   - verify HTTP [response codes decision diagram](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_decision_diagram.png)
+  >   - send testing requests to validate allowing or denying users access to web resources (also from external/blacklisted IP)
+  >   - send testing requests to check response codes for all protected resources
+  >   - less is more, you should minimize any user’s access to the critical resources
+  >   - add only really required IP addresses and check their owner in the whois database
+  >   - regularly audit your access control rules to ensure they are current
+
+  > If you use `*ACCESS_PHASE` (e.g. `allow/deny` directives) remember that NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works). See [Allow and deny](NGINX_BASICS.md#allow-and-deny) chapter to learn more. It's important because this may break your security layers.
+
+  > However, it is not recommended to use `if` statements but use of regular expressions may be a bit more flexible. `if` (for more information see [this](#if-break-and-set)).
+
+###### Example
+
+- [Restricting access with basic authentication](HELPERS.md#restricting-access-with-basic-authentication)
+- [Restricting access with client certificate](HELPERS.md#restricting-access-with-client-certificate)
+- [Restricting access by geographical location](HELPERS.md#restricting-access-by-geographical-location)
+- [Blocking/allowing IP addresses](HELPERS.md#blockingallowing-ip-addresses)
+- [Limiting referrer spam](HELPERS.md#limiting-referrer-spam)
+- [Limiting the rate of requests with burst mode](HELPERS.md#limiting-the-rate-of-requests-with-burst-mode)
+- [Limiting the rate of requests with burst mode and nodelay](HELPERS.md#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+- [Limiting the rate of requests per IP with geo and map](HELPERS.md#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
+- [Limiting the number of connections](HELPERS.md#limiting-the-number-of-connections)
+
+###### External resources
+
+- [Fastly - About ACLs](https://docs.fastly.com/en/guides/about-acls)
+- [Restrict allowed HTTP methods in Nginx](https://bjornjohansen.no/restrict-allowed-http-methods-in-nginx)
+- [Protect sensitive resources (from this handbook)](RULES.md#beginner-protect-sensitive-resources)
+- [Allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
 
 #### :beginner: Hide Nginx version number
 
@@ -3816,14 +3857,71 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
   > However, some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
 
+  > However, it is not recommended to use `if` statements, instead you can use `limit_except` directive (should be faster than regexp evaluation), but remember, it has limited use: inside `location` only. I think, use of regular expressions in this case is a bit more flexible.
+
+  > Before chosing to configure either method, note this incredible explanation of the [difference between 401, 403 and 405 HTTP response codes](https://serverfault.com/questions/905708/using-limit-except-to-deny-all-except-get-head-and-post/905922#905922) (with example that combines the 401, 403 and 405 responses and should clarify their precendence in a typical configuration). There is a brief description of HTTP method differences:
+  >
+  >   - 0: A request comes in...
+  >   - 1: `405 Method Not Allowed` refers to the server not allowing that method on that uri
+  >   - 2: `401 Unauthorized` refers to the user is not authenticated
+  >   - 3: `403 Forbidden` refers to the accessing client not being authorized to do that request
+
+  > In my opinion, if a HTTP resource is not able to handle a request with the given HTTP method, it should send an `Allow` header to list the allowed HTTP methods. For this, you may use `add_header` but remember of [potential problems](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly).
+
 ###### Example
 
+Recommended configuration:
+
 ```nginx
+# If we are in server context, it’s good to use construction like this:
 add_header Allow "GET, HEAD, POST" always;
 
 if ($request_method !~ ^(GET|HEAD|POST)$) {
 
+  # You can also use 'add_header' inside 'if' context instead of outside 'if':
+  # add_header Allow "GET, HEAD, POST" always;
   return 405;
+
+}
+```
+
+Alternative configuration (only inside `location` context):
+
+```nginx
+# Note: allowing the GET method makes the HEAD method also allowed.
+location /api {
+
+  limit_except GET POST {
+
+    allow 192.168.1.0/24;
+    deny  all;  # always return 403 error code
+
+    # or:
+    # auth_basic "Restricted access";
+    # auth_basic_user_file /etc/nginx/htpasswd;
+
+    ...
+
+  }
+
+}
+```
+
+But never do nothing like this one (it is highly not recommend!) with mixed `allow/deny` and `return` directives:
+
+```nginx
+location /api {
+
+  limit_except GET POST {
+
+    allow 192.168.1.0/24;
+    # It's only example (return is not allowed in limit_except),
+    # all clients (also from 192.168.1.0/24) might get 405 error code if it worked:
+    return 405;
+
+    ...
+
+  }
 
 }
 ```
@@ -3833,6 +3931,8 @@ if ($request_method !~ ^(GET|HEAD|POST)$) {
 - [Hypertext Transfer Protocol (HTTP) Method Registry](https://www.iana.org/assignments/http-methods/http-methods.xhtml) <sup>[IANA]</sup>
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
+- [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
 
 #### :beginner: Prevent caching of sensitive data
 

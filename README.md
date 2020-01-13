@@ -413,11 +413,12 @@
   * [Activate the cache for connections to upstream servers](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)
   * [Make an exact location match to speed up the selection process](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](doc/RULES.md#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
-- **[Hardening (29)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
+- **[Hardening (30)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
   * [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](doc/RULES.md#beginner-disable-unnecessary-modules)
   * [Protect sensitive resources](doc/RULES.md#beginner-protect-sensitive-resources)
+  * [Take care about your ACL rules](doc/RULES.md#beginner-take-care-about-your-acl-rules)
   * [Hide Nginx version number](doc/RULES.md#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](doc/RULES.md#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)
@@ -527,7 +528,7 @@ An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https:/
 
 ## Prologue
 
-When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it but I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
+When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it, forum posts on the web about every conceivable problem was great. However, I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
 
 I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me some of the documents treated the subject lightly.
 
@@ -544,7 +545,7 @@ These are definitely the best assets for us and in the first place you should se
 
 ## Why I created this handbook
 
-For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. Configuration of the NGINX can be tricky sometimes. The documentation isn't as pretty as other projects and should certainly include more robust examples.
+For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. Configuration of the NGINX can be tricky sometimes and you really need to get into the syntax and concepts to get an understanding tricks, loopholes, and mechanisms. The documentation isn't as pretty as other projects and should certainly include more robust examples.
 
   > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, notes, and helpers with countless examples. Many of them refer to external resources._
 
@@ -1053,6 +1054,7 @@ Existing chapters:
 <summary><b>Hardening</b></summary><br>
 
   - [x] _Keep NGINX up-to-date_
+  - [x] _Take care about your ACL rules_
   - [x] _Use only the latest supported OpenSSL version_
   - [x] _Remove support for legacy and risky HTTP headers_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
@@ -1095,13 +1097,13 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
 
-  > This checklist contains [all rules (75)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (76)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 30 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 31 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 25 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 8 | as an option to implement or use (not required) |
@@ -1119,6 +1121,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Protect sensitive resources](doc/RULES.md#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Take care about your ACL rules](doc/RULES.md#beginner-take-care-about-your-acl-rules)<br><sup>Test your access-control lists and to stay secure.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Remove support for legacy and risky HTTP headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)<br><sup>Supports for the offending headers should be removed.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)<br><sup>Protects your website for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1698,7 +1701,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > A few things for troubleshooting configuration problems.
 - **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
-- **[Hardening (29)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
+- **[Hardening (30)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.
 - **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.
