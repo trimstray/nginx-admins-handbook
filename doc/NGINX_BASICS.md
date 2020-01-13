@@ -527,11 +527,11 @@ Moreover, it is important to mention about `worker_cpu_affinity` directive (it's
 
 CPU affinity is represented as a bitmask (given in hexadecimal), with the lowest order bit corresponding to the first logical CPU and the highest order bit corresponding to the last logical CPU.
 
-[Here](https://www.kutukupret.com/2010/11/18/nginx-worker_cpu_affinity/) you will find an amazing explanation of this. There is a [worker_cpu_affinity configuration generator](https://github.com/cubicdaiya/nwcagen) for NGINX. After all, I would recommend to let the OS scheduler to do the work.
+[Here](https://www.kutukupret.com/2010/11/18/nginx-worker_cpu_affinity/) you will find an amazing explanation of this. There is a [worker_cpu_affinity configuration generator](https://github.com/cubicdaiya/nwcagen) for NGINX. After all, I would recommend to let the OS scheduler to do the work because there is no reason to ever set it up during normal operation.
 
 ###### Shutdown of worker processes
 
-This directive should come in useful if you want to tweak NGINX’s shutdown process, particularly if other servers or load balancers are relying upon predictable restart times or if it takes a long time to close worker processes.
+This should come in useful if you want to tweak NGINX’s shutdown process, particularly if other servers or load balancers are relying upon predictable restart times or if it takes a long time to close worker processes.
 
 The `worker_shutdown_timeout` directive configures a timeout to be used when gracefully shutting down worker processes.  When the timer expires, NGINX will try to close all the connections currently open to facilitate shutdown.
 
@@ -657,7 +657,7 @@ Look also what the official documentation says about it:
 
   > _Because the number of full‑weight processes is small (usually only one per CPU core) and constant, much less memory is consumed and CPU cycles aren’t wasted on task switching. The advantages of such an approach are well‑known through the example of NGINX itself. It successfully handles millions of simultaneous requests and scales very well._
 
-I must not forget to mention here about Non-Blocking and 3rd party modules (from official documentation):
+I must not forget to mention here about Non-Blocking and 3rd party modules (also from official documentation):
 
   > _Unfortunately, many third‑party modules use blocking calls, and users (and sometimes even the developers of the modules) aren’t aware of the drawbacks. Blocking operations can ruin NGINX performance and must be avoided at all costs._
 
@@ -1089,10 +1089,10 @@ NGINX provides the two layers to enable Keep-Alive:
 
   ```nginx
   # Default: disable
-  keepalive         32;
+  keepalive           32;
   ```
 
-NGINX, by default, only talks HTTP/1.0 to the upstream servers. To keep TCP connection alive both upstream section and origin server should be configured to not finalise the connection.
+NGINX, by default, only talks on HTTP/1.0 to the upstream servers. To keep TCP connection alive both upstream section and origin server should be configured to not finalise the connection.
 
   > Please keep in mind that keepalive is a feature of HTTP 1.1, NGINX uses HTTP 1.0 per default for upstreams.
 
@@ -1326,7 +1326,7 @@ tcp_nopush on;    # with this, the tcp_nodelay does not really matter
 
 #### Request processing stages
 
-  > When building filtering rules (e.g. with `allow/deny`) you should always remember to test them and what is happening on each of phases (which modules are used). For additional information, look at [allow and deny](#allow-and-deny) section.
+  > When building filtering rules (e.g. with `allow/deny`) you should always remember to test them and to know what happens at each of the phases (which modules are used). For additional information about the potential problems, look at [allow and deny](#allow-and-deny) section.
 
 There can be altogether 11 phases when NGINX handles (processes) a request:
 
@@ -1612,7 +1612,7 @@ The process of choosing NGINX location block is as follows (a detailed explanati
 
 4. If no regular expression locations are found that match the request URI, the previously stored prefix location is selected to serve the request
 
-In order to better understand how this process work please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
+In order, to better understand how this process work, please see this short cheatsheet that will allow you to design your location blocks in a predictable way:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_location_cheatsheet.png" alt="nginx-location-cheatsheet">
@@ -1681,7 +1681,7 @@ server {
 }
 ```
 
-And here's the table with the results:
+And look the table with the results:
 
 | <b>URL</b> | <b>LOCATIONS FOUND</b> | <b>FINAL MATCH</b> |
 | :---         | :---         | :---         |
@@ -1708,7 +1708,10 @@ And here's the table with the results:
 
 ##### `rewrite` vs `return`
 
-Generally there are two ways of implementing redirects in NGINX with: `rewrite` and `return`.
+Generally there are two ways of implementing redirects in NGINX:
+
+- with `rewrite`
+- and `return`
 
 These directives (comes from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
 
@@ -2289,7 +2292,7 @@ server {
 If you generate a reqeust:
 
 ```bash
-curl -i https://example.com
+curl -i https://example.com/test
 HTTP/2 200
 date: Wed, 11 Nov 2018 10:02:45 GMT
 content-length: 13
@@ -2305,7 +2308,7 @@ Why? Look at [Request processing stages](doc/NGINX_BASICS.md#request-processing-
 
   > **:bookmark: [Use `$request_uri` to avoid using regular expressions - Performance - P2](RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)**
 
-`$request_uri` is the original request (for example, `/foo/bar.php?arg=baz` includes arguments and can't be modified) but `$uri` refers to the altered URI so `$uri` is not equivalent to `$request_uri`.
+`$request_uri` is the original request (for example `/foo/bar.php?arg=baz` includes arguments and can't be modified) but `$uri` refers to the altered URI so `$uri` is not equivalent to `$request_uri`.
 
 See [this](https://stackoverflow.com/a/48709976) great and short explanation by [Richard Smith](https://stackoverflow.com/users/4862445/richard-smith):
 
@@ -2336,11 +2339,7 @@ Take a look at the following table:
 | `https://example.com/foo/bar?do=test` | `/foo/bar?do=test` | `/foo/bar` |
 | `https://example.com/rfc2616-sec3.html#sec3.2` | `/rfc2616-sec3.html` | `/rfc2616-sec3.html` |
 
-Remember:
-
-  > Another way to repeat the location is to use the `proxy_pass` directive.
-
-Which is quite easy:
+Another way to repeat the location is to use the `proxy_pass` directive which is quite easy:
 
 ```nginx
 location /app/ {
@@ -2745,7 +2744,7 @@ In my opinion, the two most important things related to the reverse proxy are:
 - the way of requests forwarded to the backend
 - the type of headers forwarded to the backend
 
-If we talking about security of the proxy server look at this recommendations of the National Institute of Standards and Technology about [Guidelines on Securing Public Web Servers](https://www.nist.gov/publications/guidelines-securing-public-web-servers). This document is a good starting point. Is old but still has interesting solutions and suggestions.
+If we talking about security of the proxy server look at this recommendations about [Guidelines on Securing Public Web Servers](https://www.nist.gov/publications/guidelines-securing-public-web-servers) <sup>[NIST]</sup>. This document is a good starting point. Is old but still has interesting solutions and suggestions.
 
 There is a [great explanation](https://serverfault.com/a/25095) about the benefits of improving security through the use of a reverse proxy server.
 
@@ -2985,7 +2984,7 @@ location /foo/ {
 }
 ```
 
-See how `bar` and `path` concatenates. If one go to address `http://yourserver.com/foo/path/id?param=1` NGINX will proxy request to `http://127.0.0.1/barpath/id?param=1`.
+See how `bar` and `path` concatenates. If one go to `http://yourserver.com/foo/path/id?param=1` NGINX will proxy request to `http://127.0.0.1/barpath/id?param=1`.
 
 As stated in NGINX documentation if `proxy_pass` used without URI (i.e. without path after `server:port`) NGINX will put URI from original request exactly as it was with all double slashes, `../` and so on.
 
@@ -3264,7 +3263,7 @@ There is one thing you must watch out for if you use `add_header` directive (als
 - [Nginx add_header configuration pitfall](https://blog.g3rt.nl/nginx-add_header-pitfall.html)
 - [Be very careful with your add_header in Nginx! You might make your site insecure](https://www.peterbe.com/plog/be-very-careful-with-your-add_header-in-nginx)
 
-This is described in the official documentation:
+This situation is described in the official documentation:
 
   > _There could be several `add_header` directives. These directives are inherited from the previous level if and only if there are no `add_header` directives defined on the current level._
 
@@ -3454,7 +3453,7 @@ It is similar to the Generic Hash method because you can also specify a unique h
 
   > Mainly this helps reducing the mess on the configuration made by a lot of `location` blocks with similar configurations.
 
-First of all create a map:
+First of all, create a map:
 
 ```nginx
 map $request_uri $bck_testing_01 {
@@ -3521,7 +3520,7 @@ NGINX has following variables (unique keys) that can be used in a rate limiting 
 | `$request_uri` | full original request URI (with arguments) |
 | `$query_string` | arguments in the request line |
 
-<sup><i>Please see [official doc](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
+<sup><i>Please see [official documentation](https://nginx.org/en/docs/http/ngx_http_core_module.html#variables) for more information about variables.</i></sup>
 
 ##### Directives, keys, and zones
 
@@ -3532,7 +3531,7 @@ NGINX also provides following keys:
 | `limit_req_zone` | stores the current number of excessive requests |
 | `limit_conn_zone` | stores the maximum allowed number of connections |
 
-and directives:
+And directives:
 
 | <b>DIRECTIVE</b> | <b>DESCRIPTION</b> |
 | :---         | :---         |

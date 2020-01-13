@@ -398,10 +398,11 @@
   * [Improve debugging by disable daemon, master process, and all workers except one](doc/RULES.md#beginner-improve-debugging-by-disable-daemon-master-process-and-all-workers-except-one)
   * [Use core dumps to figure out why NGINX keep crashing](doc/RULES.md#beginner-use-core-dumps-to-figure-out-why-nginx-keep-crashing)
   * [Use mirror module to copy requests to another backend](doc/RULES.md#beginner-use-mirror-module-to-copy-requests-to-another-backend)
-- **[Performance (12)](doc/RULES.md#performance)**<a id="toc-performance"></a>
+- **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance"></a>
   * [Adjust worker processes](doc/RULES.md#beginner-adjust-worker-processes)
   * [Use HTTP/2](doc/RULES.md#beginner-use-http2)
   * [Maintaining SSL sessions](doc/RULES.md#beginner-maintaining-ssl-sessions)
+  * [Enable OCSP Stapling](doc/RULES.md#beginner-enable-ocsp-stapling)
   * [Use exact names in a server_name directive where possible](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)
   * [Avoid checks server_name with if directive](doc/RULES.md#beginner-avoid-checks-server_name-with-if-directive)
   * [Use $request_uri to avoid using regular expressions](doc/RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)
@@ -534,6 +535,7 @@ Of course, [NGINX Official Documentation](https://nginx.org/en/docs/) is the bes
 - [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html)
 - [Nginx Guts](http://www.nginxguts.com/)
 - [Nginx discovery journey](http://www.nginx-discovery.com/)
+- [Nginx Secure Web Server](https://calomel.org/nginx.html)
 - [Emiller’s Guide To Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide.html)
 - [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html)
 
@@ -588,7 +590,7 @@ Remember about the following most important things:
 ```diff
 + Security is important for ethical reasons. Compliance is important for legal reasons.
 + The key to workplace contentment is understanding they are unrelated to each other.
-+ Both are important, but one does not lead to the other.
++ Both are important, but one does not lead to the other (compliance != security).
 ```
 
 I think, in the age of phishing, cyber attacks, ransomware, etc., you should take care of security of your infrastructure as hard as possible but don't ever forget about this one...
@@ -1033,6 +1035,7 @@ Existing chapters:
 <details>
 <summary><b>Performance</b></summary><br>
 
+  - [x] _Enable OCSP Stapling_
   - [ ] _Avoid multiple index directives_
   - [x] _Use $request_uri to avoid using regular expressions_
   - [x] _Use try_files directive to ensure a file exists_
@@ -1052,7 +1055,6 @@ Existing chapters:
   - [x] _Use only the latest supported OpenSSL version_
   - [x] _Remove support for legacy and risky HTTP headers_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
-  - [ ] _Enable OCSP Stapling_
   - [x] _Prevent caching of sensitive data_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
@@ -1092,14 +1094,14 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
 
-  > This checklist contains [all rules (74)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (75)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 30 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 24 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 25 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 8 | as an option to implement or use (not required) |
 
@@ -1142,6 +1144,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use reload option to change configurations on the fly](doc/RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)<br><sup>Graceful reload of the configuration without stopping the server and dropping any packets.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)<br><sup>The by far simplest and fastest because there is no regexp that has to be evaluated.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](doc/RULES.md#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Enable OCSP Stapling](doc/RULES.md#beginner-enable-ocsp-stapling)<br><sup>Enable to reduce the cost of an OCSP validation.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use exact names in a server_name directive where possible](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](doc/RULES.md#beginner-avoid-checks-server_name-with-if-directive)<br><sup>It decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use $request_uri to avoid using regular expressions](doc/RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)<br><sup>By default, the regex is costly and will slow down the performance.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
@@ -1453,6 +1456,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://istlsfastyet.com/"><b>TLS has exactly one performance problem: it is not used widely enough</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/projects/best-practices/"><b>SSL/TLS Deployment Best Practices</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/projects/rating-guide/index.html"><b>SSL Server Rating Guide</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssl-pulse/"><b>SSL Pulse</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.upguard.com/blog/how-to-build-a-tough-nginx-server-in-15-steps"><b>How to Build a Tough NGINX Server in 15 Steps</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.cyberciti.biz/tips/linux-unix-bsd-nginx-webserver-security.html"><b>Top 25 Nginx Web Server Best Security Practices</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://calomel.org/nginx.html"><b>Nginx Secure Web Server</b></a><br>
@@ -1691,7 +1695,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
-- **[Performance (12)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
+- **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (29)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Hardening approaches and security standards.

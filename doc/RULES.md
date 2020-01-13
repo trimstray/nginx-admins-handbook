@@ -1456,10 +1456,11 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
-- **[≡ Performance (12)](#performance)**
+- **[≡ Performance (13)](#performance)**
   * [Adjust worker processes](#beginner-adjust-worker-processes)
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
+  * [Enable OCSP Stapling](#beginner-enable-ocsp-stapling)
   * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
   * [Use $request_uri to avoid using regular expressions](#beginner-use-request_uri-to-avoid-using-regular-expressions)
@@ -1593,6 +1594,39 @@ ssl_buffer_size     1400;
 - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
 - [ssl_session_cache in Nginx and the ab benchmark](https://www.peterbe.com/plog/ssl_session_cache-ab)
 - [Improving OpenSSL Performance](https://software.intel.com/en-us/articles/improving-openssl-performance)
+
+#### :beginner: Enable OCSP Stapling
+
+###### Rationale
+
+  > OCSP Stapling extension is configured for better performance (is designed to reduce the cost of an OCSP validation) and user privacy is still maintained.
+
+  > OCSP stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - 8. Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
+
+  > NGINX generates this list from the file of certificates pointed to by `ssl_client_certificates`. You need to send this list or switch off `ssl_verify_client`.
+
+###### Example
+
+```nginx
+# Turn on OCSP stapling:
+ssl_stapling on;
+# Enable the server to check OCSP:
+ssl_stapling_verify on;
+# Point to a trusted CA certificate chain (root + intermediate in that order from top to bottom) file:
+ssl_trusted_certificate /etc/nginx/ssl/root-inter-CA-chain.pem
+```
+
+###### External resources
+
+- [RFC 2560 - X.509 Internet Public Key Infrastructure Online Certificate Status Protocol - OCSP](https://tools.ietf.org/html/rfc2560)
+- [OCSP Stapling; SSL with added speed and privacy](https://scotthelme.co.uk/ocsp-stapling-speeding-up-ssl/)
+- [High-reliability OCSP stapling and why it matters](https://blog.cloudflare.com/high-reliability-ocsp-stapling/)
+- [OCSP Stapling: How CloudFlare Just Made SSL 30% Faster](https://blog.cloudflare.com/ocsp-stapling-how-cloudflare-just-made-ssl-30/)
+- [The case for "OCSP Must-Staple"](https://www.grc.com/revocation/ocsp-must-staple.htm)
+- [Page Load Optimization: OCSP Stapling](https://www.ssl.com/article/page-load-optimization-ocsp-stapling/)
+- [ImperialViolet - No, don't enable revocation checking](https://www.imperialviolet.org/2014/04/19/revchecking.html)
+- [The Problem with OCSP Stapling and Must Staple and why Certificate Revocation is still broken](https://blog.hboeck.de/archives/886-The-Problem-with-OCSP-Stapling-and-Must-Staple-and-why-Certificate-Revocation-is-still-broken.html)
+- [Priming the OCSP cache in Nginx](https://unmitigatedrisk.com/?p=241)
 
 #### :beginner: Use exact names in a `server_name` directive where possible
 

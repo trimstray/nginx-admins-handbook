@@ -258,6 +258,8 @@ apt-get install nginx
 pkg install nginx
 ```
 
+  > If you install NGINX on FreeBSD/OpenBSD please see [Tuning FreeBSD for the highload](http://nginx.org/en/docs/freebsd_tuning.html).
+
 #### Installing from source
 
   > **:bookmark: [Always keep NGINX up-to-date - Hardening - P1](RULES.md#beginner-always-keep-nginx-up-to-date)**
@@ -377,9 +379,9 @@ If you download and compile above sources the good point is to install additiona
 | | | `ncurses` | for `ngx_installer.sh` |
 
 <sup><i>* If you don't use from sources.</i></sup><br>
-<sup><i>\*\*The package list for FreeBSD may be incomplete.</i></sup>
+<sup><i>\*\* The package list for FreeBSD may be incomplete.</i></sup>
 
-Shell one-liners example:
+Shell one-liners:
 
 ```bash
 # Ubuntu/Debian
@@ -406,7 +408,7 @@ pkg install jq git wget ncurses texinfo gettext gettext-tools
 
 ##### Patches
 
-- [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch) - to hide NGINX `Server` header (and more), see also rule: [Hide Nginx server signature](RULES.md#beginner-hide-nginx-server-signature)
+- [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch) - to hide NGINX `Server` header (and more), see also this rule: [Hide Nginx server signature](RULES.md#beginner-hide-nginx-server-signature)
 - [TLSv1.3 and CCM ciphers](#tlsv13-and-ccm-ciphers) - to enable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` cipher suites
 
 ##### 3rd party modules
@@ -571,7 +573,7 @@ You should also recompile libraries with `-g` compiler option and optional with 
 
 SystemTap is a scripting language and tool for dynamically instrumenting running production Linux kernel-based operating systems. It's required for `openresty-systemtap-toolkit` for OpenResty.
 
-  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) for install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
+  > It's good [all-in-one tutorial](https://gist.github.com/notsobad/b8f5ebb9b99f3a818f30) about install and configure SystemTap on CentOS 7/Ubuntu distributions. In case of problems please see this [SystemTap](https://github.com/shawfdong/hyades/wiki/SystemTap) document.
 
   > Hint: Do not specify `--with-debug` while profiling. It slows everything down
 significantly.
@@ -2519,20 +2521,6 @@ tree
 
 </details>
 
-#### Analyse configuration
-
-It is an essential way for testing NGINX configuration:
-
-```bash
-nginx -t -c /etc/nginx/nginx.conf
-```
-
-An external tool for analyse NGINX configuration is `gixy`. The main goal of this tool is to prevent security misconfiguration and automate flaw detection:
-
-```bash
-gixy /etc/nginx/nginx.conf
-```
-
 #### Installation Nginx on FreeBSD 11.3
 
   > The build and installation process is very similar to [Installation Nginx on CentOS 7](#installation-nginx-on-centos-7). However, I will only specify the most important changes. On FreeBSD you can also build NGINX from ports.
@@ -3176,7 +3164,7 @@ nginx -t -c $NGX_CONF
 
 #### Installation Nginx on FreeBSD 12.1 (from ports)
 
-  > The installation process is different from the previous ones, in my opinion is much simpler, however, has some limitations. This method is still work in progress.
+  > The installation process is different from the previous ones, in my opinion is much simpler, however, has some limitations.
 
 For more information please see:
 
@@ -3627,6 +3615,20 @@ nginx -t -c $NGX_CONF
 ```
 
 </details>
+
+#### Analyse configuration
+
+It is an essential way for testing NGINX configuration:
+
+```bash
+nginx -t -c /etc/nginx/nginx.conf
+```
+
+An external tool for analyse NGINX configuration is `gixy`. The main goal of this tool is to prevent security misconfiguration and automate flaw detection:
+
+```bash
+gixy /etc/nginx/nginx.conf
+```
 
 #### Monitoring
 
@@ -5014,7 +5016,7 @@ git clone https://github.com/jseidl/GoldenEye && cd GoldenEye
 
 ##### Show information about processes
 
-with `ps`:
+With `ps`:
 
 ```bash
 # For all processes (master + workers):
@@ -5037,7 +5039,7 @@ ps aux | grep "[n]ginx: worker"
 ps -eo pid,comm,euser,supgrp | grep nginx
 ```
 
-with `top`:
+With `top`:
 
 ```bash
 # For all processes (master + workers):
@@ -5058,7 +5060,7 @@ top -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}'
 
 ##### Check memory usage
 
-with `ps_mem`:
+With `ps_mem`:
 
 ```bash
 # For all processes (master + workers):
@@ -5078,7 +5080,7 @@ ps_mem -s -p $(pgrep -f "nginx: worker" | sed '$!s/$/,/' | tr -d '\n')
 ps_mem -s -p $(ps axw -o pid,command | awk '($2 " " $3 ~ "nginx: worker") { print $1}' | sed '$!s/$/,/' | tr -d '\n')
 ```
 
-with `pmap`:
+With `pmap`:
 
 ```bash
 # For all processes (master + workers):
@@ -5529,7 +5531,7 @@ gdb -p $(pgrep -f "nginx: master") -batch -x nginx.gdb
 less nginx.conf.running
 ```
 
-or other solution:
+Or other solution:
 
 ```gdb
 # Save gdb functions to a file, e.g. nginx.gdb:
@@ -5563,7 +5565,7 @@ First of all a buffer for debug logging should be enabled:
 error_log   memory:64m debug;
 ```
 
-and:
+Next:
 
 ```gdb
 # Save gdb functions to a file, e.g. nginx.gdb:
@@ -5808,7 +5810,7 @@ server_name example.com;
 
 ##### Restricting access with client certificate
 
-If the client-side certificate failed to authenticate, NGINX show a _400 No required SSL certificate was sent_.
+If the client-side certificate failed to authenticate, NGINX show: `400 No required SSL certificate was sent`.
 
 ```nginx
 server {
@@ -6777,7 +6779,7 @@ location /some/path/ {
 
 ##### Proxy/rewrite without changing the original URL (in browser)
 
-  > Generally, this is not recommend (possible), because you're changing hostnames. Browser security is tied to it, as is webserver configuration.
+  > Generally, this is not recommend, because you're changing hostnames. Browser security is tied to it, as is webserver configuration.
 
   > You can rewrite URLs within same hostname, but changing hostnames requires redirect or using a frame. You can change hostname only if you have the same backends under control.
 
