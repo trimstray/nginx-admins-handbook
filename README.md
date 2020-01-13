@@ -261,6 +261,7 @@
     * [Testing SSL connection with SNI support](doc/HELPERS.md#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](doc/HELPERS.md#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](doc/HELPERS.md#testing-ssl-connection-with-specific-cipher)
+    * [Testing OCSP Stapling](doc/HELPERS.md#testing-ocsp-stapling)
     * [Verify 0-RTT](doc/HELPERS.md#verify-0-rtt)
     * [Load testing with ApacheBench (ab)](doc/HELPERS.md#load-testing-with-apachebench-ab)
       * [Standard test](doc/HELPERS.md#standard-test)

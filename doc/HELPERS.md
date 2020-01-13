@@ -50,6 +50,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
+    * [Testing OCSP Stapling](#testing-ocsp-stapling)
     * [Verify 0-RTT](#verify-0-rtt)
     * [Load testing with ApacheBench (ab)](#load-testing-with-apachebench-ab)
       * [Standard test](#standard-test)
@@ -3869,6 +3870,13 @@ openssl s_client -tls1_2 -connect <server_name>:<port>
 
 ```bash
 openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
+```
+
+###### Testing OCSP Stapling
+
+```bash
+openssl s_client -connect example.com:443 -tls1 -tlsextdebug -status
+echo | openssl s_client -connect example.com:443 -status 2> /dev/null | grep -A 17 'OCSP response:'
 ```
 
 ###### Verify 0-RTT
