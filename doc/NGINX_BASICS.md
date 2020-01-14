@@ -1804,6 +1804,8 @@ Note:
 
 Official documentation has a great tutorials about [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html).
 
+I also recommend [Clean Url Rewrites Using Nginx](https://www.codesmite.com/article/clean-url-rewrites-using-nginx).
+
 Finally, look at difference between `last` and `break` flags in action:
 
 - `last` directive:
