@@ -29,6 +29,9 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Transport Layer Security (TLS) - High Performance Browser Networking](https://hpbn.co/transport-layer-security-tls/)
 - [Keyless SSL: The Nitty Gritty Technical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)
 - [The Sorry State Of SSL](https://hynek.me/talks/tls/)
+- [How does SSL/TLS work?](https://security.stackexchange.com/questions/20803/how-does-ssl-tls-work)
+- [TLS in HTTP/2](https://daniel.haxx.se/blog/2015/03/06/tls-in-http2/)
+- [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
 
@@ -78,6 +81,12 @@ For TLS 1.3 is different:
 </p>
 
 By the way, the [How SSL-TLS Works](https://ldapwiki.com/wiki/How%20SSL-TLS%20Works) from ldapwiki is an amazing explanation.
+
+In which layer is TLS situated within the TCP/IP stack? See this diagram:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tcp_tls_http.png" alt="tcp_tls_http">
+</p>
 
 #### Cipher suites
 

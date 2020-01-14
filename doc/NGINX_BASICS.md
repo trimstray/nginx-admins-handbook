@@ -1572,7 +1572,7 @@ And now, a short introduction to determines location priority:
 
 - if regular expression searching yielded a match, that result is used, otherwise, the match from prefix searching is used
 
-So look at this example, it comes from the [Nginx documentation - ngx_http_core_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
+So, look at this example, it comes from the [Nginx documentation - ngx_http_core_module](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
 
 ```
 location = / {

@@ -89,6 +89,8 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 #### HTTP/2
 
+  > **:bookmark: [Use HTTP/2 - Performance - P1](RULES.md##beginner-use-http2)**
+
 HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
 
 Look at the following comparison:
