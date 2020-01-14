@@ -625,6 +625,20 @@ NGINX means connections as follows (the following status information is provided
 
   > Waiting connections those are keepalive connections. They are usually not a problem. But if you want to lower the number reduce `keepalive_timeout` directive.
 
+Be sure to recommend to read [this](https://trac.nginx.org/nginx/ticket/1610#comment:1):
+
+  > Writing connections counter increasing might indicate one of the following:
+  >
+  >   - crashed or killed worker processes. This is unlikely in your case though, as this would also result in other values growing as well, notably `Waiting`
+  >   - a real socket leak somewhere. These usually results in sockets in `CLOSE_WAIT` state, try looking at `netstat` output without `grep -v CLOSE_WAIT` filter. Leaked sockets are reported by NGINX during graceful shutdown of a worker process (for example, after a configuration reload) - if there are any leaked sockets, NGINX will write `open socket ... left in connection ...` alerts to the error log.
+  >
+  > To further investigate things, please do the following:
+  >   - upgrade to the latest mainline versions, without any 3rd party modules, and check if you are able to reproduce the issue
+  >   - try disabling HTTP/2 to see if it fixes the issue
+  >   - check if you are seeing `open socket ... left in connection ...` alerts on configuration reload
+
+See also [Debugging socket leaks (from this handbook)](HELPERS.md#debugging-socket-leaks).
+
 ##### Event-Driven architecture
 
   > [Thread Pools in NGINX Boost Performance 9x!](https://www.nginx.com/blog/thread-pools-boost-performance-9x/) - this official article is an amazing explanation about thread pools and generally about handling connections. I also recommend [Inside NGINX: How We Designed for Performance & Scale](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale). Both are really great.

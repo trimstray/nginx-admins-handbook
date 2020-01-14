@@ -110,6 +110,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
       * [Dump configuration from a running process](#dump-configuration-from-a-running-process)
       * [Show debug log in memory](#show-debug-log-in-memory)
       * [Core dump backtrace](#core-dump-backtrace)
+    * [Debugging socket leaks](#debugging-socket-leaks)
   * [Shell aliases](#shell-aliases)
   * [Configuration snippets](#configuration-snippets)
     * [Nginx server header removal](#nginx-server-header-removal)
@@ -5438,9 +5439,21 @@ httpry -i eth0 -o output.dump -m get,head
   * `-m` - monitor only specific HTTP methods
   * `-o` - output txt file, `-b` - output binary file (raw HTTP packets)
 
+##### Check CLOSE_WAIT connections
+
+```bash
+netstat -anp | grep CLOSE_WAIT | grep -c nginx
+```
+
+See also [this](https://github.com/openresty/openresty/issues/323#issuecomment-352516797) great answer by [agentzh](https://github.com/agentzh):
+
+  > _If your NGINX worker processes' CPU usage is high when you see `CLOSE_WAIT` connections are growing, then you should sample a CPU flamegraph with `perf` or with `systemtap` (like `sample-bt`). If your NGINX worker proesses' CPU is low, then you should sample an off-CPU flamegraph to analyze (using `perf` or using a `systemtap` tool like `sample-bt-off-cpu`). In case of off-CPU blocking, use of tools like `strace` can be helpful as well._
+
 ##### Dump a process's memory
 
   > For more information about analyse core dumps please see [GNU Debugger (gdb) - Core dump backtrace](#core-dump-backtrace).
+
+  > Will make the debugger output easier to understand see [Debugging Symbols](#debugging-symbols).
 
 A core dump is a file containing a process's address space (memory) when the process terminates unexpectedly. In other words is an instantaneous picture of a failing process at the moment it attempts to do something very wrong.
 
@@ -5617,6 +5630,51 @@ You can use also this recipe:
 ```bash
 gdb --core /var/dump/nginx/core.nginx.8125.x-9s-web01-prod.1561475764
 ```
+
+#### Debugging socket leaks
+
+Typically a resource leak is defined as an erroneous condition of a program when it is allocating more resources than it actually needs.
+
+Debugging socket leaks may produce the following alerts in your error log:
+
+```
+2015/12/10 01:36:39 [alert] 27263#27263: *241 open socket #71 left in connection 56
+2015/12/10 01:36:39 [alert] 27263#27263: *242 open socket #73 left in connection 61
+```
+
+  > Disable third party modules and check your error log, it can be a good solution, added the warnings may not appear after that.
+
+The official documentation say:
+
+  > _This directive is used for debugging. When internal error is detected, e.g. the leak of sockets on restart of working processes, enabling `debug_points` leads to a core file creation (abort) or to stopping of a process (stop) for further analysis using a system debugger. [...] This will result in `abort()` call once NGINX detects leak and core dump._
+
+To debug this you should activates debug points (in the main context):
+
+```nginx
+# Set 'abort' value to abort the debug point
+# and produce a core dump file whenever there is an internal error:
+debug_points abort;
+```
+
+That example comes from the official [Debugging - Debugging socket leaks](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#socket-leaks) tutorial:
+
+  > Something like this in `gdb` should be usefull (assuming 456 is connection number from error message from the process which dumped core: `[...] left in connection 456`):
+
+  ```gdb
+  set $c = &ngx_cycle->connections[456]
+  p $c->log->connection
+  p *$c
+  set $r = (ngx_http_request_t *) $c->data
+  p *$r
+  ```
+
+  > In particular, `p $c->log->connection` will print connection number as used in logs. It will be possible to grep debug log for relevant lines, e.g.
+
+  ```bash
+  fgrep ' *12345678 ' /var/log/nginx/error_log;
+  ```
+
+At the end, look also at these interesting explanations: [Socket leak](https://forum.nginx.org/read.php?29,239511,239511#msg-239511), [[nginx] Fixed socket leak with "return 444" in error_page (ticket #274)](https://forum.nginx.org/read.php?29,281339,281339#msg-281339) and [This is strictly a violation of the TCP specification](https://blog.cloudflare.com/this-is-strictly-a-violation-of-the-tcp-specification/).
 
 #### Shell aliases
 

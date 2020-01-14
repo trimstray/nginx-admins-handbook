@@ -321,6 +321,7 @@
       * [Dump configuration from a running process](doc/HELPERS.md#dump-configuration-from-a-running-process)
       * [Show debug log in memory](doc/HELPERS.md#show-debug-log-in-memory)
       * [Core dump backtrace](doc/HELPERS.md#core-dump-backtrace)
+    * [Debugging socket leaks](doc/HELPERS.md#debugging-socket-leaks)
   * [Shell aliases](doc/HELPERS.md#shell-aliases)
   * [Configuration snippets](doc/HELPERS.md#configuration-snippets)
     * [Nginx server header removal](doc/HELPERS.md#nginx-server-header-removal)
@@ -941,6 +942,7 @@ Existing chapters:
       - [x] _Dump configuration from a running process_
       - [x] _Show debug log in memory_
       - [x] _Core dump backtrace_
+    - [x] _Debugging socket leaks_
     - _SystemTap cheatsheet_
       - [x] _stapxx_
   - _Errors & Issues_

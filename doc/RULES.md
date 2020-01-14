@@ -1370,6 +1370,8 @@ worker_processes  1;
 
   > You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
 
+  > Also keep in mind other debugging and troubleshooting tools such as `strace` (note: `strace` pausing the target process for each syscall so that the debugger can read state. And doing this twice: when the syscall begins, and when it ends) on the worker process, tracing `read/readv/write/writev/close/shutdown` calls.
+
 ###### Example
 
 ```nginx
@@ -1381,7 +1383,10 @@ working_directory     /var/dump/nginx;
 ###### External resources
 
 - [Debugging - Core dump](https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump)
+- [Debugging (from this handbook)](HELPERS.md#debugging)
 - [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory)
+- [Debugging socket leaks (from this handbook)](HELPERS.md#debugging-socket-leaks)
+- [Debugging Symbols (from this handbook)](HELPERS.md#debugging-symbols)
 
 #### :beginner: Use mirror module to copy requests to another backend
 
