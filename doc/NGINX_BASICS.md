@@ -1544,7 +1544,7 @@ direct to the first server with a `listen` directive that satisfies first step
 
   > For each request, NGINX goes through a process to choose the best location block that will be used to serve that request.
 
-The location block enables you to handle several types of URIs/routes, within a server block. Syntax looks like:
+The location block enables you to handle several types of URIs/routes (Layer 7 routing based on URL), within a server block. Syntax looks like:
 
 ```
 location optional_modifier location_match { ... }
@@ -1722,10 +1722,7 @@ And look the table with the results:
 
 ##### `rewrite` vs `return`
 
-Generally there are two ways of implementing redirects in NGINX:
-
-- with `rewrite`
-- and `return`
+Generally there are two ways of implementing redirects in NGINX: with `rewrite` and `return` directives.
 
 These directives (comes from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
 
@@ -1827,7 +1824,7 @@ Finally, look at difference between `last` and `break` flags in action:
   > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**<br>
   > **:bookmark: [Use return directive instead of rewrite for redirects - Performance - P2](RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
 
-The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client, and the entire url is rerouted to the url specified.
+The other way is a `return` directive. It's faster than rewrite because there is no regexp that has to be evaluated. It's stops processing and returns HTTP 301 (by default) to a client (tells NGINX to respond directly to the request), and the entire url is rerouted to the url specified.
 
 I use `return` directive in the following cases:
 
@@ -2525,6 +2522,8 @@ By default:
 
 - the access log is located in `logs/access.log`, but I suggest you take it to `/var/log/nginx` directory
 - data is written in the predefined `combined/main` format
+- `access.log` stores record of each request and log format is fully configurable
+- `error.log` contains important operational messages
 
 It is the equivalent to the following configuration:
 
@@ -3303,7 +3302,7 @@ Generally load balancing is a technique used to distribute the workload across m
 
 The configuration is very simple. NGINX includes a `ngx_http_upstream_module` to define backends (groups of servers or multiple server instances). More specifically, the `upstream` directive is responsible for this.
 
-  > `upstream` only provide a list of servers, some kind of weight, and other parameters related to the backend layer.
+  > `upstream` defines the load balancing pool, only provide a list of servers, some kind of weight, and other parameters related to the backend layer.
 
 ##### Backend parameters
 

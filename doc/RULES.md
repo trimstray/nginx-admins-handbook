@@ -264,7 +264,7 @@ server {
 
   > And what's more, will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the `listen` directive.
 
-  > Set IP address and port number to prevents soft mistakes which may be difficult to debug.
+  > Set IP address and port number to prevents soft mistakes which may be difficult to debug. In addition, no IP means bind to all IPs on your system, this can cause a lot of problems and it's bad practice (it is considered good security practice to only configure the minimum network access for services).
 
 ###### Example
 
@@ -2193,7 +2193,7 @@ chown -R nginx:nginx /var/www/example.com
 
 ###### Rationale
 
-  > It is recommended to disable any modules which are not required as this will minimise the risk of any potential attacks by limiting the operations allowed by the web server.
+  > It is recommended to disable any modules which are not required as this will minimise the risk of any potential attacks by limiting the operations allowed by the web server. I also recommend only compiling and running signed and tested modules on you production environments.
 
   > Disable unneeded modules in order to reduce the memory utilized and improve performance. Modules that are not needed just make loading times longer.
 
@@ -2206,7 +2206,10 @@ chown -R nginx:nginx /var/www/example.com
 ###### Example
 
 ```nginx
-# 1) During installation:
+# 1a) Check which modules can be turn on or off while compiling:
+./configure --help | less
+
+# 1b) Turn off during installation:
 ./configure --without-http_autoindex_module
 
 # 2) Comment modules in the configuration file e.g. modules.conf:
