@@ -9,6 +9,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
   * [Certificates](#certificates)
+    * [Chain of Trust](#chain-of-trust)
     * [Single-domain](#single-domain)
     * [Multi-domain](#multi-domain)
     * [Wildcard](#wildcard)
@@ -86,6 +87,8 @@ In which layer is TLS situated within the TCP/IP stack? See this diagram:
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tcp_tls_http.png" alt="tcp_tls_http">
 </p>
+
+The SSL protocol works between the `TCP/IP` protocols and higher-level protocols such as `HTTP`. Its design allows you to launch any website on the basis of public key cryptography, thus enabling secure data transmission on the network.
 
 See also [What Happens in a TLS Handshake?](https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/).
 
@@ -203,11 +206,36 @@ These parameters aren't secret and can be reused; plus they take several seconds
 
 #### Certificates
 
-A SSL certificate authenticates the identity of a website and allows secure connections from a web server to a browser by encrypting information and protect the sensitive data (login details, signups, addresses and payment) transmitted from and to your website. Without an SSL certificate, any data collected through your website is vulnerable to be intercepted by third party.
+A SSL certificate contains the public key and information about its owner, authenticates the identity of a website and allows secure connections from a web server to a browser by encrypting information and protect the sensitive data (login details, signups, addresses and payment) transmitted from and to your website.
 
-Certificates lets you secure your main domain and all its subdomains (like api.example.com) with one single SSL certificate.
+The authenticity and integrity of the certificate can be checked by cryptographic methods. The digital certificate contains the data required to verify it.
+
+  > Without an SSL certificate, any data collected through your website is vulnerable to be intercepted by third party.
+
+Certificates lets you secure your main domain and all its subdomains (like example.com and api.example.com) with one single SSL certificate.
 
 See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/).
+
+##### Chain of Trust
+
+Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
+
+A certificate chain consists of all the certificates needed to certify the subject identified by the end certificate. In practice this includes the end certificate, the certificates of intermediate CAs, and the certificate of a root CA trusted by all parties in the chain. Every intermediate CA in the chain holds a certificate issued by the CA one level above it in the trust hierarchy. The root CA issues a certificate for itself.
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/chain_of_trust.png" alt="chain_of_trust">
+</p>
+
+<sup><i>This infographic comes from [Wikipedia](https://en.wikipedia.org/wiki/Chain_of_trust).</i></sup>
+
+There are several ways in which the chain of trust might be broken, including but not limited to:
+
+- any certificate in the chain is self-signed, unless it the root
+- not every intermediate certificate is checked, starting from the original certificate all the way up to the root certificate
+- an intermediate, CA-signed certificate does not have the expected Basic Constraints or other important extensions
+- the root certificate has been compromised or authorized to the wrong party
+
+For more information please see [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/).
 
 ##### Single-domain
 
@@ -280,14 +308,15 @@ Another interesting thing is that you can have multiple wildcard names inside th
 
 #### Useful video resources
 
-- [Transport Layer Security, TLS 1.2 and 1.3 (Explained by Example)](https://youtu.be/AlE5X1NlHgg) <sup>[video]</sup>
-- [35C3 - The Rocky Road to TLS 1.3 and better Internet Encryption](https://youtu.be/i6mGfZrypP4) <sup>[video]</sup>
-- [SSL/TLS in action with Wireshark](https://youtu.be/u4ht-E-Kihk) <sup>[video]</sup>
-- [SF18US - 35: Examining SSL encryption/decryption using Wireshark (Ross Bagurdes)](https://youtu.be/0X2BVwNX4ks) <sup>[video]</sup>
-- [Breaking Down the TLS Handshake](https://youtu.be/cuR05y_2Gxc) <sup>[video]</sup>
-- [SSL/TLS handshake Protocol](https://youtu.be/sEkw8ZcxtFk) <sup>[video]</sup>
-- [What is a TLS Cipher Suite?](https://youtu.be/ZM3tXhPV8v0) <sup>[video]</sup>
-- [Strong vs. Weak TLS Ciphers](https://youtu.be/k_C2HcJbgMc) <sup>[video]</sup>
-- [Perfect Forward Secrecy](https://youtu.be/IkM3R-KDu44) <sup>[video]</sup>
-- [How SSL certificate works?](https://youtu.be/33VYnE7Bzpk) <sup>[video]</sup>
-- [Intro to Digital Certificates](https://youtu.be/qXLD2UHq2vk) <sup>[video]</sup>
+- [Transport Layer Security, TLS 1.2 and 1.3 (Explained by Example)](https://youtu.be/AlE5X1NlHgg)
+- [35C3 - The Rocky Road to TLS 1.3 and better Internet Encryption](https://youtu.be/i6mGfZrypP4)
+- [SSL/TLS in action with Wireshark](https://youtu.be/u4ht-E-Kihk)
+- [SF18US - 35: Examining SSL encryption/decryption using Wireshark (Ross Bagurdes)](https://youtu.be/0X2BVwNX4ks)
+- [Breaking Down the TLS Handshake](https://youtu.be/cuR05y_2Gxc)
+- [SSL/TLS handshake Protocol](https://youtu.be/sEkw8ZcxtFk)
+- [What is a TLS Cipher Suite?](https://youtu.be/ZM3tXhPV8v0)
+- [Strong vs. Weak TLS Ciphers](https://youtu.be/k_C2HcJbgMc)
+- [Perfect Forward Secrecy](https://youtu.be/IkM3R-KDu44)
+- [How SSL certificate works?](https://youtu.be/33VYnE7Bzpk)
+- [Intro to Digital Certificates](https://youtu.be/qXLD2UHq2vk)
+- [Digital Certificates: Chain of Trust](https://youtu.be/heacxYUnFHA)

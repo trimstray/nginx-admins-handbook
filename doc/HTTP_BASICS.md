@@ -522,10 +522,10 @@ The back-end, or the "server side", is all of the technology required to process
 
 #### Useful video resources
 
-- [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0) <sup>[video]</sup>
-- [CS50 2017 - Lecture 6 - HTTP](https://youtu.be/PUPDGbnpSjw) <sup>[video]</sup>
-- [HTTP/2 101 (Chrome Dev Summit 2015)](https://youtu.be/r5oT_2ndjms) <sup>[video]</sup>
-- [Headers for Hackers: Wrangling HTTP Like a Pro](https://youtu.be/TNlcoYLIGFk) <sup>[video]</sup>
-- [Hacking with Andrew and Brad: an HTTP/2 client](https://youtu.be/yG-UaBJXZ80) <sup>[video]</sup>
-- [Advanced HTTP Protocol Hacking](https://youtu.be/up8Vz5PTX3M) <sup>[video]</sup>
-- [Hacking HTTP/2 - New Attacks on the Internet's Next Generation Foundation](https://youtu.be/kM8cc0kB21s) <sup>[video]</sup>
+- [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0)
+- [CS50 2017 - Lecture 6 - HTTP](https://youtu.be/PUPDGbnpSjw)
+- [HTTP/2 101 (Chrome Dev Summit 2015)](https://youtu.be/r5oT_2ndjms)
+- [Headers for Hackers: Wrangling HTTP Like a Pro](https://youtu.be/TNlcoYLIGFk)
+- [Hacking with Andrew and Brad: an HTTP/2 client](https://youtu.be/yG-UaBJXZ80)
+- [Advanced HTTP Protocol Hacking](https://youtu.be/up8Vz5PTX3M)
+- [Hacking HTTP/2 - New Attacks on the Internet's Next Generation Foundation](https://youtu.be/kM8cc0kB21s)

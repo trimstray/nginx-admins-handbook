@@ -138,6 +138,7 @@
     * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
+    * [Chain of Trust](doc/SSL_TLS_BASICS.md#chain-of-trust)
     * [Single-domain](doc/SSL_TLS_BASICS.md#single-domain)
     * [Multi-domain](doc/SSL_TLS_BASICS.md#multi-domain)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
@@ -790,6 +791,7 @@ Existing chapters:
     - [x] _Authenticated encryption (AEAD) cipher suites_
   - [x] _Diffie-Hellman key exchange_
   - [x] _Certificates_
+    - [x] _Chain of Trust_
     - [x] _Single-domain_
     - [x] _Multi-domain_
     - [x] _Wildcard_
