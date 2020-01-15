@@ -25,6 +25,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Message body](#message-body-1)
   * [HTTP client](#http-client)
   * [Back-End web architecture](#back-end-web-architecture)
+  * [Useful video resources](#useful-video-resources)
 
 Simply put, HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
@@ -44,10 +45,12 @@ I will not describe the HTTP protocol meticulously so you have to look at this a
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
 - [HTTP and everything you need to know about it](https://medium.com/faun/http-and-everything-you-need-to-know-about-it-8273bc224491)
 
-We have also some interesting books:
+We have some interesting books:
 
 - [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
 - [High Performance Browser Networking](https://hpbn.co/)
+
+Also look at the [Useful resources](#useful-resources) section of this chapter.
 
 And finally look at [this](https://github.com/bigcompany/know-your-http) amazing series of A1-sized posters about the HTTP protocol.
 
@@ -516,3 +519,13 @@ The back-end, or the "server side", is all of the technology required to process
 - **server** - this is the computer that receives requests (backend/origin server)
 - **app** - this is the application running on the server that listens for requests, retrieves information from the database, and sends a response
 - **databases** - are used to organize and persist data
+
+#### Useful video resources
+
+- [HTTP Crash Course & Exploration](https://youtu.be/iYM2zFP3Zn0) <sup>[video]</sup>
+- [CS50 2017 - Lecture 6 - HTTP](https://youtu.be/PUPDGbnpSjw) <sup>[video]</sup>
+- [HTTP/2 101 (Chrome Dev Summit 2015)](https://youtu.be/r5oT_2ndjms) <sup>[video]</sup>
+- [Headers for Hackers: Wrangling HTTP Like a Pro](https://youtu.be/TNlcoYLIGFk) <sup>[video]</sup>
+- [Hacking with Andrew and Brad: an HTTP/2 client](https://youtu.be/yG-UaBJXZ80) <sup>[video]</sup>
+- [Advanced HTTP Protocol Hacking](https://youtu.be/up8Vz5PTX3M) <sup>[video]</sup>
+- [Hacking HTTP/2 - New Attacks on the Internet's Next Generation Foundation](https://youtu.be/kM8cc0kB21s) <sup>[video]</sup>

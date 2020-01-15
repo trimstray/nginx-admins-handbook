@@ -128,8 +128,9 @@
       * [Status codes and reason phrase](doc/HTTP_BASICS.md#status-codes-and-reason-phrase)
     * [Response header fields](doc/HTTP_BASICS.md#response-header-fields)
     * [Message body](doc/HTTP_BASICS.md#message-body-1)
-    * [HTTP client](doc/HTTP_BASICS.md#http-client)
-    * [Back-End web architecture](doc/HTTP_BASICS.md#back-end-web-architecture)
+  * [HTTP client](doc/HTTP_BASICS.md#http-client)
+  * [Back-End web architecture](doc/HTTP_BASICS.md#back-end-web-architecture)
+  * [Useful video resources](doc/HTTP_BASICS.md#useful-video-resources)
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics"></a>
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
@@ -142,6 +143,7 @@
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
     * [Wildcard SSL doesn't handle root domain?](doc/SSL_TLS_BASICS.md#wildcard-ssl-doesnt-handle-root-domain)
   * [Verify your SSL, TLS & Ciphers implementation](doc/SSL_TLS_BASICS.md#verify-your-ssl-tls--ciphers-implementation)
+  * [Useful video resources](doc/SSL_TLS_BASICS.md#useful-video-resources)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
   * [Directories and files](doc/NGINX_BASICS.md#directories-and-files)
   * [Commands](doc/NGINX_BASICS.md#commands)
@@ -775,6 +777,7 @@ Existing chapters:
     - [x] _Message body_
   - [x] _HTTP client_
   - [x] _Back-End web architecture_
+  - [x] _Useful video resources_
 
 </details>
 
@@ -792,6 +795,7 @@ Existing chapters:
     - [x] _Wildcard_
     - [x] _Wildcard SSL doesn't handle root domain?_
   - [x] _Verify your SSL, TLS & Ciphers implementation_
+  - [x] _Useful video resources_
 
 </details>
 

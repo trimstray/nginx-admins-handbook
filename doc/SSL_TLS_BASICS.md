@@ -14,6 +14,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Wildcard](#wildcard)
     * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
   * [Verify your SSL, TLS & Ciphers implementation](#verify-your-ssl-tls--ciphers-implementation)
+  * [Useful video resources](#useful-video-resources)
 
 TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing _Secure Socket Layer_ (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
@@ -39,6 +40,8 @@ If you have any objections to your SSL configuration put your site into [SSL Lab
 
 For testing clients against bad SSL configs I always use [badssl.com](https://badssl.com/). For monitoring of SSL/TLS quality I recommend [SSL Pulse](https://www.ssllabs.com/ssl-pulse/). It's a continuously updated dashboard that is designed to show the state of the SSL ecosystem and supports over time across 150,000 SSL- and TLS-enabled websites, based on Alexa’s list of the most popular sites in the world.
 
+Also look at the [Useful resources](#useful-resources) section of this chapter.
+
 #### TLS versions
 
   > **:bookmark: [Keep only TLS 1.3 and TLS 1.2 - Hardening - P1](RULES.md#beginner-keep-only-tls-13-and-tls-12)**
@@ -52,10 +55,6 @@ For testing clients against bad SSL configs I always use [badssl.com](https://ba
 | TLS 1.1 | [RFC 4346](https://tools.ietf.org/html/rfc4346) <sup>[IETF]</sup> | 2006 | Deprecation in 2020 |
 | TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) <sup>[IETF]</sup> | 2008 | Still secure |
 | TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) <sup>[IETF]</sup> | 2018 | Still secure |
-
-Useful resources:
-
-- [OpenSSL 1.1.1 (command) and SNI](https://github.com/drwetter/testssl.sh/issues/772)
 
 #### TLS handshake
 
@@ -88,6 +87,8 @@ In which layer is TLS situated within the TCP/IP stack? See this diagram:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tcp_tls_http.png" alt="tcp_tls_http">
 </p>
 
+See also [What Happens in a TLS Handshake?](https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/).
+
 #### Cipher suites
 
   > **:bookmark: [Use only strong ciphers - Hardening - P1](RULES.md#beginner-use-only-strong-ciphers)**<br>
@@ -108,7 +109,7 @@ Various cryptographic algorithms are used during establishing and later during t
 - **MAC** - what hash function is used to ensure message integrity?<br>
   Examples: `SHA-256`, `POLY1305`
 
-These four types of algorithms are combined into so-called cipher sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is an type of elliptic curve (TLS cipher suites and elliptical curves are sometimes configure by using a single string like this).
+These four types of algorithms are combined into so-called cipher sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is a type of elliptic curve (TLS cipher suites and elliptical curves are sometimes configure by using a single string like this).
 
   > To use `ECDSA` cipher suites, you need an `ECDSA` certificate. To use `RSA` cipher suites, you need an `RSA` certificate. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`) (recommended), or `RSA` (2048 bits).
 
@@ -202,6 +203,12 @@ These parameters aren't secret and can be reused; plus they take several seconds
 
 #### Certificates
 
+A SSL certificate authenticates the identity of a website and allows secure connections from a web server to a browser by encrypting information and protect the sensitive data (login details, signups, addresses and payment) transmitted from and to your website. Without an SSL certificate, any data collected through your website is vulnerable to be intercepted by third party.
+
+Certificates lets you secure your main domain and all its subdomains (like api.example.com) with one single SSL certificate.
+
+See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/).
+
 ##### Single-domain
 
 When a certificate only has one SAN field and it contains a reference to a single subdomain/hostname, then it’s a single-domain certificate (it cannot secure any other domains).
@@ -270,3 +277,17 @@ Another interesting thing is that you can have multiple wildcard names inside th
 | :---         | :---         |
 | **[SSL Labs by Qualys](https://www.ssllabs.com/ssltest/)** | Check all latest vulnerability & misconfiguration |
 | **[ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/)** | Verify configuration with PCI DSS, HIPAA & NIST |
+
+#### Useful video resources
+
+- [Transport Layer Security, TLS 1.2 and 1.3 (Explained by Example)](https://youtu.be/AlE5X1NlHgg) <sup>[video]</sup>
+- [35C3 - The Rocky Road to TLS 1.3 and better Internet Encryption](https://youtu.be/i6mGfZrypP4) <sup>[video]</sup>
+- [SSL/TLS in action with Wireshark](https://youtu.be/u4ht-E-Kihk) <sup>[video]</sup>
+- [SF18US - 35: Examining SSL encryption/decryption using Wireshark (Ross Bagurdes)](https://youtu.be/0X2BVwNX4ks) <sup>[video]</sup>
+- [Breaking Down the TLS Handshake](https://youtu.be/cuR05y_2Gxc) <sup>[video]</sup>
+- [SSL/TLS handshake Protocol](https://youtu.be/sEkw8ZcxtFk) <sup>[video]</sup>
+- [What is a TLS Cipher Suite?](https://youtu.be/ZM3tXhPV8v0) <sup>[video]</sup>
+- [Strong vs. Weak TLS Ciphers](https://youtu.be/k_C2HcJbgMc) <sup>[video]</sup>
+- [Perfect Forward Secrecy](https://youtu.be/IkM3R-KDu44) <sup>[video]</sup>
+- [How SSL certificate works?](https://youtu.be/33VYnE7Bzpk) <sup>[video]</sup>
+- [Intro to Digital Certificates](https://youtu.be/qXLD2UHq2vk) <sup>[video]</sup>
