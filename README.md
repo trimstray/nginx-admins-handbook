@@ -562,7 +562,7 @@ Mostly, I apply the rules presented here on the NGINX working as a reverse proxy
 
 If you do not have the time to read hundreds of articles (just like me) this multipurpose handbook may be useful. I created it in the hope that it will be useful especially for System Administrators and Experts of Web-based applications.
 
-This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, that also discusses heavyweight topics so there is something for advanced users. I tried to put external resources in many places in this handbook in order to dispel any suspicion that may exist.
+This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, also discusses heavyweight topics so there is something for advanced users. I tried to put external resources in many places in this handbook in order to dispel any suspicion that may exist.
 
 I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Many of the topics described here can certainly be done better or different. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
@@ -604,9 +604,7 @@ I think, in the age of phishing, cyber attacks, ransomware, etc., you should tak
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
 </p>
 
-Lastly, I would like to quote two very important comments found on the web about compliance with the standards and regulations:
-
-  > _I personally think the whole TLS 1.0 depreciation is a mess that's very representative of why cyber security is a mess and will never improve. A huge cargo cult telling to turn it off because it's broken, ignoring that it's breaking a lot of clients, and without a single explanation of what's the problems or how to mitigate them._ - by [ user5994461](https://news.ycombinator.com/user?id=user5994461)
+Lastly, I would like to quote very important comment found on the web about compliance with the standards and regulations:
 
   > _Regulations that make sense are often not descriptive - capturing the intent and scope of a rule often requires technical expertise. More than that, it's the type of expertise most organisations do not have. And instead of improving themselves, these companies, who may form the grand majority of the industry, petition the regulators to provide a safe checklist of technical mitigations that can be implemented to remain compliant. [...] Instead of doing the right thing and meeting the planned intent, companies are instead ticking nonsensical boxes that the regulators and their auditors demand. Blindly. Mindlessly. Divorced from reality._ - by [bostik](https://news.ycombinator.com/user?id=bostik)
 
@@ -1252,11 +1250,11 @@ I also got the highest summary note (**A+**) on the Observatory with a very high
 
 I created two versions of printable posters with hardening cheatsheets (High-Res 5000x8800) based on recipes from this handbook:
 
-  > For `*.xcf` and `*.pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
+  > For `xcf` and `pdf` formats please see [this](https://github.com/trimstray/nginx-admins-handbook/tree/master/static/img) directory.
 
 - **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
 
-  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2, and also modern strict TLS cipher suites (non 128-bits).
+  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2, and also modern strict TLS cipher suites (non 128-bits). Think carefully about its use (no TLS 1.3, restrictive cipher suites), in my opinion, it is only suitable for obtaining the highest possible rating.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="92%" height="92%">
@@ -1274,7 +1272,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
 
-For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter. Describes the installation of NGINX on systems such as Ubuntu, Debian, CentOS, and FreeBSD (also from ports).
+For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter. Describes the installation of NGINX on systems/distros such as Ubuntu, Debian, CentOS, and FreeBSD.
 
 ## Static error pages generator
 
@@ -1690,11 +1688,11 @@ _In this ebook you will learn:_
 Go back to the [Table of Contents](#table-of-contents) or read the next chapters:
 
 - **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics-2"></a>
-  > Something about HTTP.
+  > Introduction to HTTP.
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics-2"></a>
-  > Something about SSL/TLS.
+  > Introduction to SSL/TLS.
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics-2"></a>
-  > Explanation of the NGINX mechanisms.
+  > Introduction and explanation of the NGINX mechanisms.
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers-2"></a>
   > One-liners, commands, utilities for building NGINX, and more.
 - **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
@@ -1704,7 +1702,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
 - **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (30)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
-  > Hardening approaches and security standards.
+  > Security and hardening methods in line with industry standards.
 - **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing-2"></a>

@@ -61,6 +61,8 @@ Here is a brief explanation:
 
 - most often the HTTP communication uses the TCP protocol
 
+- the default port is TCP 80, but other ports can be used
+
 - HTTP allow multiple requests and responses to be carried over a single (persistent) connection ([RFC 7230](https://tools.ietf.org/html/rfc7230#section-6.3) <sup>[IETF]</sup>)
 
 - HTTP protocol is stateless (all requests are separate from each other)
@@ -173,7 +175,7 @@ See these articles about HTTP headers:
 - [The HTTP Request Headers List](https://flaviocopes.com/http-request-headers/)
 - [The HTTP Response Headers List](https://flaviocopes.com/http-response-headers/)
 
-HTTP headers allow the client and the server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).
+HTTP headers allow the client and server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).
 
 ###### Header compression
 
@@ -234,7 +236,7 @@ Example of form an HTTP request to fetch `/alerts/status` page from the web serv
 
 Additional information about requests:
 
-- route to endpoint
+- route to the endpoint
 - rewrite path/query
 - deny access (acls)
 - headers modification
@@ -251,9 +253,7 @@ Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| `GET` | is used to retreive data from a server at the specified resource |
-
-For more information look at the [HTTP/1.1 RFC](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3) for the definition of `GET`.
+| `GET` | is used to retreive data from a server at the specified resource ([HTTP/1.1 RFC](https://tools.ietf.org/html/rfc2616#section-9.3)) <sup>[IETF]</sup> |
 
 For example, say you have an API with a `/api/v2/users` endpoint. Making a `GET` request to that endpoint should return a list of all available users.
 
@@ -268,9 +268,9 @@ When executing a `GET` request, you ask the server for one, or a set of entities
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| `POST` | is used to send data to the sever to modify and update a resource |
+| `POST` | is used to send data to the sever to modify and update a resource ([HTTP/1.1 RFC](https://tools.ietf.org/html/rfc2616#section-9.5)) <sup>[IETF]</sup> |
 
-Look at the [HTTP/1.1 RFC](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5) for the definition of `POST`:
+Look at the definition of `POST`:
 
   > _The `POST` method is used to request that the origin server accept the entity enclosed in the request as a new subordinate of the resource identified by the Request-URI [...] The posted entity is subordinate to that URI in the same way that a file is subordinate to a directory containing it, a news article is subordinate to a newsgroup to which it is posted, or a record is subordinate to a database._
 
@@ -302,9 +302,9 @@ Host: example.com
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| `PUT` | is used to send data to the sever to create or overwrite a resource |
+| `PUT` | is used to send data to the sever to create or overwrite a resource ([HTTP/1.1 RFC](https://tools.ietf.org/html/rfc2616#section-9.6)) <sup>[IETF]</sup> |
 
-Look at the [HTTP/1.1 RFC](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5) for the definition of `PUT`:
+Look at the definition of `PUT`:
 
   > _The `PUT` method requests that the enclosed entity be stored under the supplied Request-URI. If the Request-URI refers to an already existing resource, the enclosed entity SHOULD be considered as a modified version of the one residing on the origin server. If the Request-URI does not point to an existing resource [...] the origin server can create the resource with that URI._
 
