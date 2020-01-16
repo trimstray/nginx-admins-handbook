@@ -182,7 +182,7 @@ The goal in Diffie-Hellman key exchange (DHKE) is for two users to obtain a shar
 
 The protocol makes use of modular arithmetic and especially exponentials. The security of the protocol relies on the fact that solving a discrete logarithm (the inverse of an exponential) is practically impossible when large enough values are used.
 
-`DHE` (according to [RFC 5246](https://tools.ietf.org/html/rfc5246#appendix-A.5) <sup>[IETF]</sup>) and `EDH` are the same (`EDH` in OpenSSL-speak, `DHE` elsewhere). `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
+`DHE` (according to [RFC 5246 - The Cipher Suite](https://tools.ietf.org/html/rfc5246#appendix-A.5) <sup>[IETF]</sup>) and `EDH` are the same (`EDH` in OpenSSL-speak, `DHE` elsewhere). `EDH` isn't a standard way to state it, but it doesn't have another usual meaning. `ECC` can stand for "Elliptic Curve Certificates" or "Elliptic Curve Cryptography". Elliptic curve certificates are commonly called `ECDSA`. Elliptic curve key exchange is called `ECDH`. If you add another 'E' to the latter (`ECDHE`), you get ephemeral.
 
 | <b>TYPE</b> | <b>ELLIPTIC CURVE</b> | <b>EPHERMAL</b> | <b>KEY ROTATION</b> | <b>PFS</b> | <b>DHPARAM FILE</b> |
 | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
@@ -263,17 +263,17 @@ No, it is not possible. By default, the wildcard cert is valid only for `*.examp
 
 Technically, wildcard certs are issued based on the unknown children of a subdomain. Most wildcard certs are issued for 3-part domains (`*.domain.com`), but it's also very common to see them for 4-part domains (e.g. `*.domain.co.uk`).
 
-The canonical answer should be in [RFC2818 (3.1. Server Identity)](https://tools.ietf.org/html/rfc2818#section-3.1) <sup>[IETF]</sup>:
+The canonical answer should be in [RFC 2818 - Server Identity](https://tools.ietf.org/html/rfc2818#section-3.1) <sup>[IETF]</sup>:
 
   > _Matching is performed using the matching rules specified by
-    RFC2459. If more than one identity of a given type is present in
+    RFC 2459. If more than one identity of a given type is present in
     the certificate (e.g., more than one dNSName name, a match in any one
     of the set is considered acceptable.) Names may contain the wildcard
     character `*` which is considered to match any single domain name
     component or component fragment. E.g., `*.a.com` matches `foo.a.com` but
     not `bar.foo.a.com`. `f*.com` matches `foo.com` but not `bar.com`._
 
-[RFC2459 (2.4. Server Identity Check)](https://tools.ietf.org/html/rfc2595#section-2.4) <sup>[IETF]</sup> says:
+[RFC 2459 - Server Identity Check](https://tools.ietf.org/html/rfc2595#section-2.4) <sup>[IETF]</sup> says:
 
   > _A "`*`" wildcard character MAY be used as **the left-most name
     component** in the certificate.  For example, `*.example.com` would

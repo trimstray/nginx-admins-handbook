@@ -38,8 +38,8 @@ Some important information about HTTP:
 
 I will not describe the HTTP protocol meticulously so you have to look at this as an introduction. I will discuss only the most important things because we have some great documents which describe this protocol in a great deal of detail:
 
-- [RFC 2616 - Hypertext Transfer Protocol - HTTP/1.1](https://tools.ietf.org/html/rfc2616) <sup>[IETF]</sup>
-- [RFC 7230 - Hypertext Transfer Protocol - HTTP/1.1: Message Syntax and Routing](https://tools.ietf.org/html/rfc7230) <sup>[IETF]</sup>
+- [RFC 2616 - HTTP/1.1](https://tools.ietf.org/html/rfc2616) <sup>[IETF]</sup>
+- [RFC 7230 - HTTP/1.1: Message Syntax and Routing](https://tools.ietf.org/html/rfc7230) <sup>[IETF]</sup>
 - [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)
 - [MDN web docs - An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview)
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
@@ -64,7 +64,7 @@ Here is a brief explanation:
 
 - the default port is TCP 80, but other ports can be used
 
-- HTTP allow multiple requests and responses to be carried over a single (persistent) connection ([RFC 7230](https://tools.ietf.org/html/rfc7230#section-6.3) <sup>[IETF]</sup>)
+- HTTP allow multiple requests and responses to be carried over a single (persistent) connection ([RFC 7230 - Persistence](https://tools.ietf.org/html/rfc7230#section-6.3) <sup>[IETF]</sup>)
 
 - HTTP protocol is stateless (all requests are separate from each other)
 
@@ -254,7 +254,7 @@ Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| `GET` | is used to retreive data from a server at the specified resource ([HTTP/1.1 RFC](https://tools.ietf.org/html/rfc2616#section-9.3)) <sup>[IETF]</sup> |
+| `GET` | is used to retreive data from a server at the specified resource ([RFC 2616 - GET](https://tools.ietf.org/html/rfc2616#section-9.3)) <sup>[IETF]</sup> |
 
 For example, say you have an API with a `/api/v2/users` endpoint. Making a `GET` request to that endpoint should return a list of all available users.
 
@@ -269,7 +269,7 @@ When executing a `GET` request, you ask the server for one, or a set of entities
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| `POST` | is used to send data to the sever to modify and update a resource ([HTTP/1.1 RFC](https://tools.ietf.org/html/rfc2616#section-9.5)) <sup>[IETF]</sup> |
+| `POST` | is used to send data to the sever to modify and update a resource ([RFC 2616 - POST](https://tools.ietf.org/html/rfc2616#section-9.5)) <sup>[IETF]</sup> |
 
 Look at the definition of `POST`:
 
@@ -303,7 +303,7 @@ Host: example.com
 
 | <b>METHOD</b> | <b>DESCRIPTION</b> |
 | :---:         | :---         |
-| `PUT` | is used to send data to the sever to create or overwrite a resource ([HTTP/1.1 RFC](https://tools.ietf.org/html/rfc2616#section-9.6)) <sup>[IETF]</sup> |
+| `PUT` | is used to send data to the sever to create or overwrite a resource ([RFC 2616 - PUT](https://tools.ietf.org/html/rfc2616#section-9.6)) <sup>[IETF]</sup> |
 
 Look at the definition of `PUT`:
 
@@ -473,7 +473,7 @@ For more information please see:
 
 - [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 - [HTTP Status Codes](https://httpstatuses.com/)
-- [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Status Code Definitions](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
+- [RFC 2616 - Status Code Definitions](https://tools.ietf.org/html/rfc2616#section-10)
 
 Be sure to take a look at this (it's genius work!):
 

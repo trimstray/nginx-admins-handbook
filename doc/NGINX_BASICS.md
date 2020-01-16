@@ -2339,7 +2339,7 @@ See [this](https://stackoverflow.com/a/48709976) great and short explanation by 
   >
   > Most of the time you would use `$uri`, because it is normalised. Using `$request_uri` in the wrong place can cause URL encoded characters to become doubly encoded.
 
-Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC2616](https://tools.ietf.org/html/rfc2616#section-3.2.2) <sup>[IETF]</sup> for the URL:
+Both excludes the schema (`https://` and the port (implicit 443) in both examples above) as defined by [RFC 2616 - http URL](https://tools.ietf.org/html/rfc2616#section-3.2.2) <sup>[IETF]</sup> for the URL:
 
 ```
 http_URL = "http(s):" "//" host [ ":" port ] [ abs_path [ "?" query ]]

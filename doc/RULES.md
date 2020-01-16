@@ -658,7 +658,7 @@ http {
 
   Also take a look at this:
 
-  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, [RFC6066 - Transport Layer Security (TLS) Extensions: Extension Definitions](https://tools.ietf.org/html/rfc6066) <sup>[IETF]</sup>), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, [RFC 6066](https://tools.ietf.org/html/rfc6066) <sup>[IETF]</sup>), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
 
 ###### Example
 
@@ -1549,8 +1549,8 @@ server {
 
 ###### External resources
 
-- [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>
-- [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2) - Security Considerations](https://tools.ietf.org/html/rfc7540#section-10) <sup>[IETF]</sup>
+- [RFC 7540 - HTTP/2](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>
+- [RFC 7540 - HTTP/2: Security Considerations](https://tools.ietf.org/html/rfc7540#section-10) <sup>[IETF]</sup>
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/)
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 - [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
@@ -1607,7 +1607,7 @@ ssl_buffer_size     1400;
 
   > OCSP Stapling extension is configured for better performance (is designed to reduce the cost of an OCSP validation) and user privacy is still maintained. OCSP Stapling is an optimization, and nothing breaks if it doesn't work.
 
-  > OCSP stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - 8. Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
+  > OCSP stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
 
   > NGINX generates this list from the file of certificates pointed to by `ssl_trusted_certificate` (the list of these certificates will not be sent to clients). You need to send this list or switch off `ssl_verify_client`. This step is optional when the full certificate chain (only Intermediate certs, without Root CA, and also must not include the site certificate) was already provided with the `ssl_certificate` statement. In case just the certificate is being used (not the parts of your CA), then `ssl_trusted_certificate` is needed.
 
@@ -2243,7 +2243,7 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
   As for the denying method:
 
-  > In my opinion, a return 403 (or even a 404, as the [RFC2616 - 10.4.4 403 Forbidden](https://tools.ietf.org/html/rfc2616#section-10.4.4) <sup>[IETF]</sup> suggests for purposes of no information disclosure) is less error prone if you know the resource should under no circumstances be accessed via http, even if "authorized" in a general context.
+  > In my opinion, a return 403 (or even a 404, as the [RFC 2616 - 403 Forbidden](https://tools.ietf.org/html/rfc2616#section-10.4.4) <sup>[IETF]</sup> suggests for purposes of no information disclosure) is less error prone if you know the resource should under no circumstances be accessed via http, even if "authorized" in a general context.
 
   Note also this:
 
@@ -2357,7 +2357,7 @@ location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htacces
 
   > Security by obscurity doesn't mean you're safe, but it does slow people down sometimes, and that's exactly what's needed for day zero vulnerabilities.
 
-  Maybe it's a very restrictive approach but the guidelines from [RFC 2616 - 15.1 Personal Information](https://tools.ietf.org/html/rfc2616#section-15.1) are always very helpful to me:
+  Maybe it's a very restrictive approach but the guidelines from [RFC 2616 - Personal Information](https://tools.ietf.org/html/rfc2616#section-15.1) are always very helpful to me:
 
   > _History shows that errors in this area often create serious security and/or privacy problems and generate highly adverse publicity for the implementor's company. [...] Like any generic data transfer protocol, HTTP cannot regulate the content of the data that is transferred, nor is there any a priori method of determining the sensitivity of any particular piece of information within the context of any given request. Therefore, applications SHOULD supply as much control over this information as possible to the provider of that information. Four header fields are worth special mention in this context: `Server`, `Via`, `Referer` and `From`._
 
@@ -2746,7 +2746,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers). The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy. `ECDHE-ECDSA` is about the same as `RSA` in performance, but much more secure. `ECDHE` with `RSA` is slower, but still much more secure than alone `RSA`.
 
-  > For backward compatibility software components think about less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC7540: TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) <sup>[IETF]</sup>, you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
+  > For backward compatibility software components think about less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC 7540 - TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) <sup>[IETF]</sup>, you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
   > Servers either use the client's most preferable ciphersuite or their own. Most servers use their own preference. Disabling `DHE` removes forward security, but results in substantially faster handshake times. I think, so long as you only control one side of the conversation, it would be ridiculous to restrict your system to only supporting one cipher suite (it would cut off too many clients and too much traffic). On the other hand, look at what [David Benjamin](https://davidben.net/) (from Chrome networking) sad about it: _Servers should also disable `DHE` ciphers. Even if `ECDHE` is preferred, merely supporting a weak group leaves `DHE`-capable clients vulnerable._
 
@@ -3346,7 +3346,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use it, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters to define how performs the Diffie-Hellman (DH) key-exchange. In older versions, NGINX used a weak key (by default: `1024 bit`) that gets lower scores.
 
-  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`) and if you want to retain support for older customers also `DHE`. Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - 6.3. Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3) <sup>[IETF]</sup>.
+  > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`) and if you want to retain support for older customers also `DHE`. Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3) <sup>[IETF]</sup>.
 
   > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with unique keys at least 2048 bits long) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
 
@@ -3362,7 +3362,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
 
-  > In older versions of OpenSSL, if no key size is specified, default key size was `512/1024 bits` - it was vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919](https://tools.ietf.org/html/rfc7919#appendix-A) <sup>[IETF]</sup> are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
+  > In older versions of OpenSSL, if no key size is specified, default key size was `512/1024 bits` - it was vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919 - Supported Groups Registry](https://tools.ietf.org/html/rfc7919#appendix-A) <sup>[IETF]</sup> are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
   >
   >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
   >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
@@ -3570,7 +3570,7 @@ ssl_prefer_server_ciphers on;
 
   > By default, the `gzip` compression modules are installed but not enabled in the NGINX.
 
-  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively (libraries like OpenSSL built with compression disabled using `no-comp` configuration option). A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - 9.2. Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2) <sup>[IETF]</sup>).
+  > You should probably never use TLS compression. Some user agents (at least Chrome) will disable it anyways. Disabling SSL/TLS compression stops the attack very effectively (libraries like OpenSSL built with compression disabled using `no-comp` configuration option). A deployment of HTTP/2 over TLS 1.2 must disable TLS compression (please see [RFC 7540 - Use of TLS Features](https://tools.ietf.org/html/rfc7540#section-9.2) <sup>[IETF]</sup>).
 
   > CRIME exploits SSL/TLS compression which is disabled since NGINX 1.3.2. BREACH exploits only HTTP compression.
 
@@ -3635,7 +3635,7 @@ location ^~ /assets/ {
   >
   > - It is advisable to assign the `max-age` directive’s value to be greater than `10368000` seconds (120 days) and ideally to `31536000` (one year). Websites should aim to ramp up the `max-age` value to ensure heightened security for a long duration for the current domain and/or subdomains
   >
-  > - [RFC 6797 14.4. The Need for includeSubDomains](https://tools.ietf.org/html/rfc6797) <sup>[IETF]</sup>, advocates that a web application must aim to add the `includeSubDomain` directive in the policy definition whenever possible. The directive’s presence ensures the HSTS policy is applied to the domain of the issuing host and all of its subdomains, e.g. `example.com` and `www.example.com`
+  > - [RFC 6797 - The Need for includeSubDomains](https://tools.ietf.org/html/rfc6797) <sup>[IETF]</sup>, advocates that a web application must aim to add the `includeSubDomain` directive in the policy definition whenever possible. The directive’s presence ensures the HSTS policy is applied to the domain of the issuing host and all of its subdomains, e.g. `example.com` and `www.example.com`
   >
   > - The application should never send an HSTS header over a plaintext HTTP header, as doing so makes the connection vulnerable to SSL stripping attacks
   >
@@ -3971,8 +3971,8 @@ location /api {
 
 ###### External resources
 
-- [RFC 2616 - Hypertext Transfer Protocol (HTTP/1.1): Standards Track](https://tools.ietf.org/html/rfc2616) <sup>[IETF]</sup>
-- [RFC 7234 - Hypertext Transfer Protocol (HTTP/1.1): Caching](https://tools.ietf.org/html/rfc7234) <sup>[IETF]</sup>
+- [RFC 2616 - HTTP/1.1: Standards Track](https://tools.ietf.org/html/rfc2616) <sup>[IETF]</sup>
+- [RFC 7234 - HTTP/1.1: Caching](https://tools.ietf.org/html/rfc7234) <sup>[IETF]</sup>
 - [HTTP Cache Headers - A Complete Guide](https://www.keycdn.com/blog/http-cache-headers)
 - [Caching best practices & max-age gotchas](https://jakearchibald.com/2016/caching-best-practices/)
 - [Increasing Application Performance with HTTP Cache Headers](https://devcenter.heroku.com/articles/increasing-application-performance-with-http-cache-headers)
@@ -4186,8 +4186,8 @@ proxy_set_header    Host    $host;
 
 ###### External resources
 
-- [RFC2616 - 5.2 The Resource Identified by a Request](http://tools.ietf.org/html/rfc2616#section-5.2) <sup>[IETF]</sup>
-- [RFC2616 - 14.23 Host](http://tools.ietf.org/html/rfc2616#section-14.23) <sup>[IETF]</sup>
+- [RFC2616 - The Resource Identified by a Request](http://tools.ietf.org/html/rfc2616#section-5.2) <sup>[IETF]</sup>
+- [RFC2616 - Host](http://tools.ietf.org/html/rfc2616#section-14.23) <sup>[IETF]</sup>
 - [Module ngx_http_proxy_module - proxy_set_header](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header)
 - [What is the difference between Nginx variables $host, $http_host, and $server_name?](https://serverfault.com/questions/706438/what-is-the-difference-between-nginx-variables-host-http-host-and-server-na/706439#706439)
 - [HTTP_HOST and SERVER_NAME Security Issues](https://expressionengine.com/blog/http-host-and-server-name-security-issues)
@@ -4337,7 +4337,7 @@ location / {
 
   > The use of custom headers with `X-` prefix is not forbidden but discouraged. In other words, you can keep using `X-` prefixed headers, but it's not recommended and you may not document them as if they are public standard.
 
-  > Internet Engineering Task Force released in [RFC-6648](https://tools.ietf.org/html/rfc6648) <sup>[IETF]</sup> recommended deprecation of `X-` prefix.
+  > Internet Engineering Task Force released in [RFC 6648](https://tools.ietf.org/html/rfc6648) <sup>[IETF]</sup> recommended deprecation of `X-` prefix.
 
   > The `X-` in front of a header name customarily has denoted it as experimental/non-standard/vendor-specific. Once it's a standard part of HTTP, it'll lose the prefix.
 
@@ -4535,7 +4535,7 @@ example.com. IN CAA 0 issue "letsencrypt.org"
 
   > When security researchers detect potential vulnerabilities in a page or application, they will try to contact someone "appropriate" to "responsibly" reveal the problem. It's worth taking care of getting to the right address.
 
-  > This file should be placed under the `/.well-known/` path, e.g. `/.well-known/security.txt` ([RFC5785](https://tools.ietf.org/html/rfc5785) <sup>[IETF]</sup>) of a domain name or IP address for web properties.
+  > This file should be placed under the `/.well-known/` path, e.g. `/.well-known/security.txt` ([RFC 5785](https://tools.ietf.org/html/rfc5785) <sup>[IETF]</sup>) of a domain name or IP address for web properties.
 
 ###### Example
 
