@@ -35,6 +35,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [How does SSL/TLS work?](https://security.stackexchange.com/questions/20803/how-does-ssl-tls-work)
 - [TLS in HTTP/2](https://daniel.haxx.se/blog/2015/03/06/tls-in-http2/)
 - [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
+- [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
 
@@ -103,6 +104,8 @@ See also [What Happens in a TLS Handshake?](https://www.cloudflare.com/learning/
 To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher suite is a combination of authentication, encryption, and message authentication code (MAC) algorithms. They are used during the negotiation of security settings for a TLS/SSL connection as well as for the transfer of data.
 
 In the SSL handshake, the client begins by informing the server what cipher suites it supports. The cipher suites are usually arranged in order of security. The server then compares those cipher suites with the cipher suites that are enabled on its side. As soon as it finds a match, it then informs the client, and the chosen cipher suite's algorithms are called into play.
+
+  > TLS 1.1 uses the same cipher suites as TLS 1.0, therefore OpenSSL does not make a distinction between the two. When it supports a cipher suite for TLS 1.1, it also supports it for TLS 1.0, and vice versa. TLS 1.2 and TLS 1.3 have its own set of cipher suites. In TLS 1.3 they are configured in OpenSSL, are enabled by default, and selected automatically (not need to be set in the configuration).
 
 Various cryptographic algorithms are used during establishing and later during the TLS connection. There are essentially 4 different parts of a TLS 1.2 cipher suite:
 
@@ -343,3 +346,5 @@ Another interesting thing is that you can have multiple wildcard names inside th
 - [How SSL certificate works?](https://youtu.be/33VYnE7Bzpk)
 - [Intro to Digital Certificates](https://youtu.be/qXLD2UHq2vk)
 - [Digital Certificates: Chain of Trust](https://youtu.be/heacxYUnFHA)
+- [Elliptic Curves - Computerphile](https://youtu.be/NF1pwjL9-DE)
+- [Secret Key Exchange (Diffie-Hellman) - Computerphile](https://youtu.be/NmM9HA2MQGI)
