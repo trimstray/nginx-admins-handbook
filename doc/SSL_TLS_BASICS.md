@@ -41,7 +41,7 @@ If you have any objections to your SSL configuration put your site into [SSL Lab
 
 For testing clients against bad SSL configs I always use [badssl.com](https://badssl.com/). For monitoring of SSL/TLS quality I recommend [SSL Pulse](https://www.ssllabs.com/ssl-pulse/). It's a continuously updated dashboard that is designed to show the state of the SSL ecosystem and supports over time across 150,000 SSL- and TLS-enabled websites, based on Alexa’s list of the most popular sites in the world.
 
-Also look at the [Useful resources](#useful-resources) section of this chapter.
+Look also at the [useful video resources](#useful-video-resources) section of this chapter.
 
 #### TLS versions
 

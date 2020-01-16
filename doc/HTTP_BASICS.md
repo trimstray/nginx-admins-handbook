@@ -50,9 +50,7 @@ We have some interesting books:
 - [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
 - [High Performance Browser Networking](https://hpbn.co/)
 
-Also look at the [Useful resources](#useful-resources) section of this chapter.
-
-And finally look at [this](https://github.com/bigcompany/know-your-http) amazing series of A1-sized posters about the HTTP protocol.
+Look also at the [useful video resources](#useful-video-resources) section of this chapter. And finally look at [this](https://github.com/bigcompany/know-your-http) amazing series of A1-sized posters about the HTTP protocol.
 
 #### Features and architecture
 
