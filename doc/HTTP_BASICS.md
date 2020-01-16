@@ -5,6 +5,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[≡ HTTP Basics](#http-basics)**
   * [Features and architecture](#features-and-architecture)
   * [HTTP/2](#http2)
+    * [How to debug HTTP/2?](#how-to-debug-http2)
   * [URI vs URL](#uri-vs-url)
   * [HTTP Headers](#http-headers)
     * [Header compression](#header-compression)
@@ -122,7 +123,9 @@ However, you should know a client that does not support HTTP/2 will never ask th
 
 An HTTP/2 client never makes a HTTP/2 request by default. It always makes an HTTP/1.1 request with `Upgrade: HTTP/2.0` header.
 
-How to debug HTTP/2? There is great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/). Look also at [Useful tools for HTTP/2 debugging](https://community.akamai.com/customers/s/article/Useful-tools-for-HTTP-2-debugging?language=en_US).
+##### How to debug HTTP/2?
+
+There is a great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/). Look also at [Useful tools for HTTP/2 debugging](https://community.akamai.com/customers/s/article/Useful-tools-for-HTTP-2-debugging?language=en_US).
 
 #### URI vs URL
 

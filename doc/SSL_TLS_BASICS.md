@@ -5,6 +5,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[≡ SSL/TLS Basics](#ssltls-basics)**
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
+    * [In which layer is TLS situated within the TCP/IP stack?](#in-which-layer-is-tls-situated-within-the-tcpip-stack)
   * [Cipher suites](#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
@@ -82,7 +83,9 @@ For TLS 1.3 is different:
 
 By the way, the [How SSL-TLS Works](https://ldapwiki.com/wiki/How%20SSL-TLS%20Works) from ldapwiki is an amazing explanation.
 
-In which layer is TLS situated within the TCP/IP stack? See this diagram:
+##### In which layer is TLS situated within the TCP/IP stack?
+
+See this diagram:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/tcp_tls_http.png" alt="tcp_tls_http">
@@ -220,7 +223,9 @@ See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/w
 
 Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
 
-A certificate chain consists of all the certificates needed to certify the subject identified by the end certificate. In practice this includes the end certificate, the certificates of intermediate CAs, and the certificate of a root CA trusted by all parties in the chain. Every intermediate CA in the chain holds a certificate issued by the CA one level above it in the trust hierarchy. The root CA issues a certificate for itself.
+A certificate chain consists of all the certificates needed to certify the subject identified by the end certificate. In practice this includes the end certificate, the certificates of intermediate CAs, and the certificate of a root CA trusted by all parties in the chain. Every intermediate CA in the chain holds a certificate issued by the CA one level above it in the trust hierarchy.
+
+If certificate is signed directly by the trusted root CA, there is no need to add any extra/intermediate to the certificate chain. The root CA issues a certificate for itself.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/chain_of_trust.png" alt="chain_of_trust">
@@ -228,14 +233,32 @@ A certificate chain consists of all the certificates needed to certify the subje
 
 <sup><i>This infographic comes from [Wikipedia](https://en.wikipedia.org/wiki/Chain_of_trust).</i></sup>
 
+With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it).
+
+The connections is still secure but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues. However, traffic will be still encrypted.
+
 There are several ways in which the chain of trust might be broken, including but not limited to:
 
 - any certificate in the chain is self-signed, unless it the root
 - not every intermediate certificate is checked, starting from the original certificate all the way up to the root certificate
-- an intermediate, CA-signed certificate does not have the expected Basic Constraints or other important extensions
+- an intermediate, CA-signed certificate does not have the expected basic constraints or other important extensions
 - the root certificate has been compromised or authorized to the wrong party
 
-For more information please see [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/).
+Take a look at [this](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices#21-use-complete-certificate-chains) great explanation:
+
+  > _In most deployments, the server certificate alone is insufficient; two or more certificates are needed to build a complete chain of trust. A common configuration problem occurs when deploying a server with a valid certificate, but without all the necessary intermediate certificates. To avoid this situation, simply use all the certificates provided to you by your CA in the same sequence._
+  >
+  > _An invalid certificate chain effectively renders the server certificate invalid and results in browser warnings. In practice, this problem is sometimes difficult to diagnose because some browsers can reconstruct incomplete chains and some can’t. All browsers tend to cache and reuse intermediate certificates._
+
+To test validation of your certificate chain use one of the following tools:
+
+- [SSL Checker by sslshopper](https://www.sslshopper.com/ssl-checker.html)
+- [SSL Checker by namecheap](https://decoder.link/sslchecker/)
+- [SSL Server Test by Qualys](https://www.ssllabs.com/ssltest/analyze.html)
+
+For more information please see [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/) and [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce).
+
+Look also at [What happens to code sign certificates when when root CA expires?](https://serverfault.com/questions/878919/what-happens-to-code-sign-certificates-when-when-root-ca-expires).
 
 ##### Single-domain
 

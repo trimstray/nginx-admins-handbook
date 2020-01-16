@@ -110,6 +110,7 @@
 - **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics"></a>
   * [Features and architecture](doc/HTTP_BASICS.md#features-and-architecture)
   * [HTTP/2](doc/HTTP_BASICS.md#http2)
+    * [How to debug HTTP/2?](doc/HTTP_BASICS.md#how-to-debug-http2)
   * [URI vs URL](doc/HTTP_BASICS.md#uri-vs-url)
   * [HTTP Headers](doc/HTTP_BASICS.md#http-headers)
     * [Header compression](#header-compression)
@@ -134,6 +135,7 @@
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics"></a>
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
+    * [In which layer is TLS situated within the TCP/IP stack?](doc/SSL_TLS_BASICS.md#in-which-layer-is-tls-situated-within-the-tcpip-stack)
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
@@ -758,6 +760,7 @@ Existing chapters:
 
   - [x] _Features and architecture_
   - [x] _HTTP/2_
+    - [x] _How to debug HTTP/2?_
   - [x] _URI vs URL_
   - [x] _HTTP Headers_
     - [x] _Header compression_
@@ -787,6 +790,7 @@ Existing chapters:
 
   - [x] _TLS versions_
   - [x] _TLS handshake_
+    - [x] _In which layer is TLS situated within the TCP/IP stack?_
   - [x] _Cipher suites_
     - [x] _Authenticated encryption (AEAD) cipher suites_
   - [x] _Diffie-Hellman key exchange_
@@ -1638,6 +1642,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.htbridge.com/ssl/"><b>Test SSL/TLS (PCI DSS, HIPAA and NIST)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://sslanalyzer.comodoca.com/"><b>SSL analyzer and certificate checker</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://decoder.link"><b>Tools for testing SSL configuration</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://tls.imirhil.fr/"><b>Test your TLS server configuration (e.g. ciphers)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.jitbit.com/sslcheck/"><b>Scan your website for non-secure content</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://2ton.com.au/dhtool/"><b>Public Diffie-Hellman Parameter Service/Tool</b></a><br>
