@@ -254,7 +254,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
-- [Force all connections over TLS (from this handbook)](doc/RULES.md#beginner-force-all-connections-over-tls)
+- [Force all connections over TLS (from this handbook)](RULES.md#beginner-force-all-connections-over-tls)
 
 #### :beginner: Define the `listen` directives with `address:port` pair
 
@@ -2756,7 +2756,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (however, Mozilla uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines.
+  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (however, Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines.
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
