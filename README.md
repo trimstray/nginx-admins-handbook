@@ -535,7 +535,7 @@ An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https:/
 
 ## Prologue
 
-When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it, forum posts on the web about every conceivable problem was great. However, I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
+When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it, e.g. forum posts on the web about every conceivable problem was great. However, I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
 
 I was interested in everything: NGINX internals, functions, security best practices, performance optimisations, tips & tricks, hacks and rules, but for me some of the documents treated the subject lightly.
 
@@ -548,7 +548,7 @@ Of course, [NGINX Official Documentation](https://nginx.org/en/docs/) is the bes
 - [Emiller’s Guide To Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide.html)
 - [Emiller’s Advanced Topics In Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide-advanced.html)
 
-These are definitely the best assets for us and in the first place you should seek help there. Moreover, in order to improve your knowledge please see [Books](#books) chapter. It contains top literature on NGINX.
+These are definitely the best assets for us and in the first place you should seek help there. Moreover, in order to improve your knowledge, please see [Books](#books) chapter - it contains top literature on NGINX.
 
 ## Why I created this handbook
 
@@ -570,9 +570,9 @@ If you do not have the time to read hundreds of articles (just like me) this mul
 
 This handbook does not get into all aspects of NGINX. What's more, some of the things described in this guide may be rather basic because most of us do not configure NGINX every day and it is easy to forget about basic/trivial things. On the other hand, also discusses heavyweight topics so there is something for advanced users. I tried to put external resources in many places in this handbook in order to dispel any suspicion that may exist.
 
-I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation. Many of the topics described here can certainly be done better or different. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
+I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation and other great documents. Many of the topics described here can certainly be done better or different. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
-Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248) (I really like this quote!). Don't need to be an expert (I'm not, definitely!) to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the nuances of a topic or skill you’re passionate about and understand the recommendations of real experts.
+Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248) (I really like this quote!). Don't need to be an expert to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the nuances of a topic or skills you’re passionate about and understand the recommendations of real experts.
 
 ## Before you start
 
@@ -1107,7 +1107,7 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 ## Checklist to rule them all
 
-This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure the NGINX properly.
+This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure and maintain the NGINX properly.
 
   > This checklist contains [all rules (76)](doc/RULES.md) from this handbook.
 
@@ -1209,7 +1209,7 @@ You can find here a few of the different things I've worked and included to this
 
 Many of these recipes have been applied to the configuration of my old private website.
 
-  > An example configuration is in [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png) version of printable high-res hardening cheatsheets.
+  > An example configuration is in the [configuration examples](#configuration-examples) chapter. It's also based on [this](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png) version of printable high-res hardening cheatsheets.
 
 ### SSL Labs
 
@@ -1266,7 +1266,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 - **A+** with all **100%’s** on @ssllabs and **120/100** on @mozilla observatory:
 
-  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2, and also modern strict TLS cipher suites (non 128-bits). Think carefully about its use (no TLS 1.3, restrictive cipher suites), in my opinion, it is only suitable for obtaining the highest possible rating.
+  > It provides the highest scores of the SSL Labs test. Setup is very restrictive with 4096-bit private key, only TLS 1.2, and also modern strict TLS cipher suites (non 128-bits). Think carefully about its use (no TLS 1.3, restrictive cipher suites), in my opinion, it is only suitable for obtaining the highest possible rating and seems a little impractical.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls12-100p.png" alt="nginx-hardening-cheatsheet-100p" width="92%" height="92%">
@@ -1274,7 +1274,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
-  > It provides less restrictive setup with 2048-bit private key, TLS 1.3 and 1.2, and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards. Recommend using this configuration.
+  > It provides less restrictive setup with 2048-bit private key, TLS 1.3 and 1.2, and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards and guidance. Recommend using this configuration.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
@@ -1284,7 +1284,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
 
-For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter. Describes the installation of NGINX on systems/distros such as Ubuntu, Debian, CentOS, and FreeBSD.
+For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter which describes the installation of NGINX on systems/distros such as Ubuntu, Debian, CentOS, and FreeBSD.
 
 ## Static error pages generator
 

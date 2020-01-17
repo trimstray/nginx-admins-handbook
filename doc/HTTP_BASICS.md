@@ -55,7 +55,7 @@ Look also at the [useful video resources](#useful-video-resources) section of th
 
 #### Features and architecture
 
-The HTTP (1.0/1.1 = h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and a response.
+The HTTP (1.0/1.1 = h1) protocol is a request/response protocol based on the client/server based architecture where web browsers, robots and search engines, etc. act like HTTP clients, and the Web server acts as a server. This is HTTP's message-based model. Every HTTP interaction includes a request and response.
 
 By its nature, HTTP is stateless. Stateless means that all requests are separate from each other. So each request from your browser must contain enough information on its own for the server to fulfill the request.
 
@@ -73,7 +73,7 @@ Here is a brief explanation:
 
 - the HTTP client, i.e., a browser initiates an HTTP request and after a request is made, the client waits for the response
 
-- the HTTP server handles and processing requests from clients (and continues to listen and to accept other requests), after that it sends a response to the client
+- the HTTP server handles and processing requests from clients (and continues to listen, and to accept other requests), after that it sends a response to the client
 
 - any type of data can be sent by HTTP as long as both the client and the server know how to handle the data content
 
@@ -162,7 +162,7 @@ The graphic below explains the URL format:
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/url_format.png" alt="url_format">
 </p>
 
-If it is still unclear to you, I would advise you to look at the following articles:
+If it is still unclear, I would advise you to look at the following articles:
 
 - [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225)
 - [The History of the URL: Path, Fragment, Query, and Auth](https://eager.io/blog/the-history-of-the-url-path-fragment-query-auth/)

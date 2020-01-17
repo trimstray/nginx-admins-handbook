@@ -488,13 +488,13 @@ server {
 
   > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` contexts. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
-  > If you use them in multiple contexes only the lowest occurrences are used. So if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
+  > If you use them in multiple contexts only the lowest occurrences are used. So, if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
 
   > The most predictable solution is include your file with all headers at the `location` level. So, you should only include it in each individual `location` where you want these headers to be sent.
 
   > In my opinion, also good solution is use an include file with your global headers and add it to the `http` context. You should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts.
 
-  > There are solutions to this such as using an alternative module like a [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) for define specific headers in you `server` or `location` blocks.
+  > There are solutions to this such as using an alternative module ([headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module)) to define specific headers in you `server` or `location` blocks.
 
   There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
 
@@ -1613,9 +1613,9 @@ ssl_buffer_size     1400;
 
   > I found on the web that both type of chains (RootCA + Intermediate certs or only Intermediate certs) will work as the `ssl_trusted_certificate` for the purpose of OCSP verification. The root is not recommended and not needed in `ssl_certificate`. If you use Let’s Encrypt you don't need to add the RootCA (to `ssl_trusted_certificate`) because the OCSP response is signed by the intermediate certificate itself. I think, that the safest way is to include all corresponding Root and Intermediate CA certificates in `ssl_trusted_certificate`.
 
-  > I always use the most stable DNS resolver like Google's DNS resolver. If `resolver` line isn't added or your NGINX will not have external access, the resolver defaults to the server's DNS default.
+  > I always use the most stable DNS resolver like Google's DNS resolver. If `resolver` line isn't added or your NGINX will not have an external access, the resolver defaults to the server's DNS default.
 
-  > Also bear in mind that NGINX lazy-loads OCSP responses. So the first request will not have a stapled response, but subsequent requests will. This is, because NGINX will not prefetch OCSP responses at server startup (or after reload).
+  > Also bear in mind that NGINX lazy-loads OCSP responses. So, the first request will not have a stapled response, but subsequent requests will. This is, because NGINX will not prefetch OCSP responses at server startup (or after reload).
 
   > You should also to know, that too short resolver timeout (default of 30 seconds) can be another reason for OCSP stapling to fail (temporarily). If the NGINX `resolver_timeout` directive is set to very low values (< 5 seconds), log messages like this can appear: `"[...] ssl_stapling" ignored, host not found in OCSP responder [...]`.
 
