@@ -166,6 +166,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Verification of the certificate](#verification-of-the-certificate)
     * [Verification of the CSR](#verification-of-the-csr)
     * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
+    * [Check whether the private key and the CSR match](#check-whether-the-private-key-and-the-csr-match)
     * [TLSv1.3 and CCM ciphers](#tlsv13-and-ccm-ciphers)
 
 #### Installing from prebuilt packages
@@ -7566,6 +7567,13 @@ openssl req -text -noout -in ${_fd_csr} )
 ```bash
 (openssl rsa -noout -modulus -in private.key | openssl md5 ; \
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
+```
+
+###### Check whether the private key and the CSR match
+
+```bash
+(openssl rsa -noout -modulus -in private.key | openssl md5 ; \
+openssl req -noout -modulus -in request.csr | openssl md5) | uniq
 ```
 
 ###### TLSv1.3 and CCM ciphers

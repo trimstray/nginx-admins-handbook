@@ -382,6 +382,7 @@
     * [Verification of the certificate](doc/HELPERS.md#verification-of-the-certificate)
     * [Verification of the CSR](doc/HELPERS.md#verification-of-the-csr)
     * [Check whether the private key and the certificate match](doc/HELPERS.md#check-whether-the-private-key-and-the-certificate-match)
+    * [Check whether the private key and the CSR match](doc/HELPERS.md#check-whether-the-private-key-and-the-csr-match)
     [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers)
 - **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
   * [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)
@@ -977,6 +978,7 @@ Existing chapters:
     - [ ] _Redirect users with certain IP to special location_
     - [x] _Allow multiple cross-domains using the CORS headers_
     - [x] _Set correct scheme passed in X-Forwarded-Proto_
+    - [ ] _Securing URLs with the Secure Link Module_
     - [ ] _Tips and methods for high load traffic testing (cheatsheet)_
     - [ ] _Location matching examples_
     - [ ] _Passing requests to the backend_

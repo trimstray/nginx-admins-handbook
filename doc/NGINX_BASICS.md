@@ -1993,6 +1993,16 @@ server {
 
 On the other hand, `try_files` is relatively primitive. When encountered, NGINX will look for any of the specified files physically in the directory matched by the location block. If they don’t exist, NGINX does an internal redirect to the last entry in the directive.
 
+Additionally, think about dont't check for the existence of directories:
+
+```nginx
+# Use this to take out an extra filesystem stat():
+try_files $uri @index;
+
+# Instead of this:
+try_files $uri $uri/ @index;
+```
+
 ##### `if`, `break` and `set`
 
   > **:bookmark: [Avoid checks server_name with if directive - Performance - P2](RULES.md#beginner-avoid-checks-server_name-with-if-directive)**
@@ -2413,7 +2423,7 @@ gzip_min_length 128;
 
 For more information see [Finding the Nginx gzip_comp_level Sweet Spot](https://mjanja.ch/2015/03/finding-the-nginx-gzip_comp_level-sweet-spot/).
 
-NGINX also provides static compression with static module. It is better, for 2 reasons:
+Compressing resources on-the-fly adds CPU-load and latency (wait for the compression to be done) every time a resource is served. NGINX also provides static compression with static module. It is better, for 2 reasons:
 
 - you don't have to gzip for each request
 - you can use a higher gzip level
@@ -2433,7 +2443,20 @@ location ^~ /assets/ {
 
 You should put the `gzip_static on;` inside the blocks that configure static files, but if you’re only running one site, it’s safe to just put it in the http block.
 
-So, for example, to service a request for `/foo/bar/file`, NGINX tries to find and send the file `/foo/bar/file.gz`.
+  > NGINX does not automatically compress the files for you. You will have to do this yourself.
+
+To compress files manually:
+
+```bash
+cd assets/
+while IFS='' read -r -d '' _fd; do
+
+  gzip -N4c ${_fd} > ${_fd}.gz
+
+done < <(find . -maxdepth 1 -type f -regex ".*\.\(css\|js\|jpg\|gif\|png\|jpeg\)" -print0)
+```
+
+So, for example, to service a request for `/foo/bar/file`, NGINX tries to find and send the file `/foo/bar/file.gz` that directly, so no extra CPU-cost or latency is added to your requests, speeding up the serving of your app.
 
 ##### What is the best NGINX compression gzip level?
 
@@ -3639,6 +3662,13 @@ The range of zones is as follows:
   > All rate limiting rules (definitions) should be added to the NGINX `http` context.
 
 `limit_req_zone` key lets you set `rate` parameter (optional) - it defines the rate limited URL(s).
+
+See also examples (all comes from this handbook):
+
+- [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
+- [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+- [Limiting the rate of requests per IP with geo and map](#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
+- [Limiting the number of connections](#limiting-the-number-of-connections)
 
 ##### Burst and nodelay parameters
 

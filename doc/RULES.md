@@ -254,7 +254,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
-- [Force all connections over TLS (from this handbook)](RULES.md#beginner-force-all-connections-over-tls)
+- [Force all connections over TLS (from this handbook)](#beginner-force-all-connections-over-tls)
 
 #### :beginner: Define the `listen` directives with `address:port` pair
 
@@ -2237,7 +2237,7 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
 ###### Rationale
 
-  > Hidden directories and files should never be web accessible - sometimes critical data are published during application deploy. If you use control version system you should defninitely drop the access to the critical hidden directories like a `.git` or `.svn` to prevent expose source code of your application.
+  > Hidden directories and files should never be web accessible - sometimes critical data are published during application deploy. If you use control version system you should defninitely drop the access (by giving less information to attackers) to the critical hidden directories/files like a `.git` or `.svn` to prevent expose source code of your application.
 
   > Sensitive resources contains items that abusers can use to fully recreate the source code used by the site and look for bugs, vulnerabilities, and exposed passwords.
 
@@ -2255,35 +2255,49 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
 ###### Example
 
+Not recommended configuration:
+
 ```nginx
 if ($request_uri ~ "/\.git") {
 
   return 403;
 
 }
+```
 
-# or
+Recommended configuration:
+
+```nginx
+# 1)
 location ~ /\.git {
 
   deny all;
 
 }
 
-# or
+# 2)
 location ~* ^.*(\.(?:git|svn|htaccess))$ {
 
   return 403;
 
 }
+```
 
-# or all . directories/files excepted .well-known
+Most recommended configuration:
+
+```nginx
+# All . directories/files excepted .well-known (recommend):
 location ~ /\.(?!well-known\/) {
 
   deny all;
   access_log /var/log/nginx/hidden-files.log main;
 
 }
+```
 
+Look also at files with extensions:
+
+```nginx
 # Think also about the following rule (I haven't tested this but looks interesting). It comes from:
 #   - https://github.com/h5bp/server-configs-nginx/blob/master/h5bp/location/security_file_access.conf
 location ~* (?:#.*#|\.(?:bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)$ {
@@ -2291,9 +2305,27 @@ location ~* (?:#.*#|\.(?:bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)
   deny all;
 
 }
+#   - https://github.com/getgrav/grav/issues/1625
+location ~ /(LICENSE\.txt|composer\.lock|composer\.json|nginx\.conf|web\.config|htaccess\.txt|\.htaccess) {
+
+  deny all;
+
+}
+
+# Deny running scripts inside core system directories:
+#   - https://github.com/getgrav/grav/issues/1625
+location ~* /(system|vendor)/.*\.(txt|xml|md|html|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ { return 418; }
+
+# Deny running scripts inside user directory:
+#   - https://github.com/getgrav/grav/issues/1625
+location ~* /user/.*\.(txt|md|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ { return 418; }
 
 # Based on the above (tested):
-location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htaccess))$ {
+location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|dist|in[ci]|log|sql|mdb|sw[op]|htaccess|php#|php~|php_bak|aspx?|tpl|sh|bash|bin|exe|dll|jsp|out|cache|))$ {
+
+  # Use also rate limiting:
+  # limit_req_zone $binary_remote_addr zone=per_ip_5r_s:5m rate=5r/s;
+  per_ip_5r_s;
 
   deny all;
   access_log /var/log/nginx/restricted-files.log main;
@@ -2342,7 +2374,7 @@ location ~* ^.*(\.(?:git|svn|bak|conf|dist|in[ci]|log|orig|sh|sql|sw[op]|htacces
 
 - [Fastly - About ACLs](https://docs.fastly.com/en/guides/about-acls)
 - [Restrict allowed HTTP methods in Nginx](https://bjornjohansen.no/restrict-allowed-http-methods-in-nginx)
-- [Protect sensitive resources (from this handbook)](RULES.md#beginner-protect-sensitive-resources)
+- [Protect sensitive resources (from this handbook)](#beginner-protect-sensitive-resources)
 - [Allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
 
 #### :beginner: Hide Nginx version number
@@ -3582,7 +3614,7 @@ ssl_prefer_server_ciphers on;
 
   > Compression is not the only requirement for the attack to be done so using it does not mean that the attack will succeed. Generally you should consider whether having an accidental performance drop on HTTPS sites is better than HTTPS sites being accidentally vulnerable.
 
-  > In most cases, the best action is to simply disable gzip for SSL but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however common mitigation is to add data of random length to any responses containing sensitive data (it's default behaviour of TLSv1.3 - [5.4.  Record Padding](https://tools.ietf.org/html/draft-ietf-tls-tls13-21#section-5.4) <sup>[IETF]</sup>). For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
+  > In most cases, the best action is moving to TLS 1.3﻿ or disable gzip for SSL (in older TLS versions than 1.3) but some of resources explain that is not a decent option to solving this. Mitigation is mostly on an application level, however common mitigation is to add data of random length to any responses containing sensitive data (it's default behaviour of TLSv1.3 - [5.4. Record Padding](https://tools.ietf.org/html/draft-ietf-tls-tls13-21#section-5.4) <sup>[IETF]</sup>). For more information look at [nginx-length-hiding-filter-module](https://github.com/nulab/nginx-length-hiding-filter-module). This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
 
   > I would gonna to prioritise security over performance but compression can be (I think) okay to HTTP compress publicly available static content like css or js and HTML content with zero sensitive info (like an "About Us" page).
 
