@@ -1451,7 +1451,7 @@ http {
 
   > **:bookmark: [Define the listen directives with address:port pair - Base Rules - P1](RULES.md#beginner-define-the-listen-directives-with-addressport-pair)**<br>
   > **:bookmark: [Prevent processing requests with undefined server names - Base Rules - P1](RULES.md#beginner-prevent-processing-requests-with-undefined-server-names)**<br>
-  > **:bookmark: [Never use a hostname in the listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-the-listen-or-upstream-directives)**<br>
+  > **:bookmark: [Never use a hostname in a listen or upstream directives - Base Rules - P1](RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)**<br>
   > **:bookmark: [Use exact names in a server_name directive where possible - Performance - P2](RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)**<br>
   > **:bookmark: [Separate listen directives for 80 and 443 ports - Base Rules - P3](RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)**<br>
   > **:bookmark: [Use only one SSL config for the listen directive - Base Rules - P3](RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)**

@@ -11,7 +11,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Separate listen directives for 80 and 443 ports](#beginner-separate-listen-directives-for-80-and-443-ports)
   * [Define the listen directives with address:port pair](#beginner-define-the-listen-directives-with-addressport-pair)
   * [Prevent processing requests with undefined server names](#beginner-prevent-processing-requests-with-undefined-server-names)
-  * [Never use a hostname in the listen or upstream directives](#beginner-never-use-a-hostname-in-the-listen-or-upstream-directives)
+  * [Never use a hostname in a listen or upstream directives](#beginner-never-use-a-hostname-in-a-listen-or-upstream-directives)
   * [Set the HTTP headers with add_header and proxy_*_header directives properly](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
   * [Use only one SSL config for the listen directive](#beginner-use-only-one-ssl-config-for-the-listen-directive)
   * [Use geo/map modules instead of allow/deny](#beginner-use-geomap-modules-instead-of-allowdeny)
@@ -39,18 +39,18 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > Use `include` directive to move and to split common server settings into a multiple files and to attach your specific code to global config or contexts. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
 
-  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`). I prefer the following structure:
+  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`) and, if necessary, mostly to the files which has `server` directives.
+
+  > I prefer the following structure:
   >
   > - `html` - for default static files, e.g. global 5xx error page
   > - `master` - for main configuration, e.g. acls, listen directives, and domains
   >   - `_acls` - for access control lists, e.g. geo or map modules
   >   - `_basic` - for rate limiting rules, redirect maps, or proxy params
   >   - `_listen` - for all listen directives; also stores SSL configuration
-  >   - `_server` - for domains (localhost) configuration; also stores all backends definitions
+  >   - `_server` - for domains configuration; also stores all backends definitions
   > - `modules` - for modules which are dynamically loading into NGINX
   > - `snippets` - for NGINX aliases, configuration templates
-  >
-  > I attach some of them, if necessary, mostly to the files which has `server` directives.
 
 ###### Example
 
@@ -100,12 +100,12 @@ server {
   > - use whitespaces and blank lines to arrange and separate code blocks
   > - tabs vs spaces - more important to be consistent throughout your code than to use any specific type
   >   - tabs are consistent, customizable and allow mistakes to be more noticeable (unless you are a 4 space kind of guy)
-  >   - a space is always one column, use it if you want your beautiful work to appear right for everyone.
+  >   - a space is always one column, use it if you want your beautiful work to appear right for everyone
   > - use comments to explain why things are done not what is done
   > - use meaningful naming conventions
   > - simple is better than complex but complex is better than complicated
 
-  > Some would say that NGINX's files are written in their own language or syntax so we should not overdo it with above rules. I think it's worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
+  > Some would say that NGINX's files are written in their own language or syntax so we should not overdo it with above rules. I think it is worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
 
 ###### Example
 
@@ -222,7 +222,7 @@ kill -HUP $(pgrep -f "nginx: master")
 
   > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration. I always split the configuration if I want to redirect from HTTP to HTTPS.
 
-  > It's useful if you pin multiple domains to one IP address. This allows you to attach one `listen` directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
+  > It's also useful if you pin multiple domains to one IP address. This allows you to attach one `listen` directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
 
   > It may also be necessary to hardcode the domains if you're using HTTPS, because you have to know upfront which certificates you'll be providing.
 
@@ -264,7 +264,7 @@ server {
 
   > And what's more, will only evaluate the `server_name` directive when it needs to distinguish between server blocks that match to the same level in the `listen` directive.
 
-  > Set IP address and port number to prevents soft mistakes which may be difficult to debug. In addition, no IP means bind to all IPs on your system, this can cause a lot of problems and it's bad practice (it is considered good security practice to only configure the minimum network access for services).
+  > Set IP address and port number to prevents soft mistakes which may be difficult to debug. In addition, no IP means bind to all IPs on your system, this can cause a lot of problems and it's bad practice because it is recommended to only configure the minimum network access for services.
 
 ###### Example
 
@@ -313,7 +313,7 @@ server {
 
   > If a server with a matching `listen` and `server_name` cannot be found, NGINX will use the default server. If your configurations are spread across multiple files, there evaluation order will be ambiguous, so you need to mark the default server explicitly.
 
-  > NGINX uses `Host` header for `server_name` matching. It does not use TLS SNI. This means that for an SSL server, NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed.
+  > NGINX uses `Host` header for `server_name` matching but it does not use TLS SNI. This means that NGINX must be able to accept SSL connection, which boils down to having certificate/key. The cert/key can be any, e.g. self-signed.
 
   > There is a simple procedure for all non defined server names:
   >
@@ -321,7 +321,7 @@ server {
   > - complete `listen` directive, with...
   > - `default_server` parameter, with...
   > - only one `server_name` (but not required) definition, and...
-  > - preventively I add it at the beginning of the configuration
+  > - preventively I add it at the beginning of the configuration (attach it to the file `nginx.conf`)
 
   > Also good point is `return 444;` for default server name because this will close the connection (which will kill the connection without sending any headers) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
 
@@ -360,6 +360,10 @@ server {
 
   # }
 
+  # Remember to log all actions in separate files:
+  access_log /var/log/nginx/default-access.log main;
+  error_log /var/log/nginx/default-error.log warn;
+
 }
 
 server {
@@ -389,11 +393,11 @@ server {
 - [How processes a request](https://nginx.org/en/docs/http/request_processing.html)
 - [nginx: how to specify a default server](https://blog.gahooa.com/2013/08/21/nginx-how-to-specify-a-default-server/)
 
-#### :beginner: Never use a hostname in the `listen` or `upstream` directives
+#### :beginner: Never use a hostname in a `listen` or `upstream` directives
 
 ###### Rationale
 
-  > Generaly, uses of hostnames in the `listen` or `upstream` directives is a bad practice. In the worst case NGINX won't be able to bind to the desired TCP socket which will prevent NGINX from starting at all.
+  > Generaly, uses of hostnames in a `listen` or `upstream` directives is a bad practice. In the worst case NGINX won't be able to bind to the desired TCP socket which will prevent NGINX from starting at all.
 
   > The best and safer way is to know the IP address that needs to be bound to and use that address instead of the hostname. This also prevents NGINX from needing to look up the address and removes dependencies on external and internal resolvers.
 
@@ -486,7 +490,7 @@ server {
 
 ###### Rationale
 
-  > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` contexts. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
+  > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` scopes. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
   > If you use them in multiple contexts only the lowest occurrences are used. So, if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
 
@@ -494,7 +498,7 @@ server {
 
   > In my opinion, also good solution is use an include file with your global headers and add it to the `http` context. You should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts.
 
-  > There are solutions to this such as using an alternative module ([headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module)) to define specific headers in you `server` or `location` blocks.
+  > There are additional solutions to this, such as using an alternative module ([headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module)) to define specific headers in you `server` or `location` blocks.
 
   There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
 
@@ -644,7 +648,7 @@ http {
 
   > For me, this rule making it easier to debug and maintain. It also prevents multiple TLS configurations on the same listening address.
 
-  > You should use one SSL config for sharing a single IP address between several HTTPS servers (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
+  > You should use one SSL config for sharing a single IP address between several HTTPS configurations (e.g. protocols, ciphers, curves). It's to prevent mistakes and configuration mismatch.
 
   > Using a common TLS configuration (stored in one file and added using the include directive) for all `server` contexts prevents strange behaviors. I think no better cure for a possible configuration clutter.
 
@@ -723,7 +727,7 @@ server {
 
   > `geo` module (watch out: don't mistake this module for the GeoIP) builds in-memory radix tree when loading configs. This is the same data structure as used in routing, and lookups are really fast.
 
-  > I use both modules for a large lists. For me, `allow/deny` directives are better solution (more plain) for simple lists. Remember that these directives may require the use of several `if` conditions.
+  > I use both modules for a large lists but these directives may require the use of several `if` conditions. For me, `allow/deny` directives are better solution (more plain) for simple lists.
 
 ###### Example
 
@@ -813,7 +817,7 @@ location /internal {
 
   > Map module provides a more elegant solution for clearly parsing a big list of regexes, e.g. User-Agents, Referrers.
 
-  > You can also use `include` directive for your maps so your config files would look pretty.
+  > You can also use `include` directive for your maps so your config files would look pretty and can be used in many places in your configuration.
 
 ###### Example
 
@@ -872,6 +876,7 @@ server {
 
   server_name example.com;
 
+  # It's important:
   root /var/www/example.com/public;
 
   location / {
@@ -1180,7 +1185,7 @@ http {
 
 Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
-  > :pushpin:&nbsp; NGINX has many methods for troubleshooting configuration problems. In this chapter I will present a few ways to deal with them.
+  > :pushpin:&nbsp; NGINX has many methods for troubleshooting issues. In this chapter I will present a few ways to deal with them.
 
 - **[Base Rules](#base-rules)**
 - **[≡ Debugging (5)](#debugging)**
@@ -1199,7 +1204,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
 ###### Rationale
 
-  > Anything you can access as a variable in NGINX config, you can log, including non-standard http headers, etc. so it's a simple way to create your own log format for specific situations.
+  > Anything you can access as a variable in NGINX config, you can log, including non-standard HTTP headers, etc. so it's a simple way to create your own log format for specific situations.
 
   > This is extremely helpful for debugging specific `location` directives.
 
@@ -1364,13 +1369,11 @@ worker_processes  1;
 
   > A core dump is basically a snapshot of the memory when the program crashed.
 
-  > NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process.
+  > NGINX is a very stable daemon but sometimes it can happen that there is a unique termination of the running NGINX process. You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
 
   > It ensures two important directives that should be enabled if you want the memory dumps to be saved, however, in order to properly handle memory dumps, there are a few things to do. For fully information about it see [Dump a process's memory (from this handbook)](HELPERS.md#dump-a-processs-memory) chapter.
 
-  > You should always enable core dumps when your NGINX instance receive an unexpected error or when it crashed.
-
-  > Also keep in mind other debugging and troubleshooting tools such as `strace` (note: `strace` pausing the target process for each syscall so that the debugger can read state. And doing this twice: when the syscall begins, and when it ends) on the worker process, tracing `read/readv/write/writev/close/shutdown` calls.
+  > Also keep in mind other debugging and troubleshooting tools such as `eBPF`, `ftrace`, `perf trace` or `strace` (note: `strace` pausing the target process for each syscall so that the debugger can read state, and doing this twice: when the syscall begins, and when it ends, so can bring down your production environment) on the worker process for syscall tracing like a `read/readv/write/writev/close/shutdown`.
 
 ###### Example
 
@@ -1407,9 +1410,9 @@ working_directory     /var/dump/nginx;
   >
   > _Usually a mirror subrequest does not affect the main request. However there are two issues with mirroring:_
   >
-  >   _- the next request on the same connection will not be processed until all mirror subrequests finish. Try disabling keepalive for the primary location and see if it helps_
+  >   - _the next request on the same connection will not be processed until all mirror subrequests finish. Try disabling keepalive for the primary location and see if it helps_
   >
-  >   _- if you use `sendfile` and `tcp_nopush`, it's possible that the response is not pushed properly because of a mirror subrequest, which may result in a delay. Turn off `sendfile` and see if it helps_
+  >   - _if you use `sendfile` and `tcp_nopush`, it's possible that the response is not pushed properly because of a mirror subrequest, which may result in a delay. Turn off `sendfile` and see if it helps_
 
 ###### Example
 
@@ -1531,11 +1534,11 @@ worker_processes 3;
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
-  > To test your server with [RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup> (HTTP/2) and [RFC 7541](https://tools.ietf.org/html/rfc7541) <sup>[IETF]</sup> (HPACK) use [h2spec](https://github.com/summerwind/h2spec) tool.
-
   > Obviously, there is no pleasure without pain. There are serious vulnerabilities detected in the HTTP/2 protocol. For more information please see [HTTP/2 can shut you down!](https://www.secpod.com/blog/http2-dos-vulnerabilities/), [On the recent HTTP/2 DoS attacks](https://blog.cloudflare.com/on-the-recent-http-2-dos-attacks/), and [HTTP/2: In-depth analysis of the top four flaws of the next generation web protocol](https://www.imperva.com/docs/Imperva_HII_HTTP2.pdf) <sup>[pdf]</sup>.
 
   > Let's not forget about backwards-compatible with HTTP/1.1, also when it comes to security. Many of the vulnerabilities for HTTP/1.1 may be present in HTTP/2.
+
+  > To test your server with [RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup> (HTTP/2) and [RFC 7541](https://tools.ietf.org/html/rfc7541) <sup>[IETF]</sup> (HPACK) use [h2spec](https://github.com/summerwind/h2spec) tool.
 
 ###### Example
 
@@ -1554,9 +1557,10 @@ server {
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/)
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 - [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
+- [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 - [HTTP/2 Compatibility with old Browsers and Servers](http://qnimate.com/http2-compatibility-with-old-browsers-and-servers/)
-- [HTTP Headers (from this handbook)](HTTP_BASICS.md#http-headers)
 - [HTTP/2 Denial of Service Advisory](https://github.com/Netflix/security-bulletins/blob/master/advisories/third-party/2019-002.md)
+- [HTTP Headers (from this handbook)](HTTP_BASICS.md#http-headers)
 
 #### :beginner: Maintaining SSL sessions
 
