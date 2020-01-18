@@ -927,8 +927,11 @@ server {
 
   ...
 
-  # return  301 https://$host$request_uri;
   return    301 https://example.com$request_uri;
+
+  # Other examples:
+  # return  301 https://$host$request_uri;
+  # return  301 $scheme://$host$request_uri;
 
 }
 
@@ -938,7 +941,7 @@ server {
 
   server_name example.com;
 
-  return      301 $scheme://www.example.com$request_uri;
+  return    301 $scheme://www.example.com$request_uri;
 
 }
 ```
@@ -1470,7 +1473,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Use HTTP/2](#beginner-use-http2)
   * [Maintaining SSL sessions](#beginner-maintaining-ssl-sessions)
   * [Enable OCSP Stapling](#beginner-enable-ocsp-stapling)
-  * [Use exact names in a server_name directive where possible](#beginner-use-exact-names-in-a-server_name-directive-where-possible)
+  * [Use exact names in a server_name directive if possible](#beginner-use-exact-names-in-a-server_name-directive-if-possible)
   * [Avoid checks server_name with if directive](#beginner-avoid-checks-server_name-with-if-directive)
   * [Use $request_uri to avoid using regular expressions](#beginner-use-request_uri-to-avoid-using-regular-expressions)
   * [Use try_files directive to ensure a file exists](#beginner-use-try_files-directive-to-ensure-a-file-exists)
@@ -1528,13 +1531,13 @@ worker_processes 3;
 
   > `http2` directive configures the port to accept HTTP/2 connections. This doesn't mean it accepts only HTTP/2 connections. HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before because if the client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
 
-  > Note that HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
+  > HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
   > You should also enable the `ssl` parameter (but NGINX can also be configured to accept HTTP/2 connections without SSL), required because browsers do not support HTTP/2 without encryption (the h2 specification, allows to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
 
   > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
-  > Obviously, there is no pleasure without pain. There are serious vulnerabilities detected in the HTTP/2 protocol. For more information please see [HTTP/2 can shut you down!](https://www.secpod.com/blog/http2-dos-vulnerabilities/), [On the recent HTTP/2 DoS attacks](https://blog.cloudflare.com/on-the-recent-http-2-dos-attacks/), and [HTTP/2: In-depth analysis of the top four flaws of the next generation web protocol](https://www.imperva.com/docs/Imperva_HII_HTTP2.pdf) <sup>[pdf]</sup>.
+  > Obviously, there is no pleasure without pain. HTTP/2 is more secure than HTTP/1.1, however, there are serious vulnerabilities detected in the HTTP/2 protocol. For more information please see [HTTP/2 can shut you down!](https://www.secpod.com/blog/http2-dos-vulnerabilities/), [On the recent HTTP/2 DoS attacks](https://blog.cloudflare.com/on-the-recent-http-2-dos-attacks/), and [HTTP/2: In-depth analysis of the top four flaws of the next generation web protocol](https://www.imperva.com/docs/Imperva_HII_HTTP2.pdf) <sup>[pdf]</sup>.
 
   > Let's not forget about backwards-compatible with HTTP/1.1, also when it comes to security. Many of the vulnerabilities for HTTP/1.1 may be present in HTTP/2.
 
@@ -1611,19 +1614,19 @@ ssl_buffer_size     1400;
 
   > OCSP Stapling extension is configured for better performance (is designed to reduce the cost of an OCSP validation) and user privacy is still maintained. OCSP Stapling is an optimization, and nothing breaks if it doesn't work.
 
-  > OCSP stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
+  > OCSP Stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
 
   > NGINX generates this list from the file of certificates pointed to by `ssl_trusted_certificate` (the list of these certificates will not be sent to clients). You need to send this list or switch off `ssl_verify_client`. This step is optional when the full certificate chain (only Intermediate certs, without Root CA, and also must not include the site certificate) was already provided with the `ssl_certificate` statement. In case just the certificate is being used (not the parts of your CA), then `ssl_trusted_certificate` is needed.
 
   > I found on the web that both type of chains (RootCA + Intermediate certs or only Intermediate certs) will work as the `ssl_trusted_certificate` for the purpose of OCSP verification. The root is not recommended and not needed in `ssl_certificate`. If you use Let’s Encrypt you don't need to add the RootCA (to `ssl_trusted_certificate`) because the OCSP response is signed by the intermediate certificate itself. I think, that the safest way is to include all corresponding Root and Intermediate CA certificates in `ssl_trusted_certificate`.
 
-  > I always use the most stable DNS resolver like Google's DNS resolver. If `resolver` line isn't added or your NGINX will not have an external access, the resolver defaults to the server's DNS default.
+  > I always use the most stable DNS resolver like Google's `8.8.8.8`, Quad9’s `9.9.9.9`, CloudFlare's `1.1.1.1`, or OpenDNS's `208.67.222.222` (of course you can use resolving domains internally and externally with Bind9 or whatever else). If `resolver` line isn't added or your NGINX will not have an external access, the resolver defaults to the server's DNS default.
 
   > Also bear in mind that NGINX lazy-loads OCSP responses. So, the first request will not have a stapled response, but subsequent requests will. This is, because NGINX will not prefetch OCSP responses at server startup (or after reload).
 
-  > You should also to know, that too short resolver timeout (default of 30 seconds) can be another reason for OCSP stapling to fail (temporarily). If the NGINX `resolver_timeout` directive is set to very low values (< 5 seconds), log messages like this can appear: `"[...] ssl_stapling" ignored, host not found in OCSP responder [...]`.
+  > You should know, that too short resolver timeout (default of 30 seconds) can be another reason for OCSP Stapling to fail (temporarily). If the NGINX `resolver_timeout` directive is set to very low values (< 5 seconds), log messages like this can appear: `"[...] ssl_stapling" ignored, host not found in OCSP responder [...]`.
 
-  The NGINX documentation says the following:
+  Important information from NGINX documentation:
 
   > _For the OCSP stapling to work, the certificate of the server certificate issuer should be known. If the `ssl_certificate` file does not contain intermediate certificates, the certificate of the server certificate issuer should be present in the `ssl_trusted_certificate` file._
 
@@ -1632,17 +1635,19 @@ ssl_buffer_size     1400;
 ###### Example
 
 ```nginx
-# Turn on OCSP stapling:
+# Turn on OCSP Stapling:
 ssl_stapling on;
+
 # Enable the server to check OCSP:
 ssl_stapling_verify on;
+
 # Point to a trusted CA (the company that signed our CSR) certificate chain
 # (Intermediate certificates in that order from top to bottom) file, but only,
 # if NGINX can not find the top level certificates from ssl_certificate:
 ssl_trusted_certificate /etc/nginx/ssl/inter-CA-chain.pem
 
 # For a resolution of the OCSP responder hostname, set resolvers and their cache time:
-resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver 1.1.1.1 8.8.8.8 valid=300s;
 resolver_timeout 5s;
 ```
 
@@ -1670,8 +1675,9 @@ echo | openssl s_client -connect example.com:443 -status 2> /dev/null | grep -A 
 - [Priming the OCSP cache in Nginx](https://unmitigatedrisk.com/?p=241)
 - [How to make OCSP stapling on nginx work](https://matthiasadler.info/blog/ocsp-stapling-on-nginx-with-comodo-ssl/)
 - [HAProxy OCSP stapling](https://icicimov.github.io/blog/server/HAProxy-OCSP-stapling/)
+- [DNS Resolvers Performance compared: CloudFlare x Google x Quad9 x OpenDNS](https://medium.com/@nykolas.z/dns-resolvers-performance-compared-cloudflare-x-google-x-quad9-x-opendns-149e803734e5)
 
-#### :beginner: Use exact names in a `server_name` directive where possible
+#### :beginner: Use exact names in a `server_name` directive if possible
 
 ###### Rationale
 
@@ -1683,26 +1689,31 @@ echo | openssl s_client -connect example.com:443 -status 2> /dev/null | grep -A 
 
 ###### Example
 
+Not recommended configuration:
+
+```nginx
+server {
+
+  listen       192.168.252.10:80;
+
+  server_name  .example.org;
+
+  ...
+
+}
+```
+
+Recommended configuration:
+
 ```nginx
 # It is more efficient to define them explicitly:
 server {
 
-    listen       192.168.252.10:80;
+  listen       192.168.252.10:80;
 
-    server_name  example.org www.example.org *.example.org;
+  server_name  example.org www.example.org *.example.org;
 
-    ...
-
-}
-
-# Than to use the simplified form:
-server {
-
-    listen       192.168.252.10:80;
-
-    server_name  .example.org;
-
-    ...
+  ...
 
 }
 ```
@@ -1710,7 +1721,7 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
-- [Virtual server logic](NGINX_BASICS.md#virtual-server-logic)
+- [Handle incoming connections (from this handbook)](NGINX_BASICS.md#handle-incoming-connections)
 
 #### :beginner: Avoid checks `server_name` with `if` directive
 
@@ -1720,7 +1731,7 @@ server {
 
   > Instead use two server directives like the example below. This approach decreases NGINX processing requirements.
 
-  > The problem is not just the `$server_name` directive. Keep in mind also other variables, e.g. `$scheme`. In some cases (but not always), it is better to add an additional a block directive than to use the `if`.
+  > The problem is not just the `$server_name` directive. Keep in mind also other variables, e.g. `$scheme`. In some cases (but not always), it is better to add an additional block directive than to use the `if`.
 
 ###### Example
 
@@ -1816,6 +1827,7 @@ return 301 https://example.com$request_uri;
 
 - [Pitfalls and Common Mistakes - Taxing Rewrites](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites)
 - [Module ngx_http_proxy_module - proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+- [uri vs request_uri (from this handbook)](NGINX_BASICS.md#uri-vs-request_uri)
 
 #### :beginner: Use `try_files` directive to ensure a file exists
 
@@ -1838,6 +1850,7 @@ return 301 https://example.com$request_uri;
 Not recommended configuration:
 
 ```nginx
+server {
 
   ...
 
@@ -1860,6 +1873,7 @@ Not recommended configuration:
 Recommended configuration:
 
 ```nginx
+server {
 
   ...
 
@@ -1880,12 +1894,15 @@ Recommended configuration:
 - [Pitfalls and Common Mistakes](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/)
 - [Serving Static Content](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/)
 - [Serve files with nginx conditionally](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/)
+- [try_files directive (from this hadnbook)](NGINX_BASICS.md#try_files-directive)
 
 #### :beginner: Use `return` directive instead of `rewrite` for redirects
 
 ###### Rationale
 
-  > You should use `server` blocks and `return` statements as they're way simpler and faster than evaluating RegEx via `location` blocks. This directive stops processing and returns the specified code to a client.
+  > For me, ability to rewrite URLs in NGINX is an extremely powerful and important feature. Technically, you can use both options but in my opinion you should use `server` blocks and `return` statements as they are way simpler and faster than evaluating RegEx e.g. via `location` blocks.
+
+  > NGINX has to process and start a search. `return` directive stops processing (it directly stops execution) and returns the specified code to a client. This is preferred in any context.
 
   > If you have a scenario where you need to validate the URL with a regex or need to capture elements in the original URL (that are obviously not in a corresponding NGINX variable), then you should use `rewrite`.
 
@@ -1898,13 +1915,17 @@ server {
 
   ...
 
-  if ($host = api.example.com) {
+  location / {
 
-    rewrite     ^/(.*)$ http://example.com/$1 permanent;
+    try_files   $uri $uri/ =404;
+
+    rewrite     ^/(.*)$ https://example.com/$1 permanent;
 
   }
 
   ...
+
+}
 ```
 
 Recommended configuration:
@@ -1914,23 +1935,23 @@ server {
 
   ...
 
-  if ($host = api.example.com) {
+  location / {
 
-    return      403;
+    try_files   $uri $uri/ =404;
 
-    # or other examples:
-    #   return    301 https://example.com$request_uri;
-    #   return    301 $scheme://$host$request_uri;
+    return      301 https://example.com$request_uri;
 
   }
 
   ...
+
+}
 ```
 
 ###### External resources
 
-- [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [NGINX - rewrite vs redirect](http://think-devops.com/blogs/nginx-rewrite-redirect.html)
+- [If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 - [rewrite vs return (from this handbook)](NGINX_BASICS.md#rewrite-vs-return)
 - [Use return directive for URL redirection (301, 302) - Base Rules - P2 (from this handbook)](#beginner-use-return-directive-for-url-redirection-301-302)
 
@@ -1938,21 +1959,21 @@ server {
 
 ###### Rationale
 
-  > Enables the use of JIT for regular expressions to speed-up their processing.
+  > Enables the use of JIT for regular expressions to speed-up their processing. Specifically, checking rules can be time-consuming, especially complex regular expression (regex) conditions.
 
   > By compiling NGINX with the PCRE library, you can perform complex manipulations with your `location` blocks and use the powerful `rewrite` directives.
 
-  > PCRE JIT can speed up processing of regular expressions significantly. NGINX with `pcre_jit` is magnitudes faster than without it. This option can improve performance, however, in some cases `pcre_jit` may have a negative effect. So, before enabling it, I recommend you to read this great document: [PCRE Performance Project](https://zherczeg.github.io/sljit/pcre.html).
+  > PCRE JIT rule-matching engine can speed up processing of regular expressions significantly. NGINX with `pcre_jit` is magnitudes faster than without it. This option can improve performance, however, in some cases `pcre_jit` may have a negative effect. So, before enabling it, I recommend you to read this great document: [PCRE Performance Project](https://zherczeg.github.io/sljit/pcre.html).
 
   > If you’ll try to use `pcre_jit on;` without JIT available, or if NGINX was compiled with JIT available, but currently loaded PCRE library does not support JIT, will warn you during configuration parsing.
 
   > The `--with-pcre-jit` is only needed when you compile PCRE library using NGNIX configure (`./configure --with-pcre=`). When using a system PCRE library whether or not JIT is supported depends on how the library was compiled.
 
+  > If you don't pass `--with-pcre-jit`, the NGINX configure scripts are smart enough to detect and enable it automatically. See [here](http://hg.nginx.org/nginx/file/abd40ce603fa/auto/lib/pcre/conf). So, if your PCRE library is recent enough, a simple `./configure` with no switches will compile NGINX with `pcre_jit` enabled.
+
   From NGINX documentation:
 
   > _The JIT is available in PCRE libraries starting from version 8.20 built with the `--enable-jit` configuration parameter. When the PCRE library is built with nginx (`--with-pcre=`), the JIT support is enabled via the `--with-pcre-jit` configuration parameter._
-
-  > But if you don't pass `--with-pcre-jit`, the NGINX configure scripts are smart enough to detect and enable it automatically. See [here](http://hg.nginx.org/nginx/file/abd40ce603fa/auto/lib/pcre/conf). So, if your PCRE library is recent enough, a simple `./configure` with no switches will compile NGINX with `pcre_jit` enabled.
 
 ###### Example
 
@@ -1964,6 +1985,8 @@ pcre_jit on;
 ###### External resources
 
 - [Core functionality - pcre jit](https://nginx.org/en/docs/ngx_core_module.html#pcre_jit)
+- [Performance comparison of regular expression engines](https://nasciiboy.land/raptorVSworld/)
+- [Building OpenResty with PCRE JIT](https://www.cryptobells.com/building-openresty-with-pcre-jit/)
 
 #### :beginner: Activate the cache for connections to upstream servers
 
@@ -2022,6 +2045,12 @@ server {
 ###### Rationale
 
   > Exact location matches are often used to speed up the selection process by immediately ending the execution of the algorithm.
+
+  > Regexes when present take precedence over simple URI matching and can add significant computational overhead depending on their complexity.
+
+  > Using the `=` modifier it is possible to define an exact match of URI and location. It is very fast to process and save a significant amount of CPU cycles.
+
+  > If an exact match is found, the search terminates. For example, if a `/` request happens frequently, defining `location = /` will speed up the processing of these requests, as search terminates right after the first comparison. Such a location cannot obviously contain nested locations.
 
 ###### Example
 

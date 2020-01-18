@@ -411,7 +411,7 @@
   * [Use HTTP/2](doc/RULES.md#beginner-use-http2)
   * [Maintaining SSL sessions](doc/RULES.md#beginner-maintaining-ssl-sessions)
   * [Enable OCSP Stapling](doc/RULES.md#beginner-enable-ocsp-stapling)
-  * [Use exact names in a server_name directive where possible](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)
+  * [Use exact names in a server_name directive if possible](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-if-possible)
   * [Avoid checks server_name with if directive](doc/RULES.md#beginner-avoid-checks-server_name-with-if-directive)
   * [Use $request_uri to avoid using regular expressions](doc/RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)
   * [Use try_files directive to ensure a file exists](doc/RULES.md#beginner-use-try_files-directive-to-ensure-a-file-exists)
@@ -1161,7 +1161,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)<br><sup>The by far simplest and fastest because there is no regexp that has to be evaluated.</sup> | Base Rules | ![medium](static/img/priorities/medium.png) |
 | [Maintaining SSL sessions](doc/RULES.md#beginner-maintaining-ssl-sessions)<br><sup>Improves performance from the clients’ perspective.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Enable OCSP Stapling](doc/RULES.md#beginner-enable-ocsp-stapling)<br><sup>Enable to reduce the cost of an OCSP validation.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
-| [Use exact names in a server_name directive where possible](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-where-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
+| [Use exact names in a server_name directive if possible](doc/RULES.md#beginner-use-exact-names-in-a-server_name-directive-if-possible)<br><sup>Helps speed up searching using exact names.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Avoid checks server_name with if directive](doc/RULES.md#beginner-avoid-checks-server_name-with-if-directive)<br><sup>It decreases NGINX processing requirements.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use $request_uri to avoid using regular expressions](doc/RULES.md#beginner-use-request_uri-to-avoid-using-regular-expressions)<br><sup>By default, the regex is costly and will slow down the performance.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
 | [Use try_files directive to ensure a file exists](doc/RULES.md#beginner-use-try_files-directive-to-ensure-a-file-exists)<br><sup>Use it if you need to search for a file, it saving duplication of code also.</sup> | Performance | ![medium](static/img/priorities/medium.png) |
