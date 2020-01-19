@@ -2212,7 +2212,10 @@ pkg -f install <pkgname>
 user nginx;   # or 'www' for example; if group is omitted,
               # a group whose name equals that of user is used
 
-# Set owner and group for root (app, default) directory:
+# Check/set owner and group for root directory:
+chown -R root:root /etc/nginx
+
+# Set owner and group for app directory:
 chown -R nginx:nginx /var/www/example.com
 ```
 
@@ -2264,7 +2267,9 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
 ###### External resources
 
+- [NGINX 3rd Party Modules](https://www.nginx.com/resources/wiki/modules/)
 - [nginx-modules](https://github.com/nginx-modules)
+- [Emiller’s Guide To Nginx Module Development](https://www.evanmiller.org/nginx-modules-guide.html)
 
 #### :beginner: Protect sensitive resources
 
@@ -2278,7 +2283,9 @@ load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
 
   > In my opinion, a return 403 (or even a 404, as the [RFC 2616 - 403 Forbidden](https://tools.ietf.org/html/rfc2616#section-10.4.4) <sup>[IETF]</sup> suggests for purposes of no information disclosure) is less error prone if you know the resource should under no circumstances be accessed via http, even if "authorized" in a general context.
 
-  Note also this:
+  Note also:
+
+  > If you use locations with regular expressions, NGINX applies them in the order of their appearance in the configuration file. You can also use the `^~` modifier which makes the prefix location block take precedence over any regular expression location block at the same level.
 
   > NGINX process request in phases. `return` directive is from rewrite module, and `deny` is from access module. Rewrite module is processed in `NGX_HTTP_REWRITE_PHASE` phase (for `return` in `location` context), the access module is processed in `NGX_HTTP_ACCESS_PHASE` phase, rewrite phase (where `return` belongs) happens before access phase (where `deny` works), thus `return` stops request processing and returns 301 in rewrite phase.
 
@@ -2301,17 +2308,19 @@ if ($request_uri ~ "/\.git") {
 Recommended configuration:
 
 ```nginx
-# 1)
+# 1) Catch only file names (without file extensions):
+# Example: /foo/bar/.git but not /foo/bar/file.git
 location ~ /\.git {
 
-  deny all;
+  return 403;
 
 }
 
-# 2)
+# 2) Catch file names and file extensions:
+# Example: /foo/bar/.git and /foo/bar/file.git
 location ~* ^.*(\.(?:git|svn|htaccess))$ {
 
-  return 403;
+  deny all;
 
 }
 ```
@@ -2319,7 +2328,8 @@ location ~* ^.*(\.(?:git|svn|htaccess))$ {
 Most recommended configuration:
 
 ```nginx
-# All . directories/files excepted .well-known (recommend):
+# Catch all . directories/files excepted .well-known (without file extensions):
+# Example: /foo/bar/.git but not /foo/bar/file.git
 location ~ /\.(?!well-known\/) {
 
   deny all;
@@ -2328,7 +2338,7 @@ location ~ /\.(?!well-known\/) {
 }
 ```
 
-Look also at files with extensions:
+Look also at files with the following extensions:
 
 ```nginx
 # Think also about the following rule (I haven't tested this but looks interesting). It comes from:
@@ -2347,21 +2357,35 @@ location ~ /(LICENSE\.txt|composer\.lock|composer\.json|nginx\.conf|web\.config|
 
 # Deny running scripts inside core system directories:
 #   - https://github.com/getgrav/grav/issues/1625
-location ~* /(system|vendor)/.*\.(txt|xml|md|html|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ { return 418; }
+location ~* /(system|vendor)/.*\.(txt|xml|md|html|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ {
+
+  return 418;
+
+}
 
 # Deny running scripts inside user directory:
 #   - https://github.com/getgrav/grav/issues/1625
-location ~* /user/.*\.(txt|md|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ { return 418; }
+location ~* /user/.*\.(txt|md|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ {
 
-# Based on the above (tested):
+  return 418;
+
+}
+```
+
+Based on the above (tested, I use this):
+
+```nginx
+# Catch file names and file extensions:
+# Example: /foo/bar/.git and /foo/bar/file.git
 location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|dist|in[ci]|log|sql|mdb|sw[op]|htaccess|php#|php~|php_bak|aspx?|tpl|sh|bash|bin|exe|dll|jsp|out|cache|))$ {
 
   # Use also rate limiting:
-  # limit_req_zone $binary_remote_addr zone=per_ip_5r_s:5m rate=5r/s;
-  per_ip_5r_s;
+  # in server context: limit_req_zone $binary_remote_addr zone=per_ip_5r_s:5m rate=5r/s;
+  limit_req zone=per_ip_5r_s;
 
   deny all;
-  access_log /var/log/nginx/restricted-files.log main;
+  access_log /var/log/nginx/restricted-files-access.log main;
+  access_log /var/log/nginx/restricted-files-error.log main;
 
 }
 ```
@@ -2370,6 +2394,7 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
 - [Hidden directories and files as a source of sensitive information about web application](https://github.com/bl4de/research/tree/master/hidden_directories_leaks)
 - [1% of CMS-Powered Sites Expose Their Database Passwords](https://feross.org/cmsploit/)
+- [RFC 5785 - Defining Well-Known Uniform Resource Identifiers (URIs)](https://tools.ietf.org/html/rfc5785) <sup>[IETF]</sup>
 
 #### :beginner: Take care about your ACL rules
 
@@ -2389,7 +2414,7 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
   > If you use `*ACCESS_PHASE` (e.g. `allow/deny` directives) remember that NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works). See [Allow and deny](NGINX_BASICS.md#allow-and-deny) chapter to learn more. It's important because this may break your security layers.
 
-  > However, it is not recommended to use `if` statements but use of regular expressions may be a bit more flexible. `if` (for more information see [this](#if-break-and-set)).
+  > However, it is not recommended to use `if` statements but use of regular expressions may be a bit more flexible (for more information see [this](NGINX_BASICS.md#if-break-and-set)).
 
 ###### Example
 
@@ -2515,7 +2540,7 @@ proxy_hide_header X-Drupal-Cache;
 proxy_set_header X-Original-URL "";
 proxy_set_header X-Rewrite-URL "";
 
-# Or consider setting the vulnerable headers to a known-safe value or unsetting the header:
+# Or consider setting the vulnerable headers to a known-safe value:
 proxy_set_header X-Original-URL $request_uri;
 proxy_set_header X-Rewrite-URL $original_uri;
 proxy_set_header X-Forwarded-Host $host;
@@ -2714,7 +2739,7 @@ certbot certonly -d example.com -d www.example.com
 
   > It is recommended to enable TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes) which we really shouldn’t be using anymore. By the way, the TLS 1.3 protocol is the latest and more robust TLS protocol version and should be used where possible (and where don't need backward compatibility). The biggest benefit to dropping TLS 1.0 and 1.1 is that modern AEAD ciphers are only supported by TLS 1.2 and above.
 
-  > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST]</sup>) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf).
+  > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST]</sup>) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf).
 
   > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be POODLEd, BEASTed and otherwise padding-Oracled as well. Lots of other CVE weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients).
 
@@ -2799,7 +2824,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [Cloudflare SSL cipher, browser, and protocol support](https://support.cloudflare.com/hc/en-us/articles/203041594-Cloudflare-SSL-cipher-browser-and-protocol-support)
 - [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
-- [SSL Labs Grade Change for TLS 1.0 and TLS 1.1 Protocols]((https://blog.qualys.com/ssllabs/2018/11/19/grade-change-for-tls-1-0-and-tls-1-1-protocols)
+- [SSL Labs Grade Change for TLS 1.0 and TLS 1.1 Protocols](https://blog.qualys.com/ssllabs/2018/11/19/grade-change-for-tls-1-0-and-tls-1-1-protocols)
 - [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
 - [Downgrade Attack on TLS 1.3 and Vulnerabilities in Major TLS Libraries](https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2019/february/downgrade-attack-on-tls-1.3-and-vulnerabilities-in-major-tls-libraries/)
 
@@ -2817,7 +2842,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > For backward compatibility software components think about less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC 7540 - TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) <sup>[IETF]</sup>, you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
-  > Servers either use the client's most preferable ciphersuite or their own. Most servers use their own preference. Disabling `DHE` removes forward security, but results in substantially faster handshake times. I think, so long as you only control one side of the conversation, it would be ridiculous to restrict your system to only supporting one cipher suite (it would cut off too many clients and too much traffic). On the other hand, look at what [David Benjamin](https://davidben.net/) (from Chrome networking) sad about it: _Servers should also disable `DHE` ciphers. Even if `ECDHE` is preferred, merely supporting a weak group leaves `DHE`-capable clients vulnerable._
+  > Servers either use the client's most preferable ciphersuite or their own. Most servers use their own preference. Disabling `DHE` removes forward security, but results in substantially faster handshake times. I think, so long as you only control one side of the conversation, it would be ridiculous to restrict your system to only supporting one cipher suite (it would cut off too many clients and too much traffic). On the other hand, look at what [David Benjamin](https://davidben.net/) (from Chrome networking) said about it: _Servers should also disable `DHE` ciphers. Even if `ECDHE` is preferred, merely supporting a weak group leaves `DHE`-capable clients vulnerable._
 
   > Also modern cipher suites (e.g. from Mozilla recommendations) suffers from compatibility troubles mainly because drops `SHA-1` (see what Google said about it in 2014: [Gradually sunsetting SHA-1](https://security.googleblog.com/2014/09/gradually-sunsetting-sha-1.html)). But be careful if you want to use ciphers with `HMAC-SHA-1` - there's a perfectly good [explanation](https://crypto.stackexchange.com/a/26518) why.
 
@@ -2825,11 +2850,11 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (however, Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines.
+  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (however, Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me and I have not found a rational explanation for why we should do it.
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
-  > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 cipher suites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+  > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 cipher suites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand, the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
 
   > By default, OpenSSL 1.1.1* with TLSv1.3 disable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers. In my opinion, `ChaCha20+Poly1305` or `AES/GCM` are very efficient in the most cases. On modern processors, the common `AES-GCM` cipher and mode are sped up by dedicated hardware, making that algorithm's implementation faster than anything by a wide margin. On older or cheaper processors that lack that feature, though, the `ChaCha20` cipher runs faster than `AES-GCM`, as was the `ChaCha20` designers' intention.
 
