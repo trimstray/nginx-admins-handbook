@@ -254,7 +254,7 @@ server {
 
 - [Understanding the Nginx Configuration File Structure and Configuration Contexts](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html)
-- [Force all connections over TLS (from this handbook)](#beginner-force-all-connections-over-tls)
+- [Force all connections over TLS - Hardening - P1 (from this handbook)](#beginner-force-all-connections-over-tls)
 
 #### :beginner: Define the `listen` directives with `address:port` pair
 
@@ -484,7 +484,7 @@ server {
 ###### External resources
 
 - [Using a Hostname to Resolve Addresses](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#using-a-hostname-to-resolve-addresses)
-- [Define the listen directives with address:port pair (from this handbook)](#beginner-define-the-listen-directives-with-addressport-pair)
+- [Define the listen directives with address:port pair - Base Rules - P1 (from this handbook)](#beginner-define-the-listen-directives-with-addressport-pair)
 
 #### :beginner: Set the HTTP headers with `add_header` and `proxy_*_header` directives properly
 
@@ -952,7 +952,7 @@ server {
 - [How to do an Nginx redirect](https://bjornjohansen.no/nginx-redirect)
 - [rewrite vs return (from this handbook)](NGINX_BASICS.md#rewrite-vs-return)
 - [Adding and removing the www prefix (from this handbook)](HELPERS.md#adding-and-removing-the-www-prefix)
-- [Avoid checks server_name with if directive (from this handbook)](#beginner-avoid-checks-server_name-with-if-directive)
+- [Avoid checks server_name with if directive - Performance - P2 (from this handbook)](#beginner-avoid-checks-server_name-with-if-directive)
 - [Use return directive instead of rewrite for redirects - Performance - P2 (from this handbook)](#beginner-use-return-directive-instead-of-rewrite-for-redirects)
 
 #### :beginner: Configure log rotation policy
@@ -2437,8 +2437,8 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
 - [Fastly - About ACLs](https://docs.fastly.com/en/guides/about-acls)
 - [Restrict allowed HTTP methods in Nginx](https://bjornjohansen.no/restrict-allowed-http-methods-in-nginx)
-- [Protect sensitive resources (from this handbook)](#beginner-protect-sensitive-resources)
 - [Allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
+- [Protect sensitive resources - Hardening - P1 (from this handbook)](#beginner-protect-sensitive-resources)
 
 #### :beginner: Hide Nginx version number
 
@@ -2520,7 +2520,7 @@ proxy_hide_header X-Drupal-Cache;
 ###### External resources
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Remove support for legacy and risky HTTP headers
 
@@ -2557,7 +2557,7 @@ proxy_set_header X-Forwarded-Host $host;
 - [Local File Inclusion Vulnerability in Concrete5 version 5.7.3.1](https://hackerone.com/reports/59665)
 - [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning)
 - [Passing headers to the backend (from this handbook)](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Use only the latest supported OpenSSL version
 
@@ -2657,7 +2657,7 @@ proxy_set_header X-Forwarded-Host $host;
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 - [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
 - [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
-- [Enable HTTP Strict Transport Security (from this handbook)](#beginner-enable-http-strict-transport-security)
+- [Enable HTTP Strict Transport Security - Hardening - P1 (from this handbook)](#beginner-enable-http-strict-transport-security)
 
 #### :beginner: Use min. 2048-bit private keys
 
@@ -3658,8 +3658,8 @@ ssl_prefer_server_ciphers on;
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
 - [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls) <sup>[not found]</sup>
 - [Duong and Rizzo's paper on the BEAST attack)](https://images.techhive.com/downloads/idge/imported/article/ifw/2011/09/26/beast_duong_rizzo.pdf) <sup>[pdf]</sup>
-- [Use only strong ciphers (from this handbook)](#beginner-use-only-strong-ciphers)
 - [ImperialViolet - Real World Crypto 2013](https://www.imperialviolet.org/2013/01/13/rwc03.html)
+- [Use only strong ciphers - Hardening - P1 (from this handbook)](#beginner-use-only-strong-ciphers)
 
 #### :beginner: Mitigation of CRIME/BREACH attacks
 
@@ -3780,7 +3780,7 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 - [How does HSTS handle mixed content?](https://serverfault.com/questions/927145/how-does-hsts-handle-mixed-content)
 - [Broadening HSTS to secure more of the Web](https://security.googleblog.com/2017/09/broadening-hsts-to-secure-more-of-web.html)
 - [The Road To HSTS](https://engineeringblog.yelp.com/2017/09/the-road-to-hsts.html)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Reduce XSS risks (Content-Security-Policy)
 
@@ -3829,7 +3829,7 @@ add_header Content-Security-Policy "default-src 'none'; script-src 'self'; conne
 - [Content Security Policy (CSP) Validator](https://cspvalidator.org/)
 - [Can I Use CSP](https://caniuse.com/#search=CSP)
 - [CSP Is Dead, Long Live CSP!](https://ai.google/research/pubs/pub45542)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Control the behaviour of the Referer header (Referrer-Policy)
 
@@ -3858,7 +3858,7 @@ add_header Referrer-Policy "no-referrer";
 - [A new security header: Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
 - [Security HTTP Headers - Referrer-Policy](https://zinoui.com/blog/security-http-headers#referrer-policy)
 - [What you need to know about Referrer Policy](https://searchengineland.com/need-know-referrer-policy-276185)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Provide clickjacking protection (X-Frame-Options)
 
@@ -3886,7 +3886,7 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 - [Clickjacking Defense Cheat Sheet](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet)
 - [Security HTTP Headers - X-Frame-Options](https://zinoui.com/blog/security-http-headers#x-frame-options)
 - [X-Frame-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-frame-options)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Prevent some categories of XSS attacks (X-XSS-Protection)
 
@@ -3911,7 +3911,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 - [DOM based XSS Prevention Cheat Sheet](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
 - [X-XSS-Protection HTTP Header](https://www.tunetheweb.com/security/http-security-headers/x-xss-protection/)
 - [Security HTTP Headers - X-XSS-Protection](https://zinoui.com/blog/security-http-headers#x-xss-protection)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Prevent Sniff Mimetype middleware (X-Content-Type-Options)
 
@@ -3934,7 +3934,7 @@ add_header X-Content-Type-Options "nosniff" always;
 - [X-Content-Type-Options HTTP Header](https://www.keycdn.com/support/x-content-type-options)
 - [Security HTTP Headers - X-Content-Type-Options](https://zinoui.com/blog/security-http-headers#x-content-type-options)
 - [X-Content-Type-Options - Scott Helme](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-content-type-options)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Deny the use of browser features (Feature-Policy)
 
@@ -3954,7 +3954,7 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 - [Policy Controlled Features](https://github.com/w3c/webappsec-feature-policy/blob/master/features.md)
 - [Security HTTP Headers - Feature-Policy](https://zinoui.com/blog/security-http-headers#feature-policy)
 - [Feature policy playground](https://featurepolicy.info/)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Reject unsafe HTTP methods
 
@@ -3962,15 +3962,15 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
   > An ordinary web server supports the `GET`, `HEAD` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
-  > Some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
+  > Some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests.
 
-  > Support for the `TRACE` method can allow Cross-Site Tracing attack that can facilitate the capture of the session ID of another application user. In addition, this method can be used to attempt to identify additional information about the environment in which the application operates (e.g. existence of cache servers on the path to the application).
+  > Support for the `TRACE` method can allow Cross-Site Tracing attack that can facilitate to capture of the session ID of another application user. In addition, this method can be used to attempt to identify additional information about the environment in which the application operates (e.g. existence of cache servers on the path to the application).
 
   > Support for the `OPTIONS` method is not a direct threat, but it is a source of additional information for the attacker that can facilitate an effective attack.
 
   > Support for the `HEAD` method is also risky (really!), because can speed up the attack process by limiting the volume of data sent from the server. If the authorization mechanisms are based on the `GET` and `POST`, the `HEAD` method may allow to bypass these protections.
 
-  > However, it is not recommended to use `if` statements, instead you can use `limit_except` directive (should be faster than regexp evaluation), but remember, it has limited use: inside `location` only. I think, use of regular expressions in this case is a bit more flexible.
+  > It is not recommended to use `if` statements to block unsafe HTTP methods, instead you can use `limit_except` directive (should be faster than regexp evaluation), but remember, it has limited use: inside `location` only. I think, use of regular expressions in this case is a bit more flexible.
 
   > Before chosing to configure either method, note this incredible explanation of the [difference between 401, 403 and 405 HTTP response codes](https://serverfault.com/questions/905708/using-limit-except-to-deny-all-except-get-head-and-post/905922#905922) (with example that combines the 401, 403 and 405 responses and should clarify their precendence in a typical configuration). There is a brief description of HTTP method differences:
   >
@@ -4045,9 +4045,9 @@ location /api {
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
 - [Cross Site Tracing](https://owasp.org/www-community/attacks/Cross_Site_Tracing)
 - [Cross-Site Tracing (XST): The misunderstood vulnerability](https://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misunderstood-vulnerability/)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 - [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
 - [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Prevent caching of sensitive data
 
@@ -4084,23 +4084,23 @@ location /api {
 - [Caching best practices & max-age gotchas](https://jakearchibald.com/2016/caching-best-practices/)
 - [Increasing Application Performance with HTTP Cache Headers](https://devcenter.heroku.com/articles/increasing-application-performance-with-http-cache-headers)
 - [HTTP Caching](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Limit concurrent connections
 
 ###### Rationale
 
-  > NGINX provides basic and simple to enable protection. By default, there are no limitations on the number of active connections a user can have.
-
-  > You should limit the number of sessions that can be opened by a single client IP address, again to a value appropriate for real users. Because most often the excess traffic is generated by bots and is meant to overwhelm the server, the rate of traffic is much higher than a human user can generate. The limit concurrent connections must be active to enable a maximum session limit.
+  > NGINX provides basic and simple to enable protection from denial of service attacks like DoS. By default, there are no limitations on the number of active connections a user can have.
 
   > In my opinion, it is also good to cut off redundant/unnecessary connections globally (in the `http` context), but be careful and monitor your access and error logs. You can set this on a per NGINX `location` match context too i.e. set it for search pages, online user displays, member lists etc.
 
-  > However, note that while NGINX is a key element of Cloudflare-style protection, it’s not enough to set NGINX up on your webserver and hope it will protect you: once an attack reaches your server a lot of the disruption has occurred all ready.
+  > You should limit the number of sessions that can be opened by a single client IP address, again to a value appropriate for real users. Because most often the excess traffic is generated by bots and is meant to overwhelm the server, the rate of traffic is much higher than a human user can generate. The limit concurrent connections must be active to enable a maximum session limit.
+
+  > However, note that while NGINX is a key element of Cloudflare-style protection, it’s not enough to set NGINX up on your webserver and hope it will protect you.
 
   > IP connection limits will help to certain degree though with a large enough layer 7 ddos attack, it can still overwhelm your server. For me, the first line of defense should be the hardware firewall (but it is not enough) or DDoS mitigation devices with stateless protection mechanism that can handle millions of connection attempts (to provide deep inspection to filter out bad traffic and allow good traffic through) without requiring connection table entries or exhausting other system resources.
 
-  > The good point is also the mitigation on the network providers side to route the traffic through a layer 7 DDoS mitigation filter provided by an external company before it reaches you. I think it is the best solution.
+  > In particular, it is a good idea enable the mitigation on the network providers side and route the traffic through a layer 7 DDoS mitigation filter provided by an external company before it reaches you. I think it is the best solution.
 
 ###### Example
 
@@ -4133,12 +4133,12 @@ http {
 - [What is a DDoS Attack?](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/)
 - [Nginx-Lua-Anti-DDoS](https://github.com/C0nw0nk/Nginx-Lua-Anti-DDoS)
 - [Extend NGINX with Lua — DDOS Mitigation using Cookie validation](https://medium.com/@satrobit/extend-nginx-with-lua-ddos-mitigation-using-cookie-validation-8b27ffc1322a)
-- [Use limit_conn to improve limiting the download speed (from this handbook)](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 - [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
 - [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
 - [ngx_http_geoip_module (from this handbook)](NGINX_BASICS.md#ngx-http-geoip-module)
-- [Control Buffer Overflow attacks (from this handbook)](#beginner-control-buffer-overflow-attacks)
-- [Mitigating Slow HTTP DoS attacks (Closing Slow Connections) (from this handbook)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
+- [Control Buffer Overflow attacks - Hardening - P2 (from this handbook)](#beginner-control-buffer-overflow-attacks)
+- [Mitigating Slow HTTP DoS attacks (Closing Slow Connections) - Hardening - P2 (from this handbook)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
+- [Use limit_conn to improve limiting the download speed - Performance - P3 (from this handbook)](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
 
 #### :beginner: Control Buffer Overflow attacks
 
@@ -4202,7 +4202,7 @@ send_timeout                  10s;    # 6default: 0s
 - [SCG WS nginx](https://www.owasp.org/index.php/SCG_WS_nginx)
 - [How to Protect Against Slow HTTP Attacks](https://blog.qualys.com/securitylabs/2011/11/02/how-to-protect-against-slow-http-attacks)
 - [Effectively Using and Detecting The Slowloris HTTP DoS Tool](https://ma.ttias.be/effectively-using-detecting-the-slowloris-http-dos-tool/)
-- [Limit concurrent connections (from this handbook)](#beginner-limit-concurrent-connections)
+- [Limit concurrent connections - Hardening - P1 (from this handbook)](#beginner-limit-concurrent-connections)
 
 # Reverse Proxy
 
@@ -4494,8 +4494,8 @@ location / {
 - [Forwarding Visitor’s Real-IP + Nginx Proxy/Fastcgi backend correctly](https://easyengine.io/tutorials/nginx/forwarding-visitors-real-ip/)
 - [Using the Forwarded header](https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/)
 - [Reverse Proxy - Passing headers (from this handbook)](NGINX_BASICS.md#passing-headers)
-- [Set properly values of the X-Forwarded-For header (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
-- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy (from this handbook)](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
+- [Set properly values of the X-Forwarded-For header - Reverse Proxy - P1 (from this handbook)](#beginner-set-properly-values-of-the-x-forwarded-for-header)
+- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy - Reverse Proxy - P1 (from this handbook)](#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
 #### :beginner: Use custom headers without `X-` prefix
 
@@ -4527,7 +4527,7 @@ add_header Backend-Server   $hostname;
 
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00) <sup>[IETF]</sup>
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
-- [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
+- [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Always use `$request_uri` instead of `$uri` in `proxy_pass`
 
