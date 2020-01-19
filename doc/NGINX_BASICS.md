@@ -3553,6 +3553,9 @@ server {
 
 #### Rate limiting
 
+  > **:bookmark: [Limit concurrent connections - Hardening - P1](RULES.md#beginner-limit-concurrent-connections)**
+  > **:bookmark: [Use limit_conn to improve limiting the download speed - Performance - P3](RULES.md#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
+
 NGINX has a default module to setup rate limiting. For me, it's one of the most useful protect feature but sometimes really hard to understand.
 
 I think, in case of doubt, you should read up on the following documents:

@@ -450,7 +450,7 @@
   * [Deny the use of browser features (Feature-Policy)](doc/RULES.md#beginner-deny-the-use-of-browser-features-feature-policy)
   * [Reject unsafe HTTP methods](doc/RULES.md#beginner-reject-unsafe-http-methods)
   * [Prevent caching of sensitive data](doc/RULES.md#beginner-prevent-caching-of-sensitive-data)
-  * [Limit concurrent sessions](doc/RULES.md#beginner-limit-concurrent-sessions)
+  * [Limit concurrent connections](doc/RULES.md#beginner-limit-concurrent-connections)
   * [Control Buffer Overflow attacks](doc/RULES.md#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](doc/RULES.md#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy"></a>
@@ -1075,7 +1075,7 @@ Existing chapters:
   - [x] _Remove support for legacy and risky HTTP headers_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
   - [x] _Prevent caching of sensitive data_
-  - [x] _Limit concurrent sessions_
+  - [x] _Limit concurrent connections_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
 
@@ -1157,7 +1157,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](doc/RULES.md#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](doc/RULES.md#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](doc/RULES.md#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Limit concurrent sessions](doc/RULES.md#beginner-limit-concurrent-sessions)<br><sup>Limit concurrent connections to prevent a rogue guys from repeatedly connecting to and monopolizing NGINX.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Limit concurrent connections](doc/RULES.md#beginner-limit-concurrent-connections)<br><sup>Limit concurrent connections to prevent a rogue guys from repeatedly connecting to and monopolizing NGINX.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use pass directive compatible with backend protocol](doc/RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](doc/RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](doc/RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
