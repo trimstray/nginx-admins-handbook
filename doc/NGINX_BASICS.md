@@ -28,6 +28,7 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
     * [Handle incoming connections](#handle-incoming-connections)
     * [Matching location](#matching-location)
     * [rewrite vs return](#rewrite-vs-return)
+    * [URL redirections](#url-redirections)
     * [try_files directive](#try_files-directive)
     * [if, break, and set](#if-break-and-set)
     * [root vs alias](#root-vs-alias)
@@ -1942,6 +1943,31 @@ I use `return` directive in the following cases:
   ```
 
 To the last example: be careful if you're using such a configuration to do a healthcheck. While a 204 HTTP code is semantically perfect for a healthcheck (success indication with no content), some services do not consider it a success.
+
+###### URL redirections
+
+  > **:bookmark: [Use return directive for URL redirection (301, 302) - Base Rules - P2](RULES.md#beginner-use-return-directive-for-url-redirection-301-302)**<br>
+  > **:bookmark: [Use return directive instead of rewrite for redirects - Performance - P2](RULES.md#beginner-use-return-directive-instead-of-rewrite-for-redirects)**
+
+HTTP allows servers to redirect a client request to a different location. This is useful when moving content to a new URL, when deleting pages or when changing domain names or merging websites.
+
+URL redirection is done for various reasons:
+
+- for URL shortening
+- to prevent broken links when web pages are moved
+- to allow multiple domain names belonging to the same owner to refer to a single web site
+- to guide navigation into and out of a website
+- for privacy protection
+- for hostile purposes such as phishing attacks or malware distribution
+
+<sup><i>It comes from [Wikipedia - URL redirection](https://en.wikipedia.org/wiki/URL_redirection).</i></sup>
+
+I recommend to read:
+
+- [Redirections in HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections)
+- [301 101: How Redirects Work](https://www.digitalthirdcoast.com/blog/301-101-redirects-work)
+- [Modify 301/302 response body (from this handbook)](HELPERS.md#modify-301302-response-body)
+- [Redirect POST request with payload to external endpoint (from this handbook)](HELPERS.md#redirect-post-request-with-payload-to-external-endpoint)
 
 ##### `try_files` directive
 

@@ -4,7 +4,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > :pushpin:&nbsp; These are the basic set of rules to keep NGINX in good condition.
 
-- **[≡ Base Rules (15)](#base-rules)**
+- **[≡ Base Rules (16)](#base-rules)**
   * [Organising Nginx configuration](#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -19,6 +19,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Set global root directory for unmatched locations](#beginner-set-global-root-directory-for-unmatched-locations)
   * [Use return directive for URL redirection (301, 302)](#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](#beginner-configure-log-rotation-policy)
+  * [Use simple custom error pages](#beginner-use-simple-custom-error-pages)
   * [Don't duplicate index directive, use it only in the http block](#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
@@ -1079,6 +1080,77 @@ server {
 - [Managing Logs with Logrotate](https://serversforhackers.com/c/managing-logs-with-logrotate)
 - [nginx and Logrotate](https://drumcoder.co.uk/blog/2012/feb/03/nginx-and-logrotate/)
 - [nginx log rotation](https://wincent.com/wiki/nginx_log_rotation)
+
+#### :beginner: Use simple custom error pages
+
+###### Rationale
+
+  > Default error pages in NGINX are simple but it reveals version information, which leads to information leakage vulnerability.
+
+  > Information about the technologies used and the software versions are extremely valuable information. These details allow the identification and exploitation of known software weaknesses published in publicly available vulnerability databases.
+
+  > The best option is to generate pages for each HTTP code or use SSI and `map` module to create dynamic error pages.
+
+  > You can setup a custom error page for every location block in your `nginx.conf`, or a global error page for the site as a whole. You can also append standard error codes together to have a single page for several types of errors.
+
+  > Be careful with the syntax! You should drop the `=` out of the `error_page` directive because with this, `error_page 404 = /404.html;` return the `404.html` page with a status code of 200 (`=` has relayed that to this page) so you should set `error_page 404 /404.html;` and you'll get the original error code returned.
+
+  > To generate custom error pages you can use [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
+
+###### Example
+
+Create error page templates:
+
+```bash
+cat >> /usr/share/nginx/html/404.html << __EOF__
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+</body>
+</html>
+__EOF__
+
+# Just an example, I know it is stupid...
+cat >> /usr/share/nginx/html/50x.html << __EOF__
+<html>
+<head><title>server error</title></head>
+<body>
+<center><h1>server error</h1></center>
+</body>
+</html>
+__EOF__
+```
+
+Set them on the NGINX side:
+
+```nginx
+error_page 404 /404.html;
+error_page 500 502 503 504 /50x.html;
+
+location = /404.html {
+
+  root /usr/share/nginx/html;
+  internal;
+
+}
+
+location = /custom_50x.html {
+
+  root /usr/share/nginx/html;
+  internal;
+
+}
+```
+
+###### External resources
+
+- [error_page from ngx_http_core_module](http://nginx.org/en/docs/http/ngx_http_core_module.html#error_page)
+- [src/http/ngx_http_special_response.c](https://github.com/nginx/nginx/blob/release-1.17.6/src/http/ngx_http_special_response.c)
+- [HTTP Status Codes](https://httpstatuses.com/)
+- [One NGINX error page to rule them all](https://blog.adriaan.io/one-nginx-error-page-to-rule-them-all.html)
+- [NGINX - Custom Error Pages. A Decent Title Not Found](https://blog.swakes.co.uk/nginx-custom-error-pages/)
+- [Dynamic error pages with SSI (from this handbook)](HELPERS.md#dynamic-error-pages-with-ssi)
 
 #### :beginner: Don't duplicate `index` directive, use it only in the http block
 
@@ -2444,7 +2516,7 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
 ###### Rationale
 
-  > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure.
+  > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure. NGINX shows the version number by default in error pages and in the headers of HTTP requests.
 
   > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions. For example, Shodan provides a widely used database of this info. It's far more efficient to just try the vulnerability on all random servers than asking them.
 
@@ -2455,6 +2527,10 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
   Maybe it's a very restrictive approach but the guidelines from [RFC 2616 - Personal Information](https://tools.ietf.org/html/rfc2616#section-15.1) are always very helpful to me:
 
   > _History shows that errors in this area often create serious security and/or privacy problems and generate highly adverse publicity for the implementor's company. [...] Like any generic data transfer protocol, HTTP cannot regulate the content of the data that is transferred, nor is there any a priori method of determining the sensitivity of any particular piece of information within the context of any given request. Therefore, applications SHOULD supply as much control over this information as possible to the provider of that information. Four header fields are worth special mention in this context: `Server`, `Via`, `Referer` and `From`._
+
+  Look also at the most excellent comment about this (by [specializt](https://serverfault.com/users/67666/specializt)):
+
+  > _Disregarding important security factors like "no version numbers" and probably even "no server vendor name" entirely is just ... a beginners mistake. Of course security through obscurity does nothing for your security itself but it sure as hell will at least protect against the most mundane, simplistic attack vectors - security through obscurity is a necessary step, it may be the first one and should never be the last security measurement -skipping it completely is a very bad mistake, even the most secure webservers can be cracked if a version-specific attack vector is known._
 
 ###### Example
 
@@ -2487,11 +2563,36 @@ server_tokens off;
 
 ###### Example
 
-```nginx
-more_set_headers "Server: Unknown"; # or whatever else, e.g. 'WOULDN'T YOU LIKE TO KNOW!'
+Recommended configuration:
 
-# or:
-more_clear_headers 'Server';
+```nginx
+http {
+
+  more_set_headers "Server: Unknown"; # or whatever else, e.g. 'WOULDN'T YOU LIKE TO KNOW!'
+
+  ...
+```
+
+Most recommended configuration:
+
+```nginx
+http {
+
+  more_clear_headers 'Server';
+
+  ...
+```
+
+You can also use Lua module:
+
+```nginx
+http {
+
+  header_filter_by_lua_block {
+    ngx.header["Server"] = nil
+  }
+
+  ...
 ```
 
 ###### External resources

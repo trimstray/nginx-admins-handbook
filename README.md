@@ -173,6 +173,7 @@
     * [Handle incoming connections](doc/NGINX_BASICS.md#handle-incoming-connections)
     * [Matching location](doc/NGINX_BASICS.md#matching-location)
     * [rewrite vs return](doc/NGINX_BASICS.md#rewrite-vs-return)
+    * [URL redirections](doc/NGINX_BASICS.md#url-redirections)
     * [try_files directive](doc/NGINX_BASICS.md#try_files-directive)
     * [if, break, and set](doc/NGINX_BASICS.md#if-break-and-set)
     * [root vs alias](doc/NGINX_BASICS.md#root-vs-alias)
@@ -385,7 +386,7 @@
     * [Check whether the private key and the certificate match](doc/HELPERS.md#check-whether-the-private-key-and-the-certificate-match)
     * [Check whether the private key and the CSR match](doc/HELPERS.md#check-whether-the-private-key-and-the-csr-match)
     [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers)
-- **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
+- **[Base Rules (16)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
   * [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)
   * [Format, prettify and indent your Nginx code](doc/RULES.md#beginner-format-prettify-and-indent-your-nginx-code)
   * [Use reload option to change configurations on the fly](doc/RULES.md#beginner-use-reload-option-to-change-configurations-on-the-fly)
@@ -400,6 +401,7 @@
   * [Set global root directory for unmatched locations](doc/RULES.md#beginner-set-global-root-directory-for-unmatched-locations)
   * [Use return directive for URL redirection (301, 302)](doc/RULES.md#beginner-use-return-directive-for-url-redirection-301-302)
   * [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)
+  * [Use simple custom error pages](doc/RULES.md#beginner-use-simple-custom-error-pages)
   * [Don't duplicate index directive, use it only in the http block](doc/RULES.md#beginner-dont-duplicate-index-directive-use-it-only-in-the-http-block)
 - **[Debugging (5)](doc/RULES.md#debugging)**<a id="toc-debugging"></a>
   * [Use custom log formats](doc/RULES.md#beginner-use-custom-log-formats)
@@ -1034,6 +1036,7 @@ Existing chapters:
   - [x] _Set the HTTP headers with add_header and proxy_*_header directives properly_
   - [ ] _Making a rewrite absolute (with scheme)_
   - [x] _Use return directive for URL redirection (301, 302)_
+  - [x] _Use simple custom error pages_
   - [x] _Configure log rotation policy_
   - [x] _Don't duplicate index directive, use it only in the http block_
 
@@ -1115,13 +1118,13 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure and maintain the NGINX properly.
 
-  > This checklist contains [all rules (78)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (79)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 32 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 33 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 26 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 8 | as an option to implement or use (not required) |
@@ -1135,6 +1138,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Never use a hostname in a listen or upstream directives](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)<br><sup>While this may work, it will comes with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Set the HTTP headers with add_header and proxy_*_header directives properly](doc/RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)<br><sup>Set the right security headers for all contexts.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Use simple custom error pages](doc/RULES.md#beginner-use-simple-custom-error-pages)<br><sup></sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](doc/RULES.md#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1430,8 +1434,9 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/"><b>Nginx Wiki</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/"><b>Nginx Admin's Guide</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/"><b>Nginx Pitfalls and Common Mistakes</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="http://nginx.org/en/docs/dev/development_guide.html"><b>Development guide</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://nginx.org/en/docs/dev/development_guide.html"><b>Development Guide</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://forum.nginx.org/"><b>Nginx Forum</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://nginx.org/en/security_advisories.html"><b>Nginx Security Advisories</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mailman.nginx.org/mailman/listinfo/nginx"><b>Nginx Mailing List</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos"><b>NGINX-Demos
@@ -1716,7 +1721,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > Introduction and explanation of the NGINX mechanisms.
 - **[Helpers](doc/HELPERS.md#helpers)**<a id="toc-helpers-2"></a>
   > One-liners, commands, utilities for building NGINX, and more.
-- **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
+- **[Base Rules (16)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
   > The basic set of rules to keep NGINX in a good condition.
 - **[Debugging (5)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
