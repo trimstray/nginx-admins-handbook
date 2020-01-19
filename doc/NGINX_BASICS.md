@@ -3638,7 +3638,7 @@ __EOF__
 
 Rate limiting rules also have zones that lets you define a shared space in which to count the incoming requests or connections.
 
-  > All requests or connections coming into the same space will be counted in the same rate limit. This is what allows you to limit per URL, per IP, or anything else.
+  > All requests or connections coming into the same space will be counted in the same rate limit. This is what allows you to limit per URL, per IP, or anything else. In HTTP/2 and SPDY, each concurrent request is considered a separate connection.
 
 The zone has two required parts:
 
@@ -3683,6 +3683,10 @@ The range of zones is as follows:
   ```
 
   > All rate limiting rules (definitions) should be added to the NGINX `http` context.
+
+Remember also about [this](https://stackoverflow.com/questions/37438949/antiddos-protection-slowing-nginx-server/37439338#37439338) answer:
+
+  > _If your are loading a website, you are not loading only this site, but assets as well. Nginx will think of them as independent connections. You have 10r/s defined and a burst size of 5. Therefore after 10 Requests/s the next requests will be delayed for rate limiting purposes. If the burst size (5) gets exceeded the following requests will receive a 503 error._
 
 `limit_req_zone` key lets you set `rate` parameter (optional) - it defines the rate limited URL(s).
 

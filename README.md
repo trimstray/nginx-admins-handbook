@@ -450,6 +450,7 @@
   * [Deny the use of browser features (Feature-Policy)](doc/RULES.md#beginner-deny-the-use-of-browser-features-feature-policy)
   * [Reject unsafe HTTP methods](doc/RULES.md#beginner-reject-unsafe-http-methods)
   * [Prevent caching of sensitive data](doc/RULES.md#beginner-prevent-caching-of-sensitive-data)
+  * [Limit concurrent sessions](doc/RULES.md#beginner-limit-concurrent-sessions)
   * [Control Buffer Overflow attacks](doc/RULES.md#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](doc/RULES.md#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy"></a>
@@ -1074,6 +1075,7 @@ Existing chapters:
   - [x] _Remove support for legacy and risky HTTP headers_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
   - [x] _Prevent caching of sensitive data_
+  - [x] _Limit concurrent sessions_
   - [ ] _Set properly files and directories permissions (also with acls) on a paths_
   - [ ] _Implement HTTPOnly and secure attributes on cookies_
 
@@ -1113,13 +1115,13 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure and maintain the NGINX properly.
 
-  > This checklist contains [all rules (77)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (78)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
-| ![high](static/img/priorities/high.png) | <i>critical</i> | 31 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
+| ![high](static/img/priorities/high.png) | <i>critical</i> | 32 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
 | ![medium](static/img/priorities/medium.png) | <i>major</i> | 26 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 8 | as an option to implement or use (not required) |
@@ -1155,6 +1157,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Prevent Sniff Mimetype middleware (X-Content-Type-Options)](doc/RULES.md#beginner-prevent-sniff-mimetype-middleware-x-content-type-options)<br><sup>Tells browsers not to sniff MIME types.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Reject unsafe HTTP methods](doc/RULES.md#beginner-reject-unsafe-http-methods)<br><sup>Only allow the HTTP methods for which you, in fact, provide services.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Prevent caching of sensitive data](doc/RULES.md#beginner-prevent-caching-of-sensitive-data)<br><sup>It helps to prevent critical data (e.g. credit card details, or username) leaked.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Limit concurrent sessions](doc/RULES.md#beginner-limit-concurrent-sessions)<br><sup>Limit concurrent connections to prevent a rogue guys from repeatedly connecting to and monopolizing NGINX.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use pass directive compatible with backend protocol](doc/RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)<br><sup>Set pass directive only to working with compatible backend layer protocol.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Set properly values of the X-Forwarded-For header](doc/RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)<br><sup>Identify clients communicating with servers located behind the proxy.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
 | [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](doc/RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)<br><sup>Prevent pass incorrect value of this header.</sup> | Reverse Proxy | ![high](static/img/priorities/high.png) |
@@ -1719,7 +1722,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > A few things for troubleshooting configuration problems.
 - **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
-- **[Hardening (30)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
+- **[Hardening (31)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
   > Security and hardening methods in line with industry standards.
 - **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.

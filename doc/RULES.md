@@ -2132,7 +2132,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[Base Rules](#base-rules)**
 - **[Debugging](#debugging)**
 - **[Performance](#performance)**
-- **[≡ Hardening (30)](#hardening)**
+- **[≡ Hardening (31)](#hardening)**
   * [Always keep NGINX up-to-date](#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](#beginner-disable-unnecessary-modules)
@@ -2161,6 +2161,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Deny the use of browser features (Feature-Policy)](#beginner-deny-the-use-of-browser-features-feature-policy)
   * [Reject unsafe HTTP methods](#beginner-reject-unsafe-http-methods)
   * [Prevent caching of sensitive data](#beginner-prevent-caching-of-sensitive-data)
+  * [Limit concurrent sessions](#beginner-limit-concurrent-sessions)
   * [Control Buffer Overflow attacks](#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
 - **[Reverse Proxy](#reverse-proxy)**
@@ -4085,11 +4086,62 @@ location /api {
 - [HTTP Caching](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
+#### :beginner: Limit concurrent sessions
+
+###### Rationale
+
+  > NGINX provides basic and simple to enable protection. By default, there are no limitations on the number of active connections a user can have.
+
+  > IP connection limits will help to certain degree though with a large enough layer 7 ddos attack, it can still overwhelm your server. For me, the first line of defense should be the hardware firewall (but it is not enough) or DDoS mitigation devices with stateless protection mechanism that can handle millions of connection attempts (to provide deep inspection to filter out bad traffic and allow good traffic through) without requiring connection table entries or exhausting other system resources.
+
+  > You should limit the number of sessions that can be opened by a single client IP address, again to a value appropriate for real users. The limit concurrent connections must be active to enable a maximum session limit.
+
+  > In my opinion, it is also good to cut off redundant/unnecessary connections globally (in the `http` context), but be careful and monitor your access and error logs. You can set this on a per NGINX `location` match context too i.e. set it for search pages, online user displays, member lists etc.
+
+  > However, note that while NGINX is a key element of Cloudflare-style protection, it’s not enough to set NGINX up on your webserver and hope it will protect you: once an attack reaches your server a lot of the disruption has occurred all ready.
+
+###### Example
+
+```nginx
+http {
+
+  limit_conn_zone $binary_remote_addr zone=slimit:10m;
+
+  # Set globally:
+  limit_conn slimit 10;
+
+  ...
+
+  server {
+
+    # Or in the server context:
+    limit_conn slimit 10;
+
+    ...
+
+  }
+
+}
+```
+
+###### External resources
+
+- [Module ngx_http_limit_conn_module](http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html)
+- [Mitigating DDoS Attacks with NGINX and NGINX Plus](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/)
+- [Nginx-Lua-Anti-DDoS](https://github.com/C0nw0nk/Nginx-Lua-Anti-DDoS)
+- [Extend NGINX with Lua — DDOS Mitigation using Cookie validation](https://medium.com/@satrobit/extend-nginx-with-lua-ddos-mitigation-using-cookie-validation-8b27ffc1322a)
+- [Use limit_conn to improve limiting the download speed (from this handbook)](#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
+- [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
+- [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
+- [ngx_http_geoip_module (from this handbook)](NGINX_BASICS.md#ngx-http-geoip-module)
+
 #### :beginner: Control Buffer Overflow attacks
 
 ###### Rationale
 
   > Buffer overflow attacks are made possible by writing data to a buffer and exceeding that buffers’ boundary and overwriting memory fragments of a process. To prevent this in NGINX we can set buffer size limitations for all clients.
+
+  > The large size of `POST` requests can effectively lead to a DoS attack if the entire server memory is used. Allowing large files to be uploaded to the server can make it easier for an attacker to utilize system resources and successfully perform a denial of service.
 
   > Corresponding values depends on your server memory and how many traffic you have. Long ago I found an interesting formula:
   >
@@ -4610,6 +4662,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > A chain of trust is a linked path of verification and validation from an end-entity digital certificate to a root certificate authority (CA) that acts as a trust anchor.
 
+  > Your browser (and possibly your OS) ships with a list of trusted CAs. These pre-installed certificates serve as trust anchors to derive all further trust from. When visiting an HTTPS website, your browser verifies that the trust chain presented by the server during the TLS handshake ends at one of the locally trusted root certificates.
+
   > Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
 
   > The server should never present certificate chains containing a trust anchor which is the root CA certificate. The presence of a trust anchor in the certification path can have a negative impact on performance when establishing connections using SSL/TLS.
@@ -4632,7 +4686,7 @@ root_ca.crt inter_ca.crt example.com.crt
 $ cat example.com.crt inter_ca.crt > certs/example.com/example.com-chain.crt
 ```
 
-To build a valid SSL certificate chain you can use `github.com/trimstray/mkchain` tool. It also can help you fix the incomplete chain and download all missing CA certificates. You can also download all certificates from remote server and get your certificate chain right.
+To build a valid SSL certificate chain you may use `github.com/trimstray/mkchain` tool. It also can help you fix the incomplete chain and download all missing CA certificates. You can also download all certificates from remote server and get your certificate chain right.
 
 ```bash
 # If you have all certificates:
@@ -4646,14 +4700,20 @@ certificate.crt
 $ mkchain -i certificate.crt -o certs/example.com/example.com-chain.crt
 
 # If you want to download certificate chain from existing domain:
-$ mkchain -i https://incomplete-chain.badssl.com/ --with-root -o certs/example.com/example.com-chain.crt
+$ mkchain -i https://incomplete-chain.badssl.com/ -o certs/example.com/example.com-chain.crt
 ```
 
 On the NGINX side:
 
 ```nginx
-ssl_certificate certs/example.com/example.com-chain.crt;
-ssl_certificate_key certs/example.com/example.com.key;
+server {
+
+  listen 192.168.10.2:443 ssl http2;
+
+  ssl_certificate certs/example.com/example.com-chain.crt;
+  ssl_certificate_key certs/example.com/example.com.key;
+
+  ...
 ```
 
 ###### External resources
