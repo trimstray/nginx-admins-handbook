@@ -4599,40 +4599,10 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
 - **[≡ Others (4)](#others)**
+  * [Set the certificate chain correctly](#beginner-set-the-certificate-chain-correctly)
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
-  * [Set the certificate chain correctly](#set-the-certificate-chain-correctly)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
   * [Use tcpdump to diagnose and troubleshoot the HTTP issues](#beginner-use-tcpdump-to-diagnose-and-troubleshoot-the-http-issues)
-
-#### :beginner: Enable DNS CAA Policy
-
-###### Rationale
-
-  > DNS CAA policy helps you to control which Certificat Authorities are allowed to issue certificates for your domain becaues if no CAA record is present, any CA is allowed to issue a certificate for the domain.
-
-  > The purpose of the CAA record is to allow domain owners to declare which certificate authorities are allowed to issue a certificate for a domain. They also provide a means of indicating notification rules in case someone requests a certificate from an unauthorized certificate authority.
-
-  > If no CAA record is present, any CA is allowed to issue a certificate for the domain. If a CAA record is present, only the CAs listed in the record(s) are allowed to issue certificates for that hostname.
-
-###### Example
-
-Generic configuration (Google Cloud DNS, Route 53, OVH, and other hosted services) for Let's Encrypt:
-
-```bash
-example.com. CAA 0 issue "letsencrypt.org"
-```
-
-Standard Zone File (BIND, PowerDNS and Knot DNS) for Let's Encrypt:
-
-```bash
-example.com. IN CAA 0 issue "letsencrypt.org"
-```
-
-###### External resources
-
-- [DNS Certification Authority Authorization (CAA) Resource Record](https://tools.ietf.org/html/rfc6844) <sup>[IETF]</sup>
-- [CAA Records](https://support.dnsimple.com/articles/caa-record/)
-- [CAA Record Helper](https://sslmate.com/caa/)
 
 #### :beginner: Set the certificate chain correctly
 
@@ -4693,6 +4663,36 @@ ssl_certificate_key certs/example.com/example.com.key;
 - [The Difference Between Root Certificates and Intermediate Certificates](https://www.thesslstore.com/blog/root-certificates-intermediate/)
 - [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce)
 - [Chain of Trust (from this handbook)](SSL_TLS_BASICS.md#chain-of-trust)
+
+#### :beginner: Enable DNS CAA Policy
+
+###### Rationale
+
+  > DNS CAA policy helps you to control which Certificat Authorities are allowed to issue certificates for your domain becaues if no CAA record is present, any CA is allowed to issue a certificate for the domain.
+
+  > The purpose of the CAA record is to allow domain owners to declare which certificate authorities are allowed to issue a certificate for a domain. They also provide a means of indicating notification rules in case someone requests a certificate from an unauthorized certificate authority.
+
+  > If no CAA record is present, any CA is allowed to issue a certificate for the domain. If a CAA record is present, only the CAs listed in the record(s) are allowed to issue certificates for that hostname.
+
+###### Example
+
+Generic configuration (Google Cloud DNS, Route 53, OVH, and other hosted services) for Let's Encrypt:
+
+```bash
+example.com. CAA 0 issue "letsencrypt.org"
+```
+
+Standard Zone File (BIND, PowerDNS and Knot DNS) for Let's Encrypt:
+
+```bash
+example.com. IN CAA 0 issue "letsencrypt.org"
+```
+
+###### External resources
+
+- [DNS Certification Authority Authorization (CAA) Resource Record](https://tools.ietf.org/html/rfc6844) <sup>[IETF]</sup>
+- [CAA Records](https://support.dnsimple.com/articles/caa-record/)
+- [CAA Record Helper](https://sslmate.com/caa/)
 
 #### :beginner: Define security policies with `security.txt`
 

@@ -465,8 +465,8 @@
   * [Tweak passive health checks](doc/RULES.md#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)
 - **[Others (4)](doc/RULES.md#others)**<a id="toc-others"></a>
+  * [Set the certificate chain correctly](doc/RULES.md#beginner-set-the-certificate-chain-correctly)
   * [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)
-  * [Set the certificate chain correctly](doc/RULES.md#set-the-certificate-chain-correctly)
   * [Define security policies with security.txt](doc/RULES.md#beginner-define-security-policies-with-securitytxt)
   * [Use tcpdump to diagnose and troubleshoot the HTTP issues](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples"></a>
@@ -1183,8 +1183,8 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](doc/RULES.md#beginner-mitigating-slow-http-dos-attack-closing-slow-connections)<br><sup>Prevents attacks in which the attacker sends HTTP requests in pieces slowly.</sup> | Hardening | ![medium](static/img/priorities/medium.png) |
 | [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](doc/RULES.mdbeginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
+| [Set the certificate chain correctly](doc/RULES.md#beginner-set-the-certificate-chain-correctly)<br><sup>Send the complete chain to the client.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
-| [Set the certificate chain correctly](doc/RULES.md#set-the-certificate-chain-correctly)<br><sup>Send the complete chain to the client.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443 ports](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>Prevents multiple configurations on the same listening address.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead of allow/deny](doc/RULES.md#beginner-use-geomap-modules-instead-of-allowdeny)<br><sup>Provides the perfect way to block invalid visitors.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
