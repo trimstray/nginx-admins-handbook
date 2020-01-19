@@ -1635,6 +1635,7 @@ The process of choosing NGINX location block is as follows (a detailed explanati
 
 4. If no regular expression locations are found that match the request URI, the previously stored prefix location (e.g. `location foo { ... }`) is selected to serve the request
 
+  - `location /` kind of a catch all location
   - the block of the longest (most explicit) of those matches is processed
   - match-searching stops
 
@@ -3083,6 +3084,14 @@ It is important to pass more than just the URI if you expect the upstream server
 
   > Please read [Managing request headers](https://www.nginx.com/resources/wiki/start/topics/examples/headers_management/) from the official wiki.
 
+In NGINX does support arbitrary request header field. Last part of a variable name is the field name converted to lower case with dashes replaced by underscores:
+
+```
+$http_name_of_the_header_key
+```
+
+If you have `X-Real-IP = 127.0.0.1` in header, you can use `$http_x_real_ip` to get `127.0.0.1`.
+
 Use the `proxy_set_header` directive to sets headers that sends to the backend servers.
 
   > HTTP headers are used to transmit additional information between client and server. `add_header` sends headers to the client (browser) and will work on successful requests only, unless you set up `always` parameter. `proxy_set_header` sends headers to the backend server. If the value of a header field is an empty string then this field will not be passed to a proxied server.
@@ -3327,7 +3336,7 @@ However - and this is important - as you now have defined a header in your `serv
 
 At the end, summary about directives to manipulate headers:
 
-- `proxy_set_header` - is to set a request header
+- `proxy_set_header` is to sets or remove a request header (and pass it or not to the backend)
 - `add_header` is to add header to response
 - `proxy_hide_header` is to hide a response header
 
