@@ -1715,7 +1715,7 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
   > One-liners, commands, utilities for building NGINX, and more.
 - **[Base Rules (15)](doc/RULES.md#base-rules)**<a id="toc-base-rules-2"></a>
   > The basic set of rules to keep NGINX in a good condition.
-- **[Debugging (4)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
+- **[Debugging (5)](doc/RULES.md#debugging)**<a id="toc-debugging-2"></a>
   > A few things for troubleshooting configuration problems.
 - **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
