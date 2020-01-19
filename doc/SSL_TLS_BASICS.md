@@ -224,6 +224,8 @@ See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/w
 
 ##### Chain of Trust
 
+  > **:bookmark: [Set the certificate chain correctly - Others - P2](RULES.md#set-the-certificate-chain-correctly)**
+
 Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
 
 A certificate chain consists of all the certificates needed to certify the subject identified by the end certificate. In practice this includes the end certificate, the certificates of intermediate CAs, and the certificate of a root CA trusted by all parties in the chain. Every intermediate CA in the chain holds a certificate issued by the CA one level above it in the trust hierarchy.

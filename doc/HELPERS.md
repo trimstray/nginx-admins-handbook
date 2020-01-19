@@ -161,6 +161,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Display DH public parameters](#display-dh-public-parameters)
     * [Convert DER to PEM](#convert-der-to-pem)
     * [Convert PEM to DER](#convert-pem-to-der)
+    * [Verification of the certificate's supported purposes](#verification-of-the-certificates-supported-purposes)
     * [Verification of the private key](#verification-of-the-private-key)
     * [Verification of the public key](#verification-of-the-public-key)
     * [Verification of the certificate](#verification-of-the-certificate)
@@ -7526,6 +7527,13 @@ openssl x509 -in ${_fd_der} -inform der -outform pem -out ${_fd_pem} )
 ```bash
 ( _fd_der="cert.crt" ; _fd_pem="cert.pem" ; \
 openssl x509 -in ${_fd_pem} -outform der -out ${_fd_der} )
+```
+
+###### Verification of the certificate's supported purposes
+
+```bash
+( _fd_pem="cert.pem" ; \
+openssl x509 -purpose -noout -in ${_fd_pem} )
 ```
 
 ###### Verification of the private key

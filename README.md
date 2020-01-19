@@ -377,6 +377,7 @@
     * [Display DH public parameters](doc/HELPERS.md#display-dh-public-parameters)
     * [Convert DER to PEM](doc/HELPERS.md#convert-der-to-pem)
     * [Convert PEM to DER](doc/HELPERS.md#convert-pem-to-der)
+    * [Verification of the certificate's supported purposes](doc/HELPERS.md#verification-of-the-certificates-supported-purposes)
     * [Verification of the private key](doc/HELPERS.md#verification-of-the-private-key)
     * [Verification of the public key](doc/HELPERS.md#verification-of-the-public-key)
     * [Verification of the certificate](doc/HELPERS.md#verification-of-the-certificate)
@@ -463,8 +464,9 @@
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing"></a>
   * [Tweak passive health checks](doc/RULES.md#beginner-tweak-passive-health-checks)
   * [Don't disable backends by comments, use down parameter](doc/RULES.md#beginner-dont-disable-backends-by-comments-use-down-parameter)
-- **[Others (3)](doc/RULES.md#others)**<a id="toc-others"></a>
+- **[Others (4)](doc/RULES.md#others)**<a id="toc-others"></a>
   * [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)
+  * [Set the certificate chain correctly](doc/RULES.md#set-the-certificate-chain-correctly)
   * [Define security policies with security.txt](doc/RULES.md#beginner-define-security-policies-with-securitytxt)
   * [Use tcpdump to diagnose and troubleshoot the HTTP issues](doc/RULES.md#beginner-use-tcpdump-to-monitor-http-traffic)
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples"></a>
@@ -1013,6 +1015,7 @@ Existing chapters:
     - [x] _Display DH public parameters_
     - [x] _Convert DER to PEM_
     - [x] _Convert PEM to DER_
+    - [x] _Verification of the certificate's supported purposes_
     - [x] _Verification of the private key_
     - [x] _Verification of the public key_
     - [x] _Verification of the certificate_
@@ -1094,6 +1097,7 @@ Existing chapters:
 <details>
 <summary><b>Others</b></summary><br>
 
+  - [x] _Set the certificate chain correctly_
   - [x] _Define security policies with security.txt_
   - [x] _Use tcpdump to diagnose and troubleshoot the HTTP issues_
 
@@ -1109,14 +1113,14 @@ GitHub exposes an [RSS/Atom](https://github.com/trimstray/nginx-admins-handbook/
 
 This checklist was the primary aim of the _nginx-admins-handbook_. It contains a set of best practices and recommendations on how to configure and maintain the NGINX properly.
 
-  > This checklist contains [all rules (76)](doc/RULES.md) from this handbook.
+  > This checklist contains [all rules (77)](doc/RULES.md) from this handbook.
 
 Generally, I think that each of these principles is important and should be considered. I separated them into four levels of priority to help guide your decision.
 
 | <b>PRIORITY</b> | <b>NAME</b> | <b>AMOUNT</b> | <b>DESCRIPTION</b> |
 | :---:        | :---         | :---:        | :---         |
 | ![high](static/img/priorities/high.png) | <i>critical</i> | 31 | definitely use this rule, otherwise it will introduce high risks of your NGINX security, performance, and other |
-| ![medium](static/img/priorities/medium.png) | <i>major</i> | 25 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
+| ![medium](static/img/priorities/medium.png) | <i>major</i> | 26 | it's also very important but not critical, and should still be addressed at the earliest possible opportunity |
 | ![low](static/img/priorities/low.png) | <i>normal</i> | 12 | there is no need to implement but it is worth considering because it can improve the NGINX working and functions |
 | ![info](static/img/priorities/info.png) | <i>minor</i> | 8 | as an option to implement or use (not required) |
 
@@ -1180,6 +1184,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)<br><sup>Use of the $host is the only one guaranteed to have something sensible.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](doc/RULES.mdbeginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)<br><sup>It gives you more control of forwarded headers.</sup> | Reverse Proxy | ![medium](static/img/priorities/medium.png) |
 | [Enable DNS CAA Policy](doc/RULES.md#beginner-enable-dns-caa-policy)<br><sup>Allows domain name holders to indicate to CA whether they are authorized to issue digital certificates.</sup> | Others | ![medium](static/img/priorities/medium.png) |
+| [Set the certificate chain correctly](doc/RULES.md#set-the-certificate-chain-correctly)<br><sup>Send the complete chain to the client.</sup> | Others | ![medium](static/img/priorities/medium.png) |
 | [Separate listen directives for 80 and 443 ports](doc/RULES.md#beginner-separate-listen-directives-for-80-and-443-ports)<br><sup>Help you maintain and modify your configuration.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use only one SSL config for the listen directive](doc/RULES.md#beginner-use-only-one-ssl-config-for-the-listen-directive)<br><sup>Prevents multiple configurations on the same listening address.</sup> | Base Rules | ![low](static/img/priorities/low.png) |
 | [Use geo/map modules instead of allow/deny](doc/RULES.md#beginner-use-geomap-modules-instead-of-allowdeny)<br><sup>Provides the perfect way to block invalid visitors.</sup> | Base Rules | ![low](static/img/priorities/low.png) |

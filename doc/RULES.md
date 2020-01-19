@@ -1612,7 +1612,11 @@ ssl_buffer_size     1400;
 
 ###### Rationale
 
-  > OCSP Stapling extension is configured for better performance (is designed to reduce the cost of an OCSP validation) and user privacy is still maintained. OCSP Stapling is an optimization, and nothing breaks if it doesn't work.
+  > Unlike OCSP, in the OCSP Stapling mechanism the user's browser does not contact the issuer of the certificate, but does it at regular intervals by the application server.
+
+  > OCSP Stapling extension is configured for better performance (is designed to reduce the cost of an OCSP validation; improves browser communication performance with the application server and allows to retrieve information about the validity of the certificate at the time of accessing the application) and user privacy is still maintained. OCSP Stapling is an optimization, and nothing breaks if it doesn't work.
+
+  > The use of the OCSP without the implementation of the OCSP Stapling extension is associated with an increased risk of losing user privacy, as well as an increased risk of negative impact on the availability of applications due to the inability to verify the validity of the certificate.
 
   > OCSP Stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
 
@@ -2470,7 +2474,7 @@ server_tokens off;
 
   > The `Server` response-header field contains information about the software used by the origin server to handle the request. This string is used by places like Alexa and Netcraft to collect statistics about how many and of what type of web server are live on the Internet.
 
-  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc.
+  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software and technologies via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc. The attacker collects all available information about the application and its environment. Information about the technologies used and the software versions are extremely valuable information.
 
   > And in my opinion, there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number. However, it's not information you need to give out, so I am generally in favour of removing it, where this can be accomplished with minimal effort.
 
@@ -3710,7 +3714,7 @@ location ^~ /assets/ {
 
 ###### Rationale
 
-  > Generally HSTS is a way for websites to tell browsers that the connection should only ever be encrypted. This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids.
+  > Generally HSTS is a way for websites to tell browsers that the connection should only ever be encrypted. This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids. The correct implementation of HSTS is an additional security mechanism in accordance with the principle of multilayer security (defense in depth).
 
   > The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
@@ -3781,17 +3785,17 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
 ###### Rationale
 
-  > CSP reduce the risk and impact a wide range of attacks, including cross-site scripting and other cross-site injections in modern browsers. Is a good defence-in-depth measure to make exploitation of an accidental lapse in that less likely.
+  > CSP reduce the risk and impact a wide range of attacks, including cross-site scripting and other cross-site injections in modern browsers (Cross-Site Scripting vulnerabilities allows you to enter into the code of the displayed page elements that will be executed by the browser when displaying the page (in particular, unauthorized scripts executed by the attacker's browser)). Is a good defence-in-depth measure to make exploitation of an accidental lapse in that less likely.
 
   > The inclusion of CSP policies significantly impedes successful XSS attacks, UI Redressing (Clickjacking), malicious use of frames or CSS injections.
 
   > Whitelisting known-good resource origins, refusing to execute potentially dangerous inline scripts, and banning the use of eval are all effective mechanisms for mitigating cross-site scripting attacks.
 
-  > The default policy that starts building a header is: block everything. By modifying the CSP value, the programmer loosens restrictions for specific groups of resources (e.g. separately for scripts, images, etc.).
+  > The default policy that starts building a header is: block everything. By modifying the CSP value, administrator/programmer loosens restrictions for specific groups of resources (e.g. separately for scripts, images, etc.).
 
   > You should approach very individually and never set CSP sample values found on the Internet or anywhere else. Blindly deploying "standard/recommend" versions of the CSP header will broke the most of web apps.
 
-  > Before enabling this header, you should discuss about CSP parameters with developers and application architects. They probably going to have to update web application to remove any inline scripts and styles, and make some additional modifications there.
+  > Before enabling this header, you should discuss about CSP parameters with developers and application architects. They probably going to have to update web application to remove any inline scripts and styles, and make some additional modifications there (implementation of content validation mechanisms introduced by users, use of lists of allowed characters that can be entered into individual fields of the application by its users or encoding of user data transferred by the application to the browser).
 
   > Strict policies will significantly increase security, and higher code quality will reduce the overall number of errors. CSP can never replace secure code - new restrictions help reduce the effects of attacks (such as XSS), but they are not mechanisms to prevent them!
 
@@ -3957,7 +3961,13 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
   > An ordinary web server supports the `GET`, `HEAD` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
-  > However, some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
+  > Some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests and methods.
+
+  > Support for the `TRACE` method can allow Cross-Site Tracing attack that can facilitate the capture of the session ID of another application user. In addition, this method can be used to attempt to identify additional information about the environment in which the application operates (e.g. existence of cache servers on the path to the application).
+
+  > Support for the `OPTIONS` method is not a direct threat, but it is a source of additional information for the attacker that can facilitate an effective attack.
+
+  > Support for the `HEAD` method is also risky (really!), because can speed up the attack process by limiting the volume of data sent from the server. If the authorization mechanisms are based on the `GET` and `POST`, the `HEAD` method may allow to bypass these protections.
 
   > However, it is not recommended to use `if` statements, instead you can use `limit_except` directive (should be faster than regexp evaluation), but remember, it has limited use: inside `location` only. I think, use of regular expressions in this case is a bit more flexible.
 
@@ -4032,6 +4042,8 @@ location /api {
 
 - [Hypertext Transfer Protocol (HTTP) Method Registry](https://www.iana.org/assignments/http-methods/http-methods.xhtml) <sup>[IANA]</sup>
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
+- [Cross Site Tracing](https://owasp.org/www-community/attacks/Cross_Site_Tracing)
+- [Cross-Site Tracing (XST): The misunderstood vulnerability](https://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misunderstood-vulnerability/)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 - [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
 - [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
@@ -4586,8 +4598,9 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 - **[Hardening](#hardening)**
 - **[Reverse Proxy](#reverse-proxy)**
 - **[Load Balancing](#load-balancing)**
-- **[≡ Others (3)](#others)**
+- **[≡ Others (4)](#others)**
   * [Enable DNS CAA Policy](#beginner-enable-dns-caa-policy)
+  * [Set the certificate chain correctly](#set-the-certificate-chain-correctly)
   * [Define security policies with security.txt](#beginner-define-security-policies-with-securitytxt)
   * [Use tcpdump to diagnose and troubleshoot the HTTP issues](#beginner-use-tcpdump-to-diagnose-and-troubleshoot-the-http-issues)
 
@@ -4620,6 +4633,66 @@ example.com. IN CAA 0 issue "letsencrypt.org"
 - [DNS Certification Authority Authorization (CAA) Resource Record](https://tools.ietf.org/html/rfc6844) <sup>[IETF]</sup>
 - [CAA Records](https://support.dnsimple.com/articles/caa-record/)
 - [CAA Record Helper](https://sslmate.com/caa/)
+
+#### :beginner: Set the certificate chain correctly
+
+###### Rationale
+
+  > A chain of trust is a linked path of verification and validation from an end-entity digital certificate to a root certificate authority (CA) that acts as a trust anchor.
+
+  > Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
+
+  > The server should never present certificate chains containing a trust anchor which is the root CA certificate. The presence of a trust anchor in the certification path can have a negative impact on performance when establishing connections using SSL/TLS.
+
+  > With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it).
+
+  > The connections is still secure but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues. However, traffic will be still encrypted.
+
+  > Example of incomplete chain: [incomplete-chain.badssl.com](https://incomplete-chain.badssl.com/).
+
+###### Example
+
+On the OpenSSL side:
+
+```bash
+$ ls
+root_ca.crt inter_ca.crt example.com.crt
+
+# Build manually. Server certificate comes first in the chain file, then the intermediates:
+$ cat example.com.crt inter_ca.crt > certs/example.com/example.com-chain.crt
+```
+
+To build a valid SSL certificate chain you can use `github.com/trimstray/mkchain` tool. It also can help you fix the incomplete chain and download all missing CA certificates. You can also download all certificates from remote server and get your certificate chain right.
+
+```bash
+# If you have all certificates:
+$ ls /data/certs/example.com
+root.crt inter01.crt inter02.crt certificate.crt
+$ mkchain -i /data/certs/example.com -o certs/example.com/example.com-chain.crt
+
+# If you have only server certificate (downloads all missing CA certificates automatically):
+$ ls /data/certs/example.com
+certificate.crt
+$ mkchain -i certificate.crt -o certs/example.com/example.com-chain.crt
+
+# If you want to download certificate chain from existing domain:
+$ mkchain -i https://incomplete-chain.badssl.com/ --with-root -o certs/example.com/example.com-chain.crt
+```
+
+On the NGINX side:
+
+```nginx
+ssl_certificate certs/example.com/example.com-chain.crt;
+ssl_certificate_key certs/example.com/example.com.key;
+```
+
+###### External resources
+
+- [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/)
+- [What is a chain of trust?](https://www.ssl.com/faqs/what-is-a-chain-of-trust/)
+- [The Difference Between Root Certificates and Intermediate Certificates](https://www.thesslstore.com/blog/root-certificates-intermediate/)
+- [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce)
+- [Chain of Trust (from this handbook)](SSL_TLS_BASICS.md#chain-of-trust)
 
 #### :beginner: Define security policies with `security.txt`
 
