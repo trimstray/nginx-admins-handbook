@@ -16,7 +16,7 @@ def main(argv):
 
         data = myfile.read()
 
-        s_server = re.findall('([ \#]*server\s\{[.\s\na-zA-Z\/0-9\;\_\{\:\#]*server_name\s[.\s\na-zA-Z\/0-9\~\^\.\*\-*\;\_\{\:\#]*%s[\s\n;][\s\S]*?(?<=\n)[\#\s]})' % domain, data, re.MULTILINE | re.DOTALL)
+        s_server = re.findall('([ \#]*server\s\{[.\s\na-zA-Z\/0-9\;\_\{\:\#\-]*server_name\s[.\s\na-zA-Z\/0-9\~\^\.\*\-*\;\_\{\:\#]*%s[\s\n;][\s\S]*?(?<=\n)[\#\s]})' % domain, data, re.MULTILINE | re.DOTALL)
 
         dash_f = '>' * 10
         dash_l = '<' * 10
