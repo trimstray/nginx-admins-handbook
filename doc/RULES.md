@@ -2962,11 +2962,11 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. Having an extensive list of highly secure Cipher Suites is important for high security SSL/TLS interception. In my opinion, in case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (it's really great source; all Mozilla websites and deployments should follow the recommendations from this document).
+  > This parameter changes more often than others, the recommended configuration for today may be out of date tomorrow. In my opinion, having a well-considered and up-to-date list of highly secure cipher suites is important for high security SSL/TLS communication. In case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (it's really great source; all Mozilla websites and deployments should follow the recommendations from this document).
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
-  > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to a weak cipher suite that may be compromised (weak does not mean insecure). If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
+  > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to a weak (less secure and don't get ahead of the latest vulnerabilities) cipher suite that may be compromised. If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
 
   > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` (according to [Alexa Top 1 Million Analysis - Feb 2017](https://scotthelme.co.uk/alexa-top-1-million-analysis-feb-2017/), over 92.8% websites using encryption prefer to use `ECDHE` based ciphers) and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers).
 
@@ -4805,9 +4805,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > The server should never present certificate chains containing a trust anchor which is the root CA certificate. The presence of a trust anchor in the certification path can have a negative impact on performance when establishing connections using SSL/TLS.
 
-  > With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it).
-
-  > The connections is still secure but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues. However, traffic will be still encrypted.
+  > With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it). The connections is still secure but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues. However, traffic will be still encrypted.
 
   > Example of incomplete chain: [incomplete-chain.badssl.com](https://incomplete-chain.badssl.com/).
 

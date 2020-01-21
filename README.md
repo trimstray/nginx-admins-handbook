@@ -587,23 +587,21 @@ Finally, you should know I'm not a NGINX expert but I love to know how stuff wor
 
 Remember about the following most important things:
 
-  > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
-
   > **`Blindly deploying of the rules described here can damage your web application!`**
 
-  > **`Copy-and-paste is not the best way to learn. Think twice before adopting rules from this handbook.`**
+  > **`Do not follow guides just to get 100% of something. Think about what you actually do at your server!`**
 
-  > **`These guidelines provides (in some places) recommendations for very restrictive setup.`**
+  > **`Copy-and-paste is not the best way to learn. Think twice before adopting rules from this handbook.`**
 
   > **`There are no settings that are perfect for everyone.`**
 
   > **`Always think about what is better and more important for you: security vs usability/compatibility.`**
 
+  > **`Security mainly refers to minimise the risk.`**
+
   > **`Change one thing may open a whole new set of problems.`**
 
   > **`The only correct approach is to understand your exposure, measure and tune.`**
-
-  > **`Regularly test your deployments to make sure that a regression is not introduced.`**
 
 ```diff
 + Security is important for ethical reasons. Compliance is important for legal reasons.
