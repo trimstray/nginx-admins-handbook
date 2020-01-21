@@ -3,11 +3,14 @@
 Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
 - **[≡ SSL/TLS Basics](#ssltls-basics)**
+  * [Introduction](#introduction)
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
     * [In which layer is TLS situated within the TCP/IP stack?](#in-which-layer-is-tls-situated-within-the-tcpip-stack)
   * [Cipher suites](#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
+    * [Why cipher suites are important?](#why-cipher-suites-are-important)
+    * [NGINX and TLS 1.3 Cipher Suites](#nginx-and-tls-13-cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
   * [Certificates](#certificates)
     * [Chain of Trust](#chain-of-trust)
@@ -17,6 +20,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
   * [Verify your SSL, TLS & Ciphers implementation](#verify-your-ssl-tls--ciphers-implementation)
   * [Useful video resources](#useful-video-resources)
+
+#### Introduction
 
 TLS stands for _Transport Layer Security_. It is a protocol that provides privacy and data integrity between two communicating applications. It’s the most widely deployed security protocol used today replacing _Secure Socket Layer_ (SSL), and is used for web browsers and other applications that require data to be securely exchanged over a network.
 
@@ -30,14 +35,18 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Every byte of a TLS connection explained and reproduced - TLS 1.2](https://tls.ulfheim.net/)
 - [Every byte of a TLS connection explained and reproduced - TLS 1.3](https://tls13.ulfheim.net/)
 - [Transport Layer Security (TLS) - High Performance Browser Networking](https://hpbn.co/transport-layer-security-tls/)
-- [Keyless SSL: The Nitty Gritty Technical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)
 - [The Sorry State Of SSL](https://hynek.me/talks/tls/)
 - [How does SSL/TLS work?](https://security.stackexchange.com/questions/20803/how-does-ssl-tls-work)
+- [What is TLS and how does it work?](https://www.comparitech.com/blog/information-security/tls-encryption/)
+- [A study of the TLS ecosystem](https://pdfs.semanticscholar.org/12fb/86fcbf0564ab11552c516539c91c6c8ff4d6.pdf) <sup>[pdf]</sup>
+- [Inspecting TLS/SSL](https://www.java2depth.com/2019/04/transport-layer-security-tls-and-secure.html)
 - [TLS in HTTP/2](https://daniel.haxx.se/blog/2015/03/06/tls-in-http2/)
+- [Keyless SSL: The Nitty Gritty Technical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)
 - [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
 - [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
+- [SSL/TLS Threat Model](https://blog.ivanristic.com/SSL_Threat_Model.png)
 
 If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/). It is one of the best (if not the best) tools to verify the SSL/TLS configuration of the HTTP server. I also recommend [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/). Both will tell you if you need to fix or update your config.
 
@@ -103,22 +112,24 @@ See also [What Happens in a TLS Handshake?](https://www.cloudflare.com/learning/
 
 To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher suite is a combination of authentication, encryption, and message authentication code (MAC) algorithms. They are used during the negotiation of security settings for a TLS/SSL connection as well as for the transfer of data.
 
-In the SSL handshake, the client begins by informing the server what cipher suites it supports. The cipher suites are usually arranged in order of security. The server then compares those cipher suites with the cipher suites that are enabled on its side. As soon as it finds a match, it then informs the client, and the chosen cipher suite's algorithms are called into play.
+  > TLS 1.1 uses the same ciphers as TLS 1.0, therefore OpenSSL does not make a distinction between the two. When it supports a cipher suite for TLS 1.1, it also supports it for TLS 1.0, and vice versa. TLS 1.2 and TLS 1.3 have its own set of cipher suites. In TLS 1.3 they are configured in OpenSSL, are enabled by default, and selected automatically (not need to be set in the configuration).
 
-  > TLS 1.1 uses the same cipher suites as TLS 1.0, therefore OpenSSL does not make a distinction between the two. When it supports a cipher suite for TLS 1.1, it also supports it for TLS 1.0, and vice versa. TLS 1.2 and TLS 1.3 have its own set of cipher suites. In TLS 1.3 they are configured in OpenSSL, are enabled by default, and selected automatically (not need to be set in the configuration).
+In the SSL handshake, the client begins by informing the server what ciphes it supports. The cipher suites are usually arranged in order of security. The server then compares those cipher suites with the cipher suites that are enabled on its side. As soon as it finds a match, it then informs the client, and the chosen cipher suite's algorithms are called into play.
+
+  > Note: The client suggests the Cipher Suite but the server chooses. The Cipher Suite decision is in the hands of the server. The server then negotiates and selects a specific cipher suite to use in the communication. If the server is not prepared to use any of the cipher suites advertised by the client, then it will not allow the session
 
 Various cryptographic algorithms are used during establishing and later during the TLS connection. There are essentially 4 different parts of a TLS 1.2 cipher suite:
 
 - **Key exchange** - what asymmetric crypto is used to exchange keys?<br>
-  Examples: `RSA`, `DH`, `ECDH`, `DHE`, `ECDHE`, `PSK`
+  Examples: `RSA`, `DH`, `ECDH`, `DHE`, `ECDHE`
 - **Authentication/Digital Signature Algorithm** - what crypto is used to verify the authenticity of the server?<br>
-  Examples: `RSA`, `ECDSA`, `DSA`
+  Examples: `RSA`, `DSA`, `ECDSA`
 - **Cipher/Bulk Encryption Algorithms** - what symmetric crypto is used to encrypt the data?<br>
-  Examples: `AES`, `CHACHA20`, `Camellia`, `ARIA`
+  Examples: `AES`, `3DES`, `CHACHA20`, `Camellia`, `ARIA`
 - **MAC** - what hash function is used to ensure message integrity?<br>
-  Examples: `SHA-256`, `POLY1305`
+  Examples: `MD5`, `SHA-256`, `POLY1305`
 
-These four types of algorithms are combined into so-called cipher sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is a type of elliptic curve (TLS cipher suites and elliptical curves are sometimes configure by using a single string like this).
+These four types of algorithms are combined into so-called cipher suites/sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is a type of elliptic curve (TLS cipher suites and elliptical curves are sometimes configure by using a single string like this).
 
   > To use `ECDSA` cipher suites, you need an `ECDSA` certificate. To use `RSA` cipher suites, you need an `RSA` certificate. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`) (recommended), or `RSA` (2048 bits).
 
@@ -132,7 +143,7 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
-Look also at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions.
+Finally, look at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions. I also recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/) and great answer by [dave_thompson_085](https://security.stackexchange.com/users/39571/dave-thompson-085) about [Role of the chosen ciphersuite in an SSL/TLS connection](https://security.stackexchange.com/questions/160429/role-of-the-chosen-ciphersuite-in-an-ssl-tls-connection/160445#160445).
 
 ##### Authenticated encryption (AEAD) cipher suites
 
@@ -180,6 +191,16 @@ TLS_DHE_RSA_WITH_ARIA_256_GCM_SHA384
 
 These are the current AEAD ciphers which don't trigger the [ROBOT](https://robotattack.org/) warning.
 
+##### Why cipher suites are important?
+
+The security level of your HTTPS traffic (the safety of your data and the data of your users) depends on which cipher suites your web server uses. Having an extensive list of highly secure Cipher Suites is important for high security SSL/TLS interception. The compatibility of your HTTPS traffic (who will see errors, warnings or experience other issues) depends on the cipher suites your web server uses. The performance of your HTTPS traffic (how fast users see your pages - page speed) depends on the cipher suites your web server uses.
+
+##### NGINX and TLS 1.3 Cipher Suites
+
+We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 cipher suites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand, the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
+
+If you want to use `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers (for example on constrained systems which are usually constrained for everything) see [TLSv1.3 and `CCM` ciphers](HELPERS.md#tlsv13-and-ccm-ciphers). But remember: `GCM` should be considered superior to `CCM` for most applications that require authenticated encryption.
+
 #### Diffie-Hellman key exchange
 
   > **:bookmark: [Use strong Key Exchange with Perfect Forward Secrecy - Hardening - P1](RULES.md#beginner-use-strong-key-exchange-with-perfect-forward-secrecy)**
@@ -218,7 +239,7 @@ The authenticity and integrity of the certificate can be checked by cryptographi
 
   > Without an SSL certificate, any data collected through your website is vulnerable to be intercepted by third party.
 
-Certificates lets you secure your main domain and all its subdomains (like example.com and api.example.com) with one single SSL certificate.
+Certificates lets you secure your main domain and all its subdomains (like `example.com` and `api.example.com`) with one single SSL certificate.
 
 See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/).
 
@@ -261,9 +282,7 @@ To test validation of your certificate chain use one of the following tools:
 - [SSL Checker by namecheap](https://decoder.link/sslchecker/)
 - [SSL Server Test by Qualys](https://www.ssllabs.com/ssltest/analyze.html)
 
-For more information please see [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/) and [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce).
-
-Look also at [What happens to code sign certificates when when root CA expires?](https://serverfault.com/questions/878919/what-happens-to-code-sign-certificates-when-when-root-ca-expires).
+For more information please see [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/) and [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce). Look also at [What happens to code sign certificates when when root CA expires?](https://serverfault.com/questions/878919/what-happens-to-code-sign-certificates-when-when-root-ca-expires).
 
 ##### Single-domain
 
@@ -349,4 +368,5 @@ Another interesting thing is that you can have multiple wildcard names inside th
 - [Intro to Digital Certificates](https://youtu.be/qXLD2UHq2vk)
 - [Digital Certificates: Chain of Trust](https://youtu.be/heacxYUnFHA)
 - [Elliptic Curves - Computerphile](https://youtu.be/NF1pwjL9-DE)
+- [Elliptic Curve Cryptography Overview](https://youtu.be/dCvB-mhkT0w)
 - [Secret Key Exchange (Diffie-Hellman) - Computerphile](https://youtu.be/NmM9HA2MQGI)

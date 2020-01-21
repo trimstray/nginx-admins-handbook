@@ -3,6 +3,7 @@
 Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbook#table-of-contents)** or **[What's next?](https://github.com/trimstray/nginx-admins-handbook#whats-next)** section.
 
 - **[≡ HTTP Basics](#http-basics)**
+  * [Introduction](#introduction)
   * [Features and architecture](#features-and-architecture)
   * [HTTP/2](#http2)
     * [How to debug HTTP/2?](#how-to-debug-http2)
@@ -27,6 +28,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [HTTP client](#http-client)
   * [Back-End web architecture](#back-end-web-architecture)
   * [Useful video resources](#useful-video-resources)
+
+#### Introduction
 
 Simply put, HTTP stands for hypertext transfer protocol and is used for transmitting data (e.g. web pages) over the Internet.
 
@@ -116,12 +119,10 @@ I will not describe HTTP/2 because there are brilliant studies:
 - [HTTP2 Vs. HTTP1 – Let’s Understand The Two Protocols](https://cheapsslsecurity.com/p/http2-vs-http1/)
 - [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 
-However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP/1.1. A client that supports HTTP/2 will ask the server (using HTTP/1.1) for an HTTP/2 upgrade:
+However, you should know a client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP/1.1. A client that supports HTTP/2 never makes a HTTP/2 request by default and will ask the server (using HTTP/1.1 with `Upgrade: HTTP/2.0` header) for an HTTP/2 upgrade:
 
   - if the server is HTTP/2 ready, then the server will notice the client as such: the communication between them will be switched to HTTP/2
   - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP/1.1: the communication between them should stay plenty HTTP/1.1
-
-An HTTP/2 client never makes a HTTP/2 request by default. It always makes an HTTP/1.1 request with `Upgrade: HTTP/2.0` header.
 
 ##### How to debug HTTP/2?
 
@@ -133,7 +134,7 @@ Uniform Resource Identifier (URI) is a string of characters used to identify a n
 
 I think the best explanation is here: [The Difference Between URLs, URIs, and URNs](https://danielmiessler.com/study/url-uri/) by [Daniel Miessler](https://danielmiessler.com/about/).
 
-For me, this short and clear explanation is also interesting:
+For me, this short and clear comment is also interesting:
 
   > URIs **identify** and URLs **identify** and **locate**; however, **locators are also identifiers**, so every URL is also a URI, but there are URIs which are not URLs.
 
@@ -363,9 +364,7 @@ The absoluteURI form is required when the request is being made to a proxy:
 GET http://example.com/pub/index.html HTTP/1.1
 ```
 
-  > Note that the absolute path cannot be empty; if none is present in the original URI, it MUST be given as `/` (the server root).
-
-  > The asterisk `*` is used when an HTTP request does not apply to a particular resource, but to the server itself, and is only allowed when the method used does not necessarily apply to a resource.
+  > Note that the absolute path cannot be empty; if none is present in the original URI, it MUST be given as `/` (the server root). The asterisk `*` is used when an HTTP request does not apply to a particular resource, but to the server itself, and is only allowed when the method used does not necessarily apply to a resource.
 
 ###### HTTP version
 
@@ -387,7 +386,7 @@ There are three types of HTTP message headers for requests:
 
 The Request-header fields allow the client to pass additional information about the request, and about the client itself, to the server.
 
-What is an accepted maximum allowed size for HTTP headers? Read [this](https://stackoverflow.com/questions/686217/maximum-on-http-header-values) great answer. HTTP does not define any limit. However most web servers do limit size of headers they accept. Server will return `413 Entity Too Large` error if headers size exceeds that limit.
+What is an accepted maximum allowed size for HTTP headers? Read [this](https://stackoverflow.com/questions/686217/maximum-on-http-header-values) great answer. HTTP does not define any limit. However, the most web servers do limit size of headers they accept. Server will return `413 Entity Too Large` error if headers size exceeds that limit.
 
 ##### Message body
 
@@ -512,7 +511,7 @@ HTTP client is a client that is able to send a request to and get a response fro
 
   > I recommend to read these great repositories:
   >
-  >   - [Learn how to design large-scale systems. Prep for the system design interview. Includes Anki flashcards.](https://github.com/donnemartin/system-design-primer)<br>
+  >   - [Learn how to design large-scale systems](https://github.com/donnemartin/system-design-primer)<br>
   >   - [Web Architecture 101](https://engineering.videoblocks.com/web-architecture-101-a3224e126947)
 
 The back-end, or the "server side", is all of the technology required to process the incoming request and generate and send the response to the client. This typically includes three major parts:

@@ -40,7 +40,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > Use `include` directive to move and to split common server settings into a multiple files and to attach your specific code to global config or contexts. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
 
-  > I always try to keep multiple directories in root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`) and, if necessary, mostly to the files which has `server` directives.
+  > I always try to keep multiple directories in a root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`) and, if necessary, mostly to the files which has `server` directives.
 
   > I prefer the following structure:
   >
@@ -73,8 +73,6 @@ server {
   include /etc/nginx/master/_static/errors.conf;
   include /etc/nginx/master/_server/_helpers/global.conf;
 
-  ...
-
   server_name example.com www.example.com;
 
   ...
@@ -106,7 +104,7 @@ server {
   > - use meaningful naming conventions
   > - simple is better than complex but complex is better than complicated
 
-  > Some would say that NGINX's files are written in their own language or syntax so we should not overdo it with above rules. I think it is worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
+  > Some would say that NGINX's files are written in their own language so we should not overdo it with above rules. I think, it is worth sticking to the general (programming) rules and make your and other NGINX adminstrators life easier.
 
 ###### Example
 
@@ -497,7 +495,7 @@ server {
 
   > The most predictable solution is include your file with all headers at the `location` level. So, you should only include it in each individual `location` where you want these headers to be sent.
 
-  > In my opinion, also good solution is use an include file with your global headers and add it to the `http` context. You should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts.
+  > In my opinion, also good solution is use an include file with your global headers and add it to the `http` context (however, then you duplicate the rules unnecessarily). You should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts.
 
   > There are additional solutions to this, such as using an alternative module ([headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module)) to define specific headers in you `server` or `location` blocks.
 
@@ -508,6 +506,29 @@ server {
   > _Let’s say we don’t include an `add_header` directive within the HTTP server block, however we do include an additional `add_header` within the HTTPs server block. In this scenario, the `add_header` directive defined in the http block will only be inherited by the HTTP server block as it does not have any `add_header` directive defined on the current level. On the other hand, the HTTPS server block will not inherit the `add_header` directive defined in the http block._
 
 ###### Example
+
+Recommended configuration:
+
+```nginx
+http {
+
+  server {
+
+    server_name example.com;
+
+    ...
+
+    location / {
+
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
+
+      ...
+
+    }
+
+  }
+```
 
 Some extra headers with `add_header` directive here but only if you include "global" headers first:
 
@@ -1085,7 +1106,7 @@ server {
 
 ###### Rationale
 
-  > Default error pages in NGINX are simple but it reveals version information, which leads to information leakage vulnerability.
+  > Default error pages in NGINX are simple but it reveals version information and returns the "nginx" string, which leads to information leakage vulnerability.
 
   > Information about the technologies used and the software versions are extremely valuable information. These details allow the identification and exploitation of known software weaknesses published in publicly available vulnerability databases.
 
@@ -1336,15 +1357,15 @@ log_format debug-level-0
 
   > If you want to logging of `ngx_http_rewrite_module` (at the `notice` level) you should enable `rewrite_log on;` in a `http`, `server`, or `location` contexts.
 
-  > A while ago, I found this interesting comment:
-  >
-  > _`notice` is much better than `debug` as the error level for debugging rewrites because it will skip a lot of low-level irrelevant debug info (e.g. SSL or gzip details; 50+ lines per request)._
-
   > Words of caution:
   >
   >   - never leave debug logging to a file on in production
   >   - don't forget to revert debug-level for `error_log` on a very high traffic sites
   >   - absolutely use log rotation policy
+
+  A while ago, I found this interesting comment:
+
+  > _`notice` is much better than `debug` as the error level for debugging rewrites because it will skip a lot of low-level irrelevant debug info (e.g. SSL or gzip details; 50+ lines per request)._
 
 ###### Example
 
@@ -1651,6 +1672,8 @@ server {
 
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
+  > [Vincent Bernat](https://vincent.bernat.ch/en) written great [tool](https://github.com/vincentbernat/rfc5077/blob/master/rfc5077-client.c) for testing session resume with and without tickets.
+
   [Ivan Ristić](https://twitter.com/ivanristic) (Founder of Hardenize) say:
 
   > _Session resumption either creates a large server-side cache that can be broken into or, with tickets, kills forward secrecy. So you have to balance performance (you don't want your users to use full handshakes on every connection) and security (you don't want to compromise it too much). Different projects dictate different settings. [...] One reason not to use a very large cache (just because you can) is that popular implementations don't actually delete any records from there; even the expired sessions are still in the cache and can be recovered. The only way to really delete is to overwrite them with a new session. [...] These days I'd probably reduce the maximum session duration to 4 hours, down from 24 hours currently in my book. But that's largely based on a gut feeling that 4 hours is enough for you to reap the performance benefits, and using a shorter lifetime is always better._
@@ -1677,6 +1700,7 @@ ssl_buffer_size     1400;
 
 - [SSL Session (cache)](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache)
 - [Speeding up TLS: enabling session reuse](https://vincent.bernat.ch/en/blog/2011-ssl-session-reuse-rfc5077)
+- [SSL Session Caching (in nginx)](https://www.hezmatt.org/~mpalmer/blog/2011/06/28/ssl-session-caching-in-nginx.html)
 - [ssl_session_cache in Nginx and the ab benchmark](https://www.peterbe.com/plog/ssl_session_cache-ab)
 - [Improving OpenSSL Performance](https://software.intel.com/en-us/articles/improving-openssl-performance)
 
@@ -2938,13 +2962,15 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
 ###### Rationale
 
-  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. In my opinion, in case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (it's really great source; all Mozilla websites and deployments should follow the recommendations from this document).
+  > This parameter changes quite often, the recommended configuration for today may be out of date tomorrow. Having an extensive list of highly secure Cipher Suites is important for high security SSL/TLS interception. In my opinion, in case of doubt, you should follow [Mozilla Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) (it's really great source; all Mozilla websites and deployments should follow the recommendations from this document).
 
   > To check ciphers supported by OpenSSL on your server: `openssl ciphers -s -v`, `openssl ciphers -s -v ECDHE` or `openssl ciphers -s -v DHE`.
 
-  > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to an insecure cipher suite that may be compromised. If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
+  > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to a weak cipher suite that may be compromised (weak does not mean insecure). If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers). The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy. `ECDHE-ECDSA` is about the same as `RSA` in performance, but much more secure. `ECDHE` with `RSA` is slower, but still much more secure than alone `RSA`.
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` (according to [Alexa Top 1 Million Analysis - Feb 2017](https://scotthelme.co.uk/alexa-top-1-million-analysis-feb-2017/), over 92.8% websites using encryption prefer to use `ECDHE` based ciphers) and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers).
+
+  > The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy (a method that does not have the vulnerability to the type of replay attack that other solutions could introduce if a highly secure cipher suite is not supported). `ECDHE-ECDSA` is about the same as `RSA` in performance, but much more secure. `ECDHE` with `RSA` is slower, but still much more secure than alone `RSA`.
 
   > For backward compatibility software components think about less restrictive ciphers. Not only that you have to enable at least one special `AES128` cipher for HTTP/2 support regarding to [RFC 7540 - TLS 1.2 Cipher Suites](https://tools.ietf.org/html/rfc7540#section-9.2.2) <sup>[IETF]</sup>, you also have to allow `prime256` elliptic curves which reduces the score for key exchange by another 10% even if a secure server preferred order is set.
 
@@ -2960,11 +2986,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
-  > We currently don't have the ability to control TLS 1.3 cipher suites without support from the NGINX to use new API (that is why today, you cannot specify the TLSv1.3 cipher suites, applications still have to adapt). NGINX isn't able to influence that so at this moment all available ciphers are always on (also if you disable potentially weak cipher from NGINX). On the other hand, the ciphers in TLSv1.3 have been restricted to only a handful of completely secure ciphers by leading crypto experts.
-
   > By default, OpenSSL 1.1.1* with TLSv1.3 disable `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers. In my opinion, `ChaCha20+Poly1305` or `AES/GCM` are very efficient in the most cases. On modern processors, the common `AES-GCM` cipher and mode are sped up by dedicated hardware, making that algorithm's implementation faster than anything by a wide margin. On older or cheaper processors that lack that feature, though, the `ChaCha20` cipher runs faster than `AES-GCM`, as was the `ChaCha20` designers' intention.
-
-  > If you want to use `TLS_AES_128_CCM_SHA256` and `TLS_AES_128_CCM_8_SHA256` ciphers (for example on constrained systems which are usually constrained for everything) see [TLSv1.3 and `CCM` ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers). But remember: `GCM` should be considered superior to `CCM` for most applications that require authenticated encryption.
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
@@ -2977,6 +2999,10 @@ ssl_protocols TLSv1.2 TLSv1.1;
   > We have a nice online tool for testing compatibility cipher suites with user agents: [CryptCheck](https://tls.imirhil.fr/suite). I think it will be very helpful for you.
 
   > If in doubt, use one of the recommended Mozilla kits (see below).
+
+  Look at this great explanation about weak ciphers by [Keith Shaw](https://github.com/keithws):
+
+  > _Weak does not mean insecure. [...] A cipher usually gets marked as weak because there is some fundamental design flaw that makes it difficult to implement securely._
 
   At the end, some interesting statistics [Logjam: the latest TLS vulnerability explained](https://blog.cloudflare.com/logjam-the-latest-tls-vulnerability-explained/):
 
@@ -3468,6 +3494,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
 - [Cryptographic Right Answers](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html)
 - [ImperialViolet - ChaCha20 and Poly1305 for TLS](https://www.imperialviolet.org/2013/10/07/chacha20.html)
+- [Cipher suites (from this handbook)](SSL_TLS_BASICS.md#cipher-suites)
 
 #### :beginner: Use more secure ECDH Curve
 
@@ -3539,6 +3566,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 - [Elliptic Curve Cryptography for those who are afraid of maths](http://www.lapsedordinary.net/files/ECC_BSidesLDN_2015.pdf)
 - [Security dangers of the NIST curves](http://cr.yp.to/talks/2013.05.31/slides-dan+tanja-20130531-4x3.pdf) <sup>[pdf]</sup>
 - [How to design an elliptic-curve signature system](http://blog.cr.yp.to/20140323-ecdsa.html)
+- [Win10 Crypto Vulnerability: Cheating in Elliptic Curve Billiards 2](https://medium.com/zengo/win10-crypto-vulnerability-cheating-in-elliptic-curve-billiards-2-69b45f2dcab6)
 
 #### :beginner: Use strong Key Exchange with Perfect Forward Secrecy
 

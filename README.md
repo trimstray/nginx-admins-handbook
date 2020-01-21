@@ -108,6 +108,7 @@
 <summary><b>Other chapters</b></summary><br>
 
 - **[HTTP Basics](doc/HTTP_BASICS.md#http-basics)**<a id="toc-http-basics"></a>
+  * [Introduction](doc/HTTP_BASICS.md#introduction-1)
   * [Features and architecture](doc/HTTP_BASICS.md#features-and-architecture)
   * [HTTP/2](doc/HTTP_BASICS.md#http2)
     * [How to debug HTTP/2?](doc/HTTP_BASICS.md#how-to-debug-http2)
@@ -133,11 +134,14 @@
   * [Back-End web architecture](doc/HTTP_BASICS.md#back-end-web-architecture)
   * [Useful video resources](doc/HTTP_BASICS.md#useful-video-resources)
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics"></a>
+  * [Introduction](doc/SSL_TLS_BASICS.md#introduction-2)
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
     * [In which layer is TLS situated within the TCP/IP stack?](doc/SSL_TLS_BASICS.md#in-which-layer-is-tls-situated-within-the-tcpip-stack)
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
+    * [Why cipher suites are important?](doc/SSL_TLS_BASICS.md#why-cipher-suites-are-important)
+    * [NGINX and TLS 1.3 Cipher Suites](doc/SSL_TLS_BASICS.md#nginx-and-tls-13-cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
     * [Chain of Trust](doc/SSL_TLS_BASICS.md#chain-of-trust)
@@ -367,7 +371,7 @@
     * [Generate CSR with -config param](doc/HELPERS.md#generate-csr-with--config-param)
     * [Generate private key and CSR](doc/HELPERS.md#generate-private-key-and-csr)
     * [Generate ECDSA private key](doc/HELPERS.md#generate-ecdsa-private-key)
-    * [Generate private key with CSR (ECC)](doc/HELPERS.md#generate-private-key-with-csr-ecc)
+    * [Generate private key and CSR (ECC)](doc/HELPERS.md#generate-private-key-and-csr-ecc)
     * [Generate self-signed certificate](doc/HELPERS.md#generate-self-signed-certificate)
     * [Generate self-signed certificate from existing private key](doc/HELPERS.md#generate-self-signed-certificate-from-existing-private-key)
     * [Generate self-signed certificate from existing private key and csr](doc/HELPERS.md#generate-self-signed-certificate-from-existing-private-key-and-csr)
@@ -577,7 +581,7 @@ This handbook does not get into all aspects of NGINX. What's more, some of the t
 
 I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation and other great documents. Many of the topics described here can certainly be done better or different. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
-Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248) (I really like this quote!). Don't need to be an expert to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the nuances of a topic or skills you’re passionate about and understand the recommendations of real experts.
+Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248) (I really like this quote!). Don't need to be an expert to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the recommendations and nuances of a topic you’re passionate about.
 
 ## Before you start
 
@@ -799,6 +803,8 @@ Existing chapters:
     - [x] _In which layer is TLS situated within the TCP/IP stack?_
   - [x] _Cipher suites_
     - [x] _Authenticated encryption (AEAD) cipher suites_
+    - [x] _Why cipher suites are important?_
+    - [x] _NGINX and TLS 1.3 Cipher Suites_
   - [x] _Diffie-Hellman key exchange_
   - [x] _Certificates_
     - [x] _Chain of Trust_
@@ -1007,7 +1013,7 @@ Existing chapters:
     - [x] _Generate CSR with -config param_
     - [x] _Generate private key and CSR_
     - [x] _Generate ECDSA private key_
-    - [x] _Generate private key with CSR (ECC)_
+    - [x] _Generate private key and CSR (ECC)_
     - [x] _Generate self-signed certificate_
     - [x] _Generate self-signed certificate from existing private key_
     - [x] _Generate self-signed certificate from existing private key and csr_
@@ -1728,13 +1734,13 @@ Go back to the [Table of Contents](#table-of-contents) or read the next chapters
 - **[Performance (13)](doc/RULES.md#performance)**<a id="toc-performance-2"></a>
   > Many methods to make sure the NGINX as fast as possible.
 - **[Hardening (31)](doc/RULES.md#hardening)**<a id="toc-hardening-2"></a>
-  > Security and hardening methods in line with industry standards.
+  > Security and hardening methods in line with best practices.
 - **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy-2"></a>
   > A few rules about the NGINX proxy server.
 - **[Load Balancing (2)](doc/RULES.md#load-balancing)**<a id="toc-load-balancing-2"></a>
-  > You may improve of some rules about the NGINX working as a load balancer.
+  > Some rules to improve NGINX as a load balancer.
 - **[Others (4)](doc/RULES.md#others)**<a id="toc-others-2"></a>
-  > Something about other interesting rules.
+  > Other interesting rules, not necessarily linked to NGINX.
 - **[Configuration Examples](doc/EXAMPLES.md#configuration-examples)**<a id="toc-configuration-examples-2"></a>
   > Here are some configuration examples.
 
