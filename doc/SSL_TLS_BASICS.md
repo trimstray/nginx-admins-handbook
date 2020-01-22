@@ -18,6 +18,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Multi-domain](#multi-domain)
     * [Wildcard](#wildcard)
     * [Wildcard SSL doesn't handle root domain?](#wildcard-ssl-doesnt-handle-root-domain)
+  * [TLS Server Name Indication](#tls-server-name-indication)
   * [Verify your SSL, TLS & Ciphers implementation](#verify-your-ssl-tls--ciphers-implementation)
   * [Useful video resources](#useful-video-resources)
 
@@ -345,6 +346,28 @@ san: *.example.com example.com
 ```
 
 Another interesting thing is that you can have multiple wildcard names inside the same certificate, that is you can have `*.example.org` and `*.subdomain.example.org` inside the same certificate. You should have little trouble finding a Certificate Authority that will issue such a certificate, and most clients should accept it.
+
+#### TLS Server Name Indication
+
+SNI is an extension of the SSL/TLS protocol that allows the client (for example, the browser) to provide the exact host name trying to connect at the beginning of the TLS handshaking process (it indicates which hostname is being contacted by the browser at the beginning of the handshake process). On the HTTP server side, it allows for multiple connection use the same IP address and port number, without having to use multiple IP addresses.
+
+See the following diagram with example of communication with SNI extension:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/with_sni.png" alt="with_sni">
+</p>
+
+<sup><i>This infographic comes from [Supporting virtual servers with Server Name Indication](https://nnc3.com/mags/LM10/Magazine/Archive/2008/92/072-074_SNI/article.html).</i></sup>
+
+From NGINX documentation:
+
+  > _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
+
+Take a look at this:
+
+  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, [RFC 6066](https://tools.ietf.org/html/rfc6066) <sup>[IETF]</sup>), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+
+For more information please see [What Is SNI? How TLS Server Name Indication Works](https://www.cloudflare.com/learning/ssl/what-is-sni/) and [Supporting virtual servers with Server Name Indication](https://nnc3.com/mags/LM10/Magazine/Archive/2008/92/072-074_SNI/article.html).
 
 #### Verify your SSL, TLS & Ciphers implementation
 

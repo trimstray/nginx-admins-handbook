@@ -149,6 +149,7 @@
     * [Multi-domain](doc/SSL_TLS_BASICS.md#multi-domain)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
     * [Wildcard SSL doesn't handle root domain?](doc/SSL_TLS_BASICS.md#wildcard-ssl-doesnt-handle-root-domain)
+    * [TLS Server Name Indication](doc/SSL_TLS_BASICS.md#tls-server-name-indication)
   * [Verify your SSL, TLS & Ciphers implementation](doc/SSL_TLS_BASICS.md#verify-your-ssl-tls--ciphers-implementation)
   * [Useful video resources](doc/SSL_TLS_BASICS.md#useful-video-resources)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
@@ -810,6 +811,7 @@ Existing chapters:
     - [x] _Multi-domain_
     - [x] _Wildcard_
     - [x] _Wildcard SSL doesn't handle root domain?_
+  - [x] _TLS Server Name Indication_
   - [x] _Verify your SSL, TLS & Ciphers implementation_
   - [x] _Useful video resources_
 

@@ -38,7 +38,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   > - easier to maintain
   > - easier to work with
 
-  > Use `include` directive to move and to split common server settings into a multiple files and to attach your specific code to global config or contexts. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
+  > Use `include` directive to move and to split common server settings into multiple files and to attach your specific code to global config or contexts. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
 
   > I always try to keep multiple directories in a root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`) and, if necessary, mostly to the files which has `server` directives.
 
@@ -53,10 +53,12 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   > - `modules` - for modules which are dynamically loading into NGINX
   > - `snippets` - for NGINX aliases, configuration templates
 
+  > Work out your own directory structure (from the top-level directory to the lowest) and apply it when working with NGINX. Think about it carefully and figure out what's going to be best for you and the easiest to maintain.
+
 ###### Example
 
 ```nginx
-# Store this in https.conf for example:
+# In https.conf for example:
 listen 10.240.20.2:443 ssl;
 
 ssl_certificate /etc/nginx/master/_server/example.com/certs/nginx_example.com_bundle.crt;
@@ -69,7 +71,7 @@ server {
 
   include /etc/nginx/master/_listen/10.240.20.2/https.conf;
 
-  # And other:
+  # And other external files:
   include /etc/nginx/master/_static/errors.conf;
   include /etc/nginx/master/_server/_helpers/global.conf;
 
@@ -94,7 +96,7 @@ server {
 
   > Spaces, tabs, and new line characters are not part of the NGINX configuration. They are not interpreted by the NGINX engine, but they help to make the configuration more readable.
 
-  > Choose your formatter style and setup a common config for it. Some rules are universal, but the most important thing is to keep a consistent NGINX code style throughout your code base:
+  > Choose your formatter style and setup a common config for it. Some rules are universal, but in my view, the most important thing is to keep a consistent NGINX code style throughout your code base:
   >
   > - use whitespaces and blank lines to arrange and separate code blocks
   > - tabs vs spaces - more important to be consistent throughout your code than to use any specific type
@@ -235,6 +237,9 @@ server {
 
   listen 10.240.20.2:80;
 
+  # If you need redirect to HTTPS:
+  return 301 https://example.com$request_uri;
+
   ...
 
 }
@@ -351,15 +356,15 @@ server {
 
   # We can also serve:
   # location / {
-
-    # static file (error page):
-    #   root /etc/nginx/error-pages/404;
-    # or redirect:
-    #   return 301 https://badssl.com;
-
+  #
+  #   static file (error page):
+  #     root /etc/nginx/error-pages/404;
+  #   or redirect:
+  #     return 301 https://badssl.com;
+  #
   # }
 
-  # Remember to log all actions in separate files:
+  # Remember to log all actions (set up access and error log):
   access_log /var/log/nginx/default-access.log main;
   error_log /var/log/nginx/default-error.log warn;
 
@@ -491,15 +496,13 @@ server {
 
   > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` scopes. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
-  > If you use them in multiple contexts only the lowest occurrences are used. So, if you specify it in the `server` and `location` contexts (even if you hide different header) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet for all contexts and use it on each level.
+  > If you use them in multiple contexts only the lowest occurrences are used. So, if you specify it in the `server` and `location` contexts (even if you hide different header by setting with the same directive and value) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet and use it on `location` level. It is the most predictable solution.
 
-  > The most predictable solution is include your file with all headers at the `location` level. So, you should only include it in each individual `location` where you want these headers to be sent.
+  > In my opinion, also interesting solution is use an include file with your global headers and add it to the `http` context (however, then you duplicate the rules unnecessarily). Next, you should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts. However, it is a little more complicated and does not guarantee consistency in any way.
 
-  > In my opinion, also good solution is use an include file with your global headers and add it to the `http` context (however, then you duplicate the rules unnecessarily). You should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts.
+  > There are additional solutions to this, such as using an alternative module ([headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module)) to define specific headers in `server` or `location` blocks. It does not affect the above directives.
 
-  > There are additional solutions to this, such as using an alternative module ([headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module)) to define specific headers in you `server` or `location` blocks.
-
-  There is a [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
+  That is [great explanation](https://www.keycdn.com/support/nginx-add_header) of the problem:
 
   > _Therefore, let’s say you have an http block and have specified the `add_header` directive within that block. Then, within the http block you have 2 server blocks - one for HTTP and one for HTTPs._
   >
@@ -507,130 +510,78 @@ server {
 
 ###### Example
 
-Recommended configuration:
+Not recommended configuration:
 
 ```nginx
 http {
 
-  server {
-
-    server_name example.com;
-
-    ...
-
-    location / {
-
-      include /etc/nginx/ngx_headers_global.conf;
-      add_header Foo bar;
-
-      ...
-
-    }
-
-  }
-```
-
-Some extra headers with `add_header` directive here but only if you include "global" headers first:
-
-```nginx
-http {
-
-  ...
-
-  include /etc/nginx/ngx_headers_global.conf;
-
-  server {
-
-    server_name example.com;
-
-    ...
-
-    include /etc/nginx/ngx_headers_global.conf;
-
-    location / {
-
-      include /etc/nginx/ngx_headers_global.conf;
-      add_header Foo bar;
-
-      ...
-
-    }
-
-  }
-
-  server {
-
-    server_name blog.example.com;
-
-    ...
-
-    location / {
-
-      ...
-
-    }
-
-  }
-
-}
-```
-
-Or some extra headers with `more_set_headers` directive here regardless of whether you include "global" headers first:
-
-```nginx
-http {
-
-  ...
-
-  include /etc/nginx/ngx_headers_global.conf;
-
-  server {
-
-    server_name example.com;
-
-    ...
-
-    include /etc/nginx/ngx_headers_global.conf;
-
-    location / {
-
-      more_set_headers 'Foo: bar';
-
-      ...
-
-    }
-
-  }
-
-}
-```
-
-Example for `proxy_hide_header` and `proxy_set_header` (but I also recommend using them from the attached file):
-
-```nginx
-http {
-
-  ...
+  # In this context:
+  # set:
+  #   - 'FooX barX' (add_header)
+  #   - 'Host $host' (proxy_set_header)
+  #   - 'X-Real-IP $remote_addr' (proxy_set_header)
+  #   - 'X-Forwarded-For $proxy_add_x_forwarded_for' (proxy_set_header)
+  #   - 'X-Powered-By' (proxy_hide_header)
 
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   proxy_hide_header X-Powered-By;
 
+  add_header FooX barX;
+
+  ...
+
   server {
 
     server_name example.com;
 
-    ...
+    # In this context:
+    # set:
+    #   - 'FooY barY' (add_header)
+    #   - 'Host $host' (proxy_set_header)
+    #   - 'X-Real-IP $remote_addr' (proxy_set_header)
+    #   - 'X-Forwarded-For $proxy_add_x_forwarded_for' (proxy_set_header)
+    #   - 'X-Powered-By' (proxy_hide_header)
+    # not set:
+    #   - 'FooX barX' (add_header)
 
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_hide_header X-Powered-By;
+    add_header FooY barY;
+
+    ...
 
     location / {
 
-      more_set_headers 'Foo: bar';
+      # In this context:
+      # set:
+      #   - 'Foo bar' (add_header)
+      #   - 'Host $host' (proxy_set_header)
+      #   - 'X-Real-IP $remote_addr' (proxy_set_header)
+      #   - 'X-Forwarded-For $proxy_add_x_forwarded_for' (proxy_set_header)
+      #   - 'X-Powered-By' (proxy_hide_header)
+      #   - headers from ngx_headers_global.conf
+      # not set:
+      #   - 'FooX barX' (add_header)
+      #   - 'FooY barY' (add_header)
+
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
+
+      ...
+
+    }
+
+    location /api {
+
+      # In this context:
+      # set:
+      #   - 'FooY barY' (add_header)
+      #   - 'Host $host' (proxy_set_header)
+      #   - 'X-Real-IP $remote_addr' (proxy_set_header)
+      #   - 'X-Forwarded-For $proxy_add_x_forwarded_for' (proxy_set_header)
+      #   - 'X-Powered-By' (proxy_hide_header)
+      # not set:
+      #   - 'FooX barX' (add_header)
 
       ...
 
@@ -640,13 +591,121 @@ http {
 
   server {
 
-    server_name blog.example.com;
+    server_name a.example.com;
+
+    # In this context:
+    # set:
+    #   - 'FooY barY' (add_header)
+    #   - 'Host $host' (proxy_set_header)
+    #   - 'X-Real-IP $remote_addr' (proxy_set_header)
+    #   - 'X-Powered-By' (proxy_hide_header)
+    # not set:
+    #   - 'FooX barX' (add_header)
+    #   - 'X-Forwarded-For $proxy_add_x_forwarded_for' (proxy_set_header)
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_hide_header X-Powered-By;
+
+    add_header FooY barY;
 
     ...
 
     location / {
 
-      more_set_headers 'Foo: bar';
+      # In this context:
+      # set:
+      #   - 'FooY barY' (add_header)
+      #   - 'X-Powered-By' (proxy_hide_header)
+      #   - 'Accept-Encoding ""' (proxy_set_header)
+      # not set:
+      #   - 'FooX barX' (add_header)
+      #   - 'Host $host' (proxy_set_header)
+      #   - 'X-Real-IP $remote_addr' (proxy_set_header)
+      #   - 'X-Forwarded-For $proxy_add_x_forwarded_for' (proxy_set_header)
+
+      proxy_set_header Accept-Encoding "";
+
+      ...
+
+    }
+
+  }
+
+}
+```
+
+Most recommended configuration:
+
+```nginx
+# Store it in a file, e.g. proxy_headers.conf:
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_hide_header X-Powered-By;
+
+http {
+
+  server {
+
+    server_name example.com;
+
+    ...
+
+    location / {
+
+      include /etc/nginx/proxy_headers.conf;
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
+
+      ...
+
+    }
+
+    location /api {
+
+      include /etc/nginx/proxy_headers.conf;
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
+
+      more_set_headers 'FooY: barY';
+
+      ...
+
+    }
+
+  }
+
+  server {
+
+    server_name a.example.com;
+
+    ...
+
+    location / {
+
+      include /etc/nginx/proxy_headers.conf;
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
+      add_header FooX barX;
+
+      ...
+
+    }
+
+  }
+
+  server {
+
+    server_name b.example.com;
+
+    ...
+
+    location / {
+
+      include /etc/nginx/proxy_headers.conf;
+      include /etc/nginx/ngx_headers_global.conf;
+      add_header Foo bar;
 
       ...
 
@@ -676,22 +735,14 @@ http {
 
   > Remember that regardless of SSL parameters you are able to use multiple SSL certificates on the same `listen` directive (IP address). Also some of the TLS parameters may be different.
 
-  > Also remember about configuration for default server. It's important because if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. So you should use only one SSL setup for several server names on the same IP address.
-
-  From NGINX documentation:
-
-  > _This is caused by SSL protocol behaviour. The SSL connection is established before the browser sends an HTTP request and nginx does not know the name of the requested server. Therefore, it may only offer the default server’s certificate._
-
-  Also take a look at this:
-
-  > _A more generic solution for running several HTTPS servers on a single IP address is TLS Server Name Indication extension (SNI, [RFC 6066](https://tools.ietf.org/html/rfc6066) <sup>[IETF]</sup>), which allows a browser to pass a requested server name during the SSL handshake and, therefore, the server will know which certificate it should use for the connection._
+  > Also remember about configuration for default server. It's important because if none of the listen directives have the `default_server` parameter then the first server in your configuration will be default server. Therefore you should use only one SSL setup for several server names on the same IP address.
 
 ###### Example
 
 ```nginx
-# Store this configuration in e.g. https.conf:
+# Store it in a file, e.g. https.conf:
 ssl_protocols TLSv1.2;
-ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
+ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305";
 
 ssl_prefer_server_ciphers on;
 
@@ -945,9 +996,9 @@ server {
 
   listen 192.168.252.10:80;
 
-  server_name www.example.com;
-
   ...
+
+  server_name www.example.com;
 
   return    301 https://example.com$request_uri;
 
@@ -1110,7 +1161,7 @@ server {
 
   > Information about the technologies used and the software versions are extremely valuable information. These details allow the identification and exploitation of known software weaknesses published in publicly available vulnerability databases.
 
-  > The best option is to generate pages for each HTTP code or use SSI and `map` module to create dynamic error pages.
+  > The best option is to generate pages for each HTTP code or use SSI and `map` modules to create dynamic error pages.
 
   > You can setup a custom error page for every location block in your `nginx.conf`, or a global error page for the site as a whole. You can also append standard error codes together to have a single page for several types of errors.
 
