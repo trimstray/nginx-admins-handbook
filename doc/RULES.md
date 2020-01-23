@@ -2834,9 +2834,12 @@ proxy_set_header X-Forwarded-Host $host;
 
 ###### External resources
 
+- [Does My Site Need HTTPS?](https://doesmysiteneedhttps.com/)
+- [HTTP vs HTTPS Test](https://www.httpvshttps.com/)
+- [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 - [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
-- [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
+- [The Security Impact of HTTPS Interception](https://jhalderm.com/pub/papers/interception-ndss17.pdf) <sup>[pdf]</sup>
 - [Enable HTTP Strict Transport Security - Hardening - P1 (from this handbook)](#beginner-enable-http-strict-transport-security)
 
 #### :beginner: Use min. 2048-bit private keys
