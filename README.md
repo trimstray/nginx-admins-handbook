@@ -142,6 +142,7 @@
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
     * [Why cipher suites are important?](doc/SSL_TLS_BASICS.md#why-cipher-suites-are-important)
+    * [What does insecure, weak, secure and recommended mean?](doc/SSL_TLS_BASICS.md#what-does-insecure-weak-secure-and-recommended-mean)
     * [NGINX and TLS 1.3 Cipher Suites](doc/SSL_TLS_BASICS.md#nginx-and-tls-13-cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
@@ -1499,7 +1500,6 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.upguard.com/blog/how-to-build-a-tough-nginx-server-in-15-steps"><b>How to Build a Tough NGINX Server in 15 Steps</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.cyberciti.biz/tips/linux-unix-bsd-nginx-webserver-security.html"><b>Top 25 Nginx Web Server Best Security Practices</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://calomel.org/nginx.html"><b>Nginx Secure Web Server</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://cipherli.st/"><b>Strong ciphers for Apache, Nginx, Lighttpd and more</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html"><b>Strong SSL Security on Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://enable-cors.org/index.html"><b>Enable cross-origin resource sharing (CORS)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nbs-system/naxsi"><b>NAXSI - WAF for Nginx</b></a><br>
@@ -1669,6 +1669,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://decoder.link"><b>Tools for testing SSL configuration</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://tls.imirhil.fr/"><b>Test your TLS server configuration (e.g. ciphers)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.jitbit.com/sslcheck/"><b>Scan your website for non-secure content</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://ciphersuite.info/"><b>TLS Cipher Suite Search</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suche.org/sslClientInfo"><b>SSL-Client Info's</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://2ton.com.au/dhtool/"><b>Public Diffie-Hellman Parameter Service/Tool</b></a><br>

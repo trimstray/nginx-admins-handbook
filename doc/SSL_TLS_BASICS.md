@@ -10,6 +10,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Cipher suites](#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
     * [Why cipher suites are important?](#why-cipher-suites-are-important)
+    * [What does insecure, weak, secure and recommended mean?](#what-does-insecure-weak-secure-and-recommended-mean)
     * [NGINX and TLS 1.3 Cipher Suites](#nginx-and-tls-13-cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
   * [Certificates](#certificates)
@@ -144,6 +145,8 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
+  > There is a great [TLS Cipher Suite Search](https://ciphersuite.info/) engine with which you will get a lot of useful information about available ciphers.
+
 Finally, look at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions. I also recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/) and great answer by [dave_thompson_085](https://security.stackexchange.com/users/39571/dave-thompson-085) about [Role of the chosen ciphersuite in an SSL/TLS connection](https://security.stackexchange.com/questions/160429/role-of-the-chosen-ciphersuite-in-an-ssl-tls-connection/160445#160445).
 
 ##### Authenticated encryption (AEAD) cipher suites
@@ -195,6 +198,18 @@ These are the current AEAD ciphers which don't trigger the [ROBOT](https://robot
 ##### Why cipher suites are important?
 
 The security level of your HTTPS traffic (the safety of your data and the data of your users) depends on which cipher suites your web server uses. Having an extensive list of highly secure Cipher Suites is important for high security SSL/TLS interception. The compatibility of your HTTPS traffic (who will see errors, warnings or experience other issues) depends on the cipher suites your web server uses. The performance of your HTTPS traffic (how fast users see your pages - page speed) depends on the cipher suites your web server uses.
+
+##### What does insecure, weak, secure and recommended mean?
+
+- **insecure** - these ciphers are very old and shouldn't be used under any circumstances. Their protection can be broken with minimal effort nowadays
+
+- **weak** - these ciphers are old and should be disabled if you are setting up a new server for example. Make sure to only enable them if you have a special use case where support for older operating systems, browsers or applications is required
+
+- **secure** - secure ciphers are considered state-of-the-art and if you want to secure your web server you should certainly choose from this set. Only very old operating systems, browsers or applications are unable to handle them
+
+- **recommended** - all 'recommended' ciphers are 'secure' ciphers by definition. Recommended means that these ciphers also support PFS (Perfect Forward Secrecy) and should be your first choice if you want the highest level of security. However, you might run into some compatibility issues with older clients that do not support PFS ciphers
+
+<sup><i>This explanation comes from [TLS Cipher Suite Search](https://ciphersuite.info/page/faq/).</i></sup>
 
 ##### NGINX and TLS 1.3 Cipher Suites
 
