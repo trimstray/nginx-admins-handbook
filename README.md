@@ -131,6 +131,7 @@
     * [Response header fields](doc/HTTP_BASICS.md#response-header-fields)
     * [Message body](doc/HTTP_BASICS.md#message-body-1)
   * [HTTP client](doc/HTTP_BASICS.md#http-client)
+    * [IP address shortcuts](doc/HTTP_BASICS.md#ip-address-shortcuts)
   * [Back-End web architecture](doc/HTTP_BASICS.md#back-end-web-architecture)
   * [Useful video resources](doc/HTTP_BASICS.md#useful-video-resources)
 - **[SSL/TLS Basics](doc/SSL_TLS_BASICS.md#ssltls-basics)**<a id="toc-ssltls-basics"></a>
@@ -789,6 +790,7 @@ Existing chapters:
     - [x] _Response header fields_
     - [x] _Message body_
   - [x] _HTTP client_
+    - [x] _IP address shortcuts_
   - [x] _Back-End web architecture_
   - [x] _Useful video resources_
 
@@ -1660,12 +1662,13 @@ _In this ebook you will learn:_
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/"><b>SSL Server Test by SSL Labs</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.htbridge.com/ssl/"><b>Test SSL/TLS (PCI DSS, HIPAA and NIST)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://sslanalyzer.comodoca.com/"><b>SSL analyzer and certificate checker</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://decoder.link"><b>Tools for testing SSL configuration</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://tls.imirhil.fr/"><b>Test your TLS server configuration (e.g. ciphers)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.jitbit.com/sslcheck/"><b>Scan your website for non-secure content</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://suche.org/sslClientInfo"><b>SSL-Client Info's</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://2ton.com.au/dhtool/"><b>Public Diffie-Hellman Parameter Service/Tool</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://securityheaders.com/"><b>Analyse the HTTP response headers by Security Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://observatory.mozilla.org/"><b>Analyze your website by Mozilla Observatory</b></a><br>

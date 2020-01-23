@@ -274,13 +274,13 @@ server {
 
 ```nginx
 # Client side:
-curl -Iks http://api.random.com
+$ curl -Iks http://api.random.com
 
 # Server side:
 server {
 
   # This block will be processed:
-  listen 192.168.252.10;  # --> 192.168.252.10:80
+  listen 192.168.252.10; # --> 192.168.252.10:80
 
   ...
 
@@ -288,7 +288,7 @@ server {
 
 server {
 
-  listen 80;  # --> *:80 --> 0.0.0.0:80
+  listen 80; # --> *:80 --> 0.0.0.0:80
   server_name api.random.com;
 
   ...
@@ -305,7 +305,7 @@ server {
 
 ###### Rationale
 
-  > The `Host` header tells the server which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This header can also be modified so NGINX should prevent processing requests with undefined server names (also on IP address).
+  > The `Host` header tells the server which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This header can also be modified, so for security and cleanness reasons it's a good practice to deny requests without host or with hosts not configured in any vhost. According to this, NGINX should prevent processing requests with undefined server names (also on IP address).
 
   > It protects against configuration errors, e.g. traffic forwarding to incorrect backends, bypassing filters like an ACLs or WAFs. The problem is easily solved by creating a default dummy vhost that catches all requests with unrecognized `Host` headers.
 
@@ -327,7 +327,7 @@ server {
   > - only one `server_name` (but not required) definition, and...
   > - preventively I add it at the beginning of the configuration (attach it to the file `nginx.conf`)
 
-  > Also good point is `return 444;` for default server name because this will close the connection (which will kill the connection without sending any headers) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
+  > Also good point is `return 444;` (most commonly used to deny malicious or malformed requests) for default server name because this will close the connection (which will kill the connection without sending any headers) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
 
 ###### Example
 
@@ -352,6 +352,7 @@ server {
 
   ...
 
+  # Close (hang up) connection without response:
   return 444;
 
   # We can also serve:
@@ -755,11 +756,11 @@ server {
 
   listen 192.168.252.10:443 default_server ssl http2;
 
-  include             /etc/nginx/https.conf;
+  include /etc/nginx/https.conf;
 
-  server_name         domain-a.com;
+  server_name domain-a.com;
 
-  ssl_certificate     domain-a.com.crt;
+  ssl_certificate domain-a.com.crt;
   ssl_certificate_key domain-a.com.key;
 
   ...
@@ -771,11 +772,11 @@ server {
 
   listen 192.168.252.10:443 ssl http2;
 
-  include             /etc/nginx/https.conf;
+  include /etc/nginx/https.conf;
 
-  server_name         domain-b.com;
+  server_name domain-b.com;
 
-  ssl_certificate     domain-b.com.crt;
+  ssl_certificate domain-b.com.crt;
   ssl_certificate_key domain-b.com.key;
 
   ...
@@ -845,8 +846,8 @@ Take a look also at the example below (`allow/deny` vs `geo + if` statement):
 location /internal {
 
   include acls/internal.conf;
-  allow   192.168.240.0/24;
-  deny    all;
+  allow 192.168.240.0/24;
+  deny all;
 
   ...
 
@@ -1000,11 +1001,11 @@ server {
 
   server_name www.example.com;
 
-  return    301 https://example.com$request_uri;
+  return 301 https://example.com$request_uri;
 
   # Other examples:
-  # return  301 https://$host$request_uri;
-  # return  301 $scheme://$host$request_uri;
+  # return 301 https://$host$request_uri;
+  # return 301 $scheme://$host$request_uri;
 
 }
 
@@ -1014,7 +1015,7 @@ server {
 
   server_name example.com;
 
-  return    301 $scheme://www.example.com$request_uri;
+  return 301 $scheme://www.example.com$request_uri;
 
 }
 ```
@@ -1398,7 +1399,7 @@ log_format debug-level-0
 
 ###### Rationale
 
-  > There's probably more detail than you want, but that can sometimes be a lifesaver (but log file growing rapidly on a very high-traffic sites).
+  > It will probably return more details than you want, but that can sometimes be a lifesaver (however, log file growing rapidly on a very high-traffic sites).
 
   > Generally, the `error_log` directive is specified in the `main` context but you can specified inside a particular `server` or a `location` block, the global settings will be overridden and such `error_log` directive will set its own path to the log file and the level of logging.
 
@@ -1444,8 +1445,8 @@ log_format debug-level-0
   events {
 
     # Other connections will use logging level set by the error_log directive.
-    debug_connection    192.168.252.15/32;
-    debug_connection    10.10.10.0/24;
+    debug_connection 192.168.252.15/32;
+    debug_connection 10.10.10.0/24;
 
   }
   ```
@@ -1498,9 +1499,9 @@ log_format debug-level-0
 
 ```nginx
 # Update configuration file (in a global context):
-daemon            off
-master_process    off;
-worker_processes  1;
+daemon off
+master_process off;
+worker_processes 1;
 
 # Or run NGINX from shell (oneliner):
 /usr/sbin/nginx -t -g 'daemon off; master_process off; worker_processes 1;'
@@ -1525,9 +1526,9 @@ worker_processes  1;
 ###### Example
 
 ```nginx
-worker_rlimit_core    500m;
-worker_rlimit_nofile  65535;
-working_directory     /var/dump/nginx;
+worker_rlimit_core 500m;
+worker_rlimit_nofile 65535;
+working_directory /var/dump/nginx;
 ```
 
 ###### External resources
@@ -1544,10 +1545,10 @@ working_directory     /var/dump/nginx;
 
   > Traffic mirroring is very useful to:
   >
-  >   - analyze and debug original request
+  >   - analyzing and debugging the original request
   >   - content inspection
   >   - troubleshooting (diagnose errors)
-  >   - copy real traffic to a test envrionment without considerable changes to the production system
+  >   - copying real traffic to a test envrionment without considerable changes to the production system
 
   > Mirroring itself doesn’t affect original requests (only requests are analyzed, responses are not analyzed). And what's more, errors in the mirror backend don’t affect the main backend.
 
@@ -1671,15 +1672,13 @@ worker_processes 3;
 
 ###### Rationale
 
-  > HTTP/2 will make our applications faster, simpler, and more robust. The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimise protocol overhead via efficient compression of HTTP header fields, and add support for request prioritisation and server push.
+  > HTTP/2 will make our applications faster, simpler, and more robust. The primary goals for HTTP/2 are to reduce latency by enabling full request and response multiplexing, minimise protocol overhead via efficient compression of HTTP header fields, and add support for request prioritisation and server push. HTTP/2 has also a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers.
 
   > `http2` directive configures the port to accept HTTP/2 connections. This doesn't mean it accepts only HTTP/2 connections. HTTP/2 is backwards-compatible with HTTP/1.1, so it would be possible to ignore it completely and everything will continue to work as before because if the client that does not support HTTP/2 will never ask the server for an HTTP/2 communication upgrade: the communication between them will be fully HTTP1/1.
 
   > HTTP/2 multiplexes many requests within a single TCP connection. Typically, a single TCP connection is established to a server when HTTP/2 is in use.
 
   > You should also enable the `ssl` parameter (but NGINX can also be configured to accept HTTP/2 connections without SSL), required because browsers do not support HTTP/2 without encryption (the h2 specification, allows to use HTTP/2 over an unsecure `http://` scheme, but browsers have not implemented this (and most do not plan to)). Note that accepting HTTP/2 connections over TLS requires the "Application-Layer Protocol Negotiation" (ALPN) TLS extension support.
-
-  > HTTP/2 has a extremely large [blacklist](https://http2.github.io/http2-spec/#BadCipherSuites) of old and insecure ciphers, so you should avoid them.
 
   > Obviously, there is no pleasure without pain. HTTP/2 is more secure than HTTP/1.1, however, there are serious vulnerabilities detected in the HTTP/2 protocol. For more information please see [HTTP/2 can shut you down!](https://www.secpod.com/blog/http2-dos-vulnerabilities/), [On the recent HTTP/2 DoS attacks](https://blog.cloudflare.com/on-the-recent-http-2-dos-attacks/), and [HTTP/2: In-depth analysis of the top four flaws of the next generation web protocol](https://www.imperva.com/docs/Imperva_HII_HTTP2.pdf) <sup>[pdf]</sup>.
 
@@ -1741,10 +1740,10 @@ server {
 ###### Example
 
 ```nginx
-ssl_session_cache   shared:NGX_SSL_CACHE:10m;
+ssl_session_cache shared:NGX_SSL_CACHE:10m;
 ssl_session_timeout 12h;
 ssl_session_tickets off;
-ssl_buffer_size     1400;
+ssl_buffer_size 1400;
 ```
 
 ###### External resources
@@ -1845,9 +1844,9 @@ Not recommended configuration:
 ```nginx
 server {
 
-  listen       192.168.252.10:80;
+  listen 192.168.252.10:80;
 
-  server_name  .example.org;
+  server_name .example.org;
 
   ...
 
@@ -1860,9 +1859,9 @@ Recommended configuration:
 # It is more efficient to define them explicitly:
 server {
 
-  listen       192.168.252.10:80;
+  listen 192.168.252.10:80;
 
-  server_name  example.org www.example.org *.example.org;
+  server_name example.org www.example.org *.example.org;
 
   ...
 
@@ -1891,15 +1890,15 @@ Not recommended configuration:
 ```nginx
 server {
 
-  server_name                 example.com www.example.com;
+  server_name example.com www.example.com;
 
   if ($host = www.example.com) {
 
-    return                    301 https://example.com$request_uri;
+    return 301 https://example.com$request_uri;
 
   }
 
-  server_name                 example.com;
+  server_name example.com;
 
   ...
 
@@ -1911,12 +1910,14 @@ Recommended configuration:
 ```nginx
 server {
 
-    server_name               www.example.com;
+    listen 192.168.252.10:80;
 
-    return                    301 $scheme://example.com$request_uri;
+    server_name www.example.com;
+
+    return 301 $scheme://example.com$request_uri;
 
     # If you force your web traffic to use HTTPS:
-    # return                  301 https://example.com$request_uri;
+    # return 301 https://example.com$request_uri;
 
     ...
 
@@ -1924,9 +1925,9 @@ server {
 
 server {
 
-    listen                    192.168.252.10:80;
+    listen 192.168.252.10:80;
 
-    server_name               example.com;
+    server_name example.com;
 
     ...
 
@@ -2068,9 +2069,9 @@ server {
 
   location / {
 
-    try_files   $uri $uri/ =404;
+    try_files $uri $uri/ =404;
 
-    rewrite     ^/(.*)$ https://example.com/$1 permanent;
+    rewrite ^/(.*)$ https://example.com/$1 permanent;
 
   }
 
@@ -2088,9 +2089,9 @@ server {
 
   location / {
 
-    try_files   $uri $uri/ =404;
+    try_files $uri $uri/ =404;
 
-    return      301 https://example.com$request_uri;
+    return 301 https://example.com$request_uri;
 
   }
 
@@ -2161,7 +2162,7 @@ upstream backend {
 
   # Sets the maximum number of idle keepalive connections to upstream servers
   # that are preserved in the cache of each worker process.
-  keepalive           16;
+  keepalive 16;
 
 }
 
@@ -2174,10 +2175,11 @@ server {
 
     # By default only talks HTTP/1 to the upstream,
     # keepalive is only enabled in HTTP/1.1:
-    proxy_http_version  1.1;
+    proxy_http_version 1.1;
+
     # Remove the Connection header if the client sends it,
     # it could be "close" to close a keepalive connection:
-    proxy_set_header    Connection "";
+    proxy_set_header Connection "";
 
     ...
 
@@ -2401,20 +2403,20 @@ chown -R nginx:nginx /var/www/example.com
 ./configure --without-http_autoindex_module
 
 # 2) Comment modules in the configuration file e.g. modules.conf:
-# load_module                 /usr/share/nginx/modules/ndk_http_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_http_cache_purge_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_http_dav_ext_module.so;
-load_module                   /usr/share/nginx/modules/ngx_http_echo_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_http_fancyindex_module.so;
-load_module                   /usr/share/nginx/modules/ngx_http_geoip_module.so;
-load_module                   /usr/share/nginx/modules/ngx_http_headers_more_filter_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_http_image_filter_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_http_lua_module.so;
-load_module                   /usr/share/nginx/modules/ngx_http_perl_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_mail_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_nchan_module.so;
-# load_module                 /usr/share/nginx/modules/ngx_stream_module.so;
+# load_module   /usr/share/nginx/modules/ndk_http_module.so;
+# load_module   /usr/share/nginx/modules/ngx_http_auth_pam_module.so;
+# load_module   /usr/share/nginx/modules/ngx_http_cache_purge_module.so;
+# load_module   /usr/share/nginx/modules/ngx_http_dav_ext_module.so;
+load_module     /usr/share/nginx/modules/ngx_http_echo_module.so;
+# load_module   /usr/share/nginx/modules/ngx_http_fancyindex_module.so;
+load_module     /usr/share/nginx/modules/ngx_http_geoip_module.so;
+load_module     /usr/share/nginx/modules/ngx_http_headers_more_filter_module.so;
+# load_module   /usr/share/nginx/modules/ngx_http_image_filter_module.so;
+# load_module   /usr/share/nginx/modules/ngx_http_lua_module.so;
+load_module     /usr/share/nginx/modules/ngx_http_perl_module.so;
+# load_module   /usr/share/nginx/modules/ngx_mail_module.so;
+# load_module   /usr/share/nginx/modules/ngx_nchan_module.so;
+# load_module   /usr/share/nginx/modules/ngx_stream_module.so;
 ```
 
 ###### External resources
@@ -2485,7 +2487,8 @@ Most recommended configuration:
 location ~ /\.(?!well-known\/) {
 
   deny all;
-  access_log /var/log/nginx/hidden-files.log main;
+  access_log /var/log/nginx/hidden-files-access.log main;
+  error_log /var/log/nginx/hidden-files-error.log warn;
 
 }
 ```
@@ -2774,7 +2777,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > In my opinion you should always use HTTPS instead of HTTP (use HTTP only for redirection to HTTPS) to protect your website, even if it doesn’t handle sensitive communications and don’t have any mixed content. The application can have many sensitive places that should be protected.
 
-  > Always put login page, registration forms, all subsequent authenticated pages, contact forms, and payment details forms in HTTPS to prevent injection and sniffing. Them must be accessed only over TLS to ensure your traffic is secure.
+  > Always put login page, registration forms, all subsequent authenticated pages, contact forms, and payment details forms in HTTPS to prevent sniffing and injection (attacker can inject code into an unencrypted HTTP transmission, so it always increases the risk to alter the content, even if someone only reads non-critical content. See [Man-in-the-browser attack](https://owasp.org/www-community/attacks/Man-in-the-browser_attack)). Them must be accessed only over TLS to ensure your traffic is secure.
 
   > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
 
@@ -2843,7 +2846,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per [NIST](https://www.keylength.com/en/4/)). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
 
-  > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage and higher power consumption.
+  > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage.
 
   > The real advantage of using a 4096-bit key nowadays is future proofing. If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main (and the only one for me) reason why you should use them.
 
@@ -2851,7 +2854,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most CPU time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
-  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over `RSA` certificates) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your Web site.
+  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over `RSA` certificates) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -3784,13 +3787,13 @@ server {
 
   ...
 
-  ssl_protocols   TLSv1.2 TLSv1.3;
+  ssl_protocols TLSv1.2 TLSv1.3;
   # To enable 0-RTT (TLS 1.3):
-  ssl_early_data  on;
+  ssl_early_data on;
 
   location / {
 
-    proxy_pass       http://backend_x20;
+    proxy_pass http://backend_x20;
     # It protect against such attacks at the application layer:
     proxy_set_header Early-Data $ssl_early_data;
 
@@ -3974,7 +3977,7 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubdomains" alway
 
   > The default policy that starts building a header is: block everything. By modifying the CSP value, administrator/programmer loosens restrictions for specific groups of resources (e.g. separately for scripts, images, etc.).
 
-  > You should approach very individually and never set CSP sample values found on the Internet or anywhere else. Blindly deploying "standard/recommend" versions of the CSP header will broke the most of web apps.
+  > You should approach very individually and never set CSP sample values found on the Internet or anywhere else. Blindly deploying "standard/recommend" versions of the CSP header will broke the most of web apps. Be aware that incorrectly configured Content Security Policy could expose an application against client-side threats including Cross-Site Scripting, Cross Frame Scripting and Cross-Site Request Forgery.
 
   > Before enabling this header, you should discuss about CSP parameters with developers and application architects. They probably going to have to update web application to remove any inline scripts and styles, and make some additional modifications there (implementation of content validation mechanisms introduced by users, use of lists of allowed characters that can be entered into individual fields of the application by its users or encoding of user data transferred by the application to the browser).
 
@@ -4341,10 +4344,10 @@ http {
 ###### Example
 
 ```nginx
-client_body_buffer_size       16k;    # default: 8k (32-bit) | 16k (64-bit)
-client_header_buffer_size     1k;     # default: 1k
-client_max_body_size          100k;   # default: 1m
-large_client_header_buffers   2 1k;   # default: 4 8k
+client_body_buffer_size 16k;      # default: 8k (32-bit) | 16k (64-bit)
+client_header_buffer_size 1k;     # default: 1k
+client_max_body_size 100k;        # default: 1m
+large_client_header_buffers 2 1k; # default: 4 8k
 ```
 
 ###### External resources
@@ -4367,10 +4370,10 @@ large_client_header_buffers   2 1k;   # default: 4 8k
 ###### Example
 
 ```nginx
-client_body_timeout           10s;    # default: 60s
-client_header_timeout         10s;    # default: 60s
-keepalive_timeout             5s 5s;  # default: 75s
-send_timeout                  10s;    # 6default: 0s
+client_body_timeout 10s;    # default: 60s
+client_header_timeout 10s;  # default: 60s
+keepalive_timeout 5s 5s;    # default: 75s
+send_timeout 10s;           # 6default: 0s
 ```
 
 ###### External resources
@@ -4428,7 +4431,8 @@ server {
   location /app/ {
 
     # For this, you should use uwsgi_pass directive.
-    proxy_pass      192.168.154.102:4000;         # backend layer: uWSGI Python app.
+    # backend layer: uWSGI Python app
+    proxy_pass 192.168.154.102:4000;
 
   }
 
@@ -4444,19 +4448,22 @@ server {
 
   location /app/ {
 
-    proxy_pass      http://192.168.154.102:80;    # backend layer: OpenResty as a front for app.
+    # backend layer: OpenResty as a front for app
+    proxy_pass http://192.168.154.102:80;
 
   }
 
   location /app/v3 {
 
-    uwsgi_pass      192.168.154.102:8080;         # backend layer: uWSGI Python app.
+    # backend layer: uWSGI Python app
+    uwsgi_pass 192.168.154.102:8080;
 
   }
 
   location /app/v4 {
 
-    fastcgi_pass    192.168.154.102:8081;         # backend layer: php-fpm app.
+    # backend layer: php-fpm app
+    fastcgi_pass 192.168.154.102:8081;
 
   }
   ...
@@ -4527,7 +4534,7 @@ location ^~ /a/ {
 ###### Example
 
 ```nginx
-proxy_set_header    Host    $host;
+proxy_set_header Host $host;
 ```
 
 ###### External resources
@@ -4571,11 +4578,13 @@ proxy_set_header    Host    $host;
 
 ```nginx
 # The whole purpose that it exists is to do the appending behavior:
-proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
 # Above is equivalent for this:
-proxy_set_header    X-Forwarded-For    $http_x_forwarded_for,$remote_addr;
+proxy_set_header X-Forwarded-For $http_x_forwarded_for,$remote_addr;
+
 # The following is also equivalent for above but in this example we use http_realip_module:
-proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_addr";
+proxy_set_header X-Forwarded-For "$http_x_forwarded_for, $realip_remote_addr";
 ```
 
 ###### External resources
@@ -4600,11 +4609,11 @@ proxy_set_header    X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_ad
 
 ```nginx
 # 1) client <-> proxy <-> backend
-proxy_set_header    X-Forwarded-Proto  $scheme;
+proxy_set_header X-Forwarded-Proto $scheme;
 
 # 2) client <-> proxy <-> proxy <-> backend
-# proxy_set_header  X-Forwarded-Proto  https;
-proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
+# proxy_set_header X-Forwarded-Proto https;
+proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
 ```
 
 ###### External resources
@@ -4632,39 +4641,39 @@ proxy_set_header    X-Forwarded-Proto  $proxy_x_forwarded_proto;
 ```nginx
 location / {
 
-  proxy_pass          http://bk_upstream_01;
+  proxy_pass http://bk_upstream_01;
 
   # The following headers also should pass to the backend:
   #   - Host - host name from the request line, or host name from the Host request header field, or the server name matching a request
-  # proxy_set_header  Host               $host:$server_port;
-  # proxy_set_header  Host               $http_host;
-  proxy_set_header    Host               $host;
+  # proxy_set_header Host $host:$server_port;
+  # proxy_set_header Host $http_host;
+  proxy_set_header Host $host;
 
   #   - X-Real-IP - forwards the real visitor remote IP address to the proxied server
-  proxy_set_header    X-Real-IP          $remote_addr;
+  proxy_set_header X-Real-IP $remote_addr;
 
   # X-Forwarded headers stack:
   #   - X-Forwarded-For - mark origin IP of client connecting to server through proxy
-  # proxy_set_header  X-Forwarded-For    $remote_addr;
-  # proxy_set_header  X-Forwarded-For    $http_x_forwarded_for,$remote_addr;
-  # proxy_set_header  X-Forwarded-For    "$http_x_forwarded_for, $realip_remote_addr";
-  proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+  # proxy_set_header X-Forwarded-For $remote_addr;
+  # proxy_set_header X-Forwarded-For $http_x_forwarded_for,$remote_addr;
+  # proxy_set_header X-Forwarded-For "$http_x_forwarded_for, $realip_remote_addr";
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
   #   - X-Forwarded-Host - mark origin host of client connecting to server through proxy
-  # proxy_set_header  X-Forwarded-Host   $host:443;
-  proxy_set_header    X-Forwarded-Host   $host:$server_port;
+  # proxy_set_header X-Forwarded-Host $host:443;
+  proxy_set_header X-Forwarded-Host $host:$server_port;
 
   #   - X-Forwarded-Server - the hostname of the proxy server
-  proxy_set_header    X-Forwarded-Server $host;
+  proxy_set_header X-Forwarded-Server $host;
 
   #   - X-Forwarded-Port - defines the original port requested by the client
-  # proxy_set_header  X-Forwarded-Port   443;
-  proxy_set_header    X-Forwarded-Port   $server_port;
+  # proxy_set_header X-Forwarded-Port 443;
+  proxy_set_header X-Forwarded-Port $server_port;
 
   #   - X-Forwarded-Proto - mark protocol of client connecting to server through proxy
-  # proxy_set_header  X-Forwarded-Proto  https;
-  # proxy_set_header  X-Forwarded-Proto  $proxy_x_forwarded_proto;
-  proxy_set_header    X-Forwarded-Proto  $scheme;
+  # proxy_set_header X-Forwarded-Proto https;
+  # proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+  proxy_set_header X-Forwarded-Proto $scheme;
 
 }
 ```
@@ -4700,7 +4709,7 @@ add_header X-Backend-Server $hostname;
 Recommended configuration:
 
 ```nginx
-add_header Backend-Server   $hostname;
+add_header Backend-Server $hostname;
 ```
 
 ###### External resources
@@ -4856,7 +4865,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > The server should never present certificate chains containing a trust anchor which is the root CA certificate. The presence of a trust anchor in the certification path can have a negative impact on performance when establishing connections using SSL/TLS.
 
-  > With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it). The connections is still secure but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues. However, traffic will be still encrypted.
+  > With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it). The connections is still secure (will be still encrypted) but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues.
 
   > Example of incomplete chain: [incomplete-chain.badssl.com](https://incomplete-chain.badssl.com/).
 
@@ -4872,7 +4881,7 @@ root_ca.crt inter_ca.crt example.com.crt
 $ cat example.com.crt inter_ca.crt > certs/example.com/example.com-chain.crt
 ```
 
-To build a valid SSL certificate chain you may use `github.com/trimstray/mkchain` tool. It also can help you fix the incomplete chain and download all missing CA certificates. You can also download all certificates from remote server and get your certificate chain right.
+To build a valid SSL certificate chain you may use [mkchain](https://github.com/trimstray/mkchain) tool. It also can help you fix the incomplete chain and download all missing CA certificates. You can also download all certificates from remote server and get your certificate chain right.
 
 ```bash
 # If you have all certificates:
@@ -4944,6 +4953,8 @@ example.com. IN CAA 0 issue "letsencrypt.org"
 
 ###### Rationale
 
+  > Add `security.txt` to your site, with correct contact details inside the file, so that people reporting security issues won't have to guess where to send the reports to.
+
   > The main purpose of `security.txt` is to help make things easier for companies and security researchers when trying to secure platforms. It also provides information to assist in disclosing security vulnerabilities.
 
   > When security researchers detect potential vulnerabilities in a page or application, they will try to contact someone "appropriate" to "responsibly" reveal the problem. It's worth taking care of getting to the right address.
@@ -4953,7 +4964,7 @@ example.com. IN CAA 0 issue "letsencrypt.org"
 ###### Example
 
 ```bash
-curl -ks https://example.com/.well-known/security.txt
+$ curl -ks https://example.com/.well-known/security.txt
 
 Contact: security@example.com
 Contact: +1-209-123-0123
@@ -4966,7 +4977,7 @@ Policy: https://example.com/security-policy.html
 And from Google:
 
 ```bash
-curl -ks https://www.google.com/.well-known/security.txt
+$ curl -ks https://www.google.com/.well-known/security.txt
 
 Contact: https://g.co/vulnz
 Contact: mailto:security@google.com

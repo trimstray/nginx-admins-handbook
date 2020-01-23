@@ -26,6 +26,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Response header fields](#response-header-fields)
     * [Message body](#message-body-1)
   * [HTTP client](#http-client)
+    * [IP address shortcuts](#ip-address-shortcuts)
   * [Back-End web architecture](#back-end-web-architecture)
   * [Useful video resources](#useful-video-resources)
 
@@ -506,6 +507,24 @@ Contains the resource data that was requested by the client.
 HTTP client is a client that is able to send a request to and get a response from the server in HTTP format. Clients also originates a connection, passes any necessary authentication tokens and delivers the request for a specific piece of data.
 
   > The clients are anything that send requests to the back-end.
+
+##### IP address shortcuts
+
+IP addresses can be shortened by dropping the zeroes:
+
+```
+http://1.0.0.1 → http://1.1
+http://127.0.0.1 → http://127.1
+http://192.168.0.1 → http://192.168.1
+
+http://0xC0A80001 or http://3232235521 → 192.168.0.1
+http://192.168.257 → 192.168.1.1
+http://192.168.516 → 192.168.2.4
+```
+
+  > This bypasses WAF filters for SSRF, open-redirect, etc where any IP as input gets blacklisted.
+
+For more information please see [How to Obscure Any URL](http://www.pc-help.org/obscure.htm) and [Magic IP Address Shortcuts](https://stuff-things.net/2014/09/25/magic-ip-address-shortcuts/).
 
 #### Back-End web architecture
 
