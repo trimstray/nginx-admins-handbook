@@ -1804,8 +1804,8 @@ resolver_timeout 5s;
 To test OCSP Stapling:
 
 ```bash
-openssl s_client -connect example.com:443 -tls1 -tlsextdebug -status
-echo | openssl s_client -connect example.com:443 -status 2> /dev/null | grep -A 17 'OCSP response:'
+openssl s_client -connect example.com:443 -servername example.com -tlsextdebug -status
+echo | openssl s_client -connect example.com:443 -servername example.com -status 2> /dev/null | grep -A 17 'OCSP response:'
 ```
 
 ###### External resources

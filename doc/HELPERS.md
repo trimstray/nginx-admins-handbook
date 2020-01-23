@@ -47,6 +47,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Send request with http method, user-agent, follow redirects and show response headers](#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](#send-multiple-requests)
     * [Testing SSL connection](#testing-ssl-connection)
+    * [Testing SSL connection (debug mode)](#testing-ssl-connection-debug-mode)
     * [Testing SSL connection with SNI support](#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
@@ -3853,6 +3854,12 @@ echo | openssl s_client -connect <server_name>:<port>
 gnutls-cli --disable-sni -p 443 <server_name>
 ```
 
+###### Testing SSL connection (debug mode)
+
+```bash
+echo | openssl s_client -connect <server_name>:<port> -showcerts -tlsextdebug -status
+```
+
 ###### Testing SSL connection with SNI support
 
 ```bash
@@ -3878,8 +3885,8 @@ openssl s_client -cipher 'AES128-SHA' -connect <server_name>:<port>
 ###### Testing OCSP Stapling
 
 ```bash
-openssl s_client -connect example.com:443 -tls1 -tlsextdebug -status
-echo | openssl s_client -connect example.com:443 -status 2> /dev/null | grep -A 17 'OCSP response:'
+openssl s_client -connect example.com:443 -servername example.com -tls1 -tlsextdebug -status
+echo | openssl s_client -connect example.com:443 -servername example.com  -status 2> /dev/null | grep -A 17 'OCSP response:'
 ```
 
 ###### Verify 0-RTT

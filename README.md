@@ -270,6 +270,7 @@
     * [Send request with http method, user-agent, follow redirects and show response headers](doc/HELPERS.md#send-request-with-http-method-user-agent-follow-redirects-and-show-response-headers)
     * [Send multiple requests](doc/HELPERS.md#send-multiple-requests)
     * [Testing SSL connection](doc/HELPERS.md#testing-ssl-connection)
+    * [Testing SSL connection (debug mode)](doc/HELPERS.md#testing-ssl-connection-debug-mode)
     * [Testing SSL connection with SNI support](doc/HELPERS.md#testing-ssl-connection-with-sni-support)
     * [Testing SSL connection with specific SSL version](doc/HELPERS.md#testing-ssl-connection-with-specific-ssl-version)
     * [Testing SSL connection with specific cipher](doc/HELPERS.md#testing-ssl-connection-with-specific-cipher)
@@ -918,6 +919,7 @@ Existing chapters:
     - [x] _Send request with http method, user-agent, follow redirects and show response headers_
     - [x] _Send multiple requests_
     - [x] _Testing SSL connection_
+    - [x] _Testing SSL connection (debug mode)_
     - [x] _Testing SSL connection with SNI support_
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
