@@ -46,6 +46,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [Keyless SSL: The Nitty Gritty Technical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)
 - [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
 - [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
+- [TLS Security 1: What Is SSL/TLS (set of articles by Acunetix)](https://www.acunetix.com/blog/articles/tls-security-what-is-tls-ssl-part-1/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
 - [SSL/TLS Threat Model](https://blog.ivanristic.com/SSL_Threat_Model.png)

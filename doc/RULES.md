@@ -2937,7 +2937,7 @@ certbot certonly -d example.com -d www.example.com
 
   > Before enabling specific protocol version, you should check which ciphers are supported by the protocol. So, if you turn on TLS 1.2 and TLS 1.3 both remember about [the correct (and strong)](#beginner-use-only-strong-ciphers) ciphers to handle them. Otherwise, they will not be anyway works without supported ciphers (no TLS handshake will succeed).
 
-  > I think the best way to deploy secure configuration is: enable TLS 1.2 (is safe enough) without any `CBC` ciphers (`ChaCha20+Poly1305` or `AES/GCM` should be preferred over `CBC` (cf. BEAST)) and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice (all of industry standards like PCI-DSS, HIPAA, NIST, strongly suggest the use of TLS 1.2 than TLS 1.1/1.0).
+  > I think the best way to deploy secure configuration is: enable TLS 1.2 (as a minimum version; is safe enough) without any `CBC` ciphers (`ChaCha20+Poly1305` or `AES/GCM` should be preferred over `CBC` (cf. BEAST), howewer, for me using `CBC` ciphers is not a vulnerability in and out of itself, Zombie POODLE, etc. are the vulnerabilities) and/or TLS 1.3 which is safer because of its handling improvement and the exclusion of everything that went obsolete since TLS 1.2 came up. So, making TLS 1.2 your "minimum protocol level" is the solid choice and an industry best practice (all of industry standards like PCI-DSS, HIPAA, NIST, strongly suggest the use of TLS 1.2 than TLS 1.1/1.0).
 
   > TLS 1.2 is probably insufficient for legacy client support. The NIST guidelines are not applicable to all use cases, and you should always analyze your user base before deciding which protocols to support or drop (for example, by adding variables responsible for TLS versions and ciphers to the log format). It's important to remember that not every client supports the latest and greatest that TLS has to offer.
 
@@ -3027,7 +3027,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to a weak (less secure and don't get ahead of the latest vulnerabilities; see [this](https://ciphersuite.info/page/faq/)) cipher suite that may be compromised. If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` (according to [Alexa Top 1 Million Analysis - Feb 2017](https://scotthelme.co.uk/alexa-top-1-million-analysis-feb-2017/), over 92.8% websites using encryption prefer to use `ECDHE` based ciphers) and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers).
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` (according to [Alexa Top 1 Million Analysis - Feb 2017](https://scotthelme.co.uk/alexa-top-1-million-analysis-feb-2017/), over 92.8% websites using encryption prefer to use `ECDHE` based ciphers) and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers). `DHE` is generally slow and in TLS 1.2 and below is vulnerable to weak groups (less than 2048-bit at this moment). And what's more, not specified any restrictions on the groups to use. These issues don't impact `ECDHE` which is why it's generally preferred today.
 
   > The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy (a method that does not have the vulnerability to the type of replay attack that other solutions could introduce if a highly secure cipher suite is not supported). `ECDHE-ECDSA` is about the same as `RSA` in performance, but much more secure. `ECDHE` with `RSA` is slower, but still much more secure than alone `RSA`.
 
@@ -3041,7 +3041,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (however, Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me (getting rid of `CHACHA20_POLY1305`) and I have not found a rational explanation for why we should do it.
+  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me (getting rid of `CHACHA20_POLY1305`) and I have not found a rational explanation for why we should do it. `ChaCha20` is simpler than `AES` and currently be quite a lot faster encryption algorithm if no `AES` hardware acceleration is available (in practice `AES` is often implemented in hardware which gives it an advantage).
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
@@ -3049,7 +3049,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. The `CBC` mode is vulnerable to plain-text attacks with TLS 1.0, SSL 3.0 and lower. However a real fix is implemented with TLS 1.2 in which the `GCM` mode was introduced and which is not vulnerable to the BEAST attack. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
-  > There are vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE which were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.2 or TLS 1.1 or TLS 1.0 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) presentation from Black Hat Asia 2019.
+  > There are vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE which were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.0, TLS 1.1 or TLS 1.2 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) presentation from Black Hat Asia 2019. TLS 1.0 and TLS 1.1 may be affected by vulnerabilities such as [FREAK, POODLE, BEAST, and CRIME](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/).
 
   > Disable TLS cipher modes that use RSA encryption (all ciphers that start with `TLS_RSA_WITH_*`) because they are really vulnerable to [ROBOT](https://robotattack.org/) attack. Not all servers that support `RSA` key exchange are vulnerable, but it is recommended to disable `RSA` key exchange ciphers as it does not support forward secrecy. TLS 1.3 doesn’t use `RSA` key exchanges because they’re not forward secret.
 
@@ -3057,7 +3057,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > We have a nice online tool for testing compatibility cipher suites with user agents: [CryptCheck](https://tls.imirhil.fr/suite). I think it will be very helpful for you.
 
-  > If in doubt, use one of the recommended Mozilla kits (see below).
+  > If in doubt, use one of the recommended Mozilla kits (see below), check also [Supported cipher suites](https://tls.imirhil.fr/ciphers) and [User agent compatibility](https://tls.imirhil.fr/suite).
 
   Look at this great explanation about weak ciphers by [Keith Shaw](https://github.com/keithws):
 
@@ -3069,7 +3069,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   **My recommendation:**
 
-  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with below cipher suites (remember about min. `2048-bit` DH params for `DHE`!):
+  > Use only [TLSv1.3 and TLSv1.2](#keep-only-tls1.2-tls13) with below cipher suites (remember about min. `2048-bit` DH params for `DHE` with TLSv1.2):
   ```nginx
   ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256";
   ```
@@ -3554,6 +3554,8 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
 - [Cryptographic Right Answers](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html)
 - [ImperialViolet - ChaCha20 and Poly1305 for TLS](https://www.imperialviolet.org/2013/10/07/chacha20.html)
+- [Do the ChaCha: better mobile performance with cryptography](https://blog.cloudflare.com/do-the-chacha-better-mobile-performance-with-cryptography/)
+- [AES Is Great … But We Need A Fall-back: Meet ChaCha and Poly1305](https://medium.com/asecuritysite-when-bob-met-alice/aes-is-great-but-we-need-a-fall-back-meet-chacha-and-poly1305-76ee0ee61895)
 - [Cipher suites (from this handbook)](SSL_TLS_BASICS.md#cipher-suites)
 
 #### :beginner: Use more secure ECDH Curve
@@ -3640,7 +3642,9 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > `DHE` is slower than `ECDHE`. If you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`. OWASP estimates that the TLS handshake with `DHE` hinders the CPU by a factor of 2.4 compared to `ECDHE`.
 
-  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. This can be used to prevent being affected from the Logjam attack (both the client and the server need to be vulnerable in order for the attack to succeed because the server must accept to sign small `DHE_EXPORT` parameters, and the client must accept them as valid `DHE` parameters).
+  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. However, using custom parameters will make the server non-compliant with [FIPS](https://csrc.nist.gov/News/2018/NIST-Publishes-Updates-to-SP-800-56A-and-800-56C) requirements: _The publication approves the use of specific safe-prime groups of domain parameters for the finite field DH and MQV schemes, in addition to the previously approved domain parameter sets._ See also approved [TLS groups for FFC key agreement](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf) (table 26, page 133) <sup>[pdf]</pdf>.
+
+  > You can use custom parameters to prevent being affected from the Logjam attack (both the client and the server need to be vulnerable in order for the attack to succeed because the server must accept to sign small `DHE_EXPORT` parameters, and the client must accept them as valid `DHE` parameters).
 
   > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
 
@@ -3650,7 +3654,7 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > If you use `ECDH/ECDHE` key exchange please see [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve) rule.
 
-  > In older versions of OpenSSL, if no key size is specified, default key size was `512/1024 bits` - it was vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919 - Supported Groups Registry](https://tools.ietf.org/html/rfc7919#appendix-A) <sup>[IETF]</sup> are audited and may be more resistant to attacks than ones randomly generated) from Mozilla SSL Configuration Generator:
+  > In older versions of OpenSSL, if no key size is specified, default key size was `512/1024 bits` - it was vulnerable and breakable. For the best security configuration use your own DH Group (min. `2048 bit`) or use known safe ones pre-defined DH groups (it's recommended; the pre-defined DH groups `ffdhe2048`, `ffdhe3072` or `ffdhe4096` recommended by the IETF in [RFC 7919 - Supported Groups Registry](https://tools.ietf.org/html/rfc7919#appendix-A) <sup>[IETF]</sup>, compliant with NIST and FIPS. They are audited and may be more resistant to attacks than ones randomly generated. Example of pre-defined groups:
   >
   >  - [ffdhe2048](https://ssl-config.mozilla.org/ffdhe2048.txt)
   >  - [ffdhe4096](https://ssl-config.mozilla.org/ffdhe4096.txt)
