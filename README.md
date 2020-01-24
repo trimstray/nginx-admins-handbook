@@ -625,9 +625,11 @@ I think, in the age of phishing, cyber attacks, ransomware, etc., you should tak
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/crypto_nerds.png">
 </p>
 
-Lastly, I would like to quote very important comment found on the web about compliance with the standards and regulations:
+Lastly, I would like to quote two very important comments found on the web about compliance with the standards and regulations, and essence of a human factor in security:
 
   > _Regulations that make sense are often not descriptive - capturing the intent and scope of a rule often requires technical expertise. More than that, it's the type of expertise most organisations do not have. And instead of improving themselves, these companies, who may form the grand majority of the industry, petition the regulators to provide a safe checklist of technical mitigations that can be implemented to remain compliant. [...] Instead of doing the right thing and meeting the planned intent, companies are instead ticking nonsensical boxes that the regulators and their auditors demand. Blindly. Mindlessly. Divorced from reality._ - by [bostik](https://news.ycombinator.com/user?id=bostik)
+
+  > _Whenever considering security, the human factor is nearly always as important or more important than just the technical aspects. Policy and procedures need to consider the human element and try to ensure that these policies and procedures are structured in such a way as to help enable staff to do the right thing, even when they may not fully understand why they need to do it._ - by [Tim X](https://security.stackexchange.com/users/13958/tim-x)
 
 ## Contributing & Support
 
