@@ -2869,11 +2869,9 @@ proxy_set_header X-Forwarded-Host $host;
 
   > The truth is (if we talk about `RSA`), the industry/community are split on this topic. I am in the "_use 2048, because 4096 gives us almost nothing, while costing us quite a lot_" camp myself.
 
-  > Advisories recommend 2048-bit for `RSA` (or 256-bit for `ECC`) keys for now (according to NIST). Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (also as per [NIST](https://www.keylength.com/en/4/)). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths. A 256-bit `ECC` key can be stronger than a 2048-bit classical key.
+  > Advisories recommend 2048-bit for `RSA` (or 256-bit for `ECC`) keys for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per [NIST](https://www.keylength.com/en/4/)). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths. A 256-bit `ECC` key can be stronger than a 2048-bit classical key. If you use `ECDSA` the recommended key size changes according to usage, see [Table 2-1 at NIST 800-57, page 12](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-57pt3r1.pdf).
 
   > Generally there is no compelling reason to choose 4096 bit keys for `RSA` over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage.
-
-  > If you use `ECDSA` the recommended key size changes according to usage, see [Table 2-1 at NIST 800-57, page 12](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-57pt3r1.pdf).
 
   > The real advantage of using a 4096-bit key nowadays is future proofing. If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main (and the only one for me) reason why you should use them.
 

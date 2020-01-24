@@ -139,7 +139,7 @@
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
     * [In which layer is TLS situated within the TCP/IP stack?](doc/SSL_TLS_BASICS.md#in-which-layer-is-tls-situated-within-the-tcpip-stack)
-  * [RSA and ECC keys/certificates](doc/SSL_TLS_BASICS.md#rsa-and-ecc-keys-certificates)
+  * [RSA and ECC keys/certificates](doc/SSL_TLS_BASICS.md#rsa-and-ecc-keyscertificates)
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
     * [Why cipher suites are important?](doc/SSL_TLS_BASICS.md#why-cipher-suites-are-important)

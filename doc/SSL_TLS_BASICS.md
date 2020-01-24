@@ -7,7 +7,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
     * [In which layer is TLS situated within the TCP/IP stack?](#in-which-layer-is-tls-situated-within-the-tcpip-stack)
-  * [RSA and ECC keys/certificates](#rsa-and-ecc-keys-certificates)
+  * [RSA and ECC keys/certificates](#rsa-and-ecc-keyscertificates)
   * [Cipher suites](#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
     * [Why cipher suites are important?](#why-cipher-suites-are-important)
@@ -123,7 +123,7 @@ By default `ECC` key pairs using the Elliptic Curve Digital Signature Algorithm 
 
 For more information please see this amazing presentation: [ECC vs RSA: Battle of the Crypto-Ninjas](https://www.slideshare.net/JamesMcGivern/ecc-vs-rsa-battle-of-the-cryptoninjas). See also [Diffie-Hellman, RSA, DSA, ECC and ECDSA – Asymmetric Key Algorithms](https://www.ssl2buy.com/wiki/diffie-hellman-rsa-dsa-ecc-and-ecdsa-asymmetric-key-algorithms).
 
-See also key-length comparison:
+Look at this key-length comparison:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/rsa_ecc_comparison.png" alt="rsa_ecc_comparison">
