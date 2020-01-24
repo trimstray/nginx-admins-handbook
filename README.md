@@ -139,6 +139,7 @@
   * [TLS versions](doc/SSL_TLS_BASICS.md#tls-versions)
   * [TLS handshake](doc/SSL_TLS_BASICS.md#tls-handshake)
     * [In which layer is TLS situated within the TCP/IP stack?](doc/SSL_TLS_BASICS.md#in-which-layer-is-tls-situated-within-the-tcpip-stack)
+  * [RSA and ECC keys/certificates](doc/SSL_TLS_BASICS.md#rsa-and-ecc-keys-certificates)
   * [Cipher suites](doc/SSL_TLS_BASICS.md#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](doc/SSL_TLS_BASICS.md#authenticated-encryption-aead-cipher-suites)
     * [Why cipher suites are important?](doc/SSL_TLS_BASICS.md#why-cipher-suites-are-important)
@@ -446,7 +447,7 @@
   * [Remove support for legacy and risky HTTP request headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-request-headers)
   * [Use only the latest supported OpenSSL version](doc/RULES.md#beginner-use-only-the-latest-supported-openssl-version)
   * [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)
-  * [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)
+  * [Use min. 2048-bit for RSA and 256-bit for ECC](doc/RULES.md#beginner-use-min-2048-bit-for-rsa-and-256-bit-for-ecc)
   * [Keep only TLS 1.3 and TLS 1.2](doc/RULES.md#beginner-keep-only-tls-13-and-tls-12)
   * [Use only strong ciphers](doc/RULES.md#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](doc/RULES.md#beginner-use-more-secure-ecdh-curve)
@@ -807,6 +808,7 @@ Existing chapters:
   - [x] _TLS versions_
   - [x] _TLS handshake_
     - [x] _In which layer is TLS situated within the TCP/IP stack?_
+  - [x] _RSA and ECC keys/certificates_
   - [x] _Cipher suites_
     - [x] _Authenticated encryption (AEAD) cipher suites_
     - [x] _Why cipher suites are important?_
@@ -1163,7 +1165,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Remove support for legacy and risky HTTP request headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-request-headers)<br><sup>Supports for the offending headers should be removed.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)<br><sup>Protects your website for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Use min. 2048-bit for RSA and 256-bit for ECC](doc/RULES.md#beginner-use-min-2048-bit-for-rsa-and-256-bit-for-ecc)<br><sup>2048 bit (RSA) or 256 bit (ECC) keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Keep only TLS 1.3 and TLS 1.2](doc/RULES.md#beginner-keep-only-tls-13-and-tls-12)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use only strong ciphers](doc/RULES.md#beginner-use-only-strong-ciphers)<br><sup>Use only strong and not vulnerable cipher suites.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use more secure ECDH Curve](doc/RULES.md#beginner-use-more-secure-ecdh-curve)<br><sup>Use ECDH Curves with according to NIST recommendations.</sup> | Hardening | ![high](static/img/priorities/high.png) |

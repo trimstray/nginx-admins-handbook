@@ -2295,7 +2295,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Remove support for legacy and risky HTTP request headers](#beginner-remove-support-for-legacy-and-risky-http-request-headers)
   * [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
-  * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
+  * [Use min. 2048-bit for RSA and 256-bit for ECC](#beginner-use-min-2048-bit-for-rsa-and-256-bit-for-ecc)
   * [Keep only TLS 1.3 and TLS 1.2](#beginner-keep-only-tls-13-and-tls-12)
   * [Use only strong ciphers](#beginner-use-only-strong-ciphers)
   * [Use more secure ECDH Curve](#beginner-use-more-secure-ecdh-curve)
@@ -2861,25 +2861,27 @@ proxy_set_header X-Forwarded-Host $host;
 - [HTTPS with self-signed certificate vs HTTP (from this handbook)](#https-with-self-signed-certificate-vs-http)
 - [Enable HTTP Strict Transport Security - Hardening - P1 (from this handbook)](#beginner-enable-http-strict-transport-security)
 
-#### :beginner: Use min. 2048-bit private keys
+#### :beginner: Use min. 2048-bit for `RSA` and 256-bit for `ECC`
 
 ###### Rationale
 
-  > The truth is, the industry/community are split on this topic. I am in the "_use 2048, because 4096 gives us almost nothing, while costing us quite a lot_" camp myself.
+  > Both are public key cryptosystems. SSL certificates most commonly use `RSA` keys and the recommended size of these keys keeps increasing to maintain sufficient cryptographic strength. An alternative to `RSA` is `ECC`. The `ECC` (and `ECDSA`) is probably better for most purposes, but not for everything. Both key types share the same important property of being asymmetric algorithms (one key for encrypting and one key for decrypting).
 
-  > Advisories recommend 2048 for now. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per [NIST](https://www.keylength.com/en/4/)). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
+  > The truth is (if we talk about `RSA`), the industry/community are split on this topic. I am in the "_use 2048, because 4096 gives us almost nothing, while costing us quite a lot_" camp myself.
 
-  > Generally there is no compelling reason to choose 4096 bit keys over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage.
+  > Advisories recommend 2048-bit for `RSA` (or 256-bit for `ECC`) keys for now (according to NIST). Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (also as per [NIST](https://www.keylength.com/en/4/)). The latest version of FIPS-186 also say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths. A 256-bit `ECC` key can be stronger than a 2048-bit classical key.
+
+  > Generally there is no compelling reason to choose 4096 bit keys for `RSA` over 2048 provided you use sane expiration intervals. While it is true that a longer key provides better security, doubling the length of the key from 2048 to 4096, the increase in bits of security is only 18, a mere 16% (the time to sign a message increases by 7x, and the time to verify a signature increases by more than 3x in some cases). Moreover, besides requiring more storage, longer keys also translate into increased CPU usage.
+
+  > If you use `ECDSA` the recommended key size changes according to usage, see [Table 2-1 at NIST 800-57, page 12](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-57pt3r1.pdf).
 
   > The real advantage of using a 4096-bit key nowadays is future proofing. If you want to get **A+ with 100%s on SSL Lab** (for Key Exchange) you should definitely use 4096 bit private keys. That's the main (and the only one for me) reason why you should use them.
 
-  > Longer keys take more time to generate and require more CPU and power when used for encrypting and decrypting, also the SSL handshake at the start of each connection will be slower. It also has a small impact on the client side (e.g. browsers).
+  > `ECC` is more better than `RSA` in terms of key length. But the main issues are implementation. I think, `RSA` is more easy to implement than `ECC`. `ECDSA` keys (contain an `ECC` public keys) are recommended over `RSA` because offers same level of security with smaller keys contrasted with non-ECC cryptography. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break (less vulnerable). In my opinion, `ECC` is suitable for environments with lots of constrained (limited storage or data processing resources), e.g. cellular phones, PDAs, and generally for embedded systems. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
 
-  > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most CPU time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
+  > Longer `RSA` keys take more time to generate and require more CPU and power when used for encrypting and decrypting, also the SSL handshake at the start of each connection will be slower. It also has a small impact on the client side (e.g. browsers). When using `curve25519`, `ECC` is considered more secure. It is fast and immune to a variety of side-channel attacks by design. `RSA` is no less secure though in practical terms, and is also considered unbreakable by modern technology.
 
-  > Use of alternative solution: `ECC` keys (see [Elliptic Curve Cryptography Explained](https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/) and [ECC Certificate Signing Request (CSR)](https://www.digitalocean.com/community/tutorials/how-to-create-an-ecc-certificate-on-nginx-for-debian-8)). `ECDSA` certificates (are recommended over `RSA` certificates because offers same level of security with smaller keys contrasted with non-ECC cryptography) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break, but for me, `ECC` is suitable for environments with lots of constrained (with limited storage or data processing resources), e.g. cellular phones or PDAs. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
-
-  > Note (old vulnerabilities): `ECC` in OpenSSL resulted in Common Vulnerability and Exposures [CVE-2014-3572](https://www.cvedetails.com/cve/CVE-2014-3572/), [CVE-2014-0076](https://www.cvedetails.com/cve-details.php?t=1&cve_id=CVE-2014-0076) and [CVE-2008-5077](https://www.cvedetails.com/cve-details.php?t=1&cve_id=CVE-2008-5077). Known attacks include side-channel, and twist-security (fault) attacks.
+  > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096`, `openssl speed rsa` or `openssl speed ecdsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most CPU time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2941,8 +2943,12 @@ certbot certonly -d example.com -d www.example.com
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 - [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)
 - [ECDSA: Elliptic Curve Signatures](https://cryptobook.nakov.com/digital-signatures/ecdsa-sign-verify-messages)
+- [Elliptic Curve Cryptography Explained](https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/)
+- [You should be using ECC for your SSL/TLS certificates](https://www.thesslstore.com/blog/you-should-be-using-ecc-for-your-ssl-tls-certificates/)
+- [Comparing ECC vs RSA](https://www.linkedin.com/pulse/comparing-ecc-vs-rsa-ott-sarv)
 - [Comparison And Evaluation Of Digital Signature Schemes Employed In Ndn Network](https://arxiv.org/pdf/1508.00184.pdf) <sup>[pdf]</sup>
 - [HTTPS Performance, 2048-bit vs 4096-bit](https://blog.nytsoi.net/2015/11/02/nginx-https-performance)
+- [RSA and ECDSA hybrid Nginx setup with LetsEncrypt certificates](https://hackernoon.com/rsa-and-ecdsa-hybrid-nginx-setup-with-letsencrypt-certificates-ee422695d7d3)
 
 #### :beginner: Keep only TLS 1.3 and TLS 1.2
 

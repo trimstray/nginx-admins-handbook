@@ -7,6 +7,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [TLS versions](#tls-versions)
   * [TLS handshake](#tls-handshake)
     * [In which layer is TLS situated within the TCP/IP stack?](#in-which-layer-is-tls-situated-within-the-tcpip-stack)
+  * [RSA and ECC keys/certificates](#rsa-and-ecc-keys-certificates)
   * [Cipher suites](#cipher-suites)
     * [Authenticated encryption (AEAD) cipher suites](#authenticated-encryption-aead-cipher-suites)
     * [Why cipher suites are important?](#why-cipher-suites-are-important)
@@ -109,6 +110,32 @@ See this diagram:
 The SSL protocol works between the `TCP/IP` protocols and higher-level protocols such as `HTTP`. Its design allows you to launch any website on the basis of public key cryptography, thus enabling secure data transmission on the network.
 
 See also [What Happens in a TLS Handshake?](https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/).
+
+#### RSA and ECC keys/certificates
+
+An `RSA` key pair includes a private and a public key. It is a well-established method of public-key cryptography and is based on the use of two large prime numbers. The `RSA` private key is used to generate digital signatures, and the `RSA` public key is used to verify digital signatures. `RSA` requires much bigger key lengths to implement encryption (min. 2048-bit at this moment). This type of encryption is really great when we have two physically or geographically different end-points.
+
+`ECC` is the latest encryption method. The main selling point of `ECC` is that this security level is achieved using very short system parameters (requires much shorter key lengths compared to `RSA`) and hence speeds. Elliptic curve based algorithms use significantly smaller key sizes than the non-elliptic curve equivalents. An `ECC` key pair also includes a private and public key. The `ECC` private key is used to generate digital signatures, and the `ECC` public key is used to verify digital signatures.
+
+According to most recommendations the key lengths can be taken about twelve times shorter than their counterparts in `RSA` or in classical discrete logarithm based cryptography; concretely `Curve25519` works with keys consisting of about 256 bits, while an equivalent `RSA` instantiation would need key sizes of 3072 bits long.
+
+By default `ECC` key pairs using the Elliptic Curve Digital Signature Algorithm (see [ECDSA: The digital signature algorithm of a better internet](https://blog.cloudflare.com/ecdsa-the-digital-signature-algorithm-of-a-better-internet/)). This algorithm uses elliptic curve cryptography (an encryption system based on the properties of elliptic curves) to provide a variant of the Digital Signature Algorithm (`DSA`) and is applied to `ECC` to make it appropriate for security encryption.
+
+For more information please see this amazing presentation: [ECC vs RSA: Battle of the Crypto-Ninjas](https://www.slideshare.net/JamesMcGivern/ecc-vs-rsa-battle-of-the-cryptoninjas). See also [Diffie-Hellman, RSA, DSA, ECC and ECDSA – Asymmetric Key Algorithms](https://www.ssl2buy.com/wiki/diffie-hellman-rsa-dsa-ecc-and-ecdsa-asymmetric-key-algorithms).
+
+See also key-length comparison:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/rsa_ecc_comparison.png" alt="rsa_ecc_comparison">
+</p>
+
+<sup><i>This infographic comes from [AES and ECDH key (crypto.stackexchange)](https://crypto.stackexchange.com/questions/61248/aes-and-ecdh-key).</i></sup>
+
+Finally, I recommend to read [this](https://crypto.stackexchange.com/questions/61248/aes-and-ecdh-key) answer by [Maarten Bodewes](https://crypto.stackexchange.com/users/1172/maarten-bodewes):
+
+  > _RSA - an asymmetric algorithm - requires a larger key size because the number calculations are on large numbers. For RSA an attacker can try and refactor the modulus to try and find the private key components. It is therefore much easier to attack RSA than to try $2^X$ values for an $X$-bit key. In the table you can see that it will take about $2^{128}$ tests to break a 3072 bit key. So an AES key of 128 bit and a RSA key of 3072 bits both have a strength of 128 bits._
+
+  > _Elliptic Curve cryptography allows for smaller key sizes than RSA to deliver the same strength asymmetric key pair. Generally the effective key size of the key pair needs to be double the size to achieve the same strength as a symmetric key. So we see the value 256 for ECC in that same row. The curve sizes listed are of the named curves first created by Certicom and later standardized by NIST as P-160, P-224, P-256, P-384 and P-521 (that's not a typo, it's not 512)._
 
 #### Cipher suites
 
