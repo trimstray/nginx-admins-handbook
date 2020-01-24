@@ -2599,7 +2599,7 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
 ###### Rationale
 
-  > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure. NGINX shows the version number by default in error pages and in the headers of HTTP requests.
+  > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure. NGINX shows the version number by default in error pages and in the headers of HTTP responses.
 
   > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions. For example, Shodan provides a widely used database of this info. It's far more efficient to just try the vulnerability on all random servers than asking them.
 
@@ -2630,7 +2630,7 @@ server_tokens off;
 
   > The `Server` response-header field contains information about the software used by the origin server to handle the request. This string is used by places like Alexa and Netcraft to collect statistics about how many and of what type of web server are live on the Internet.
 
-  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software and technologies via the `Server` header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc. The attacker collects all available information about the application and its environment. Information about the technologies used and the software versions are extremely valuable information.
+  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software and technologies via the `Server` header. Certainly, there are several reasons why do you want to change the server header. It could be security, it could be redundant systems, load balancers etc. The attacker collects all available information about the application and its environment. Information about the technologies used and the software versions are extremely valuable information.
 
   > And in my opinion, there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number. However, it's not information you need to give out, so I am generally in favour of removing it, where this can be accomplished with minimal effort.
 
@@ -2800,7 +2800,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
 
-  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-enable-http-strict-transport-security) and ensure proper configuration of TLS (versions, cipher suites, right certificate chain, and other).
+  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-enable-http-strict-transport-security) and ensure proper configuration of TLS (protocol version, cipher suites, right certificate chain, and other).
 
   > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
 
@@ -2877,7 +2877,9 @@ proxy_set_header X-Forwarded-Host $host;
 
   > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most CPU time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
-  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over `RSA` certificates because offers same level of security with smaller key sizes) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
+  > Use of alternative solution: `ECC` keys (see [Elliptic Curve Cryptography Explained](https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/) and [ECC Certificate Signing Request (CSR)](https://www.digitalocean.com/community/tutorials/how-to-create-an-ecc-certificate-on-nginx-for-debian-8)). `ECDSA` certificates (are recommended over `RSA` certificates because offers same level of security with smaller keys contrasted with non-ECC cryptography) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break, but for me, `ECC` is suitable for environments with lots of constrained (with limited storage or data processing resources), e.g. cellular phones or PDAs. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
+
+  > Note (old vulnerabilities): `ECC` in OpenSSL resulted in Common Vulnerability and Exposures [CVE-2014-3572](https://www.cvedetails.com/cve/CVE-2014-3572/), [CVE-2014-0076](https://www.cvedetails.com/cve-details.php?t=1&cve_id=CVE-2014-0076) and [CVE-2008-5077](https://www.cvedetails.com/cve-details.php?t=1&cve_id=CVE-2008-5077). Known attacks include side-channel, and twist-security (fault) attacks.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -3553,6 +3555,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [RFC 7525 - TLS Recommendations](https://tools.ietf.org/html/rfc7525) <sup>[IETF]</sup>
 - [TLS Cipher Suites](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-4) <sup>[IANA]</sup>
 - [TLS Cipher Suite Search](https://ciphersuite.info/)
+- [Elliptic Curve Cryptography: a gentle introduction](https://andrea.corbellini.name/2015/05/17/elliptic-curve-cryptography-a-gentle-introduction/)
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [HTTP/2 and ECDSA Cipher Suites](https://sparanoid.com/note/http2-and-ecdsa-cipher-suites/)
 - [TLS 1.3 (with AEAD) and TLS 1.2 cipher suites demystified: how to pick your ciphers wisely](https://www.cloudinsidr.com/content/tls-1-3-and-tls-1-2-cipher-suites-demystified-how-to-pick-your-ciphers-wisely/)
