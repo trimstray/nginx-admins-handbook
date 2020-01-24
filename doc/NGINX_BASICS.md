@@ -69,6 +69,8 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
     * [Variables](#variables)
     * [Directives, keys, and zones](#directives-keys-and-zones)
     * [Burst and nodelay parameters](#burst-and-nodelay-parameters)
+  * [NAXSI Web Application Firewall](#naxsi-web-application-firewall)
+  * [OWASP ModSecurity Core Rule Set (CRS)](#owasp-modsecurity-core-rule-set-crs)
   * [Core modules](#core-modules)
     * [ngx_http_geo_module](#ngx_http_geo_module)
   * [3rd party modules](#3rd-party-modules)
@@ -3738,6 +3740,20 @@ For enable queue you should use `limit_req` or `limit_conn` directives (see abov
   > `nodelay` parameters are only useful when you also set a `burst`.
 
 Without `nodelay` NGINX would wait (no 503 response) and handle excessive requests with some delay.
+
+#### NAXSI Web Application Firewall
+
+- [NAXSI](https://github.com/nbs-system/naxsi)
+- [NAXSI, a web application firewall for Nginx](https://www.nbs-system.com/en/blog/naxsi-web-application-firewall-for-nginx/)
+
+NAXSI is an open-source, high performance, low rules maintenance WAF for NGINX and is usually referred to as a _Positive model application Firewall_. It is an open-source WAF (Web Application Firewall), providing high performances, and low rules maintenance Web Application Firewall module.
+
+#### OWASP ModSecurity Core Rule Set (CRS)
+
+- [OWASP Core Rule Set](https://coreruleset.org/)
+- [OWASP Core Rule Set - Official documentation](https://coreruleset.org/documentation/)
+
+The OWASP ModSecurity Core Rule Set (CRS) is a set of generic attack detection rules for use with ModSecurity or compatible web application firewalls. The CRS aims to protect web applications from a wide range of attacks, including the OWASP Top Ten, with a minimum of false alerts.
 
 #### Core modules
 

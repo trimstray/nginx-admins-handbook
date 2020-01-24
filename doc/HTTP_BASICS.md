@@ -180,6 +180,7 @@ See these articles about HTTP headers:
 - [HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 - [The HTTP Request Headers List](https://flaviocopes.com/http-request-headers/)
 - [The HTTP Response Headers List](https://flaviocopes.com/http-response-headers/)
+- [Secure your web application with these HTTP headers](https://odino.org/secure-your-web-application-with-these-http-headers/)
 
 HTTP headers allow the client and server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).
 

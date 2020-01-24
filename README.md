@@ -151,7 +151,8 @@
     * [Multi-domain](doc/SSL_TLS_BASICS.md#multi-domain)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
     * [Wildcard SSL doesn't handle root domain?](doc/SSL_TLS_BASICS.md#wildcard-ssl-doesnt-handle-root-domain)
-    * [TLS Server Name Indication](doc/SSL_TLS_BASICS.md#tls-server-name-indication)
+    * [HTTPS with self-signed certificate vs HTTP](doc/SSL_TLS_BASICS.md#https-with-self-signed-certificate-vs-http)
+  * [TLS Server Name Indication](doc/SSL_TLS_BASICS.md#tls-server-name-indication)
   * [Verify your SSL, TLS & Ciphers implementation](doc/SSL_TLS_BASICS.md#verify-your-ssl-tls--ciphers-implementation)
   * [Useful video resources](doc/SSL_TLS_BASICS.md#useful-video-resources)
 - **[NGINX Basics](doc/NGINX_BASICS.md#nginx-basics)**<a id="toc-nginx-basics"></a>
@@ -221,6 +222,8 @@
     * [Variables](doc/NGINX_BASICS.md#variables)
     * [Directives, keys, and zones](doc/NGINX_BASICS.md#directives-keys-and-zones)
     * [Burst and nodelay parameters](doc/NGINX_BASICS.md#burst-and-nodelay-parameters)
+  * [NAXSI Web Application Firewall](doc/NGINX_BASICS.md#naxsi-web-application-firewall)
+  * [OWASP ModSecurity Core Rule Set (CRS)](doc/NGINX_BASICS.md#owasp-modsecurity-core-rule-set-crs)
   * [Core modules](doc/NGINX_BASICS.md#core-modules)
     * [ngx_http_geo_module](doc/NGINX_BASICS.md#ngx_http_geo_module)
   * [3rd party modules](doc/NGINX_BASICS.md#3rd-party-modules)
@@ -440,7 +443,7 @@
   * [Hide Nginx version number](doc/RULES.md#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](doc/RULES.md#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)
-  * [Remove support for legacy and risky HTTP headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)
+  * [Remove support for legacy and risky HTTP request headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-request-headers)
   * [Use only the latest supported OpenSSL version](doc/RULES.md#beginner-use-only-the-latest-supported-openssl-version)
   * [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)
   * [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)
@@ -544,7 +547,7 @@ In addition, I would like to recommend three great docs focuses on the concept o
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). I also recommend to read the [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
-An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. And, finally, [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. It's a great listing contains the definitions of all issues that can be detected by this tool and a really good source to start learning about web application security.
+An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. Finally, [The Web Security Academy](https://portswigger.net/web-security) is a free online training center for web application security. It includes content from PortSwigger's in-house research team and high-quality reading materials and interactive labs of varying levels of difficulty. [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities and it's a great listing contains the definitions of all issues that can be detected by this tool. Both are really good source to start learning about web application security.
 
 ## Prologue
 
@@ -886,6 +889,8 @@ Existing chapters:
     - [x] _Variables_
     - [x] _Directives, keys, and zones_
     - [x] _Burst and nodelay parameters_
+  - _NAXSI Web Application Firewall_
+  - _OWASP ModSecurity Core Rule Set (CRS)_
   - _Core modules_
     - [x] _ngx_http_geo_module_
   - _3rd party modules_
@@ -1086,7 +1091,7 @@ Existing chapters:
   - [x] _Keep NGINX up-to-date_
   - [x] _Take care about your ACL rules_
   - [x] _Use only the latest supported OpenSSL version_
-  - [x] _Remove support for legacy and risky HTTP headers_
+  - [x] _Remove support for legacy and risky HTTP request headers_
   - [x] _Prevent Replay Attacks on Zero Round-Trip Time_
   - [x] _Prevent caching of sensitive data_
   - [x] _Limit concurrent connections_
@@ -1156,7 +1161,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Protect sensitive resources](doc/RULES.md#beginner-protect-sensitive-resources)<br><sup>Hidden directories and files should never be web accessible.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Take care about your ACL rules](doc/RULES.md#beginner-take-care-about-your-acl-rules)<br><sup>Test your access-control lists and to stay secure.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Hide upstream proxy headers](doc/RULES.md#beginner-hide-upstream-proxy-headers)<br><sup>Don't expose what version of software is running on the server.</sup> | Hardening | ![high](static/img/priorities/high.png) |
-| [Remove support for legacy and risky HTTP headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-headers)<br><sup>Supports for the offending headers should be removed.</sup> | Hardening | ![high](static/img/priorities/high.png) |
+| [Remove support for legacy and risky HTTP request headers](doc/RULES.md#beginner-remove-support-for-legacy-and-risky-http-request-headers)<br><sup>Supports for the offending headers should be removed.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Force all connections over TLS](doc/RULES.md#beginner-force-all-connections-over-tls)<br><sup>Protects your website for handle sensitive communications.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Use min. 2048-bit private keys](doc/RULES.md#beginner-use-min-2048-bit-private-keys)<br><sup>2048 bits private keys are sufficient for commercial use.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Keep only TLS 1.3 and TLS 1.2](doc/RULES.md#beginner-keep-only-tls-13-and-tls-12)<br><sup>Use TLS with modern cryptographic algorithms and without protocol weaknesses.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1698,6 +1703,9 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://appsecwiki.com/#/"><b>Application Security Wiki</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/ASVS/tree/master/4.0"><b>OWASP ASVS 4.0</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/OWASP_Proactive_Controls"><b>OWASP Top 10 Proactive Controls 2018.</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/web-security"><b>The Web Security Academy</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/kb/issues"><b>Burp Scanner - Issue Definitions</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://odino.org/wasec-web-application-security-what-to-do-when-dot-dot-dot/"><b>Web application security: what to do when...</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml"><b>Transport Layer Security (TLS) Parameters</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/TLS-Redirection#technical-details"><b>TLS Redirection (and Virtual Host Confusion)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>

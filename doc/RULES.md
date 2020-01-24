@@ -497,7 +497,7 @@ server {
 
   > The `add_header` directive works in the `if`, `location`, `server`, and `http` scopes. The `proxy_*_header` directives works in the `location`, `server`, and `http` scopes. These directives are inherited from the previous level if and only if there are no `add_header` or `proxy_*_header` directives defined on the current level.
 
-  > If you use them in multiple contexts only the lowest occurrences are used. So, if you specify it in the `server` and `location` contexts (even if you hide different header by setting with the same directive and value) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet and use it on `location` level. It is the most predictable solution.
+  > If you use them in multiple contexts only the lowest occurrences are used. So, if you specify it in the `server` and `location` contexts (even if you hide different header by setting with the same directive and value) only the one of them in the `location` block are used. To prevent this situation, you should define a common config snippet and only include it in each individual `location` where you want these headers to be sent. It is the most predictable solution.
 
   > In my opinion, also interesting solution is use an include file with your global headers and add it to the `http` context (however, then you duplicate the rules unnecessarily). Next, you should also set up other include file with your server/domain specific configuration (but always with your global headers! You have to repeat it in the lowest contexts) and add it to the `server/location` contexts. However, it is a little more complicated and does not guarantee consistency in any way.
 
@@ -1703,9 +1703,10 @@ server {
 - [Introduction to HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/)
 - [What is HTTP/2 - The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 - [The HTTP/2 Protocol: Its Pros & Cons and How to Start Using It](https://www.upwork.com/hiring/development/the-http2-protocol-its-pros-cons-and-how-to-start-using-it/)
-- [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 - [HTTP/2 Compatibility with old Browsers and Servers](http://qnimate.com/http2-compatibility-with-old-browsers-and-servers/)
+- [HTTP 2 protocol – it is faster, but is it also safer?](https://research.securitum.com/http-2-protocol-it-is-faster-but-is-it-also-safer/)
 - [HTTP/2 Denial of Service Advisory](https://github.com/Netflix/security-bulletins/blob/master/advisories/third-party/2019-002.md)
+- [HTTP/2, Brute! Then fall, server. Admin! Ops! The server is dead](https://www.theregister.co.uk/2019/08/14/http2_flaw_server/)
 - [HTTP Headers (from this handbook)](HTTP_BASICS.md#http-headers)
 
 #### :beginner: Maintaining SSL sessions
@@ -2291,7 +2292,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Hide Nginx version number](#beginner-hide-nginx-version-number)
   * [Hide Nginx server signature](#beginner-hide-nginx-server-signature)
   * [Hide upstream proxy headers](#beginner-hide-upstream-proxy-headers)
-  * [Remove support for legacy and risky HTTP headers](#beginner-remove-support-for-legacy-and-risky-http-headers)
+  * [Remove support for legacy and risky HTTP request headers](#beginner-remove-support-for-legacy-and-risky-http-request-headers)
   * [Use only the latest supported OpenSSL version](#beginner-use-only-the-latest-supported-openssl-version)
   * [Force all connections over TLS](#beginner-force-all-connections-over-tls)
   * [Use min. 2048-bit private keys](#beginner-use-min-2048-bit-private-keys)
@@ -2324,7 +2325,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > NGINX is a very secure and stable but vulnerabilities in the main binary itself do pop up from time to time. It's the main reason for keep NGINX up-to-date as hard as you can.
 
-  > When planning the NGINX update/upgrade process, the best way is simply to install the newly released version. But for me, the most common way to handle NGINX updates is to wait a few weeks after the stable release (and reading community comments about all issues after the release of the new NGINX version).
+  > When planning the NGINX update/upgrade process, the best way is simply to install the newly released version. But for me, the most common way to handle NGINX updates is to wait a few weeks after the stable release (and reading community comments of all possible and identified issues after the release of the new NGINX version).
 
   > Most modern GNU/Linux distros will not push the latest version of NGINX into their default package lists so maybe you should consider install it from sources.
 
@@ -2354,11 +2355,15 @@ pkg -f install <pkgname>
 
 ###### Rationale
 
-  > It is an important general principle that programs have the minimal amount of privileges necessary to do its job. That way, if the program is broken, its damage is limited. The most extreme example is to simply not write a secure program at all - if this can be done, it usually should be.
+  > It is an important general principle that programs have the minimal amount of privileges necessary to do its job. That way, if the program is broken, its damage is limited.
 
   > There is no real difference in security just by changing the process owner name. On the other hand, in security, the principle of least privilege states that an entity should be given no more permission than necessary to accomplish its goals within a given system. This way only master process runs as root.
 
   > NGINX meets these requirements and it is the default behaviour, but remember to check it.
+
+  From [Secure-Programs-HOWTO: Minimize Privileges](ftp://ftp.wayne.edu/ldp/en/Secure-Programs-HOWTO/minimize-privileges.html) article:
+
+  > _The most extreme example is to simply not write a secure program at all - if this can be done, it usually should be. For example, don't make your program `setuid` or `setgid` if you can; just make it an ordinary program, and require the administrator to log in as such before running it._
 
 ###### Example
 
@@ -2556,14 +2561,13 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
 ###### Rationale
 
-  > When planning for access control, consider several access options. NGINX provides `ngx_http_access_module`, `ngx_http_geo_module`, `ngx_http_map_module` or `ngx_http_auth_basic_module` modules for allow and deny permissions. Each of them secure sensitive directories.
+  > When planning for access control, consider several access options. NGINX provides `ngx_http_access_module`, `ngx_http_geo_module`, `ngx_http_map_module` or `ngx_http_auth_basic_module` modules for allow and deny permissions. Each of them secure sensitive files and directories.
 
   > You should always test your rules:
   >
   >   - check all used directives and their occurrence/priorites at all [levels of request processing](NGINX_BASICS.md#request-processing-stages)
-  >   - verify HTTP [response codes decision diagram](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_decision_diagram.png)
   >   - send testing requests to validate allowing or denying users access to web resources (also from external/blacklisted IP)
-  >   - send testing requests to check response codes for all protected resources
+  >   - send testing requests to check and verify HTTP response codes for all protected resources (see: [response codes decision diagram](https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/http/http_decision_diagram.png))
   >   - less is more, you should minimize any user’s access to the critical resources
   >   - add only really required IP addresses and check their owner in the whois database
   >   - regularly audit your access control rules to ensure they are current
@@ -2603,10 +2607,6 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
   > Security by obscurity doesn't mean you're safe, but it does slow people down sometimes, and that's exactly what's needed for day zero vulnerabilities.
 
-  Maybe it's a very restrictive approach but the guidelines from [RFC 2616 - Personal Information](https://tools.ietf.org/html/rfc2616#section-15.1) are always very helpful to me:
-
-  > _History shows that errors in this area often create serious security and/or privacy problems and generate highly adverse publicity for the implementor's company. [...] Like any generic data transfer protocol, HTTP cannot regulate the content of the data that is transferred, nor is there any a priori method of determining the sensitivity of any particular piece of information within the context of any given request. Therefore, applications SHOULD supply as much control over this information as possible to the provider of that information. Four header fields are worth special mention in this context: `Server`, `Via`, `Referer` and `From`._
-
   Look also at the most excellent comment about this (by [specializt](https://serverfault.com/users/67666/specializt)):
 
   > _Disregarding important security factors like "no version numbers" and probably even "no server vendor name" entirely is just ... a beginners mistake. Of course security through obscurity does nothing for your security itself but it sure as hell will at least protect against the most mundane, simplistic attack vectors - security through obscurity is a necessary step, it may be the first one and should never be the last security measurement -skipping it completely is a very bad mistake, even the most secure webservers can be cracked if a version-specific attack vector is known._
@@ -2630,11 +2630,15 @@ server_tokens off;
 
   > The `Server` response-header field contains information about the software used by the origin server to handle the request. This string is used by places like Alexa and Netcraft to collect statistics about how many and of what type of web server are live on the Internet.
 
-  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software and technologies via the server header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc. The attacker collects all available information about the application and its environment. Information about the technologies used and the software versions are extremely valuable information.
+  > One of the easiest first steps to undertake, is to prevent the web server from showing its used software and technologies via the `Server` header. Certainly, there are several reasons why you would like to change the server header. It could be security, it could be redundant systems, load balancers etc. The attacker collects all available information about the application and its environment. Information about the technologies used and the software versions are extremely valuable information.
 
   > And in my opinion, there is no real reason or need to show this much information about your server. It is easy to look up particular vulnerabilities once you know the version number. However, it's not information you need to give out, so I am generally in favour of removing it, where this can be accomplished with minimal effort.
 
   > You should compile NGINX from sources with `ngx_headers_more` to used `more_set_headers` directive or use a [nginx-remove-server-header.patch](https://gitlab.com/buik/nginx/blob/master/nginx-remove-server-header.patch).
+
+  Maybe it's a very restrictive approach but the guidelines from [RFC 2616 - Personal Information](https://tools.ietf.org/html/rfc2616#section-15.1) are always very helpful to me:
+
+  > _History shows that errors in this area often create serious security and/or privacy problems and generate highly adverse publicity for the implementor's company. [...] Like any generic data transfer protocol, HTTP cannot regulate the content of the data that is transferred, nor is there any a priori method of determining the sensitivity of any particular piece of information within the context of any given request. Therefore, applications SHOULD supply as much control over this information as possible to the provider of that information. Four header fields are worth special mention in this context: `Server`, `Via`, `Referer` and `From`._
 
   The Official Apache Documentation (yep, it's not a joke, in my opinion that's an interesting point of view) say:
 
@@ -2688,21 +2692,35 @@ http {
 
   > When NGINX is used to proxy requests to an upstream server (such as a PHP-FPM instance), it can be beneficial to hide certain headers sent in the upstream response (e.g. the version of PHP running).
 
+  > You should use `proxy_hide_header` (or Lua module) to hide/remove headers from upstream servers returned to your NGINX reverse proxy (and consequently to the client).
+
 ###### Example
 
 ```nginx
+# Hide some standard response headers:
 proxy_hide_header X-Powered-By;
 proxy_hide_header X-AspNetMvc-Version;
 proxy_hide_header X-AspNet-Version;
 proxy_hide_header X-Drupal-Cache;
+
+# Hide some Amazon S3 specific response headers:
+proxy_hide_header X-Amz-Id-2;
+proxy_hide_header X-Amz-Request-Id;
+
+# Hide other risky response headers:
+proxy_hide_header X-Runtime;
 ```
 
 ###### External resources
 
 - [Remove insecure http headers](https://veggiespam.com/headers/)
+- [CRLF Injection and HTTP Response Splitting Vulnerability](https://www.netsparker.com/blog/web-security/crlf-http-header/)
+- [HTTP Response Splitting](https://owasp.org/www-community/attacks/HTTP_Response_Splitting)
+- [HTTP response header injection](https://portswigger.net/kb/issues/00200200_http-response-header-injection)
+- [X-Runtime header related attacks](https://stackoverflow.com/questions/38584331/x-runtime-header-related-attacks)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
-#### :beginner: Remove support for legacy and risky HTTP headers
+#### :beginner: Remove support for legacy and risky HTTP request headers
 
 ###### Rationale
 
@@ -2721,7 +2739,7 @@ proxy_hide_header X-Drupal-Cache;
 ###### Example
 
 ```nginx
-# Remove risky headers (the safest method):
+# Remove risky request headers (the safest method):
 proxy_set_header X-Original-URL "";
 proxy_set_header X-Rewrite-URL "";
 
@@ -2733,7 +2751,7 @@ proxy_set_header X-Forwarded-Host $host;
 
 ###### External resources
 
-- [CVE-2018-14773: Remove support for legacy and risky HTTP headers](https://symfony.com/blog/cve-2018-14773-remove-support-for-legacy-and-risky-http-headers)
+- [CVE-2018-14773: Remove support for legacy and risky HTTP request headers](https://symfony.com/blog/cve-2018-14773-remove-support-for-legacy-and-risky-http-headers)
 - [Local File Inclusion Vulnerability in Concrete5 version 5.7.3.1](https://hackerone.com/reports/59665)
 - [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning)
 - [Passing headers to the backend (from this handbook)](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
@@ -2782,7 +2800,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > If page is available over TLS, it must be composed completely of content which is transmitted over TLS. Requesting subresources using the insecure HTTP protocol weakens the security of the entire page and HTTPS protocol. Modern browsers should blocked or report all active mixed content delivered via HTTP on pages by default.
 
-  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-enable-http-strict-transport-security).
+  > Also remember to implement the [HTTP Strict Transport Security (HSTS)](#beginner-enable-http-strict-transport-security) and ensure proper configuration of TLS (versions, cipher suites, right certificate chain, and other).
 
   > We have currently the first free and open CA - [Let's Encrypt](https://letsencrypt.org/) - so generating and implementing certificates has never been so easy. It was created to provide free and easy-to-use TLS and SSL certificates.
 
@@ -2840,6 +2858,7 @@ proxy_set_header X-Forwarded-Host $host;
 - [Should we force user to HTTPS on website?](https://security.stackexchange.com/questions/23646/should-we-force-user-to-https-on-website)
 - [Force a user to HTTPS](https://security.stackexchange.com/questions/137542/force-a-user-to-https)
 - [The Security Impact of HTTPS Interception](https://jhalderm.com/pub/papers/interception-ndss17.pdf) <sup>[pdf]</sup>
+- [HTTPS with self-signed certificate vs HTTP (from this handbook)](#https-with-self-signed-certificate-vs-http)
 - [Enable HTTP Strict Transport Security - Hardening - P1 (from this handbook)](#beginner-enable-http-strict-transport-security)
 
 #### :beginner: Use min. 2048-bit private keys
@@ -2858,7 +2877,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > Use OpenSSL's `speed` command to benchmark the two types and compare results, e.g. `openssl speed rsa2048 rsa4096` or `openssl speed rsa`. Remember, however, in OpenSSL speed tests you see difference on block cipher speed, while in real life most CPU time is spent on asymmetric algorithms during SSL handshake. On the other hand, modern processors are capable of executing at least 1k of RSA 1024-bit signs per second on a single core, so this isn't usually an issue.
 
-  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over `RSA` certificates) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
+  > Use of alternative solution: [ECC Certificate Signing Request (CSR)](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography) - `ECDSA` certificates (are recommended over `RSA` certificates because offers same level of security with smaller key sizes) contain an `ECC` public key. `ECC` keys are better than `RSA & DSA` keys in that the `ECC` algorithm is harder to break. NGINX supports dual certificates, so you can get the leaner, meaner `ECC` certificates but still let visitors with older browsers browse your site.
 
   The "SSL/TLS Deployment Best Practices" book say:
 
@@ -2870,7 +2889,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   **My recommendation:**
 
-  > Use 2048-bit key instead of 4096-bit at this moment.
+  > Use 256-bit for `ECDSA` or 2048-bit key instead of 4096-bit for `RSA` at this moment.
 
 ###### Example
 
@@ -2919,6 +2938,8 @@ certbot certonly -d example.com -d www.example.com
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 - [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)
+- [ECDSA: Elliptic Curve Signatures](https://cryptobook.nakov.com/digital-signatures/ecdsa-sign-verify-messages)
+- [Comparison And Evaluation Of Digital Signature Schemes Employed In Ndn Network](https://arxiv.org/pdf/1508.00184.pdf) <sup>[pdf]</sup>
 - [HTTPS Performance, 2048-bit vs 4096-bit](https://blog.nytsoi.net/2015/11/02/nginx-https-performance)
 
 #### :beginner: Keep only TLS 1.3 and TLS 1.2
@@ -2929,9 +2950,9 @@ certbot certonly -d example.com -d www.example.com
 
   > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST]</sup>) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf).
 
-  > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be POODLEd, BEASTed and otherwise padding-Oracled as well. Lots of other CVE weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients).
+  > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be POODLEd, BEASTed and otherwise padding-Oracled as well. Lots of other CVE weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients). There are many other security risks caused by sticking to TLS 1.0 or 1.1, so I strongly recommend everyone updates their clients, services and devices to support min. TLS 1.2.
 
-  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, and `CBC` ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
+  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms and adds TLS extensions and cipher suites. TLS 1.2 improves cipher suites that reduce reliance on block ciphers that have been exploited by attacks like BEAST and the aforementioned POODLE. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, and `CBC` ciphers. TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions and doesn't require any particular configuration, as all of the ciphers are secure, and by default OpenSSL only enables `GCM` and `Chacha20/Poly1305` for TLSv1.3, without enabling `CCM`. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
 
@@ -3910,6 +3931,8 @@ location ^~ /assets/ {
 ###### Rationale
 
   > Generally HSTS is a way for websites to tell browsers that the connection should only ever be encrypted. This prevents MITM attacks, downgrade attacks, sending plain text cookies and session ids. The correct implementation of HSTS is an additional security mechanism in accordance with the principle of multilayer security (defense in depth).
+
+  > This header is great for performance because it instructs the browser to do the HTTP to HTTPS redirection client-side, without ever touching the network.
 
   > The header indicates for how long a browser should unconditionally refuse to take part in unsecured HTTP connection for a specific domain.
 
