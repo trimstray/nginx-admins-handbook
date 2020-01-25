@@ -125,11 +125,22 @@ For more information please see this amazing presentation: [ECC vs RSA: Battle o
 
 Look at this key-length comparison:
 
-<p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/rsa_ecc_comparison.png" alt="rsa_ecc_comparison">
-</p>
-
-<sup><i>This infographic comes from [AES and ECDH key (crypto.stackexchange)](https://crypto.stackexchange.com/questions/61248/aes-and-ecdh-key).</i></sup>
+```
++===+=================+========================+=================+
+|   |    Symmetric    | RSA and Diffie-Hellman | Elliptic Curve  |
+|   | Key Size (bits) |    Key Size (bits)     | Key Size (bits) |
++===+=================+========================+=================+
+| 1 |       80        |          1024          |       160       |
++---+-----------------+------------------------+-----------------+
+| 2 |      112        |         [2048]         |       224       |
++---+-----------------+------------------------+-----------------+
+| 3 |      128        |          3072          |      [256]      |
++---+-----------------+------------------------+-----------------+
+| 4 |      192        |          7680          |       384       |
++---+-----------------+------------------------+-----------------+
+| 5 |      256        |         15360          |       521       |
++---+-----------------+------------------------+-----------------+
+```
 
 Finally, I recommend to read [this](https://crypto.stackexchange.com/questions/61248/aes-and-ecdh-key) answer by [Maarten Bodewes](https://crypto.stackexchange.com/users/1172/maarten-bodewes):
 
@@ -163,7 +174,7 @@ Various cryptographic algorithms are used during establishing and later during t
 
 These four types of algorithms are combined into so-called cipher suites/sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is a type of elliptic curve (TLS cipher suites and elliptical curves are sometimes configure by using a single string like this).
 
-  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate. To use `RSA` cipher suites, you need an `RSA` certificate. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`) (recommended), or `RSA` (2048 bits).
+  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate and key. To use `RSA` cipher suites, you need an `RSA` certificate and key. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`) (recommended), or `RSA` (2048 bits).
 
 Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
@@ -175,9 +186,9 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
-  > There is a great [TLS Cipher Suite Search](https://ciphersuite.info/) engine with which you will get a lot of useful information about available ciphers.
+  > If you want to get a lot of useful information about available ciphers, see [TLS Cipher Suite Search](https://ciphersuite.info/) engine. For more, look also at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions.
 
-Finally, look at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions. I also recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/) and great answer by [dave_thompson_085](https://security.stackexchange.com/users/39571/dave-thompson-085) about [Role of the chosen ciphersuite in an SSL/TLS connection](https://security.stackexchange.com/questions/160429/role-of-the-chosen-ciphersuite-in-an-ssl-tls-connection/160445#160445).
+I recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/) and great answer about [Role of the chosen ciphersuite in an SSL/TLS connection](https://security.stackexchange.com/questions/160429/role-of-the-chosen-ciphersuite-in-an-ssl-tls-connection/160445#160445) (by [dave_thompson_085](https://security.stackexchange.com/users/39571/dave-thompson-085)).
 
 ##### Authenticated encryption (AEAD) cipher suites
 
@@ -411,11 +422,11 @@ Look at [this](https://stackoverflow.com/a/20578199) great explanation by [Kevin
 
   > _If you don't verify the certificate you are gaining nothing over unencrypted HTTP as anyone between you and the server could just generate their own certificate and you would be none the wiser. This could be considered worse than plain HTTP as us humans with our feeble emotions might be mislead into thinking that our connection is secure, but the only technical downside over HTTP is some wasted CPU cycles._
 
-**Security**
+- **Security**
 
 For me, a self-signed certificates are good to go for testing purposes and for internal services, on condition that you can trust the issuer of the certificate (but you are still implicitly authorizing the issuer by verifying manually certificate authority server is secure; no way of knowing who signed the certificate or if it should be trusted). Otherwise, they create the illusion of security (only provide encryption and an HTTPS connection), nothing more, so in principle, self-signed certificates should always raise doubts and be used only under controlled environments.
 
-**Performance**
+- **Performance**
 
 So the important thing to keep in mind is performance. In my opinion, HTTP is slower than HTTPS with HTTP/2 (e.g one TCP connection, multiplexing, HPACK headers compression), HSTS, OCSP Stapling and several other improvements, except the initial TLS handshake which requires two extra roundtrips (but I think TLS performance impact is not as important as it used to be). See also [HTTP vs HTTPS Test](http://www.httpvshttps.com/).
 

@@ -548,7 +548,7 @@ In addition, I would like to recommend three great docs focuses on the concept o
 
 If you love security keep your eye on this one: [Cryptology ePrint Archive](https://eprint.iacr.org/). It provides access to recent research in cryptology and explores many subjects of security (e.g. Ciphers, Algorithms, SSL/TLS protocols). A great introduction that covers core concepts of cryptography is [Practical Cryptography for Developers](https://cryptobook.nakov.com/). I also recommend to read the [Bulletproof SSL and TLS](https://www.feistyduck.com/books/bulletproof-ssl-and-tls/). Yep, it's definitely the most comprehensive book about deploying TLS for me.
 
-An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. Finally, [The Web Security Academy](https://portswigger.net/web-security) is a free online training center for web application security. It includes content from PortSwigger's in-house research team and high-quality reading materials and interactive labs of varying levels of difficulty. [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities and it's a great listing contains the definitions of all issues that can be detected by this tool. Both are really good source to start learning about web application security.
+An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities and it's a great listing contains the definitions of all issues that can be detected by this tool. Finally, [The Web Security Academy](https://portswigger.net/web-security) is a free online training center for web application security. It includes content from PortSwigger's in-house research team and high-quality reading materials and interactive labs of varying levels of difficulty. All are really good source to start learning about web application security.
 
 ## Prologue
 
@@ -1158,7 +1158,7 @@ Remember, these are only guidelines. My point of view may be different from your
 | [Never use a hostname in a listen or upstream directives](doc/RULES.md#beginner-never-use-a-hostname-in-a-listen-or-upstream-directive)<br><sup>While this may work, it will comes with a large number of issues.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Set the HTTP headers with add_header and proxy_*_header directives properly](doc/RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)<br><sup>Set the right security headers for all contexts.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Configure log rotation policy](doc/RULES.md#beginner-configure-log-rotation-policy)<br><sup>Save yourself trouble with your web server: configure appropriate logging policy.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
-| [Use simple custom error pages](doc/RULES.md#beginner-use-simple-custom-error-pages)<br><sup></sup> | Base Rules | ![high](static/img/priorities/high.png) |
+| [Use simple custom error pages](doc/RULES.md#beginner-use-simple-custom-error-pages)<br><sup>Default error pages reveals information which leads to information leakage vulnerability.</sup> | Base Rules | ![high](static/img/priorities/high.png) |
 | [Use HTTP/2](doc/RULES.md#beginner-use-http2)<br><sup>HTTP/2 will make our applications faster, simpler, and more robust.</sup> | Performance | ![high](static/img/priorities/high.png) |
 | [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)<br><sup>Use newest NGINX package to fix vulnerabilities, bugs, and to use new features.</sup> | Hardening | ![high](static/img/priorities/high.png) |
 | [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)<br><sup>Use the principle of least privilege. This way only master process runs as root.</sup> | Hardening | ![high](static/img/priorities/high.png) |
@@ -1306,7 +1306,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
-  > It provides less restrictive setup with 2048-bit private key, TLS 1.3 and 1.2, and also modern strict TLS cipher suites (128/256-bits). The final grade is also in line with the industry standards and guidance. Recommend using this configuration.
+  > It provides less restrictive setup with 2048-bit key for `RSA` and 256-bit key for `ECC`, TLS 1.3 and 1.2, modern strict TLS cipher suites (128/256-bits), and 2048-bit predefined `DHE` groups recommended by Mozilla. The final grade is also in line with the industry standards and guidance. Recommend using this configuration.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
