@@ -3374,12 +3374,12 @@ At the end, summary about directives to manipulate headers:
 - `add_header` is to add header to response
 - `proxy_hide_header` is to hide a response header
 
-We also have the ability to manipulate request and response headers using the [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) module:
+We also have the ability to manipulate request and response headers using the [headers-more-nginx-module](https://github.com/openresty/headers-more-nginx-module) module:
 
-- `more_set_headers` - replaces (if any) or adds (if not any) the specified output headers when the response status code matches the codes specified by the `-s` option AND the response content type matches the types specified by the `-t` option
-- `more_clear_headers` - clears the specified output headers when the response status code matches the codes specified by the `-s` option AND the response content type matches the types specified by the `-t`
-- `more_set_input_headers` - very much like `more_set_headers` except that it operates on input headers (or request headers) and it only supports the `-t` option (in this directive means filtering by the `Content-Type` request header)
-- `more_clear_input_headers` - very much like `more_clear_headers` except that it operates on input headers (or request headers) and it only supports the `-t` option (in this directive means filtering by the `Content-Type` request header)
+- `more_set_headers` - replaces (if any) or adds (if not any) the specified output headers
+- `more_clear_headers` - clears the specified output headers
+- `more_set_input_headers` - very much like `more_set_headers` except that it operates on input headers (or request headers)
+- `more_clear_input_headers` - very much like `more_clear_headers` except that it operates on input headers (or request headers)
 
 See also the following diagram:
 
