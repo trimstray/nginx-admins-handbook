@@ -944,7 +944,7 @@ Given the above to change/improve the limitations you should:
     ```bash
     # Set the limit for file descriptors for a single worker process (change it as needed):
     #   nginx.conf within the main context
-    worker_rlimit_nofile          10000;
+    worker_rlimit_nofile 10000;
 
     # You need to reload the NGINX service:
     nginx -s reload
@@ -1090,18 +1090,18 @@ NGINX provides the two layers to enable Keep-Alive:
 
   ```nginx
   # Default: 100
-  keepalive_requests  256;
+  keepalive_requests 256;
   ```
 
 - server will close connection after this time. A higher number may be required when there is a larger amount of traffic to ensure there is no frequent TCP connection re-initiated. If you set it lower, you are not utilizing keep-alives on most of your requests slowing down client:
 
   ```nginx
   # Default: 75s
-  keepalive_timeout   10s;
+  keepalive_timeout 10s;
 
   # Or tell the browser when it should close the connection by adding an optional second timeout
   # in the header sent to the browser (some browsers do not care about the header):
-  keepalive_timeout   10s 25s;
+  keepalive_timeout 10s 25s;
   ```
 
   > Increase this to allow the keepalive connection to stay open longer, resulting in faster subsequent requests. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible. You could also decrease little by little the timeout (75s -> 50, then later 25...) and see how the server behaves.
@@ -1112,7 +1112,7 @@ NGINX provides the two layers to enable Keep-Alive:
 
   ```nginx
   # Default: disable
-  keepalive           32;
+  keepalive 32;
   ```
 
 NGINX, by default, only talks on HTTP/1.0 to the upstream servers. To keep TCP connection alive both upstream section and origin server should be configured to not finalise the connection.
@@ -1134,7 +1134,7 @@ upstream bk_x8080 {
 
   # Sets the maximum number of idle keepalive connections to upstream servers
   # that are preserved in the cache of each worker process.
-  keepalive         16;
+  keepalive 16;
 
 }
 ```
@@ -1149,12 +1149,12 @@ server {
   location / {
 
     # Default is HTTP/1, keepalive is only enabled in HTTP/1.1:
-    proxy_http_version  1.1;
+    proxy_http_version 1.1;
     # Remove the Connection header if the client sends it,
     # it could be "close" to close a keepalive connection:
-    proxy_set_header    Connection "";
+    proxy_set_header Connection "";
 
-    proxy_pass          http://bk_x8080;
+    proxy_pass http://bk_x8080;
 
   }
 
@@ -1343,7 +1343,7 @@ Summarizing:
 So in fact, the most important changes are listed below:
 
 ```nginx
-sendfile   on;
+sendfile on;
 tcp_nopush on;    # with this, the tcp_nodelay does not really matter
 ```
 
@@ -1663,57 +1663,57 @@ Ok, so here's a more complicated configuration:
 ```nginx
 server {
 
- listen           80;
- server_name      xyz.com www.xyz.com;
+ listen 80;
+ server_name xyz.com www.xyz.com;
 
  location ~ ^/(media|static)/ {
-  root            /var/www/xyz.com/static;
-  expires         10d;
+  root /var/www/xyz.com/static;
+  expires 10d;
  }
 
  location ~* ^/(media2|static2) {
-  root            /var/www/xyz.com/static2;
-  expires         20d;
+  root /var/www/xyz.com/static2;
+  expires 20d;
  }
 
  location /static3 {
-  root            /var/www/xyz.com/static3;
+  root /var/www/xyz.com/static3;
  }
 
  location ^~ /static4 {
-  root            /var/www/xyz.com/static4;
+  root /var/www/xyz.com/static4;
  }
 
  location = /api {
-  proxy_pass      http://127.0.0.1:8080;
+  proxy_pass http://127.0.0.1:8080;
  }
 
  location / {
-  proxy_pass      http://127.0.0.1:8080;
+  proxy_pass http://127.0.0.1:8080;
  }
 
  location /backend {
-  proxy_pass      http://127.0.0.1:8080;
+  proxy_pass http://127.0.0.1:8080;
  }
 
  location ~ logo.xcf$ {
-  root            /var/www/logo;
-  expires         48h;
+  root /var/www/logo;
+  expires 48h;
  }
 
  location ~* .(png|ico|gif|xcf)$ {
-  root            /var/www/img;
-  expires         24h;
+  root /var/www/img;
+  expires 24h;
  }
 
  location ~ logo.ico$ {
-  root            /var/www/logo;
-  expires         96h;
+  root /var/www/logo;
+  expires 96h;
  }
 
  location ~ logo.jpg$ {
-  root            /var/www/logo;
-  expires         48h;
+  root /var/www/logo;
+  expires 48h;
  }
 
 }
@@ -1748,7 +1748,7 @@ And look the table with the results:
 
 Generally there are two ways of implementing redirects in NGINX: with `rewrite` and `return` directives.
 
-These directives (comes from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a location context are:
+These directives (comes from the `ngx_http_rewrite_module`) are very useful but (from the NGINX documentation) the only 100% safe things which may be done inside if in a `location` context are:
 
 - `return ...;`
 - `rewrite ... last;`
@@ -1768,10 +1768,10 @@ location / {
 
   ...
 
-  rewrite   ^/users/(.*)$       /user.php?username=$1 last;
+  rewrite ^/users/(.*)$ /user.php?username=$1 last;
 
   # or:
-  rewrite   ^/users/(.*)/items$ /user.php?username=$1&page=items last;
+  rewrite ^/users/(.*)/items$ /user.php?username=$1&page=items last;
 
 }
 ```
@@ -1823,11 +1823,9 @@ Note:
 
 <sup><i>This explanation is based on the awesome answer by [Pothi Kalimuthu](https://serverfault.com/users/102173/pothi-kalimuthu) to [nginx url rewriting: difference between break and last](https://serverfault.com/a/829148).</i></sup>
 
-Official documentation has a great tutorials about [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html).
+Official documentation has a great tutorials about [Creating NGINX Rewrite Rules](https://www.nginx.com/blog/creating-nginx-rewrite-rules/) and [Converting rewrite rules](https://nginx.org/en/docs/http/converting_rewrite_rules.html). I also recommend [Clean Url Rewrites Using Nginx](https://www.codesmite.com/article/clean-url-rewrites-using-nginx).
 
-I also recommend [Clean Url Rewrites Using Nginx](https://www.codesmite.com/article/clean-url-rewrites-using-nginx).
-
-Finally, look at difference between `last` and `break` flags in action:
+Finally, look at the difference between `last` and `break` flags in action:
 
 - `last` directive:
 
@@ -1859,7 +1857,7 @@ I use `return` directive in the following cases:
 
     ...
 
-    return  301 https://example.com$request_uri;
+    return 301 https://example.com$request_uri;
 
   }
   ```
@@ -1871,10 +1869,10 @@ I use `return` directive in the following cases:
 
     ...
 
-    # It's only example. You shouldn't use 'if' statement in the following case.
+    # It's only example. You shouldn't use 'if' statement in the following case:
     if ($host = www.example.com) {
 
-      return  301 https://example.com$request_uri;
+      return 301 https://example.com$request_uri;
 
     }
 
@@ -2090,19 +2088,19 @@ Example of usage `if` and `set` directives:
 # It comes from: https://gist.github.com/jrom/1760790:
 if ($request_uri = /) {
 
-  set $test  A;
+  set $test A;
 
 }
 
 if ($host ~* example.com) {
 
-  set $test  "${test}B";
+  set $test "${test}B";
 
 }
 
 if ($http_cookie !~* "auth_token") {
 
-  set $test  "${test}C";
+  set $test "${test}C";
 
 }
 
@@ -2340,7 +2338,9 @@ request URI
 
 ##### `allow` and `deny`
 
-Both comes from the `ngx_http_access_module` module allows limiting access to certain client addresses. You can combining `allow/deny` rules.
+  > **:bookmark: [Take care about your ACL rules - Hardening - P1](RULES.md#beginner-take-care-about-your-acl-rules)**
+
+Both comes from the `ngx_http_access_module` module and allows limiting access to certain client addresses. You can combining `allow/deny` rules.
 
 The easiest path would be to start out by denying all access, then only granting access to those locations you want.
 
@@ -2751,8 +2751,8 @@ server {
 
   location /api/v4 {
 
-    access_log    logs/access_req_body.log req_body_logging;
-    proxy_pass    http://127.0.0.1;
+    access_log logs/access_req_body.log req_body_logging;
+    proxy_pass http://127.0.0.1;
 
     ...
 
@@ -2760,8 +2760,8 @@ server {
 
   location = /post.php {
 
-    access_log    /var/log/nginx/postdata.log req_body_logging;
-    fastcgi_pass  php_cgi;
+    access_log /var/log/nginx/postdata.log req_body_logging;
+    fastcgi_pass php_cgi;
 
     ...
 
@@ -2873,7 +2873,7 @@ It is possible to proxy requests to:
   ```nginx
   upstream bk_front {
 
-    server 192.168.252.20:8080  weight=5;
+    server 192.168.252.20:8080 weight=5;
     server 192.168.252.21:8080
 
   }
@@ -2882,31 +2882,31 @@ It is possible to proxy requests to:
 
     location / {
 
-      proxy_pass    http://bk_front;
+      proxy_pass http://bk_front;
 
     }
 
     location /api {
 
-      proxy_pass    http://192.168.21.20:8080;
+      proxy_pass http://192.168.21.20:8080;
 
     }
 
     location /info {
 
-      proxy_pass    http://localhost:3000;
+      proxy_pass http://localhost:3000;
 
     }
 
     location /ra-client {
 
-      proxy_pass    http://10.0.11.12:8080/guacamole/;
+      proxy_pass http://10.0.11.12:8080/guacamole/;
 
     }
 
     location /foo/bar/ {
 
-      proxy_pass    http://www.example.com/url/;
+      proxy_pass http://www.example.com/url/;
 
     }
 
@@ -2926,8 +2926,8 @@ It is possible to proxy requests to:
 
       location ~ ^/.+\.php(/|$) {
 
-        fastcgi_pass    127.0.0.1:9000;
-        include         /etc/nginx/fcgi_params;
+        fastcgi_pass 127.0.0.1:9000;
+        include /etc/nginx/fcgi_params;
 
       }
 
@@ -2943,10 +2943,10 @@ It is possible to proxy requests to:
 
       location / {
 
-        root            html;
-        uwsgi_pass      django_cluster;
-        uwsgi_param     UWSGI_SCRIPT testapp;
-        include         /etc/nginx/uwsgi_params;
+        root html;
+        uwsgi_pass django_cluster;
+        uwsgi_param UWSGI_SCRIPT testapp;
+        include /etc/nginx/uwsgi_params;
 
       }
 
@@ -2962,8 +2962,8 @@ It is possible to proxy requests to:
 
       location / {
 
-        scgi_pass       127.0.0.1:4000;
-        include         /etc/nginx/scgi_params;
+        scgi_pass 127.0.0.1:4000;
+        include /etc/nginx/scgi_params;
 
       }
 
@@ -2979,16 +2979,16 @@ It is possible to proxy requests to:
 
       location / {
 
-        set            $memcached_key "$uri?$args";
+        set $memcached_key "$uri?$args";
         memcached_pass memc_instance:4004;
 
-        error_page     404 502 504 = @memc_fallback;
+        error_page 404 502 504 = @memc_fallback;
 
       }
 
       location @memc_fallback {
 
-        proxy_pass     http://backend;
+        proxy_pass http://backend;
 
       }
 
@@ -3004,17 +3004,17 @@ It is possible to proxy requests to:
 
       location / {
 
-        set            $redis_key $uri;
+        set $redis_key $uri;
 
-        redis_pass     redis_instance:6379;
-        default_type   text/html;
-        error_page     404 = /fallback;
+        redis_pass redis_instance:6379;
+        default_type text/html;
+        error_page 404 = /fallback;
 
       }
 
       location @fallback {
 
-        proxy_pass     http://backend;
+        proxy_pass http://backend;
 
       }
 
@@ -3048,15 +3048,15 @@ location /public/ {
 }
 ```
 
-and go to `http://example.com/public`, NGINX will automatically redirect you to `http://example.com/public/`.
+And go to `http://example.com/public`, NGINX will automatically redirect you to `http://example.com/public/`.
 
 Look also at this example:
 
 ```nginx
 location /foo/bar/ {
 
-  # proxy_pass  http://example.com/url/;
-  proxy_pass    http://192.168.100.20/url/;
+  # proxy_pass http://example.com/url/;
+  proxy_pass http://192.168.100.20/url/;
 
 }
 ```
@@ -3065,12 +3065,12 @@ If the URI is specified along with the address, it replaces the part of the requ
 
 If the address is specified without a URI, or it is not possible to determine the part of URI to be replaced, the full request URI is passed (possibly, modified).
 
-Look also at this. Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`:
+Here is an example with trailing slash in location, but no trailig slash in `proxy_pass`:
 
 ```nginx
 location /foo/ {
 
-  proxy_pass  http://127.0.0.1:8080/bar;
+  proxy_pass http://127.0.0.1:8080/bar;
 
 }
 ```
@@ -3112,7 +3112,7 @@ When NGINX proxies a request, it automatically makes some adjustments to the req
 
 - NGINX drop empty headers. There is no point of passing along empty values to another server; it would only serve to bloat the request
 
-- NGINX, by default, will consider any header that contains underscores as invalid. It will remove these from the proxied request. If you wish to have NGINX interpret these as valid, you can set the `underscores_in_headers` directive to `on`, otherwise your headers will never make it to the backend server
+- NGINX, by default, will consider any header that contains underscores as invalid. It will remove these from the proxied request. If you wish to have NGINX interpret these as valid, you can set the `underscores_in_headers` directive to `on`, otherwise your headers will never make it to the backend server. Underscores in header fields are allowed ([RFC 7230, sec. 3.2.](https://tools.ietf.org/html/rfc7230#section-3.2)), but indeed uncommon
 
 It is important to pass more than just the URI if you expect the upstream server handle the request properly. The request coming from NGINX on behalf of a client will look different than a request coming directly from a client.
 
@@ -3137,13 +3137,13 @@ Ok, so look at the following short explanation about proxy directives (for more 
 - `proxy_http_version` - defines the HTTP protocol version for proxying, by default it it set to 1.0. For Websockets and keepalive connections you need to use the version 1.1:
 
   ```nginx
-  proxy_http_version  1.1;
+  proxy_http_version 1.1;
   ```
 
 - `proxy_cache_bypass` - sets conditions under which the response will not be taken from a cache:
 
   ```nginx
-  proxy_cache_bypass  $http_upgrade;
+  proxy_cache_bypass $http_upgrade;
   ```
 
 - `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (as opposed to the error page on the backend side):
@@ -3238,8 +3238,8 @@ In step 6 above, the Proxy is setting the HTTP header `X-Forwarded-Proto: https`
 
 You can read about how to set it up correctly here:
 
-- [Set correct scheme passed in X-Forwarded-Proto](RULES.md#set-correct-scheme-passed-in-x-forwarded-proto)
-- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy](RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
+- [Set correct scheme passed in X-Forwarded-Proto](HELPERS.md#set-correct-scheme-passed-in-x-forwarded-proto)
+- [Don't use X-Forwarded-Proto with $scheme behind reverse proxy - Reverse Proxy - P1](RULES.md#beginner-dont-use-x-forwarded-proto-with-scheme-behind-reverse-proxy)
 
 ###### A warning about the `X-Forwarded-For`
 
@@ -3271,19 +3271,19 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
     ```nginx
     # Add these to the set_real_ip.conf, there are the real IPs where your traffic
     # is coming from (front proxy/lb):
-    set_real_ip_from    192.168.20.10; # IP address of master
-    set_real_ip_from    192.168.20.11; # IP address of slave
+    set_real_ip_from 192.168.20.10; # IP address of master
+    set_real_ip_from 192.168.20.11; # IP address of slave
 
     # You can also add an entire subnet:
-    set_real_ip_from    192.168.40.0/24;
+    set_real_ip_from 192.168.40.0/24;
 
     # Defines a request header field used to send the address for a replacement,
     # in this case We use X-Forwarded-For:
-    real_ip_header      X-Forwarded-For;
+    real_ip_header X-Forwarded-For;
 
     # The real IP from your client address that matches one of the trusted addresses
     # is replaced by the last non-trusted address sent in the request header field:
-    real_ip_recursive   on;
+    real_ip_recursive on;
 
     # Include it to the appropriate context:
     server {
@@ -3374,6 +3374,19 @@ At the end, summary about directives to manipulate headers:
 - `add_header` is to add header to response
 - `proxy_hide_header` is to hide a response header
 
+We also have the ability to manipulate request and response headers using the [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module) module:
+
+- `more_set_headers` - replaces (if any) or adds (if not any) the specified output headers when the response status code matches the codes specified by the `-s` option AND the response content type matches the types specified by the `-t` option
+- `more_clear_headers` - clears the specified output headers when the response status code matches the codes specified by the `-s` option AND the response content type matches the types specified by the `-t`
+- `more_set_input_headers` - very much like `more_set_headers` except that it operates on input headers (or request headers) and it only supports the `-t` option (in this directive means filtering by the `Content-Type` request header)
+- `more_clear_input_headers` - very much like `more_clear_headers` except that it operates on input headers (or request headers) and it only supports the `-t` option (in this directive means filtering by the `Content-Type` request header)
+
+See also the following diagram:
+
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/reverse-proxy/headers_processing.png" alt="headers_processing">
+</p>
+
 #### Load balancing algorithms
 
 Load Balancing is in principle a wonderful thing really. You can find out about it when you serve tens of thousands (or maybe more) of requests every second. Of course, load balancing is not the only reason - think also about maintenance tasks without downtime.
@@ -3444,9 +3457,9 @@ This method is similar to the Round Robin in a sense that the manner by which re
 ```nginx
 upstream bck_testing_01 {
 
-  server 192.168.250.220:8080   weight=3;
-  server 192.168.250.221:8080;              # default weight=1
-  server 192.168.250.222:8080;              # default weight=1
+  server 192.168.250.220:8080 weight=3;
+  server 192.168.250.221:8080;           # default weight=1
+  server 192.168.250.222:8080;           # default weight=1
 
 }
 ```
@@ -3487,9 +3500,9 @@ upstream bck_testing_01 {
 
   least_conn;
 
-  server 192.168.250.220:8080   weight=3;
-  server 192.168.250.221:8080;              # default weight=1
-  server 192.168.250.222:8080;              # default weight=1
+  server 192.168.250.220:8080 weight=3;
+  server 192.168.250.221:8080;           # default weight=1
+  server 192.168.250.222:8080;           # default weight=1
 
 }
 ```
@@ -3576,7 +3589,7 @@ server {
 
   location / {
 
-    proxy_pass    http://$bck_testing_01;
+    proxy_pass http://$bck_testing_01;
 
   }
 
