@@ -571,7 +571,7 @@ These are definitely the best assets for us and in the first place you should se
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. Configuration of the NGINX can be tricky sometimes and you really need to get into the syntax and concepts to get an understanding tricks, loopholes, and mechanisms. The documentation isn't as pretty as other projects and should certainly include more robust examples.
 
-  > _This handbook is a set of rules and recommendations for the NGINX HTTP server. It also contains the best practices, notes, and helpers with countless examples. Many of them refer to external resources._
+  > _This handbook is a set of rules and recommendations for the NGINX Open Source HTTP server. It also contains the best practices, notes, and helpers with countless examples. Many of them refer to external resources._
 
 There are a lot of things you can do to improve in your NGINX instance and this guide will attempt to cover as many of them as possible. For the most part, it contains the most important things about NGINX for me. I think the configuration you provided should work without any talisman. That's why I created this repository.
 
@@ -1306,7 +1306,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 - **A+** on @ssllabs and **120/100** on @mozilla observatory with TLS 1.3 support:
 
-  > It provides less restrictive setup with 2048-bit key for `RSA` and 256-bit key for `ECC`, TLS 1.3 and 1.2, modern strict TLS cipher suites (128/256-bits), and 2048-bit predefined `DHE` groups recommended by Mozilla. The final grade is also in line with the industry standards and guidance. Recommend using this configuration.
+  > It provides less restrictive setup with 2048-bit key for `RSA` or 256-bit key for `ECC`, TLS 1.3 and 1.2, modern strict TLS cipher suites (128/256-bits), and 2048-bit predefined `DH` groups recommended by Mozilla. The final grade is also in line with the industry standards and guidance. Recommend using this, for me, it is very reasonable configuration.
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/cheatsheets/nginx-hardening-cheatsheet-tls13.png" alt="nginx-hardening-cheatsheet-tls13" width="92%" height="92%">
@@ -1326,7 +1326,7 @@ For more information please see [HTTP Static Error Pages Generator](https://gith
 
 ## Server names parser
 
-I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as a `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts in NGINX.
+I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as a `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts from file or the active configuration.
 
 Example of use:
 

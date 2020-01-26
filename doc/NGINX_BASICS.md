@@ -99,7 +99,7 @@ For upstream NGINX packaging paths can be as follows (it depends on the type of 
   * other locations: `/var/lib/nginx`
 
 - `/etc/nginx/conf` - contains custom/vhosts configuration files
-  * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled` (I can't stand this debian-like convention...)
+  * other locations:  `/etc/nginx/conf.d`, `/etc/nginx/sites-enabled` (I can't stand this debian/apache-like convention)
 
 - `/var/run/nginx` - contains information about NGINX process(es)
   * other locations: `/usr/local/nginx/logs`, `logs/` in root directory
@@ -193,7 +193,7 @@ Something about testing configuration:
   > **:bookmark: [Organising Nginx configuration - Base Rules - P2](RULES.md#beginner-organising-nginx-configuration)**<br>
   > **:bookmark: [Format, prettify and indent your Nginx code - Base Rules - P2](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
 
-NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me NGINX configuration has a simple and very transparent structure.
+NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me, NGINX configuration has a simple and very transparent structure.
 
 ##### Comments
 
@@ -205,9 +205,9 @@ Lines containing directives must end with a semicolon (`;`), otherwise NGINX wil
 
 ##### Variables, Strings, and Quotes
 
-Variables start with `$`. Some modules introduce variables can be used when setting directives.
+Variables start with `$` and that get set automaticaly for each request. The ability to set variables at runtime and control logic flow based on them is part of the rewrite module and not a general feature of NGINX. By default, we cannot modify built-in variables like `$host` or `$request_uri`.
 
-  > There are some directives that do not support variables, e.g. `access_log` or `error_log`.
+  > There are some directives that do not support variables, e.g. `access_log` (is really the exception because can contain variables with restrictions) or `error_log`. Variables probably can't be (and shouldn't be because they are evaluated in the run-time during the processing of each request and rather costly compared to plain static configuration) declared anywhere, with very few exceptions: `root` directive can contains variables, `server_name` directive only allows strict `$hostname` built-in value as a variable-like notation (but it's more like a magic constant). If you use variables in `if` context, you can only set them in `if` conditions (and maybe rewrite directives). Don’t try to use them elsewhere.
 
 To assign value to the variable you should use a `set` directive:
 
@@ -235,10 +235,10 @@ Quotes are required for values which are containing space(s) and/or some other s
 
 ```nginx
 # 1)
-add_header X-Header "nginx web server;";
+add_header My-Header "nginx web server;";
 
 # 2)
-add_header X-Header nginx\ web\ server\;;
+add_header My-Header nginx\ web\ server\;;
 ```
 
 Variables in quoted strings are expanded normally unless the `$` is escaped.
@@ -362,6 +362,10 @@ include /etc/nginx/conf/*.conf;
 ```
 
   > You cannot use variables in NGINX config file includes. This is because includes are processed before any variables are evaluated.
+
+See also [this](http://nginx.org/en/docs/faq/variables_in_config.html):
+
+  > _Variables should not be used as template macros. Variables are evaluated in the run-time during the processing of each request, so they are rather costly compared to plain static configuration. Using variables to store static strings is also a bad idea. Instead, a macro expansion and "include" directives should be used to generate configs more easily and it can be done with the external tools, e.g. sed + make or any other common template mechanism._
 
 ##### Measurement units
 
@@ -553,15 +557,15 @@ Then, if the shutdown timer was set, after the `worker_shutdown_timeout` interva
 
   > By default, NGINX to wait for and process additional data from a client before fully closing a connection, but only if heuristics suggests that a client may be sending more data.
 
-Sometimes, you can see `nginx: worker process is shutting down` in your log file. The problem occurs when reloading the configuration - where NGINX usually exits the existing worker processes gracefully. Some of these processes were sticking around for hours. Every config reload was dropping a zombie workers, permanently eating up all of your system's memory.
+Sometimes, you can see `nginx: worker process is shutting down` in your log file. The problem occurs when reloading the configuration - where NGINX usually exits the existing worker processes gracefully, but at times, it takes hours to close these processes. Every config reload may dropping a zombie workers, permanently eating up all of your system's memory. In this case, fast shutdown of worker processes might be a solution.
 
-Setting `worker_shutdown_timeout` solve the issue:
+In addition, setting `worker_shutdown_timeout` also solve the issue:
 
 ```nginx
 worker_shutdown_timeout 60s;
 ```
 
-60 seconds matches our request and connect timeouts so nothing valid should last longer than that.
+Test connection timeouts and how long your request is processed by a server, next adjust the `worker_shutdown_timeout` value to these values. 60 seconds is a value with a solid supply and nothing valid should last longer than that.
 
 #### Connection processing
 
@@ -638,7 +642,7 @@ Be sure to recommend to read [this](https://trac.nginx.org/nginx/ticket/1610#com
   > To further investigate things, please do the following:
   >   - upgrade to the latest mainline versions, without any 3rd party modules, and check if you are able to reproduce the issue
   >   - try disabling HTTP/2 to see if it fixes the issue
-  >   - check if you are seeing `open socket ... left in connection ...` alerts on configuration reload
+  >   - check if you are seeing `open socket ... left in connection ...` (socket leaks) alerts on configuration reload
 
 See also [Debugging socket leaks (from this handbook)](HELPERS.md#debugging-socket-leaks).
 
@@ -747,7 +751,7 @@ I've seen some admins does directly translate the sum of `worker_processes` and 
 
   > That is a HTTP/1.1 limit (6-8) of concurrent HTTP calls, the best solution to improve performance (without upgrade the hardware and use cache at the middle (e.g. CDN, Varnish)) is using HTTP/2 ([RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>) instead of HTTP/1.1.
   >
-  > HTTP/2 multiplex many HTTP requests on a single connection. When HTTP/1.1 has a limit of 6-8 roughly, HTTP/2 does not have a standard limit but say that "_It is recommended that this value (`SETTINGS_MAX_CONCURRENT_STREAMS`) be no smaller than 100_" (RFC 7540). That number is better than 6-8.
+  > HTTP/2 multiplex many HTTP requests on a single connection. When HTTP/1.1 has a limit of 6-8 roughly, HTTP/2 does not have a standard limit but say: "_It is recommended that this value (`SETTINGS_MAX_CONCURRENT_STREAMS`) be no smaller than 100_" (RFC 7540). That number is better than 6-8.
 
 Additionally, you must know that the `worker_connections` directive **includes all connections** per worker (e.g. connection structures are used for listen sockets, internal control sockets between NGINX processes, connections with proxied servers, and for upstream connections), not only incoming connections from clients.
 
@@ -778,7 +782,7 @@ worker_rlimit_nofile 256;
  24434        256 256
 ```
 
-This is also controlled by the OS because the worker is not the only process running on the machine. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible.
+This is also controlled by the OS because the worker is not the only process running on the server. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible.
 
 In my opinion, relying on the `RLIMIT_NOFILE` than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set, but you should keep a constant eye on the priority of the limits.
 
@@ -1010,7 +1014,9 @@ nginx: master process         = LimitNOFILE (35,000)
   \_ nginx: worker process    = LimitNOFILE (35,000), worker_rlimit_nofile (10,000)
   \_ nginx: worker process    = LimitNOFILE (35,000), worker_rlimit_nofile (10,000)
 
-                              = master (35,000), all workers (140,000 or 40,000)
+                              = master (35,000), all workers:
+                                                 - 140,000 by LimitNOFILE
+                                                 - 40,000 by worker_rlimit_nofile
 ```
 
 Look also at this great article about [Optimizing Nginx for High Traffic Loads](https://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/).
@@ -1343,7 +1349,7 @@ tcp_nopush on;    # with this, the tcp_nodelay does not really matter
 
 #### Request processing stages
 
-  > When building filtering rules (e.g. with `allow/deny`) you should always remember to test them and to know what happens at each of the phases (which modules are used). For additional information about the potential problems, look at [allow and deny](#allow-and-deny) section.
+  > When building filtering rules (e.g. with `allow/deny`) you should always remember to test them and to know what happens at each of the phases (which modules are used). For additional information about the potential problems, look at [allow and deny](#allow-and-deny) section and [Take care about your ACL rules - Hardening - P1](RULES.md#beginner-take-care-about-your-acl-rules).
 
 There can be altogether 11 phases when NGINX handles (processes) a request:
 

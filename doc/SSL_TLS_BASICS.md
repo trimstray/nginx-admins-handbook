@@ -157,7 +157,7 @@ To secure the transfer of data, TLS/SSL uses one or more cipher suites. A cipher
 
   > TLS 1.1 uses the same ciphers as TLS 1.0, therefore OpenSSL does not make a distinction between the two. When it supports a cipher suite for TLS 1.1, it also supports it for TLS 1.0, and vice versa. TLS 1.2 and TLS 1.3 have its own set of cipher suites. In TLS 1.3 they are configured in OpenSSL, are enabled by default, and selected automatically (not need to be set in the configuration).
 
-In the SSL handshake, the client begins by informing the server what ciphes it supports. The cipher suites are usually arranged in order of security. The server then compares those cipher suites with the cipher suites that are enabled on its side. As soon as it finds a match, it then informs the client, and the chosen cipher suite's algorithms are called into play.
+In the SSL handshake, the client begins by informing the server what ciphers it supports. The cipher suites are usually arranged in order of security. The server then compares those cipher suites with the cipher suites that are enabled on its side. As soon as it finds a match, it then informs the client, and the chosen cipher suite's algorithms are called into play.
 
   > Note: The client suggests the Cipher Suite but the server chooses. The Cipher Suite decision is in the hands of the server. The server then negotiates and selects a specific cipher suite to use in the communication. If the server is not prepared to use any of the cipher suites advertised by the client, then it will not allow the session
 
@@ -174,7 +174,7 @@ Various cryptographic algorithms are used during establishing and later during t
 
 These four types of algorithms are combined into so-called cipher suites/sets, for example, the `TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256` uses ephemeral elliptic curve Diffie-Hellman (`ECDHE`) to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `RSA_WITH_AES_128_CBC_SHA256` - this means that an RSA key exchange is used in conjunction with `AES-128-CBC` (the symmetric cipher) and `SHA256` hashing is used for message authentication. `P256` is a type of elliptic curve (TLS cipher suites and elliptical curves are sometimes configure by using a single string like this).
 
-  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate and key. To use `RSA` cipher suites, you need an `RSA` certificate and key. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`) (recommended), or `RSA` (2048 bits).
+  > To use `ECDSA` cipher suites, you need an `ECDSA` certificate and key. To use `RSA` cipher suites, you need an `RSA` certificate and key. `ECDSA `certificates are recommended over `RSA` certificates. I think, the minimum configuration is `ECDSA` (`P-256`), or `RSA` (2048 bits).
 
 Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
@@ -186,7 +186,7 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
-  > If you want to get a lot of useful information about available ciphers, see [TLS Cipher Suite Search](https://ciphersuite.info/) engine. For more, look also at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS versions.
+  > If you want to get a lot of useful information about available ciphers, see [TLS Cipher Suite Search](https://ciphersuite.info/) engine. For more, look also at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS protocols.
 
 I recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/) and great answer about [Role of the chosen ciphersuite in an SSL/TLS connection](https://security.stackexchange.com/questions/160429/role-of-the-chosen-ciphersuite-in-an-ssl-tls-connection/160445#160445) (by [dave_thompson_085](https://security.stackexchange.com/users/39571/dave-thompson-085)).
 
@@ -238,7 +238,7 @@ These are the current AEAD ciphers which don't trigger the [ROBOT](https://robot
 
 ##### Why cipher suites are important?
 
-The security level of your HTTPS traffic (the safety of your data and the data of your users) depends on which cipher suites your web server uses. Having an extensive list of highly secure Cipher Suites is important for high security SSL/TLS interception. The compatibility of your HTTPS traffic (who will see errors, warnings or experience other issues) depends on the cipher suites your web server uses. The performance of your HTTPS traffic (how fast users see your pages - page speed) depends on the cipher suites your web server uses.
+The security level of your HTTPS traffic (the safety of your data and the data of your users) depends on which cipher suites your web server uses. Having an extensive list of highly secure Cipher Suites is important for high security SSL/TLS interception. The compatibility of your HTTPS traffic (who will see errors, warnings or experience other issues) depends on the cipher suites your web server uses. The performance of your HTTPS traffic (how fast users see your pages) depends also on the cipher suites your web server uses.
 
 ##### What does insecure, weak, secure and recommended mean?
 
@@ -276,7 +276,7 @@ The protocol makes use of modular arithmetic and especially exponentials. The se
 
 Using `DHE` means even the `g` and `p` parameters may be randomly generated, but as this is a very expensive process (because you need to find a safe prime), computationally seen, you usually don't do this.
 
-However, when you're doing a DH (without the "E") key exchange, the server has a certificate, which embeds a static, public Diffie-Hellman key, i.e. `gxmodp` as well as `g` and `p` allowing you to save an additional signature (e.g. using `RSA` or `ECDSA`) to verify the authenticity of the DH parameter. So while the server's DH value is static, the client still usually chooses a random value for security and storage-reduction reasons. Obviously fixing the parameters in the certificate implies they can't be changed at run-time.
+However, when you're doing a DH (without the "E") key exchange, the server has a certificate, which embeds a static, public Diffie-Hellman key, i.e. `gxmodp` as well as `g` and `p` allowing you to save an additional signature (e.g. using `RSA` or `ECDSA`) to verify the authenticity of the DH parameter. So, while the server's DH value is static, the client still usually chooses a random value for security and storage-reduction reasons. Obviously fixing the parameters in the certificate implies they can't be changed at run-time.
 
 Ephermal Diffie-Hellman (`ECDHE/DHE`) generates a new key for every exchange (on-the-fly), which enables Perfect Forward Secrecy (PFS). Next, it signs the public key with its `RSA` or `DSA` or `ECDSA` private key, and sends that to the client. The DH key is ephemeral, meaning that the server never stores it on its disk; it keeps it in RAM during the session, and discarded after use. Being never stored, it cannot be stolen afterwards, and that's what PFS comes from.
 
@@ -407,9 +407,9 @@ Another interesting thing is that you can have multiple wildcard names inside th
 
 | <b>FEATURE</b> | <b>HTTP</b> | <b>HTTPS WITH SELF-SIGNED CERTIFICATE</b> |
 | :---         | :---         | :---         |
-| encryption | **no** | **yes** |
-| authorization | **no** | **no** |
-| privacy | **no** | **no** (or **yes** if you trust the issuer of that certificate implicitly) |
+| encryption | no | **yes** |
+| authorization | no | no |
+| privacy | no | no (or **yes** if you trust the issuer of that certificate implicitly) |
 | performance | **fast** | **faster than HTTP** |
 
 Look at [this](https://stackoverflow.com/a/20578199) great explanation by [Kevin Cox](https://stackoverflow.com/users/1166181/kevin-cox):
