@@ -146,6 +146,7 @@
     * [What does insecure, weak, secure and recommended mean?](doc/SSL_TLS_BASICS.md#what-does-insecure-weak-secure-and-recommended-mean)
     * [NGINX and TLS 1.3 Cipher Suites](doc/SSL_TLS_BASICS.md#nginx-and-tls-13-cipher-suites)
   * [Diffie-Hellman key exchange](doc/SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
+    * [What exactly is the purpose of these DH Parameters?](doc/SSL_TLS_BASICS.md#what-exactly-is-the-purpose-of-these-dh-parameters)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
     * [Chain of Trust](doc/SSL_TLS_BASICS.md#chain-of-trust)
     * [Single-domain](doc/SSL_TLS_BASICS.md#single-domain)

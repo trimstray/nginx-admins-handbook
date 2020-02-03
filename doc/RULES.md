@@ -3057,7 +3057,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > Without careful cipher suite selection (TLS 1.3 does it for you!), you risk negotiating to a weak (less secure and don't get ahead of the latest vulnerabilities; see [this](https://ciphersuite.info/page/faq/)) cipher suite that may be compromised. If another party doesn't support a cipher suite that's up to your standards, and you highly value security on that connection, you shouldn't allow your system to operate with lower-quality cipher suites.
 
-  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE` (according to [Alexa Top 1 Million Analysis - Feb 2017](https://scotthelme.co.uk/alexa-top-1-million-analysis-feb-2017/), over 92.8% websites using encryption prefer to use `ECDHE` based ciphers) and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers). `DHE` is generally slow and in TLS 1.2 and below is vulnerable to weak groups (less than 2048-bit at this moment). And what's more, not specified any restrictions on the groups to use. These issues don't impact `ECDHE` which is why it's generally preferred today.
+  > For more security use only strong and not vulnerable cipher suites. Place `ECDHE+AESGCM` (according to [Alexa Top 1 Million Analysis - Feb 2017](https://scotthelme.co.uk/alexa-top-1-million-analysis-feb-2017/), over 92.8% websites using encryption prefer to use `ECDHE` based ciphers) and `DHE` suites at the top of your list (also if you are concerned about performance, prioritize `ECDHE-ECDSA` and `ECDHE-RSA` over `DHE`; Chrome is going to prioritize `ECDHE`-based ciphers over `DHE`-based ciphers). `DHE` is generally slow and in TLS 1.2 and below is vulnerable to weak groups (less than 2048-bit at this moment). And what's more, not specified any restrictions on the groups to use. These issues don't impact `ECDHE` which is why it's generally preferred today.
 
   > The order is important because `ECDHE` suites are faster, you want to use them whenever clients supports them. Ephemeral `DHE/ECDHE` are recommended and support Perfect Forward Secrecy (a method that does not have the vulnerability to the type of replay attack that other solutions could introduce if a highly secure cipher suite is not supported). `ECDHE-ECDSA` is about the same as `RSA` in performance, but much more secure. `ECDHE` with `RSA` is slower, but still much more secure than alone `RSA`.
 
@@ -3767,10 +3767,12 @@ ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
 - [OpenSSL generate different types of self signed certificate](https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate)
 - [Public Diffie-Hellman Parameter Service/Tool](https://2ton.com.au/dhtool/)
 - [Vincent Bernat's SSL/TLS & Perfect Forward Secrecy](http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html)
+- [What's the purpose of DH Parameters?](https://security.stackexchange.com/questions/94390/whats-the-purpose-of-dh-parameters)
 - [RSA and ECDSA performance](https://securitypitfalls.wordpress.com/2014/10/06/rsa-and-ecdsa-performance/)
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [Diffie-Hellman and its TLS/SSL usage](https://security.stackexchange.com/questions/41205/diffie-hellman-and-its-tls-ssl-usage)
 - [Google Plans to Deprecate DHE Cipher Suites](https://www.digicert.com/blog/google-plans-to-deprecate-dhe-cipher-suites/)
+- [Diffie-Hellman key exchange (from this handbook)](SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
 
 #### :beginner: Prevent Replay Attacks on Zero Round-Trip Time
 
@@ -4583,8 +4585,8 @@ proxy_set_header Host $host;
 
 ###### External resources
 
-- [RFC2616 - The Resource Identified by a Request](http://tools.ietf.org/html/rfc2616#section-5.2) <sup>[IETF]</sup>
-- [RFC2616 - Host](http://tools.ietf.org/html/rfc2616#section-14.23) <sup>[IETF]</sup>
+- [RFC 2616 - The Resource Identified by a Request](http://tools.ietf.org/html/rfc2616#section-5.2) <sup>[IETF]</sup>
+- [RFC 2616 - Host](http://tools.ietf.org/html/rfc2616#section-14.23) <sup>[IETF]</sup>
 - [Module ngx_http_proxy_module - proxy_set_header](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header)
 - [What is the difference between Nginx variables $host, $http_host, and $server_name?](https://serverfault.com/questions/706438/what-is-the-difference-between-nginx-variables-host-http-host-and-server-na/706439#706439)
 - [HTTP_HOST and SERVER_NAME Security Issues](https://expressionengine.com/blog/http-host-and-server-name-security-issues)

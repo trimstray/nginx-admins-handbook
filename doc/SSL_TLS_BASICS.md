@@ -14,6 +14,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [What does insecure, weak, secure and recommended mean?](#what-does-insecure-weak-secure-and-recommended-mean)
     * [NGINX and TLS 1.3 Cipher Suites](#nginx-and-tls-13-cipher-suites)
   * [Diffie-Hellman key exchange](#diffie-hellman-key-exchange)
+    * [What exactly is the purpose of these DH Parameters?](#what-exactly-is-the-purpose-of-these-dh-parameters)
   * [Certificates](#certificates)
     * [Chain of Trust](#chain-of-trust)
     * [Single-domain](#single-domain)
@@ -287,6 +288,18 @@ The `ECDHE` is a variant of the Diffie-Hellman protocol which uses elliptic curv
 Fixed Diffie-Hellman (`ECDH` and `DH`) on the other hand uses the same Diffie-Hellman key every time. Without any DH exchange, you can only use `RSA` in encryption mode.
 
 These parameters aren't secret and can be reused; plus they take several seconds to generate. The `openssl dhparam ...` step generates the DH params (mostly just a single large prime number) ahead of time, which you then store for the server to use.
+
+##### What exactly is the purpose of these DH Parameters?
+
+I will quote some [great answers](https://security.stackexchange.com/questions/94390/whats-the-purpose-of-dh-parameters):
+
+  > _These parameters define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. As you stated correctly they include a field prime p and a generator g. The purpose of the availability to customize these parameter is to allow everyone to use his/her own parameters for this. This can be used to prevent being affected from the Logjam attack (which doesn't really apply to 4096 bit field primes)._
+
+  > _The parameters `p` and `g` define the security of this key-exchange. A larger `p` will make finding the shared secret `K` a lot harder, defending against passive attackers._
+
+  > _Finding such primes is really computational intense and can't be afforded on each connection, so they're pre-computed._
+
+  > _It's no risk publishing them. In fact they're sent out for every key-exchange that involves some Diffie-Hellman (DH) key exchange. There are even a few such parameters standardized for example in [RFC 5114 - Additional Diffie-Hellman Groups for Use with IETF Standards](https://tools.ietf.org/html/rfc5114) <sup>[IETF]</sup>._
 
 #### Certificates
 
