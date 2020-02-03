@@ -40,6 +40,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > Use `include` directive to move and to split common server settings into multiple files and to attach your specific code to global config or contexts. This helps in organizing code into logical components. Inclusions are processed recursively, that is, an include file can further have include statements.
 
+  > Work out your own directory structure (from the top-level directory to the lowest) and apply it when working with NGINX. Think about it carefully and figure out what's going to be best for you and the easiest to maintain.
+
   > I always try to keep multiple directories in a root of configuration tree. These directories stores all configuration files which are attached to the main file (e.g. `nginx.conf`) and, if necessary, mostly to the files which has `server` directives.
 
   > I prefer the following structure:
@@ -52,8 +54,6 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   >   - `_server` - for domains configuration; also stores all backends definitions
   > - `modules` - for modules which are dynamically loading into NGINX
   > - `snippets` - for NGINX aliases, configuration templates
-
-  > Work out your own directory structure (from the top-level directory to the lowest) and apply it when working with NGINX. Think about it carefully and figure out what's going to be best for you and the easiest to maintain.
 
 ###### Example
 
@@ -221,7 +221,7 @@ kill -HUP $(pgrep -f "nginx: master")
 
   > If you served HTTP and HTTPS with the exact same config (a single server that handles both HTTP and HTTPS requests) NGINX is intelligent enough to ignore the SSL directives if loaded over port 80.
 
-  > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration. I always split the configuration if I want to redirect from HTTP to HTTPS.
+  > I don't like duplicating the rules, but separate `listen` directives is certainly to help you maintain and modify your configuration. I always split the configuration if I want to redirect from HTTP to HTTPS (or www to non-www,  and vice versa). For me, the right way is to define a separate server context in any such cases.
 
   > It's also useful if you pin multiple domains to one IP address. This allows you to attach one `listen` directive (e.g. if you keep it in the configuration file) to multiple domains configurations.
 
@@ -305,9 +305,9 @@ server {
 
 ###### Rationale
 
-  > The `Host` header tells the server which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This header can also be modified, so for security and cleanness reasons it's a good practice to deny requests without host or with hosts not configured in any vhost. According to this, NGINX should prevent processing requests with undefined server names (also on IP address).
+  > It protects against configuration errors, e.g. traffic forwarding to incorrect backends, bypassing filters like an ACLs or WAFs. The problem is easily solved by creating a default dummy vhost (with `default_server` directive) that catches all requests with unrecognized `Host` headers.
 
-  > It protects against configuration errors, e.g. traffic forwarding to incorrect backends, bypassing filters like an ACLs or WAFs. The problem is easily solved by creating a default dummy vhost that catches all requests with unrecognized `Host` headers.
+  > As we know, the `Host` header tells the server which virtual host to use (if set up). You can even have the same virtual host using several aliases (= domains and wildcard-domains). This header can also be modified, so for security and cleanness reasons it's a good practice to deny requests without host or with hosts not configured in any vhost. According to this, NGINX should prevent processing requests with undefined server names (also on IP address).
 
   > If none of the `listen` directives have the `default_server` parameter then the first server with the `address:port` pair will be the default server for this pair (it means that the NGINX always has a default server).
 
