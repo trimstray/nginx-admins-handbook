@@ -551,6 +551,8 @@ If you love security keep your eye on this one: [Cryptology ePrint Archive](http
 
 An obligatory source of knowledge is also the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/). You should ought treat it as an excellent security guidance. [Burp Scanner - Issue Definitions](https://portswigger.net/kb/issues) introduces you to the web apps and security vulnerabilities. Finally, [The Web Security Academy](https://portswigger.net/web-security) is a free online training center for web application security with high-quality reading materials and interactive labs of varying levels of difficulty. All are really good source to start learning about web application security.
 
+And, of course, always browse official [Nginx Security Advisories](http://nginx.org/en/security_advisories.html) and CVE databases like [CVE Details](https://www.cvedetails.com/vendor/10048/Nginx.html) or [CVE - The MITRE Corporation](https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=NGINX) - to stay Up-to-Date on NGINX vulnerabilities.
+
 ## Prologue
 
 When I was studying architecture of HTTP servers I became interested in NGINX. As I was going through research, I kept notes. I found a lot of information about it, e.g. forum posts on the web about every conceivable problem was great. However, I've never found one guide that covers the most important things in a suitable form. I was a little disappointed.
