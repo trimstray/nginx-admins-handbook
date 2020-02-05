@@ -2774,7 +2774,7 @@ proxy_set_header X-Forwarded-Host $host;
   >     - last minor version: 1.0.2s (May 28, 2018)
   >   - any other versions are no longer supported
 
-  > In my opinion, the only safe way is based on the up-to-date, still supported and production-ready version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1 or 1.1.1d at this moment).
+  > In my opinion, the only safe way is based on the up-to-date, still supported and production-ready version of the OpenSSL. And what's more, I recommend to hang on to the latest versions (e.g. 1.1.1 or 1.1.1d at this moment). So, make sure your OpenSSL library is updated to the latest available version and encourage your clients to also use updated OpenSSL and software working with it.
 
   > You should know one thing before start using OpenSSL 1.1.1: it has a different API than the current 1.0.2 so that's not just a simple flick of the switch. NGINX started supporting TLS 1.3 with the release of version 1.13.0, but when the OpenSSL devs released OpenSSL 1.1.1, that NGINX had support for the brand new protocol version.
 
@@ -3666,7 +3666,9 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
 ###### Rationale
 
-  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use it, NGINX will use the default Ephemeral Diffie-Hellman (`DHE`) paramaters to define how performs the Diffie-Hellman (DH) key-exchange. In older versions, NGINX used a weak key (by default: `1024 bit`) that gets lower scores.
+  > These parameters determine how the OpenSSL library performs Diffie-Hellman (DH) key exchange (DH requires some set-up parameters to begin with which are generated with `openssl dhparam ...` and set in `ssl_dhparam` directive). From a mathematical point of view, they include a field prime `p` and a generator `g`. A larger `p` will make it more difficult to find a common and secret key `K`, protecting against passive attacks.
+
+  > To use a signature based authentication you need some kind of DH exchange (fixed or ephemeral/temporary), to exchange the session key. If you use `DHE` ciphers but you do not specify these parameters, NGINX will use the default Ephemeral Diffie-Hellman paramaters to define how performs the Diffie-Hellman (DH) key-exchange. In older versions, NGINX used a weak key (by default: `1024 bit`) that gets lower scores.
 
   > You should always use the Elliptic Curve Diffie Hellman Ephemeral (`ECDHE`) and if you want to retain support for older customers also `DHE`. Due to increasing concern about pervasive surveillance, key exchanges that provide Forward Secrecy are recommended, see for example [RFC 7525 - Forward Secrecy](https://tools.ietf.org/html/rfc7525#section-6.3) <sup>[IETF]</sup>.
 
@@ -3674,13 +3676,15 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > For greater compatibility but still for security in key exchange, you should prefer the latter E (ephemeral) over the former E (EC). There is recommended configuration: `ECDHE` > `DHE` (with unique keys at least 2048 bits long) > `ECDH`. With this if the initial handshake fails, another handshake will be initiated using `DHE`.
 
-  > `DHE` is slower than `ECDHE`. If you are concerned about performance, prioritize `ECDHE-ECDSA` over `DHE`. OWASP estimates that the TLS handshake with `DHE` hinders the CPU by a factor of 2.4 compared to `ECDHE`.
+  > `DHE` is slower than `ECDHE`. If you are concerned about performance, prioritize `ECDHE-ECDSA` or `ECDHE-RSA` over `DHE`. OWASP estimates that the TLS handshake with `DHE` hinders the CPU by a factor of 2.4 compared to `ECDHE`.
 
-  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`. The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this. However, using custom parameters will make the server non-compliant with [FIPS](https://csrc.nist.gov/News/2018/NIST-Publishes-Updates-to-SP-800-56A-and-800-56C) requirements: _The publication approves the use of specific safe-prime groups of domain parameters for the finite field DH and MQV schemes, in addition to the previously approved domain parameter sets._ See also approved [TLS groups for FFC key agreement](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf) (table 26, page 133) <sup>[pdf]</pdf>.
+  > Diffie-Hellman requires some set-up parameters to begin with. Parameters from `ssl_dhparam` (which are generated with `openssl dhparam ...`) define how OpenSSL performs the Diffie-Hellman (DH) key-exchange. They include a field prime `p` and a generator `g`.
+
+  > The purpose of the availability to customize these parameter is to allow everyone to use own parameters for this, and most importantly, finding such prime numbers is really computationally intensive and you can't afford them with every connection, so they are pre-calculated (set up from the HTTP server). In the case of NGINX, we set them using the ssl_dhparam directive. However, using custom parameters will make the server non-compliant with [FIPS](https://csrc.nist.gov/News/2018/NIST-Publishes-Updates-to-SP-800-56A-and-800-56C) requirements: _The publication approves the use of specific safe-prime groups of domain parameters for the finite field DH and MQV schemes, in addition to the previously approved domain parameter sets._ See also approved [TLS groups for FFC key agreement](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf) (table 26, page 133) <sup>[pdf]</pdf>.
 
   > You can use custom parameters to prevent being affected from the Logjam attack (both the client and the server need to be vulnerable in order for the attack to succeed because the server must accept to sign small `DHE_EXPORT` parameters, and the client must accept them as valid `DHE` parameters).
 
-  > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE`.
+  > Modern clients prefer `ECDHE` instead other variants and if your NGINX accepts this preference then the handshake will not use the DH param at all since it will not do a `DHE` key exchange but an `ECDHE` key exchange. Thus, if no plain `DH/DHE` ciphers are configured at your server but only Eliptic curve DH (e.g. `ECDHE`) then you don't need to set your own `ssl_dhparam` directive. Enabling `DHE` requires us to take care of our DH primes (a.k.a. `dhparams`) and to trust in `DHE` - in newer versions, NGINX does it for us.
 
   > Elliptic curve Diffie-Hellman is a modified Diffie-Hellman exchange which uses Elliptic curve cryptography instead of the traditional RSA-style large primes. So, while I'm not sure what parameters it may need (if any), I don't think it needs the kind you're generating (`ECDH` is based on curves, not primes, so I don't think the traditional DH params will do you any good).
 

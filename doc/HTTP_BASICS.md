@@ -97,7 +97,7 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
 #### HTTP/2
 
-  > **:bookmark: [Use HTTP/2 - Performance - P1](RULES.md##beginner-use-http2)**
+  > **:bookmark: [Use HTTP/2 - Performance - P1](RULES.md#beginner-use-http2)**
 
 HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
 
@@ -124,6 +124,8 @@ However, you should know a client that does not support HTTP/2 will never ask th
 
   - if the server is HTTP/2 ready, then the server will notice the client as such: the communication between them will be switched to HTTP/2
   - if the server is not HTTP/2 ready, then the server will ignore the upgrade request answering with HTTP/1.1: the communication between them should stay plenty HTTP/1.1
+
+See also [NGINX Updates Mitigate the August 2019 HTTP/2 Vulnerabilities](https://www.nginx.com/blog/nginx-updates-mitigate-august-2019-http-2-vulnerabilities/).
 
 ##### How to debug HTTP/2?
 
