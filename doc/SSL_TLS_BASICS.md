@@ -61,6 +61,14 @@ For testing clients against (bad) SSL configs and to learn what real world TLS c
 
 Look also at the [useful video resources](#useful-video-resources) section of this chapter.
 
+Finally, see [this](https://jve.linuxwall.info/blog/index.php?post/TLS_Survey) fantastic answer by [Julien Vehent](https://jve.linuxwall.info/blog/). It tell you why is the correct TLS configuration so important:
+
+  > _What can we do about it? Education is key: TLS is a complex subject, and most administrators and website owners don't have the time and knowledge to dig through dozens of mailing lists and blog posts to find the best configuration choices._
+
+  > _It is the primary motivation for documents such as Server Side TLS and Better Crypto. Some of us are working on improving these documents. But we need an army to broadcast the message, teach administrators in conferences, mailing lists and user groups, and push websites owners to apply more secure configuration to their websites._
+
+  > _We could use some help: go out there and teach TLS!_
+
 #### TLS versions
 
   > **:bookmark: [Keep only TLS 1.3 and TLS 1.2 - Hardening - P1](RULES.md#beginner-keep-only-tls-13-and-tls-12)**
