@@ -3220,9 +3220,9 @@ portsnap update
 
 ###### Dependencies
 
-  > In my configuration I used all prebuilt dependencies without `openssl`, `zlib`, and `luajit` because I compiled them manually (also from ports).
-
 **Install prebuilt packages, export variables and set symbolic link:**
+
+  > Install the OpenSSL library only if the latest version is available. FreeBSD 12.1 has built-in OpenSSL 1.1.1d. If the latest available version is 1.1.1d you don't need to do anything more, go to the NGINX compilation and installation step.
 
 ```bash
 # It's important and required, regardless of chosen sources:

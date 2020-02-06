@@ -99,7 +99,7 @@ The HTTP protocol allows clients and servers to communicate. Clients send reques
 
   > **:bookmark: [Use HTTP/2 - Performance - P1](RULES.md#beginner-use-http2)**
 
-HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible.
+HTTP/2 (h2) is a major revision of the HTTP network protocol, intended as a higher performance alternative to HTTP/1.1. It introduces several new features, while remaining semantically compatible. HTTP/2 enables more efficient communication between browsers and servers that support it. All recent versions of major browsers support HTTP/2, including Chrome, Edge, Firefox, Opera, and Safari.
 
 Look at the following comparison:
 
