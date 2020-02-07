@@ -2601,7 +2601,7 @@ location ~* ^.*(\.(?:git|svn|hg|bak|bckp|save|old|orig|original|test|conf|cfg|di
 
   > Disclosing the version of NGINX running can be undesirable, particularly in environments sensitive to information disclosure. NGINX shows the version number by default in error pages and in the headers of HTTP responses.
 
-  > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions. For example, Shodan provides a widely used database of this info. It's far more efficient to just try the vulnerability on all random servers than asking them.
+  > This information can be used as a starting point for attackers who know of specific vulnerabilities associated with specific versions and might help gain a greater understanding of the systems in use and potentially develop further attacks targeted at the specific version of NGINX. For example, Shodan provides a widely used database of this info. It's far more efficient to just try the vulnerability on all random servers than asking them.
 
   > Hiding your version information will not stop an attack from happening, but it will make you less of a target if attackers are looking for a specific version of hardware or software. I take the data broadcast by the HTTP server as a personal information.
 

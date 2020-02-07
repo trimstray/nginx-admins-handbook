@@ -3844,6 +3844,14 @@ geo $geo_ranges {
 
 #### 3rd party modules
 
+  > Not all external modules can work properly with your currently NGINX version. You should read the documentation of each module before adding it to the modules list. You should also to check what version of module is compatible with your NGINX release. What's more, be careful before adding modules on production. Some of them can cause strange behaviors, increased memory and CPU usage, and also reduce the overall performance of NGINX.
+
+  > Before installing external modules please read [Event-Driven architecture](NGINX_BASICS.md#event-driven-architecture) section to understand why poor quality 3rd party modules may reduce NGINX performance.
+
+  > If you have running NGINX on your server, and if you want to add new modules, you'll need to compile them against the same version of NGINX that's currently installed (`nginx -v`) and to make new module compatible with the existing NGINX binary, you need to use the same compile flags (`nginx -V`). For more please see [How to Compile Dynamic NGINX Modules](https://gorails.com/blog/how-to-compile-dynamic-nginx-modules).
+
+  > If you use, e.g. `--with-stream=dynamic`, then all those `stream_xxx` modules must also be built as NGINX dynamic modules. Otherwise you would definitely see those linker errors.
+
 ##### ngx_set_misc
 
 Documentation:
