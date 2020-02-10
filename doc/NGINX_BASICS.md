@@ -2720,7 +2720,7 @@ The `$time_local` variable contains the time when the log entry is written so wh
 - `try_files` phase
 - log phase
 
-Since the log phase is the last one, `$time_local` variable is much more colse to the end of the request than it's start.
+Since the log phase is the last one, `$time_local` variable is much more close to the end of the request than it's start.
 
 #### How to log the HTTP request body?
 
