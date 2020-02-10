@@ -3590,6 +3590,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [ImperialViolet - ChaCha20 and Poly1305 for TLS](https://www.imperialviolet.org/2013/10/07/chacha20.html)
 - [Do the ChaCha: better mobile performance with cryptography](https://blog.cloudflare.com/do-the-chacha-better-mobile-performance-with-cryptography/)
 - [AES Is Great … But We Need A Fall-back: Meet ChaCha and Poly1305](https://medium.com/asecuritysite-when-bob-met-alice/aes-is-great-but-we-need-a-fall-back-meet-chacha-and-poly1305-76ee0ee61895)
+- [There’s never magic, but plenty of butterfly effects](https://docs.microsoft.com/en-us/archive/blogs/ieinternals/theres-never-magic-but-plenty-of-butterfly-effects)
 - [Cipher suites (from this handbook)](SSL_TLS_BASICS.md#cipher-suites)
 
 #### :beginner: Use more secure ECDH Curve

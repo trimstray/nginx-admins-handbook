@@ -7300,6 +7300,12 @@ dpkg --force-confmiss -i /var/cache/apt/archives/nginx-common_*.deb
 
 ###### Create a temporary static backend
 
+Busybox:
+
+```bash
+busybox httpd -p $PORT -h $HOME [-c httpd.conf]
+```
+
 Python 3.x:
 
 ```bash
