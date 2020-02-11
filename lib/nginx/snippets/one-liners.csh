@@ -19,3 +19,20 @@ alias ng.dump '/usr/local/sbin/nginx -T -c /usr/local/etc/nginx/nginx.conf'
 alias CD_NGX_ROOT 'cd /usr/local/etc/nginx && ls -lh'
 alias CD_NGX_LOGS 'cd /var/log/nginx && ls -lh'
 alias CD_NGX_ACME 'cd /var/www/acme/.well-known/acme-challenge && ls -lh'
+
+### GIT
+alias git.log 'git log --oneline --decorate --graph --all'
+alias git.commit 'git add . && git commit -m "uncommited changes"'
+alias git.sync 'git pull origin master && git fetch --all && git fetch --prune --tags'
+alias git.push 'git push origin master && git push origin --tags --force'
+alias git.force 'git push origin master --force && git push origin --tags --force'
+alias git.remote 'git remote update && git status -uno && git show-branch *master'
+alias git.reset 'git add . && git reset --hard HEAD'
+
+### VARNISH
+alias vs.test 'varnishd -C -f /etc/varnish/default.vcl'
+alias vs.gen '_xr=$(cat /dev/urandom | tr -dc '0-9' | fold -w 256 | head -n 1 | head --bytes 8) ; varnishadm vcl.load vcl_${_xr} /etc/varnish/default.vcl'
+alias vs.use 'varnishadm vcl.use'
+
+### OTHER
+alias http.server 'python3 -m http.server 8080 --bind 127.0.0.1'
