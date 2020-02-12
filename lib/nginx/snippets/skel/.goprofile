@@ -1,0 +1,2 @@
+export GOROOT="/usr/lib/go"
+export GOPATH="/opt/go"

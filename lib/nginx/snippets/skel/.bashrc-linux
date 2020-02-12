@@ -1,0 +1,54 @@
+# .bashrc
+
+export LANG=en_US.UTF-8
+umask 22
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+  . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  . /etc/bash_completion
+fi
+
+[ -f ~/.goprofile ] && source ~/.goprofile
+
+[ -f /scripts/aliases/global-aliases.bash ] && source /scripts/aliases/global-aliases.bash
+[ -f /scripts/aliases/global-functions.bash ] && source /scripts/aliases/global-functions.bash
+
+for i in \
+  "$GOROOT" \
+  "${GOROOT}/bin" \
+  "$GOPATH" \
+  "${GOPATH}/bin" ; do
+    if [ -d "$i" ] ; then
+      export PATH="${i}:$PATH"
+    fi
+done
+
+# git clone https://github.com/magicmonty/bash-git-prompt.git
+if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ] ; then
+  GIT_PROMPT_ONLY_IN_REPO=1
+  GIT_PROMPT_FETCH_REMOTE_STATUS=1
+  GIT_PROMPT_START='\[\033[01;31m\]\u@\H:\[\033[02;37m\]\w\[\033[00m\]'
+  GIT_PROMPT_END='\n\$ '
+  source $HOME/.bash-git-prompt/gitprompt.sh
+fi
+
+if [ "$SHELL" = "/usr/local/bin/bash" ] ; then
+  PS1='\[\033[01;31m\]\u@\H:\[\033[02;37m\]\w\$\[\033[00m\] '
+fi

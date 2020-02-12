@@ -3213,6 +3213,7 @@ export NGINX_GROUP="www"
 ###### Update FreeBSD ports tree
 
 ```bash
+cd /usr/ports
 portsnap fetch
 portsnap extract
 portsnap update
