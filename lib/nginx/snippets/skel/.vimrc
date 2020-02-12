@@ -49,10 +49,12 @@ set novisualbell
 set t_vb=
 set tm=500
 
-syntax on
+" vim/vim-full (not vim-tiny):
+" syntax on
 
+" vim/vim-full (not vim-tiny):
 " colorscheme desert
-colorscheme elflord
+" colorscheme elflord
 set background=dark
 
 if has("gui_running")
