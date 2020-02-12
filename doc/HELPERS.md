@@ -1159,7 +1159,7 @@ _mod_dir="${NGX_PREFIX}/modules"
 
 for _module in $(ls "${_mod_dir}/") ; do
 
-  echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
+  echo -en "load_module ${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
 
 done
 ```
@@ -3094,7 +3094,7 @@ _mod_dir="${NGX_PREFIX}/modules"
 
 for _module in $(ls "${_mod_dir}/") ; do
 
-  echo -en "load_module\t\t${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
+  echo -en "load_module ${_mod_dir}/$_module;\n" >> "${_mod_dir}.conf"
 
 done
 ```
@@ -3553,6 +3553,21 @@ Include the necessary error pages:
   ```
   50x.html  index.html
   ```
+
+Update modules list and include `modules.conf` to your configuration:
+
+```bash
+NGX_PREFIX="/usr/local/etc/nginx"
+_mod_dir="/usr/local/libexec/nginx"
+
+:>"${NGX_PREFIX}/modules.conf"
+
+for _module in $(ls "${_mod_dir}/") ; do
+
+  echo -en "load_module ${_mod_dir}/$_module;\n" >> "${NGX_PREFIX}/modules.conf"
+
+done
+```
 
 Create `logrotate` configuration:
 
