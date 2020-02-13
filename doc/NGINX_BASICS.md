@@ -193,7 +193,7 @@ Something about testing configuration:
   > **:bookmark: [Organising Nginx configuration - Base Rules - P2](RULES.md#beginner-organising-nginx-configuration)**<br>
   > **:bookmark: [Format, prettify and indent your Nginx code - Base Rules - P2](RULES.md#beginner-format-prettify-and-indent-your-nginx-code)**
 
-NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. For me, NGINX configuration has a simple and very transparent structure.
+NGINX uses a micro programming language in the configuration files. This language's design is heavily influenced by Perl and Bourne Shell. Configuration syntax, formatting and definitions follow a so-called C-style convention. For me, NGINX configuration has a simple and very transparent structure.
 
 ##### Comments
 
@@ -684,7 +684,9 @@ I must not forget to mention here about Non-Blocking and 3rd party modules (also
 
 To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded but it can fork several processes to utilize multiple cores.
 
-However, NGINX is not a single threaded application. Each of worker processes is single-threaded and can handle thousands of concurrent connections. NGINX does not create a new process/thread for each connection/requests but it starts several worker threads during start. It does this asynchronously with one thread, rather than using multi-threaded programming (it uses an event loop with asynchronous I/O).
+However, NGINX is not a single threaded application. Each of worker processes is single-threaded and can handle thousands of concurrent connections. A single worker can and does process tens of thousands of requests a second. Workers are used to get request parallelism across multiple cores. When a request blocks, that worker will work on another request.
+
+NGINX does not create a new process/thread for each connection/requests but it starts several worker threads during start. It does this asynchronously with one thread, rather than using multi-threaded programming (it uses an event loop with asynchronous I/O).
 
 That way, the I/O and network operations are not a very big bottleneck (remember that your CPU would spend a lot of time waiting for your network interfaces, for example). This results from the fact that NGINX only use one thread to service all requests. When requests arrive at the server, they are serviced one at a time. However, when the code serviced needs other thing to do it sends the callback to the other queue and the main thread will continue running (it doesn't wait).
 
@@ -701,6 +703,7 @@ For more information take a look at following resources:
 - [Nginx vs Apache: Is it fast, if yes, why?](http://planetunknown.blogspot.com/2011/02/why-nginx-is-faster-than-apache.html)
 - [How is Nginx handling its requests in terms of tasks or threading?](https://softwareengineering.stackexchange.com/questions/256510/how-is-nginx-handling-its-requests-in-terms-of-tasks-or-threading)
 - [Why nginx is faster than Apache, and why you needn’t necessarily care](https://djangodeployment.com/2016/11/15/why-nginx-is-faster-than-apache-and-why-you-neednt-necessarily-care/)
+- [How we scaled nginx and saved the world 54 years every day](https://blog.cloudflare.com/how-we-scaled-nginx-and-saved-the-world-54-years-every-day/)
 
 Finally, look at these great preview:
 
@@ -720,7 +723,9 @@ From official documentation:
 
   > _The NGINX configuration recommended in most cases - running one worker process per CPU core - makes the most efficient use of hardware resources._
 
-NGINX uses a custom event loop which was designed specifically for NGINX - all connections are processed in a highly efficient run-loop in a limited number of single-threaded processes called workers.
+NGINX uses a custom event loop which was designed specifically for NGINX - all connections are processed in a highly efficient run-loop in a limited number of single-threaded processes called workers. Worker processes accept new requests from a shared listen socket and execute a loop. There’s no specialized distribution of connections to the workers in NGINX; this work is done by the OS kernel mechanisms which notifies a workers.
+
+  > _Upon startup, an initial set of listening sockets is created. workers then continuously accept, read from and write to the sockets while processing HTTP requests and responses._ - from [The Architecture of Open Source Applications - NGINX](http://aosabook.org/en/nginx.html).
 
 Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()`, or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
