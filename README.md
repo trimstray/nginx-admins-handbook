@@ -209,7 +209,7 @@
       * [Redirects and X-Forwarded-Proto](doc/NGINX_BASICS.md#redirects-and-x-forwarded-proto)
       * [A warning about the X-Forwarded-For](doc/NGINX_BASICS.md#a-warning-about-the-x-forwarded-for)
       * [Improve extensibility with Forwarded](doc/NGINX_BASICS.md#improve-extensibility-with-forwarded)
-* [Response headers](doc/NGINX_BASICS.md#response-headers)
+    * [Response headers](doc/NGINX_BASICS.md#response-headers)
   * [Load balancing algorithms](doc/NGINX_BASICS.md#load-balancing-algorithms)
     * [Backend parameters](doc/NGINX_BASICS.md#backend-parameters)
     * [Upstream servers with SSL](doc/NGINX_BASICS.md#upstream-servers-with-ssl)
@@ -898,6 +898,8 @@ Existing chapters:
     - [x] _Burst and nodelay parameters_
   - _NAXSI Web Application Firewall_
   - _OWASP ModSecurity Core Rule Set (CRS)_
+  - _Other subjects_
+    - [ ] _Secure Distribution of SSL Private Keys with NGINX_
   - _Core modules_
     - [x] _ngx_http_geo_module_
   - _3rd party modules_
