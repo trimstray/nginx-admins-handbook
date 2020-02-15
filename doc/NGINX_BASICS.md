@@ -132,6 +132,8 @@ Some useful snippets for management of the NGINX daemon:
   ```bash
   /usr/sbin/nginx -t -c /etc/nginx/nginx.conf
   /usr/sbin/nginx -t -q -g 'daemon on; master_process on;' # ; echo $?
+
+  /usr/local/etc/rc.d/nginx status
   ```
 
 - starting daemon:
@@ -151,8 +153,10 @@ Some useful snippets for management of the NGINX daemon:
 - stopping daemon:
 
   ```bash
-  /usr/sbin/nginx -s quit     # graceful shutdown (waiting for the worker processes to finish serving current requests)
-  /usr/sbin/nginx -s stop     # fast shutdown (kill connections immediately)
+  # graceful shutdown (waiting for the worker processes to finish serving current requests)
+  /usr/sbin/nginx -s quit
+  # fast shutdown (kill connections immediately)
+  /usr/sbin/nginx -s stop
 
   service nginx stop
   systemctl stop nginx
@@ -171,6 +175,8 @@ Some useful snippets for management of the NGINX daemon:
   service nginx reload
   systemctl reload nginx
 
+  /usr/local/etc/rc.d/nginx reload
+
   kill -HUP $(cat /var/run/nginx.pid)
   kill -HUP $(pgrep -f "nginx: master")
   ```
@@ -186,7 +192,7 @@ Some useful snippets for management of the NGINX daemon:
 
 Something about testing configuration:
 
-  > You cannot test half-baked configurations, for example, you defined a server section for your domain in a separate file. Any attempt to test such a file will throw errors. The file has to be complete in all respects.
+  > You cannot test half-baked configurations. For example, you defined a server section for your domain in a separate file. Any attempt to test such a file will throw errors. The file has to be complete in all respects.
 
 #### Configuration syntax
 
@@ -219,7 +225,7 @@ set $var "value";
 
 Some interesting things about variables:
 
-  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a NGINX Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail. I also recommend [nginx built-in variables](http://siwei.me/blog/posts/nginx-built-in-variables).
+  > Make sure to read the [agentzh's Nginx Tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html) - it's about NGINX tips & tricks. This guy is a NGINX Guru and creator of the OpenResty. In these tutorials he describes, amongst other things, variables in great detail. I also recommend [nginx built-in variables](http://siwei.me/blog/posts/nginx-built-in-variables) post.
 
 - the most variables in NGINX only exist at runtime, not during configuration time
 - the scope of variables spreads out all over configuration
@@ -282,6 +288,8 @@ Directives are organised into groups known as **blocks** or **contexts**. Genera
 As a general rule, if a directive is valid in multiple nested scopes, a declaration in a broader context will be passed on to any child contexts as default values. The children contexts can override these values at will.
 
   > Directives placed in the configuration file outside of any contexts are considered to be in the global/main context.
+
+  > Special attention should be paid to some strange behavior associated with some directives. For more information please see [Set the HTTP headers with add_header and proxy_*_header directives properly](RULES.md#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly) rule.
 
 Directives can only be used in the contexts that they were designed for. NGINX will error out on reading a configuration file with directives that are declared in the wrong context.
 
@@ -348,7 +356,7 @@ Look also at the graphic below. It presents the most important contexts with ref
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/nginx_contexts.png" alt="nginx-contexts">
 </p>
 
-NGINX lookup starts from the http block, then through one or more server blocks, followed by the location block(s).
+For HTTP, NGINX lookup starts from the http block, then through one or more server blocks, followed by the location block(s).
 
 ##### External files
 
@@ -369,7 +377,7 @@ See also [this](http://nginx.org/en/docs/faq/variables_in_config.html):
 
 ##### Measurement units
 
-  > It is recommended to always specify a suffix for greater transparency.
+  > It is recommended to always specify a suffix for the sake of clarity and consistency.
 
 Sizes can be specified in:
 
@@ -566,6 +574,8 @@ worker_shutdown_timeout 60s;
 ```
 
 Test connection timeouts and how long your request is processed by a server, next adjust the `worker_shutdown_timeout` value to these values. 60 seconds is a value with a solid supply and nothing valid should last longer than that.
+
+In my experience, if you have multiple workers in a shutting down state, maybe you should first look at the loaded modules that may cause problems with hanging worker processes.
 
 #### Connection processing
 
@@ -2627,6 +2637,8 @@ http {
 ```
 
 For more information please see [Configuring Logging](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/).
+
+  > Set `access log off;` to completely turns off logging.
 
   > If you don't want 404 errors to show in your NGINX error logs, you should set `log_not_found off;`.
 
