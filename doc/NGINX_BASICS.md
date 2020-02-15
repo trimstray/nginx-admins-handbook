@@ -694,7 +694,7 @@ I must not forget to mention here about Non-Blocking and 3rd party modules (also
 
 To handle concurrent requests with a single worker process NGINX uses the [reactor design pattern](https://stackoverflow.com/questions/5566653/simple-explanation-for-the-reactor-pattern-with-its-applications). Basically, it's a single-threaded but it can fork several processes to utilize multiple cores.
 
-However, NGINX is not a single threaded application. Each of worker processes is single-threaded and can handle thousands of concurrent connections. A single worker can and does process tens of thousands of requests a second. Workers are used to get request parallelism across multiple cores. When a request blocks, that worker will work on another request.
+However, NGINX is not a single threaded application. Each of worker processes is single-threaded and can handle thousands of concurrent connections. Workers are used to get request parallelism across multiple cores. When a request blocks, that worker will work on another request.
 
 NGINX does not create a new process/thread for each connection/requests but it starts several worker threads during start. It does this asynchronously with one thread, rather than using multi-threaded programming (it uses an event loop with asynchronous I/O).
 
@@ -764,7 +764,7 @@ According to this: if you are running **4** worker processes with **4,096** work
 
 I've seen some admins does directly translate the sum of `worker_processes` and `worker_connections` into the number of clients that can be served simultaneously. In my opinion, it is a mistake because certain of clients (e.g. browsers which have different values for this) **opens a number of parallel connections** (see [this](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) to confirm my words). Clients typically establish 4-8 TCP connections so that they can download resources in parallel (to download various components that compose a web page, for example, images, scripts, and so on). This increases the effective bandwidth and reduces latency.
 
-  > That is a HTTP/1.1 limit (6-8) of concurrent HTTP calls, the best solution to improve performance (without upgrade the hardware and use cache at the middle (e.g. CDN, Varnish)) is using HTTP/2 ([RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>) instead of HTTP/1.1.
+  > That is a HTTP/1.1 limit (6-8) of concurrent HTTP calls. The best solution to improve performance (without upgrade the hardware and use cache at the middle (e.g. CDN, Varnish)) is using HTTP/2 ([RFC 7540](https://tools.ietf.org/html/rfc7540) <sup>[IETF]</sup>) instead of HTTP/1.1.
   >
   > HTTP/2 multiplex many HTTP requests on a single connection. When HTTP/1.1 has a limit of 6-8 roughly, HTTP/2 does not have a standard limit but say: "_It is recommended that this value (`SETTINGS_MAX_CONCURRENT_STREAMS`) be no smaller than 100_" (RFC 7540). That number is better than 6-8.
 
@@ -783,8 +783,15 @@ I don't like this piece of the NGINX documentation. Maybe I'm missing something 
 If you set `RLIMIT_NOFILE` to 25,000 and `worker_rlimit_nofile` to 12,000, NGINX sets (only for workers) the maximum open files limit as a `worker_rlimit_nofile`. But the master process will have a set value of `RLIMIT_NOFILE`. Default value of `worker_rlimit_nofile` directive is `none` so by default NGINX sets the initial value of maximum open files from the system limits.
 
 ```bash
+# On GNU/Linux:
 grep "LimitNOFILE" /lib/systemd/system/nginx.service
 LimitNOFILE=5000
+
+# On FreeBSD:
+sysctl kern.maxfiles kern.maxfilesperproc kern.openfiles
+kern.maxfiles: 64305
+kern.maxfilesperproc: 57870
+kern.openfiles: 143
 
 grep "worker_rlimit_nofile" /etc/nginx/nginx.conf
 worker_rlimit_nofile 256;
@@ -799,7 +806,7 @@ worker_rlimit_nofile 256;
 
 This is also controlled by the OS because the worker is not the only process running on the server. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible.
 
-In my opinion, relying on the `RLIMIT_NOFILE` than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set, but you should keep a constant eye on the priority of the limits.
+In my opinion, relying on the `RLIMIT_NOFILE` (and alternatives on other systems) than `worker_rlimit_nofile` value is more understandable and predictable. To be honest, it doesn't really matter which method is used to set, but you should keep a constant eye on the priority of the limits.
 
   > If you don't set the `worker_rlimit_nofile` directive manually, then the OS settings will determine how many file descriptors can be used by NGINX.
 
@@ -1050,7 +1057,7 @@ The original model of HTTP, and the default one in HTTP/1.0, is short-lived conn
 
 HTTP Keep-Alive connection or persistent connection is the idea of using a single TCP connection to send and receive multiple HTTP requests/responses (Keep Alive's work between requests), as opposed to opening a new connection for every single request/response pair.
 
-When using keep alive the browser does not have to make multiple connections (keep in mind that establishing connections is expensive). But uses the already established connection, this controls how long that stays active/open. So, the keep alive is a way to reduce the overhead of creating the connection, as, most of the time, a user will navigate through the site etc. (plus the multiple requests from a single page, to download css, javascript, images etc.).
+When using keep alive the browser does not have to make multiple connections (keep in mind that establishing connections is expensive) but uses the already established connection and controls how long that stays active/open. So, the keep alive is a way to reduce the overhead of creating the connection, as, most of the time, a user will navigate through the site etc. (plus the multiple requests from a single page, to download css, javascript, images etc.).
 
 It takes a 3-way handshake to establish a TCP connection, so, when there is a perceivable latency between the client and the server, keepalive would greatly speed things up by reusing existing connections.
 
