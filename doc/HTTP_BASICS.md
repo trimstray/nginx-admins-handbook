@@ -50,6 +50,11 @@ I will not describe the HTTP protocol meticulously so you have to look at this a
 - [LWP in Action - Chapter 2. Web Basics](http://lwp.interglacial.com/ch02_01.htm)
 - [HTTP and everything you need to know about it](https://medium.com/faun/http-and-everything-you-need-to-know-about-it-8273bc224491)
 
+I also recommend to read:
+
+- [Mini HTTP guide for developers](https://charemza.name/blog/posts/abstractions/http/http-guide-for-developers/)
+- [10 Great Web Performance Blogs](https://www.aaronpeters.nl/blog/10-great-web-performance-blogs/)
+
 We have some interesting books:
 
 - [HTTP: The Definitive Guide](https://www.amazon.com/HTTP-Definitive-Guide-Guides-ebook/dp/B0043D2EKO)
@@ -182,6 +187,7 @@ See these articles about HTTP headers:
 - [HTTP headers](https://developer.mozilla.org/pl/docs/Web/HTTP/Headers)
 - [The HTTP Request Headers List](https://flaviocopes.com/http-request-headers/)
 - [The HTTP Response Headers List](https://flaviocopes.com/http-response-headers/)
+- [Exotic HTTP Headers](https://peteris.rocks/blog/exotic-http-headers/)
 - [Secure your web application with these HTTP headers](https://odino.org/secure-your-web-application-with-these-http-headers/)
 
 HTTP headers allow the client and server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).

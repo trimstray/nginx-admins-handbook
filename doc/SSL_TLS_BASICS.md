@@ -319,7 +319,7 @@ The authenticity and integrity of the certificate can be checked by cryptographi
 
 Certificates lets you secure your main domain and all its subdomains (like `example.com` and `api.example.com`) with one single SSL certificate.
 
-See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/).
+See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/) and [EV Certificates Make The Web Slow and Unreliable](https://www.aaronpeters.nl/blog/ev-certificates-make-the-web-slow-and-unreliable/).
 
 ##### Chain of Trust
 
