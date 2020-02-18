@@ -8,6 +8,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [HTTP/2](#http2)
     * [How to debug HTTP/2?](#how-to-debug-http2)
   * [URI vs URL](#uri-vs-url)
+  * [Connection vs request](#connection-vs-request)
   * [HTTP Headers](#http-headers)
     * [Header compression](#header-compression)
   * [HTTP Methods](#http-methods)
@@ -175,6 +176,31 @@ If it is still unclear, I would advise you to look at the following articles:
 
 - [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn/1984225)
 - [The History of the URL: Path, Fragment, Query, and Auth](https://eager.io/blog/the-history-of-the-url-path-fragment-query-auth/)
+
+#### Connection vs request
+
+Basically connections are established to make requests using it. So you can have multiple requests per connection. Not at the same time, of course, but rendering a web page is a fairly lengthy process.
+
+A connection is a TCP-based reliable pipeline between two endpoints. Each connection requires keeping track of both endpoint addresses/ports, sequence numbers, and which packets are unacknowledged or presumed missing.
+
+A request is a HTTP request for a given resource with a particular method. There may be zero or more requests per session. (Yes, web browsers can and do open connections without sending a request.)
+
+Most modern browsers open several connections at once, and download different files (images, css, js) at the same time to speed up the page load. But, like I said, each connection can handle multiple requests (downloads), too.
+
+To summarize:
+
+- HTTP connections - client and server introduce themselves; making a connection with server involves TCP handshaking and it is basically creating a socket connection with the server
+
+- HTTP requests - client ask something from server; to make a HTTP request you should be already established a connection with the server. If you established connection with a server you can make multiple request using the same connection (HTTP/1.0 by default one request per connection, HTTP/1.1 by default it is keep alive)
+
+There is also great comparison:
+
+- opening 25 connections, one after another, and downloading 1 file through each connection (slowest)
+- opening 1 connection and downloading 25 files through it (slow)
+- opening 5 connections and downloading 5 files through each connection (fast)
+- opening 25 connections and downloading 1 file through each connection (waste of resources)
+
+So if you limit the number of connections or the number of requests too much, you will slow down your page load speeds.
 
 #### HTTP Headers
 

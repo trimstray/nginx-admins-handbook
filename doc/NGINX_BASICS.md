@@ -640,14 +640,14 @@ NGINX means connections as follows (the following status information is provided
 - **Writing** - the current number of connections where NGINX is writing the response back to the client (reads request body, processes request, or writes response to a client)
 - **Waiting** - the current number of idle client connections waiting for a request, i.e. connection still opened waiting for either a new request, or the keepalive expiration (actually it is Active - (Reading + Writing))
 
-  > Waiting connections those are keepalive connections. They are usually not a problem. But if you want to lower the number reduce `keepalive_timeout` directive.
+  > Waiting connections those are keepalive connections. They are usually not a problem but if you want to reduce them set the lower value of the `keepalive_timeout` directive.
 
 Be sure to recommend to read [this](https://trac.nginx.org/nginx/ticket/1610#comment:1):
 
   > Writing connections counter increasing might indicate one of the following:
   >
   >   - crashed or killed worker processes. This is unlikely in your case though, as this would also result in other values growing as well, notably `Waiting`
-  >   - a real socket leak somewhere. These usually results in sockets in `CLOSE_WAIT` state, try looking at `netstat` output without `grep -v CLOSE_WAIT` filter. Leaked sockets are reported by NGINX during graceful shutdown of a worker process (for example, after a configuration reload) - if there are any leaked sockets, NGINX will write `open socket ... left in connection ...` alerts to the error log.
+  >   - a real socket leak somewhere. These usually results in sockets in `CLOSE_WAIT` state (in a waiting state for the FIN packet terminating the connection), try looking at `netstat` output without `grep -v CLOSE_WAIT` filter. Leaked sockets are reported by NGINX during graceful shutdown of a worker process (for example, after a configuration reload) - if there are any leaked sockets, NGINX will write `open socket ... left in connection ...` alerts to the error log
   >
   > To further investigate things, please do the following:
   >   - upgrade to the latest mainline versions, without any 3rd party modules, and check if you are able to reproduce the issue
@@ -737,7 +737,7 @@ NGINX uses a custom event loop which was designed specifically for NGINX - all c
 
   > _Upon startup, an initial set of listening sockets is created. workers then continuously accept, read from and write to the sockets while processing HTTP requests and responses._ - from [The Architecture of Open Source Applications - NGINX](http://aosabook.org/en/nginx.html).
 
-Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()`, `kqueue()`, or `select()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
+Multiplexing works by using a loop to increment through a program chunk by chunk operating on one piece of data/new connection/whatever per connection/object per loop iteration. It is all based on events multiplexing like `epoll()` or `kqueue()`. Within each worker NGINX can handle many thousands of concurrent connections and requests per second.
 
   > See [Nginx Internals](https://www.slideshare.net/joshzhu/nginx-internals) presentation as a lot of great stuff about the internals of the NGINX.
 
@@ -772,7 +772,7 @@ Additionally, you must know that the `worker_connections` directive **includes a
 
   > Be aware that every worker connection (in the sleeping state) needs 256 bytes of memory, so you can increase it easily.
 
-The number of connections is especially limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system. The reason is that the operating system needs memory to manage each open file, and memory is a limited resource. This limitation only affects the limits for the current process. The limits of the current process are bequeathed to children processes too, but each process has a separate count.
+The number of connections is especially limited by the maximum number of open files (`RLIMIT_NOFILE`) on your system (you can read about file descriptors and file handlers on [this](https://stackoverflow.com/questions/2423628/whats-the-difference-between-a-file-descriptor-and-file-pointer) great explanation). The reason is that the operating system needs memory to manage each open file, and memory is a limited resource. This limitation only affects the limits for the current process. The limits of the current process are bequeathed to children processes too, but each process has a separate count.
 
 To change the limit of the maximum file descriptors (that can be opened by a single worker process) you can also edit the `worker_rlimit_nofile` directive. With this, NGINX provides very powerful dynamic configuration capabilities with no service restarts.
 
@@ -783,15 +783,9 @@ I don't like this piece of the NGINX documentation. Maybe I'm missing something 
 If you set `RLIMIT_NOFILE` to 25,000 and `worker_rlimit_nofile` to 12,000, NGINX sets (only for workers) the maximum open files limit as a `worker_rlimit_nofile`. But the master process will have a set value of `RLIMIT_NOFILE`. Default value of `worker_rlimit_nofile` directive is `none` so by default NGINX sets the initial value of maximum open files from the system limits.
 
 ```bash
-# On GNU/Linux:
+# On GNU/Linux (or /usr/lib/systemd/system/nginx.service):
 grep "LimitNOFILE" /lib/systemd/system/nginx.service
 LimitNOFILE=5000
-
-# On FreeBSD:
-sysctl kern.maxfiles kern.maxfilesperproc kern.openfiles
-kern.maxfiles: 64305
-kern.maxfilesperproc: 57870
-kern.openfiles: 143
 
 grep "worker_rlimit_nofile" /etc/nginx/nginx.conf
 worker_rlimit_nofile 256;
@@ -802,6 +796,12 @@ worker_rlimit_nofile 256;
  24432        256 256
  24433        256 256
  24434        256 256
+
+# To check fds on FreeBSD:
+sysctl kern.maxfiles kern.maxfilesperproc kern.openfiles
+kern.maxfiles: 64305
+kern.maxfilesperproc: 57870
+kern.openfiles: 143
 ```
 
 This is also controlled by the OS because the worker is not the only process running on the server. It would be very bad if your workers used up all of the file descriptors available to all processes, don't set your limits so that is possible.
