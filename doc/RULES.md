@@ -4973,6 +4973,7 @@ server {
 - [What is a chain of trust?](https://www.ssl.com/faqs/what-is-a-chain-of-trust/)
 - [The Difference Between Root Certificates and Intermediate Certificates](https://www.thesslstore.com/blog/root-certificates-intermediate/)
 - [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce)
+- [Verify certificate chain with OpenSSL](https://www.itsfullofstars.de/2016/02/verify-certificate-chain-with-openssl/)
 - [Chain of Trust (from this handbook)](SSL_TLS_BASICS.md#chain-of-trust)
 
 #### :beginner: Enable DNS CAA Policy

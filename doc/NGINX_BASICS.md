@@ -2400,7 +2400,7 @@ content-type: text/plain
 it's all okay
 ```
 
-Why? Look at [Request processing stages](doc/NGINX_BASICS.md#request-processing-stages) chapter. That's because NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works).
+Why? Look at [Request processing stages](#request-processing-stages) chapter. That's because NGINX process request in phases, and `rewrite` phase (where `return` belongs) goes before `access` phase (where `deny` works).
 
 ##### `uri` vs `request_uri`
 
