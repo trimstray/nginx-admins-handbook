@@ -17,6 +17,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [What exactly is the purpose of these DH Parameters?](#what-exactly-is-the-purpose-of-these-dh-parameters)
   * [Certificates](#certificates)
     * [Chain of Trust](#chain-of-trust)
+      * [What is the main purpose of the Intermediate CA?](#what-is-the-main-purpose-of-the-intermediate-ca)
     * [Single-domain](#single-domain)
     * [Multi-domain](#multi-domain)
     * [Wildcard](#wildcard)
@@ -324,9 +325,11 @@ See also [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/w
 
 ##### Chain of Trust
 
-  > **:bookmark: [Set the certificate chain correctly - Others - P2](RULES.md#set-the-certificate-chain-correctly)**
+  > **:bookmark: [Set the certificate chain correctly - Others - P2](RULES.md#beginner-set-the-certificate-chain-correctly)**
 
 Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
+
+  > In [RFC 5280](https://tools.ietf.org/html/rfc5280) the certificate chain or chain of trust is defined as "certification path".
 
 A certificate chain consists of all the certificates needed to certify the subject identified by the end certificate. In practice this includes the end certificate, the certificates of intermediate CAs, and the certificate of a root CA trusted by all parties in the chain. Every intermediate CA in the chain holds a certificate issued by the CA one level above it in the trust hierarchy.
 
@@ -356,7 +359,11 @@ If certificate is signed directly by the trusted root CA, there is no need to ad
 
 <sup><i>This infographic comes from [Wikipedia](https://en.wikipedia.org/wiki/Chain_of_trust).</i></sup>
 
+The last certificate in the list is a trust anchor: a certificate that you trust because it was delivered to you by some trustworthy procedure. A trust anchor is a CA certificate (or more precisely, the public verification key of a CA) used by a relying party as the starting point for path validation.
+
 With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it).
+
+  > If the intermediate certs are missing the client can not verify the certificate is valid.
 
 The connections is still secure but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues. However, traffic will be still encrypted.
 
@@ -380,6 +387,22 @@ To test validation of your certificate chain use one of the following tools:
 - [SSL Server Test by Qualys](https://www.ssllabs.com/ssltest/analyze.html)
 
 For more information please see [What is the SSL Certificate Chain?](https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/) and [Get your certificate chain right](https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce). Look also at [What happens to code sign certificates when when root CA expires?](https://serverfault.com/questions/878919/what-happens-to-code-sign-certificates-when-when-root-ca-expires).
+
+###### What is the main purpose of the Intermediate CA?
+
+For enhanced security purposes (extra level of security), most end user certificates today are issued by intermediate certificate authorities. Using Intermediate CA certificates is more secure because this way the Root CA is offline (sacrifices convenience to gain security). So, if the Intermediate is compromised it does not impact the Root CA.
+
+If the server does not send the intermediate certificates along with the main domain certificate, the browsers will start throwing error stating `NET:ERR_CERT_AUTHORITY_INVALID` (in Chrome) because it was expecting the intermediate certificate who has signed the domain certificate but got just the domain certificate.
+
+  > Do not do the following if you do not trust the certificate issuer!
+
+See [this](https://security.stackexchange.com/questions/128779/why-is-it-more-secure-to-use-intermediate-ca-certificates/128800#128800) great answer by [Lie Ryan](https://security.stackexchange.com/users/2755/lie-ryan):
+
+  > Getting a new root certificates deployed due to compromised root is massively more difficult than replacing the certificates whose intermediates are compromised. [...] This is extremely hard to do in a short time. People don't upgrade their browser often enough. Some softwares like browsers have mechanism to quickly broadcasts revoked root certificates, and some software vendors have processes to rush release when a critical security vulnerability is found in their product, however you could be almost sure that they would not necessarily consider adding a new Root to warrant a rush update. Nor would people rush to update their software to get the new Root.
+
+And also by [gowenfawr](https://security.stackexchange.com/users/3365/gowenfawr):
+
+  > The Root CA is offline for slow, awkward, but more secure servicing of requests. The use of multiple Intermediate CAs allows the "risk" of having the authority online and accessible to be divided into different sets of certificates; the eggs are spread into different baskets.
 
 ##### Single-domain
 

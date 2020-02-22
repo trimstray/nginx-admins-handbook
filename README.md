@@ -150,6 +150,7 @@
     * [What exactly is the purpose of these DH Parameters?](doc/SSL_TLS_BASICS.md#what-exactly-is-the-purpose-of-these-dh-parameters)
   * [Certificates](doc/SSL_TLS_BASICS.md#certificates)
     * [Chain of Trust](doc/SSL_TLS_BASICS.md#chain-of-trust)
+      * [What is the main purpose of the Intermediate CA?](doc/SSL_TLS_BASICS.md#what-is-the-main-purpose-of-the-intermediate-ca)
     * [Single-domain](doc/SSL_TLS_BASICS.md#single-domain)
     * [Multi-domain](doc/SSL_TLS_BASICS.md#multi-domain)
     * [Wildcard](doc/SSL_TLS_BASICS.md#wildcard)
@@ -823,6 +824,7 @@ Existing chapters:
   - [x] _Diffie-Hellman key exchange_
   - [x] _Certificates_
     - [x] _Chain of Trust_
+      - [x] _What is the main purpose of the Intermediate CA?_
     - [x] _Single-domain_
     - [x] _Multi-domain_
     - [x] _Wildcard_
