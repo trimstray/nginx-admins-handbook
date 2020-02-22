@@ -2950,6 +2950,7 @@ certbot certonly -d example.com -d www.example.com
 - [HTTPS Performance, 2048-bit vs 4096-bit](https://blog.nytsoi.net/2015/11/02/nginx-https-performance)
 - [RSA and ECDSA hybrid Nginx setup with LetsEncrypt certificates](https://hackernoon.com/rsa-and-ecdsa-hybrid-nginx-setup-with-letsencrypt-certificates-ee422695d7d3)
 - [Why ninety-day lifetimes for certificates?](https://letsencrypt.org/2015/11/09/why-90-days.html)
+- [SSL Certificate Validity Will Be Limited to One Year by Apple’s Safari Browser](https://www.thesslstore.com/blog/ssl-certificate-validity-will-be-limited-to-one-year-by-apples-safari-browser/)
 
 #### :beginner: Keep only TLS 1.3 and TLS 1.2
 
@@ -4919,7 +4920,11 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > Validation of the certificate chain is a critical part within any certificate-based authentication process. If a system does not follow the chain of trust of a certificate to a root server, the certificate loses all usefulness as a metric of trust.
 
-  > The server should never present certificate chains containing a trust anchor which is the root CA certificate. The presence of a trust anchor in the certification path can have a negative impact on performance when establishing connections using SSL/TLS.
+  > The server always sends a chain but should never present certificate chains containing a trust anchor which is the root CA certificate, because the root is useless for validation purposes. As per the TLS standard, the chain may or may not include the root certificate itself; the client does not need that root since it already has it. And, indeed, if the client does not already have the root, then receiving it from the server would not help since a root can be trusted only by virtue of being already there.
+
+  > What's more, the presence of a trust anchor in the certification path can have a negative impact on performance when establishing connections using SSL/TLS, because the root is "downloaded" on each handshake (allows you to save the 1 kB or so of data bandwith per connection and reduces server-side memory consumption for TLS session parameters).
+
+  > For best practices, remove the self-signed root from the server. The certificate bundle should only include the certificate's public key, and the public key of any intermediate certificate authorities. Browsers will only trust certificates that resolve to roots that are already in their trust store, they will ignore a root certificate sent in the certificate bundle (otherwise, anyone could send any root).
 
   > With the chain broken, there is no verification that the server that's hosting the data is the correct (expected) server - there is no way to be sure the server is what the server says it is (you lose the ability to validate the security of the connection or to trust it). The connections is still secure (will be still encrypted) but the main concern would be to fix that certificate chain. You should solve the incomplete certificate chain issue manually by concatenating all certificates from the certificate to the trusted root certificate (exclusive, in this order), to prevent such issues.
 

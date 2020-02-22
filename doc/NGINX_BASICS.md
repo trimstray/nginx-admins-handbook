@@ -1126,7 +1126,7 @@ NGINX provides the two layers to enable Keep-Alive:
   keepalive_timeout 10s 25s;
   ```
 
-  > Increase this to allow the keepalive connection to stay open longer, resulting in faster subsequent requests. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible. You could also decrease little by little the timeout (75s -> 50, then later 25...) and see how the server behaves.
+  > Increase this to allow the keepalive connection to stay open longer, resulting in faster subsequent requests. However, setting this too high will result in the waste of resources (mainly memory) as the connection will remain open even if there is no traffic, potentially: significantly affecting performance. I think this should be as close to your average response time as possible. You could also decrease little by little the timeout (75s -> 50s, then later 25s...) and see how the server behaves.
 
 ###### Upstream layer
 
@@ -2361,6 +2361,7 @@ request URI
 ##### `allow` and `deny`
 
   > **:bookmark: [Take care about your ACL rules - Hardening - P1](RULES.md#beginner-take-care-about-your-acl-rules)**
+  > **:bookmark: [Reject unsafe HTTP methods - Hardening - P1](RULES.md#beginner-reject-unsafe-http-methods)**
 
 Both comes from the `ngx_http_access_module` module and allows limiting access to certain client addresses. You can combining `allow/deny` rules.
 

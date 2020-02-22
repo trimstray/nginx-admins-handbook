@@ -330,6 +330,24 @@ Validation of the certificate chain is a critical part within any certificate-ba
 
 A certificate chain consists of all the certificates needed to certify the subject identified by the end certificate. In practice this includes the end certificate, the certificates of intermediate CAs, and the certificate of a root CA trusted by all parties in the chain. Every intermediate CA in the chain holds a certificate issued by the CA one level above it in the trust hierarchy.
 
+The server's certificate, with its chain, is not for the server. The server has no use for its own certificate. Certificates are always for other people (here, the client). What is used by the server is its private key (that corresponds to the public key in its certificate). In particular, the server does not need to trust its own certificate or any CA which issued it.
+
+Look at the following diagram:
+
+```
+ROOT_CERT (isCA=yes)
+|
+|---INTERMEDIATE_CERT_1 (isCA=yes)
+     |
+     |---INTERMEDIATE_CERT_2 (isCA=yes)
+         |
+         |---LEAF_CERT valid for example.com (isCA=no)
+```
+
+  > When CAs sign certificates, they do not only sign the public key of a website e.g., but actually a whole lot of metadata. This meta data e.g. includes when the certificate expires or so. In our case, this is saved in a data format defined as X.509. [...] It also includes certain "constrains", i.e. limits on what the cert can do. The Wikipedia article lists an overview, but what is important for our case is: It also says whether that cert can sign other "(sub)certs" and thus "certify" them or no. - [TLS: Clarification on trust in the certificate trust chain](https://security.stackexchange.com/questions/210672/tls-clarification-on-trust-in-the-certificate-trust-chain/210700#210700).
+
+Both the root CA and intermediate CAs/certs have this set. Thus, they are allowed to sign other certs. Obviously, the leaf cert must not have the permission to sign other certs.
+
 If certificate is signed directly by the trusted root CA, there is no need to add any extra/intermediate to the certificate chain. The root CA issues a certificate for itself.
 
 <p align="center">
@@ -391,20 +409,11 @@ Technically, wildcard certs are issued based on the unknown children of a subdom
 
 The canonical answer should be in [RFC 2818 - Server Identity](https://tools.ietf.org/html/rfc2818#section-3.1) <sup>[IETF]</sup>:
 
-  > _Matching is performed using the matching rules specified by
-    RFC 2459. If more than one identity of a given type is present in
-    the certificate (e.g., more than one dNSName name, a match in any one
-    of the set is considered acceptable.) Names may contain the wildcard
-    character `*` which is considered to match any single domain name
-    component or component fragment. E.g., `*.a.com` matches `foo.a.com` but
-    not `bar.foo.a.com`. `f*.com` matches `foo.com` but not `bar.com`._
+  > _Matching is performed using the matching rules specified by RFC 2459. If more than one identity of a given type is present in the certificate (e.g., more than one dNSName name, a match in any one of the set is considered acceptable.) Names may contain the wildcard character `*` which is considered to match any single domain name component or component fragment. E.g., `*.a.com` matches `foo.a.com` but not `bar.foo.a.com`. `f*.com` matches `foo.com` but not `bar.com`._
 
 [RFC 2459 - Server Identity Check](https://tools.ietf.org/html/rfc2595#section-2.4) <sup>[IETF]</sup> says:
 
-  > _A "`*`" wildcard character MAY be used as **the left-most name
-    component** in the certificate.  For example, `*.example.com` would
-    match `a.example.com`, `foo.example.com`, etc. but **would not match**
-    `example.com`._
+  > _A "`*`" wildcard character MAY be used as **the left-most name component** in the certificate.  For example, `*.example.com` would match `a.example.com`, `foo.example.com`, etc. but **would not match** `example.com`._
 
 Essentially, the standards say that the `*` should match 1 or more non-dot characters. So the root domain needs to be an alternate name for it to validate.
 

@@ -437,7 +437,7 @@
   * [Activate the cache for connections to upstream servers](doc/RULES.md#beginner-activate-the-cache-for-connections-to-upstream-servers)
   * [Make an exact location match to speed up the selection process](doc/RULES.md#beginner-make-an-exact-location-match-to-speed-up-the-selection-process)
   * [Use limit_conn to improve limiting the download speed](doc/RULES.md#beginner-use-limit_conn-to-improve-limiting-the-download-speed)
-- **[Hardening (30)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
+- **[Hardening (31)](doc/RULES.md#hardening)**<a id="toc-hardening"></a>
   * [Always keep NGINX up-to-date](doc/RULES.md#beginner-always-keep-nginx-up-to-date)
   * [Run as an unprivileged user](doc/RULES.md#beginner-run-as-an-unprivileged-user)
   * [Disable unnecessary modules](doc/RULES.md#beginner-disable-unnecessary-modules)
@@ -469,7 +469,7 @@
   * [Limit concurrent connections](doc/RULES.md#beginner-limit-concurrent-connections)
   * [Control Buffer Overflow attacks](doc/RULES.md#beginner-control-buffer-overflow-attacks)
   * [Mitigating Slow HTTP DoS attacks (Closing Slow Connections)](doc/RULES.md#beginner-mitigating-slow-http-dos-attacks-closing-slow-connections)
-- **[Reverse Proxy (7)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy"></a>
+- **[Reverse Proxy (8)](doc/RULES.md#reverse-proxy)**<a id="toc-reverse-proxy"></a>
   * [Use pass directive compatible with backend protocol](doc/RULES.md#beginner-use-pass-directive-compatible-with-backend-protocol)
   * [Be careful with trailing slashes in proxy_pass directive](doc/RULES.md#beginner-be-careful-with-trailing-slashes-in-proxy_pass-directive)
   * [Set and pass Host header only with $host variable](doc/RULES.md#beginner-set-and-pass-host-header-only-with-host-variable)
