@@ -1546,8 +1546,9 @@ working_directory /var/dump/nginx;
   > Traffic mirroring is very useful to:
   >
   >   - analyzing and debugging the original request
-  >   - content inspection
-  >   - troubleshooting (diagnose errors)
+  >   - pre-production tests (handle real production traffic)
+  >   - logging of requests for security analysis and content inspection
+  >   - traffic troubleshooting (diagnose errors)
   >   - copying real traffic to a test envrionment without considerable changes to the production system
 
   > Mirroring itself doesn’t affect original requests (only requests are analyzed, responses are not analyzed). And what's more, errors in the mirror backend don’t affect the main backend.
