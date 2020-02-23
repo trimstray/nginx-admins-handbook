@@ -251,7 +251,7 @@ Variables in quoted strings are expanded normally unless the `$` is escaped.
 
 ##### Directives, Blocks, and Contexts
 
-  > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/2012/08/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
+  > Read this great article about [the NGINX configuration inheritance model](https://blog.martinfjordvald.com/understanding-the-nginx-configuration-inheritance-model/) by [Martin Fjordvald](https://blog.martinfjordvald.com/about/).
 
 Configuration options are called directives. We have four types of directives:
 
@@ -1041,7 +1041,7 @@ nginx: master process         = LimitNOFILE (35,000)
                                                  - 40,000 by worker_rlimit_nofile
 ```
 
-Look also at this great article about [Optimizing Nginx for High Traffic Loads](https://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/).
+Look also at this great article about [Optimizing Nginx for High Traffic Loads](https://blog.martinfjordvald.com/optimizing-nginx-for-high-traffic-loads/).
 
 ##### HTTP Keep-Alive connections
 

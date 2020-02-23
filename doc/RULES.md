@@ -4949,15 +4949,15 @@ To build a valid SSL certificate chain you may use [mkchain](https://github.com/
 # If you have all certificates:
 $ ls /data/certs/example.com
 root.crt inter01.crt inter02.crt certificate.crt
-$ mkchain -i /data/certs/example.com -o certs/example.com/example.com-chain.crt
+$ mkchain -i /data/certs/example.com -o /data/certs/example.com-chain.crt
 
 # If you have only server certificate (downloads all missing CA certificates automatically):
 $ ls /data/certs/example.com
 certificate.crt
-$ mkchain -i certificate.crt -o certs/example.com/example.com-chain.crt
+$ mkchain -i certificate.crt -o /data/certs/example.com-chain.crt
 
 # If you want to download certificate chain from existing domain:
-$ mkchain -i https://incomplete-chain.badssl.com/ -o certs/example.com/example.com-chain.crt
+$ mkchain -i https://incomplete-chain.badssl.com/ -o /data/certs/example.com-chain.crt
 ```
 
 On the NGINX side:
