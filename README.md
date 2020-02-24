@@ -1656,6 +1656,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/O-Saft"><b>O-Saft</b></a> - OWASP SSL advanced forensic tool.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://nghttp2.org/"><b>Nghttp2</b></a> - is an implementation of HTTP/2 and its header compression algorithm HPACK in C.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/summerwind/h2spec"><b>h2spec</b></a> - is a conformance testing tool for HTTP/2 implementation.<br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/gildasio/h2t"><b>h2t</b></a> - is a simple tool to help sysadmins to hardening their websites.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/c0nrad/http2fuzz"><b>http2fuzz</b></a> - HTTP/2 fuzzer written in Golang.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/Arjun"><b>Arjun</b></a> - HTTP parameter discovery suite.<br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/s0md3v/Corsy"><b>Corsy</b></a> - CORS misconfiguration scanner.<br>
