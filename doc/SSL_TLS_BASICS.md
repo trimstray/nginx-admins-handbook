@@ -197,6 +197,14 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
+Ok, so look at the [last example](https://security.stackexchange.com/a/137297) with an explanation of differences between `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` and `TLS_RSA_WITH_AES_128_GCM_SHA256`.
+
+- both use `RSA` certificates to authenticate the server (and possibly the client)
+- both use `AES-128` in Galois/Counter Mode for encryption
+- both use `HMAC-SHA256` for message integrity
+
+They differ is in the key exchange method. `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` uses ephemeral elliptic curve Diffie-Hellman to exchange keys, providing forward secrecy. Because the parameters are ephemeral, they are discarded after use and the key that was exchanged cannot be recovered from the traffic stream without them. `TLS_RSA_WITH_AES_128_GCM_SHA256` on the other hand uses the `RSA` keys in the server certificate to exchange keys. This is still strong crypto (assuming large enough keys), but the session key that was exchanged can be recovered from the traffic stream using the server's private key, which obviously cannot be discarded frequently.
+
   > If you want to get a lot of useful information about available ciphers, see [TLS Cipher Suite Search](https://ciphersuite.info/) engine. For more, look also at [cipher suite definitions](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.gska100/csdcwh.htm) for SSL and TLS protocols.
 
 I recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/) and great answer about [Role of the chosen ciphersuite in an SSL/TLS connection](https://security.stackexchange.com/questions/160429/role-of-the-chosen-ciphersuite-in-an-ssl-tls-connection/160445#160445) (by [dave_thompson_085](https://security.stackexchange.com/users/39571/dave-thompson-085)).
