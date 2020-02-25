@@ -1714,13 +1714,17 @@ server {
 
 ###### Rationale
 
-  > Enabling session caching helps to reduce NGINX server CPU load. This also improves performance from the clients’ perspective because it eliminates the need for a new (and time-consuming) SSL handshake to be conducted each time a request is made.
+  > Default, "built-in" session cache is not optimal as it can be used by only one worker process and can cause memory fragmentation.
 
-  > The TLS RFC recommends that sessions are not kept alive for more than 24 hours (it is the maximum time). But a while ago, I found `ssl_session_timeout` with less time (e.g. 15 minutes) for prevent abused by advertisers like Google and Facebook, I don't know, I guess it makes sense.
-
-  > Default, "built-in" session cache is not optimal as it can be used by only one worker process and can cause memory fragmentation. It is much better to use shared cache.
+  > Enabling session caching with `ssl_session_cache` directive helps to reduce NGINX server CPU load. This also improves performance from the clients’ perspective because it eliminates the need for a new (and time-consuming) SSL handshake to be conducted each time a request is made. What's more, it is much better to use shared cache.
 
   > When using `ssl_session_cache`, the performance of keep-alive connections over SSL might be enormously increased. 10M value of this is a good starting point (1MB shared cache can hold approximately 4,000 sessions). With `shared` a cache shared between all worker processes (a cache with the same name can be used in several virtual servers).
+
+  > For TLSv1.2, the [RFC 5246 - Resuming Sessions](https://tools.ietf.org/html/rfc5246#appendix-F.1.4) recommends that sessions are not kept alive for more than 24 hours (it is the maximum time). Generally, TLS sessions cannot be resumed unless both the client and server agree and should force a full handshake if either party suspects that the session may have been compromised, or that certificates may have expired or been revoked. But a while ago, I found `ssl_session_timeout` with less time (e.g. 15 minutes) for prevent abused by advertisers like Google and Facebook, I don't know, I guess it makes sense.
+
+  On the other hand, [RFC 5077 - Ticket Lifetime](https://tools.ietf.org/html/rfc5077#section-5.6) says:
+
+  > _The ticket lifetime may be longer than the 24-hour lifetime recommended in [RFC4346](https://tools.ietf.org/html/rfc4346). TLS clients may be given a hint of the lifetime of the ticket. Since the lifetime of a ticket may be unspecified, a client has its own local policy that determines when it discards tickets._
 
   > Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
 
@@ -1743,7 +1747,7 @@ server {
 
 ```nginx
 ssl_session_cache shared:NGX_SSL_CACHE:10m;
-ssl_session_timeout 12h;
+ssl_session_timeout 4h;
 ssl_session_tickets off;
 ssl_buffer_size 1400;
 ```
