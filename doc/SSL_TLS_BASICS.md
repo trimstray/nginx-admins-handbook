@@ -56,6 +56,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
 - [SSL Testing Methods](https://securityboulevard.com/2020/02/ssl-testing-methods/)
 - [SSL/TLS Threat Model](https://blog.ivanristic.com/SSL_Threat_Model.png)
+- [Baseline requirements documents (SSL/TLS server certificates)](https://cabforum.org/baseline-requirements-documents/)
 
 If you have any objections to your SSL configuration put your site into [SSL Labs](https://www.ssllabs.com/). It is one of the best (if not the best) tools to verify the SSL/TLS configuration of the HTTP server. I also recommend [ImmuniWeb SSL Security Test](https://www.immuniweb.com/ssl/) and [CryptCheck](https://tls.imirhil.fr/). Each of them will tell you if you need to fix or update your config.
 
