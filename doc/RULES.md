@@ -2874,7 +2874,7 @@ proxy_set_header X-Forwarded-Host $host;
 
   > The truth is (if we talk about `RSA`), the industry/community are split on this topic. I am in the "_use 2048, because 4096 gives us almost nothing, while costing us quite a lot_" camp myself.
 
-  > Advisories recommend 2048-bit for `RSA` (or 256-bit for `ECC`) keys at the moment. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per [NIST](https://www.keylength.com/en/4/)). US National Security Agency (NSA) requires all Top Secret files and documents to be encrypted with 384-bit `ECC` keys (7680-bit `RSA` key). On the other hand, the latest version of [FIPS-186](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf) <sup>[pdf]</sup> say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
+  > Advisories recommend 2048-bit for `RSA` (or 256-bit for `ECC`) keys at the moment. Security experts are projecting that 2048 bits will be sufficient for commercial use until around the year 2030 (as per [NIST](https://www.keylength.com/en/4/)). US National Security Agency (NSA) requires all Top Secret files and documents to be encrypted with 384-bit `ECC` keys (7680-bit `RSA` key). Also, due to security reason, the latest [CA/Browser forum - Baseline Requirements](https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.6.7.pdf) <sup>[pdf]</sup> forum and IST advises to use 2048-bit RSA key for subscriber certificates/keys. On the other hand, the latest version of [FIPS-186](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf) <sup>[pdf]</sup> say the U.S. Federal Government generate (and use) digital signatures with 1024, 2048, or 3072 bit key lengths.
 
   > Recommendations of the European Payments Council ([EPC342-08 v8.0](https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2019-01/EPC342-08%20v8.0%20Guidelines%20on%20cryptographic%20algorithms%20usage%20and%20key%20management.pdf) <sup>[pdf]</sup>) say you should avoid using 1024-bit RSA keys and 160-bit ECC keys for new applications unless for short term low value protection (e.g. ephemeral authentication for single devices). EPC also recommend to use at least 2048-bit RSA or 224-bit ECC for medium term (e.g. 10 year) protection. They classify `SHA-1`, `RSA` moduli with 1024 bits, `ECC` keys of 160 bits as suitable for legacy use (but I no longer believe `SHA-1` is suitable for legacy use).
 
@@ -2948,6 +2948,7 @@ certbot certonly -d example.com -d www.example.com
 - [Cryptographic Key Length Recommendations](https://www.keylength.com/)
 - [Key Lengths - Contribution to The Handbook of Information Security](https://infoscience.epfl.ch/record/164539/files/NPDF-32.pdf) <sup>[pdf]</sup>
 - [NIST - Key Management](https://csrc.nist.gov/Projects/Key-Management/publications) <sup>[NIST]</sup>
+- [CA/Browser Forum Baseline Requirements](https://cabforum.org/baseline-requirements-documents/)
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 - [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)
