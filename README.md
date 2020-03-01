@@ -614,6 +614,8 @@ Remember about the following most important things:
 
   > **`Change one thing may open a whole new set of problems.`**
 
+  > **`Read about how things work and what values are considered secure enough (and for what purposes).`**
+
   > **`The only correct approach is to understand your exposure, measure and tune.`**
 
 ```diff
