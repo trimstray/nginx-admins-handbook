@@ -473,7 +473,7 @@ Another interesting thing is that you can have multiple wildcard names inside th
 | encryption | no | **yes** |
 | authorization | no | no |
 | privacy | no | no (or **yes** if you trust the issuer of that certificate implicitly) |
-| performance | **fast** | **faster than HTTP** |
+| performance | **fast** | **faster than HTTP** (under certain conditions) |
 
 Look at [this](https://stackoverflow.com/a/20578199) great explanation by [Kevin Cox](https://stackoverflow.com/users/1166181/kevin-cox):
 
@@ -491,7 +491,7 @@ For me, a self-signed certificates are good to go for testing purposes and for i
 
 - **Performance**
 
-So the important thing to keep in mind is performance. In my opinion, HTTP is slower than HTTPS with HTTP/2 (e.g one TCP connection, multiplexing, HPACK headers compression), HSTS, OCSP Stapling and several other improvements, except the initial TLS handshake which requires two extra roundtrips (but I think TLS performance impact is not as important as it used to be). See also [HTTP vs HTTPS Test](http://www.httpvshttps.com/).
+So the important thing to keep in mind is performance. In my opinion, HTTP is slower than HTTPS with HTTP/2 (e.g one TCP connection, multiplexing, HPACK headers compression), HSTS, OCSP Stapling and several other improvements, except the initial TLS handshake which requires two extra roundtrips (but I think TLS performance impact is not as important as it used to be). See also [HTTP vs HTTPS Test](http://www.httpvshttps.com/) and [TLS has exactly one performance problem: it is not used widely enough](https://istlsfastyet.com/).
 
 #### TLS Server Name Indication
 
