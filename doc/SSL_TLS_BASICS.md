@@ -45,6 +45,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [The Sorry State Of SSL](https://hynek.me/talks/tls/)
 - [How does SSL/TLS work?](https://security.stackexchange.com/questions/20803/how-does-ssl-tls-work)
 - [What is TLS and how does it work?](https://www.comparitech.com/blog/information-security/tls-encryption/)
+- [TLSeminar - Understanding and Securing TLS](https://tlseminar.github.io/)
 - [A study of the TLS ecosystem](https://pdfs.semanticscholar.org/12fb/86fcbf0564ab11552c516539c91c6c8ff4d6.pdf) <sup>[pdf]</sup>
 - [Inspecting TLS/SSL](https://www.java2depth.com/2019/04/transport-layer-security-tls-and-secure.html)
 - [TLS in HTTP/2](https://daniel.haxx.se/blog/2015/03/06/tls-in-http2/)
@@ -85,6 +86,18 @@ Finally, see [this](https://jve.linuxwall.info/blog/index.php?post/TLS_Survey) f
 | TLS 1.1 | [RFC 4346](https://tools.ietf.org/html/rfc4346) <sup>[IETF]</sup> | 2006 | Deprecation in 2020 |
 | TLS 1.2 | [RFC 5246](https://tools.ietf.org/html/rfc5246) <sup>[IETF]</sup> | 2008 | Still secure |
 | TLS 1.3 | [RFC 8446](https://tools.ietf.org/html/rfc8446) <sup>[IETF]</sup> | 2018 | Still secure |
+
+Some SSL/TLS server implementations do not negotiate the protocol version correctly, but terminate the connection with a fatal alert if the client attempts to negotiate a protocol version that the server doesn't support. This might happen at either of three steps in the handshake protocol:
+
+- when the server parses the client hello (which should contain the highest protocol version supported by the client). A correctly implemented server should store the client version value, even if it is not supported by the server
+
+- when parsing a client key exchange message containing a RSA encrypted pre master secret (which should contain the highest protocol version supported by the client as the first two octets). This version field should be compared to the client version value above, and not to the negotiated version
+
+- when verifying the client finished message (which should be a hash of all handshake messages, including the client hello which contains the highest protocol version supported by the client)
+
+Now, if the server for some reason doesn't process these steps in accordance with the TLS 1.0, 1.1 or 1.2 standards, but one way or another e.g. requires the highest protocol version supported by the client to have a specific value, or to be no greater than the highest protocol version supported by the server, the client has two choices: Either fail the connection with an error message that is displayed to the user, or attempt to connect again with the highest protocol version disabled.
+
+<sup>This answer comes from [Why is TLS susceptible to protocol downgrade attacks?](https://crypto.stackexchange.com/questions/10493/why-is-tls-susceptible-to-protocol-downgrade-attacks/10495#10495).</sup>
 
 #### TLS handshake
 

@@ -2973,6 +2973,8 @@ certbot certonly -d example.com -d www.example.com
 
   > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be POODLEd, BEASTed and otherwise padding-Oracled as well. Lots of other CVE weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients). There are many other security risks caused by sticking to TLS 1.0 or 1.1, so I strongly recommend everyone updates their clients, services and devices to support min. TLS 1.2.
 
+  > Removing backward SSL/TLS version is often the only way to prevent downgrade attacks. Google has proposed an extension to SSL/TLS named `TLS_FALLBACK_SCSV` (it should be supported by your OpenSSL library) that seeks to prevent forced SSL/TLS downgrades (the extension was adopted as [RFC 7507](https://tools.ietf.org/html/rfc7507) in April 2015). Upgrading alone is not sufficient. You must disable SSLv2 and SSLv3 - so if your server does not allow SSLv3 (or v2) connections it is not needed (as those downgraded connections would not work). Technically `TLS_FALLBACK_SCSV` is still useful with SSL disabled, because it helps avoid the connection being downgraded to TLS<1.2. To test this extension, read [this](https://dwradcliffe.com/2014/10/16/testing-tls-fallback.html) great tutorial.
+
   > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms and adds TLS extensions and cipher suites. TLS 1.2 improves cipher suites that reduce reliance on block ciphers that have been exploited by attacks like BEAST and the aforementioned POODLE. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, and `CBC` ciphers. Additionally, as already mentioned, TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions and doesn't require any particular configuration, as all of the ciphers are secure, and by default OpenSSL only enables `GCM` and `Chacha20/Poly1305` for TLSv1.3, without enabling `CCM`. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
@@ -3040,6 +3042,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454)
 - [Deploying TLS 1.3: the great, the good and the bad](https://media.ccc.de/v/33c3-8348-deploying_tls_1_3_the_great_the_good_and_the_bad)
 - [Downgrade Attack on TLS 1.3 and Vulnerabilities in Major TLS Libraries](https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2019/february/downgrade-attack-on-tls-1.3-and-vulnerabilities-in-major-tls-libraries/)
+- [How does TLS 1.3 protect against downgrade attacks?](https://blog.gypsyengineer.com/en/security/how-does-tls-1-3-protect-against-downgrade-attacks.html)
 - [Phase two of our TLS 1.0 and 1.1 deprecation plan](https://www.fastly.com/blog/phase-two-our-tls-10-and-11-deprecation-plan)
 - [Deprecating TLSv1.0 and TLSv1.1 (IETF)](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>
 - [Deprecating TLS 1.0 and 1.1 - Enhancing Security for Everyone](https://www.keycdn.com/blog/deprecating-tls-1-0-and-1-1)
@@ -3049,6 +3052,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [A Challenging but Feasible Blockwise-Adaptive Chosen-Plaintext Attack on SSL](https://eprint.iacr.org/2006/136)
 - [TLS/SSL hardening and compatibility Report 2011](http://www.g-sec.lu/sslharden/SSL_comp_report2011.pdf) <sup>[pdf]</sup>
 - [This POODLE bites: exploiting the SSL 3.0 fallback](https://security.googleblog.com/2014/10/this-poodle-bites-exploiting-ssl-30.html)
+- [New Tricks For Defeating SSL In Practice](https://www.blackhat.com/presentations/bh-dc-09/Marlinspike/BlackHat-DC-09-Marlinspike-Defeating-SSL.pdf) <sup>[pdf]</sup>
 - [Are You Ready for 30 June 2018? Saying Goodbye to SSL/early TLS](https://blog.pcisecuritystandards.org/are-you-ready-for-30-june-2018-sayin-goodbye-to-ssl-early-tls)
 - [What Happens After 30 June 2018? New Guidance on Use of SSL/Early TLS](https://blog.pcisecuritystandards.org/what-happens-after-30-june-2018-new-guidance-on-use-of-ssl/early-tls-)
 - [Mozilla Security Blog - Removing Old Versions of TLS](https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls/)
@@ -3060,7 +3064,6 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
 - [SSL Labs Grade Change for TLS 1.0 and TLS 1.1 Protocols](https://blog.qualys.com/ssllabs/2018/11/19/grade-change-for-tls-1-0-and-tls-1-1-protocols)
 - [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
-- [Downgrade Attack on TLS 1.3 and Vulnerabilities in Major TLS Libraries](https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2019/february/downgrade-attack-on-tls-1.3-and-vulnerabilities-in-major-tls-libraries/)
 
 #### :beginner: Use only strong ciphers
 
@@ -3795,6 +3798,7 @@ ssl_dhparam /etc/nginx/ssl/dhparam_2048.pem;
 - [SSL/TLS: How to choose your cipher suite](https://technology.amis.nl/2017/07/04/ssltls-choose-cipher-suite/)
 - [Diffie-Hellman and its TLS/SSL usage](https://security.stackexchange.com/questions/41205/diffie-hellman-and-its-tls-ssl-usage)
 - [Google Plans to Deprecate DHE Cipher Suites](https://www.digicert.com/blog/google-plans-to-deprecate-dhe-cipher-suites/)
+- [Downgrade Attacks](https://tlseminar.github.io/downgrade-attacks/)
 - [Diffie-Hellman key exchange (from this handbook)](SSL_TLS_BASICS.md#diffie-hellman-key-exchange)
 
 #### :beginner: Prevent Replay Attacks on Zero Round-Trip Time
@@ -4600,6 +4604,10 @@ location ^~ /a/ {
 
   > `$http_host`, moreover, is better than `$host:$server_port` because it uses the port as present in the URL, unlike `$server_port` which uses the port that NGINX listens on.
 
+  > On the other hand, using `$host` has it's own vulnerability; you must handle the situation when the `Host` field is absent properly by defining default server blocks to catch those requests. The key point though is that changing the `proxy_set_header Host $host` would not change this behavior at all because the `$host` value would be equal to the `$http_host` value when the `Host` request field is present.
+
+  > In the NGINX server we will achieve this by use catch-all virtual hosts. These are vhosts referenced by web servers if an unrecognized/undefined `Host` header appears in the client request. It's also a good idea to specifying the exact (not wildcard) value of `server_name`.
+
 ###### Example
 
 ```nginx
@@ -4617,6 +4625,7 @@ proxy_set_header Host $host;
 - [Tip: keep the Host header via nginx proxy_pass](https://www.simplicidade.org/notes/2011/02/15/tip-keep-the-host-header-via-nginx-proxy_pass/)
 - [What is a Host Header Attack?](https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/)
 - [Practical HTTP Host header attacks](https://www.skeletonscribe.net/2013/05/practical-http-host-header-attacks.html)
+- [Host of Troubles Vulnerabilities](https://hostoftroubles.com/)
 - [$10k host header](https://www.ezequiel.tech/p/10k-host-header.html)
 
 #### :beginner: Set properly values of the `X-Forwarded-For` header
