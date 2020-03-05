@@ -4218,13 +4218,17 @@ add_header Feature-Policy "geolocation 'none'; midi 'none'; notifications 'none'
 
   > An ordinary web server supports the `GET`, `HEAD` and `POST` methods to retrieve static and dynamic content. Other (e.g. `OPTIONS`, `TRACE`) methods should not be supported on public web servers, as they increase the attack surface.
 
+  > Some of these methods are typically dangerous to expose, and some are just extraneous in a production environment, which could be considered extra attack surface. Still, worth shutting those off too, since you probably wont need them.
+
   > Some of the APIs (e.g. RESTful APIs) uses also other methods. In addition to the following protection, application architects should also verify incoming requests.
 
   > Support for the `TRACE` method can allow Cross-Site Tracing attack that can facilitate to capture of the session ID of another application user. In addition, this method can be used to attempt to identify additional information about the environment in which the application operates (e.g. existence of cache servers on the path to the application).
 
   > Support for the `OPTIONS` method is not a direct threat, but it is a source of additional information for the attacker that can facilitate an effective attack.
 
-  > Support for the `HEAD` method is also risky (really!), because can speed up the attack process by limiting the volume of data sent from the server. If the authorization mechanisms are based on the `GET` and `POST`, the `HEAD` method may allow to bypass these protections.
+  > Support for the `HEAD` method is also risky (really!) - it is not considered dangerous but it can be used to attack a web application by mimicking the `GET` request. Secondly, usage of `HEAD` can speed up the attack process by limiting the volume of data sent from the server. If the authorization mechanisms are based on the `GET` and `POST`, the `HEAD` method may allow to bypass these protections.
+
+  > I think, that `HEAD` requests are commonly used by proxies or CDN's to efficiently determine whether a page has changed without downloading the entire body (it is useful for retrieving meta-information written in response headers). What's more, if you disabled it, you'd just increase your throughput cost.
 
   > It is not recommended to use `if` statements to block unsafe HTTP methods, instead you can use `limit_except` directive (should be faster than regexp evaluation), but remember, it has limited use: inside `location` only. I think, use of regular expressions in this case is a bit more flexible.
 
@@ -4301,6 +4305,7 @@ location /api {
 - [Vulnerability name: Unsafe HTTP methods](https://www.onwebsecurity.com/security/unsafe-http-methods.html)
 - [Cross Site Tracing](https://owasp.org/www-community/attacks/Cross_Site_Tracing)
 - [Cross-Site Tracing (XST): The misunderstood vulnerability](https://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misunderstood-vulnerability/)
+- [Penetration Testing Of A Web Application Using Dangerous HTTP Methods](https://www.sans.org/reading-room/whitepapers/testing/penetration-testing-web-application-dangerous-http-methods-33945) <sup>[pdf]</sup>
 - [Blocking/allowing IP addresses (from this handbook)](HELPERS.md#blockingallowing-ip-addresses)
 - [allow and deny (from this handbook)](NGINX_BASICS.md#allow-and-deny)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)

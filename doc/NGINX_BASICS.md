@@ -2360,7 +2360,7 @@ request URI
 
 ##### `allow` and `deny`
 
-  > **:bookmark: [Take care about your ACL rules - Hardening - P1](RULES.md#beginner-take-care-about-your-acl-rules)**
+  > **:bookmark: [Take care about your ACL rules - Hardening - P1](RULES.md#beginner-take-care-about-your-acl-rules)**<br>
   > **:bookmark: [Reject unsafe HTTP methods - Hardening - P1](RULES.md#beginner-reject-unsafe-http-methods)**
 
 Both comes from the `ngx_http_access_module` module and allows limiting access to certain client addresses. You can combining `allow/deny` rules.

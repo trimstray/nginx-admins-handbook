@@ -521,6 +521,8 @@ Be sure to take a look at this (it's genius work!):
 
 <sup><i>This diagram comes from [for-GET/http-decision-diagram](https://github.com/for-GET/http-decision-diagram) repository.</i></sup>
 
+The diagram follows the indications in [RFC7230](https://tools.ietf.org/html/rfc7230), [RFC7231](https://tools.ietf.org/html/rfc7231), [RFC7232](https://tools.ietf.org/html/rfc7232), [RFC7233](https://tools.ietf.org/html/rfc7233), [RFC7234](https://tools.ietf.org/html/rfc7234), [RFC7235](https://tools.ietf.org/html/rfc7235), and fills in the void where necessary. Under no circumstances does this diagram override the HTTP specifications.
+
 ##### Response header fields
 
 There are three types of HTTP message headers for responses:
