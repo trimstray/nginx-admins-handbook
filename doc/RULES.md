@@ -4608,7 +4608,7 @@ location ^~ /a/ {
 
   > In the NGINX server we will achieve this by use catch-all virtual hosts. These are vhosts referenced by web servers if an unrecognized/undefined `Host` header appears in the client request. It's also a good idea to specifying the exact (not wildcard) value of `server_name`.
 
-  > Of course, the most important line of defense is the proper implementation of parsing mechanisms on the application side, e.g. using the list of allowed values for the `Host` header. Your web-app should fully comply with [RFC 7230](https://tools.ietf.org/html/rfc7230) to avoid problems caused by inconsistent interpretation of host to associate with an HTTP transaction. Per RFC 7230, the correct solution is to treat multiple `Host` headers and white-spaces around field-names as errors.
+  > Of course, the most important line of defense is the proper implementation of parsing mechanisms on the application side, e.g. using the list of allowed values for the `Host` header. Your web-app should fully comply with [RFC 7230](https://tools.ietf.org/html/rfc7230) to avoid problems caused by inconsistent interpretation of host to associate with an HTTP transaction. Per above RFC, the correct solution is to treat multiple `Host` headers and white-spaces around field-names as errors.
 
 ###### Example
 

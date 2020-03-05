@@ -1291,6 +1291,10 @@ Look also at the following recommendations. I believe the right configuration of
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/blkcipher_ssllabs_preview.png" alt="blkcipher_ssllabs_preview">
 </p>
 
+Something about SSL Labs grading mechanism (that's an interesting point of view):
+
+  > _The whole grading mechanism is more propaganda and public relations than actual security. If you want good security, then you must mind the details and understand how things work internally. If you want a good grade then you should do whatever it takes to have a good grade. An "A+" from SSL Labs is a very nifty thing to add at the end of a report, but it does not really equate with having rock solid security. Having an "A+" equates with being able to say "I have an A+"._ - from [this](https://security.stackexchange.com/a/112539) answer by [Tom Leek](https://security.stackexchange.com/users/5411/tom-leek).
+
 ### Mozilla Observatory
 
   > Read about Mozilla Observatory [here](https://observatory.mozilla.org/faq/) and about [Observatory Scoring Methodology](https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/scoring.md).
