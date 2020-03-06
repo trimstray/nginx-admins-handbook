@@ -207,7 +207,7 @@ Look at the following explanation for `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`:
 | :---:        | :---:        | :---:        | :---:        | :---:        |
 | `TLS` | `ECDHE` | `ECDSA` | `AES_128_GCM` | `SHA256` |
 
-`TLS` is the protocol. Starting with `ECDHE` we can see that during the handshake the keys will be exchanged via ephemeral Elliptic Curve Diffie Hellman (`ECDHE`). `ECDSA` is the authentication algorithm. `AES_128_GCM` is the bulk encryption algorithm: `AES` running Galois Counter Mode with `128-bit` key size. Finally, `SHA-256` is the hashing algorithm.
+`TLS` is the protocol (standard starting point). Starting with `ECDHE` we can see that during the handshake the keys will be exchanged via ephemeral Elliptic Curve Diffie Hellman (`ECDHE`) - elliptic curve version of the Diffie-Hellman key-exchange using ephemeral keys. `ECDSA` is the authentication algorithm used to sign the key-exchange parameters, omitted for RSA. `AES_128_GCM` is the bulk encryption algorithm: `AES` running Galois Counter Mode with `128-bit` key size. `AES_256` would denote a 256-bit key, with `GCM`, only `AES`, `CAMELLIA` and `ARIA` are possible, with `AES` being clearly the most popular and widely deployed choice. Finally, `SHA-256` is the hashing algorithm - the hash-function used as a basis for key-derivation from the master secret in the TLS protocol, as well as for authentication of the finished message.
 
 The client and the server negotiate which cipher suite to use at the beginning of the TLS connection (the client sends the list of cipher suites that it supports, and the server picks one and lets the client know which one). The choice of elliptic curve for `ECDH` is not part of the cipher suite encoding. The curve is negotiated separately (here too, the client proposes and the server decides).
 
@@ -225,7 +225,11 @@ I recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security
 
 ##### Authenticated encryption (AEAD) cipher suites
 
-AEAD algorithms generally come with a security proof. These security proofs are of course dependent on the underlying primitives, but it gives more confidence in the full scheme none-the-less. The AEAD ciphers - regardless of the internal structure - should be immune to the problems caused by authenticate-then-encrypt.
+AEAD algorithms generally come with a security proof. They provides specialized block cipher modes of operation called Authenticated Encryption (AE) modes, or sometimes Authenticated Encryption with Associated Data (AEAD). These modes handle both the encryption and the authentication in one go, usually with a single key.
+
+These security proofs are of course dependent on the underlying primitives, but it gives more confidence in the full scheme none-the-less. The AEAD ciphers - regardless of the internal structure - should be immune to the problems caused by authenticate-then-encrypt (see [How to choose an Authenticated Encryption mode](https://blog.cryptographyengineering.com/2012/05/19/how-to-choose-authenticated-encryption/) as a great explanation).
+
+AE(AD) modes were developed as a way to make the problem of authentication ‘easy’ for implementers. Moreover, some of these modes are lightning fast, or at least allow you to take advantage of parallelization to speed things up.
 
 Advantages of AEAD ciphers:
 
@@ -266,6 +270,15 @@ TLS_DHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
 TLS_DHE_RSA_WITH_ARIA_128_GCM_SHA256
 TLS_DHE_RSA_WITH_ARIA_256_GCM_SHA384
 ```
+
+But the following AEAD cipher suites are recommended:
+
+| <b>NAME</b> | <b>ALIAS</b> | <b>KEY SIZE</b> | <b>SALT SIZE</b> | <b>NONCE SIZE</b> | <b>TAG SIZE</b> |
+| :---:        | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
+| `AEAD_CHACHA20_POLY1305` | `chacha20-ietf-poly1305` | 32 | 32 | 12 | 16 |
+| `AEAD_AES_256_GCM` | `aes-256-gcm` | 32 | 32 | 12 | 16 |
+| `AEAD_AES_192_GCM` | `aes-192-gcm 24` | 24 | 12 | 16 |
+| `AEAD_AES_128_GCM` | `aes-128-gcm 16` | 16 | 12 | 16 |
 
 These are the current AEAD ciphers which don't trigger the [ROBOT](https://robotattack.org/) warning.
 
@@ -552,3 +565,5 @@ For more information please see [What Is SNI? How TLS Server Name Indication Wor
 - [Elliptic Curves - Computerphile](https://youtu.be/NF1pwjL9-DE)
 - [Elliptic Curve Cryptography Overview](https://youtu.be/dCvB-mhkT0w)
 - [Secret Key Exchange (Diffie-Hellman) - Computerphile](https://youtu.be/NmM9HA2MQGI)
+- [The Cryptographers' Panel](https://youtu.be/gMc9fHvc78Y)
+- [The Cryptographers' Panel 2015](https://youtu.be/9RtZrNPP26w)

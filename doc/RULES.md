@@ -770,7 +770,7 @@ server {
 # Include this file to the server context (attach domain-b.com for specific listen directive):
 server {
 
-  listen 192.168.252.10:443 ssl http2;
+  listen 192.168.252.10:443 ssl;
 
   include /etc/nginx/https.conf;
 
@@ -2969,13 +2969,13 @@ certbot certonly -d example.com -d www.example.com
 
   > It is recommended to enable TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes) which we really shouldn’t be using anymore. TLS 1.2 is currently the most used version of TLS and has made several improvements in security compared to TLS 1.1. The vast majority of sites do support TLSv1.2 but there are still some out there that don't (what's more, it is still not all clients are compatible with every version of TLS). The TLS 1.3 protocol is the latest and more robust TLS protocol version and should be used where possible (and where don't need backward compatibility). The biggest benefit to dropping TLS 1.0 and 1.1 is that modern AEAD ciphers are only supported by TLS 1.2 and above.
 
-  > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. NIST Special Publication (SP) [800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST, pdf]</sup>) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf) <sup>[pdf]</sup>. For example, in March of 2020, [Firefox will disable support for TLS 1.0 and TLS 1.1](https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls/).
+  > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. [NIST Special Publication (SP) 800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST, pdf]</sup>) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf) <sup>[pdf]</sup>. For example, in March of 2020, [Firefox will disable support for TLS 1.0 and TLS 1.1](https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls/).
 
   > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be POODLEd, BEASTed and otherwise padding-Oracled as well. Lots of other CVE weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients). There are many other security risks caused by sticking to TLS 1.0 or 1.1, so I strongly recommend everyone updates their clients, services and devices to support min. TLS 1.2.
 
   > Removing backward SSL/TLS version is often the only way to prevent downgrade attacks. Google has proposed an extension to SSL/TLS named `TLS_FALLBACK_SCSV` (it should be supported by your OpenSSL library) that seeks to prevent forced SSL/TLS downgrades (the extension was adopted as [RFC 7507](https://tools.ietf.org/html/rfc7507) in April 2015). Upgrading alone is not sufficient. You must disable SSLv2 and SSLv3 - so if your server does not allow SSLv3 (or v2) connections it is not needed (as those downgraded connections would not work). Technically `TLS_FALLBACK_SCSV` is still useful with SSL disabled, because it helps avoid the connection being downgraded to TLS<1.2. To test this extension, read [this](https://dwradcliffe.com/2014/10/16/testing-tls-fallback.html) great tutorial.
 
-  > TLS 1.2 and TLS 1.3 are both without security issues. Only these versions provides modern cryptographic algorithms and adds TLS extensions and cipher suites. TLS 1.2 improves cipher suites that reduce reliance on block ciphers that have been exploited by attacks like BEAST and the aforementioned POODLE. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, and `CBC` ciphers. Additionally, as already mentioned, TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
+  > TLS 1.2 and TLS 1.3 are both without security issues (TLSv1.2 only once the certain conditions have been fulfilled, e.g. disable `CBC` ciphers). Only these versions provides modern cryptographic algorithms and adds TLS extensions and cipher suites. TLS 1.2 improves cipher suites that reduce reliance on block ciphers that have been exploited by attacks like BEAST and the aforementioned POODLE. TLS 1.3 is a new TLS version that will power a faster and more secure web for the next few years. What's more, TLS 1.3 comes without a ton of stuff (was removed): renegotiation, compression, and many legacy algorithms: `DSA`, `RC4`, `SHA1`, `MD5`, and `CBC` ciphers. Additionally, as already mentioned, TLS 1.0 and TLS 1.1 protocols will be removed from browsers at the beginning of 2020.
 
   > TLS 1.2 does require careful configuration to ensure obsolete cipher suites with identified vulnerabilities are not used in conjunction with it. TLS 1.3 removes the need to make these decisions and doesn't require any particular configuration, as all of the ciphers are secure, and by default OpenSSL only enables `GCM` and `Chacha20/Poly1305` for TLSv1.3, without enabling `CCM`. TLS 1.3 version also improves TLS 1.2 security, privace and performance issues.
 
@@ -3057,11 +3057,13 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [What Happens After 30 June 2018? New Guidance on Use of SSL/Early TLS](https://blog.pcisecuritystandards.org/what-happens-after-30-june-2018-new-guidance-on-use-of-ssl/early-tls-)
 - [Mozilla Security Blog - Removing Old Versions of TLS](https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls/)
 - [Google - Modernizing Transport Security](https://security.googleblog.com/2018/10/modernizing-transport-security.html)
+- [These truly are the end times for TLS 1.0, 1.1](https://www.theregister.co.uk/2020/02/10/tls_10_11_firefox_complete_eradication/)
 - [Who's quit TLS 1.0?](https://who-quit-tls10.com/)
 - [Recommended Cloudflare SSL configurations for PCI compliance](https://support.cloudflare.com/hc/en-us/articles/205043158-PCI-compliance-and-Cloudflare-SSL#h_8d214b26-c3e5-4632-8056-d2ccd08790dd)
 - [Cloudflare SSL cipher, browser, and protocol support](https://support.cloudflare.com/hc/en-us/articles/203041594-Cloudflare-SSL-cipher-browser-and-protocol-support)
 - [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
+- [AEAD Ciphers - shadowsocks](https://shadowsocks.org/en/spec/AEAD-Ciphers.html)
 - [SSL Labs Grade Change for TLS 1.0 and TLS 1.1 Protocols](https://blog.qualys.com/ssllabs/2018/11/19/grade-change-for-tls-1-0-and-tls-1-1-protocols)
 - [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
 
@@ -3089,7 +3091,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me (getting rid of `CHACHA20_POLY1305`) and I have not found a rational explanation for why we should do it. `ChaCha20` is simpler than `AES` and currently be quite a lot faster encryption algorithm if no `AES` hardware acceleration is available (in practice `AES` is often implemented in hardware which gives it an advantage).
+  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me (getting rid of `CHACHA20_POLY1305`) and I have not found a rational explanation for why we should do it. `ChaCha20` is simpler than `AES` and currently be quite a lot faster encryption algorithm if no `AES` hardware acceleration is available (in practice `AES` is often implemented in hardware which gives it an advantage). What's more, speed and security is probably the reason for Google to already support `ChaCha20 + Poly1305/AES` in Chrome.
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
@@ -3098,6 +3100,8 @@ ssl_protocols TLSv1.2 TLSv1.1;
   > For TLS 1.2 you should consider disable weak ciphers without forward secrecy like ciphers with `CBC` algorithm. The `CBC` mode is vulnerable to plain-text attacks with TLS 1.0, SSL 3.0 and lower. However a real fix is implemented with TLS 1.2 in which the `GCM` mode was introduced and which is not vulnerable to the BEAST attack. Using them also reduces the final grade because they don't use ephemeral keys. In my opinion you should use ciphers with `AEAD` (TLS 1.3 supports only these suites) encryption because they don't have any known weaknesses.
 
   > There are vulnerabilities like Zombie POODLE, GOLDENDOODLE, 0-Length OpenSSL and Sleeping POODLE which were published for websites that use `CBC` (Cipher Block Chaining) block cipher modes. These vulnerabilities are applicable only if the server uses TLS 1.0, TLS 1.1 or TLS 1.2 with `CBC` cipher modes. Look at [Zombie POODLE, GOLDENDOODLE, & How TLSv1.3 Can Save Us All](https://i.blackhat.com/asia-19/Fri-March-29/bh-asia-Young-Zombie-Poodle-Goldendoodle-and-How-TLSv13-Can-Save-Us-All.pdf) <sup>[pdf]</sup> presentation from Black Hat Asia 2019. TLS 1.0 and TLS 1.1 may be affected by vulnerabilities such as [FREAK, POODLE, BEAST, and CRIME](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/).
+
+  > And yet, interestingly, Craig Young, a computer security researcher for Tripwire's Vulnerability and Exposure Research Team, found vulnerabilities in SSL 3.0's successor, TLS 1.2, that allow for attacks akin to POODLE due to TLS 1.2's continued support for a long-outdated cryptographic method: cipher block-chaining (`CBC`). The flaws allow man-in-the-middle (MitM) attacks on a user's encrypted Web sessions.
 
   > I recommend to disable TLS cipher modes that use `RSA` encryption (all ciphers that start with `TLS_RSA_WITH_*`) because they are really vulnerable to [ROBOT](https://robotattack.org/) attack. Instead, you should add support for cipher suites that use `ECDHE` or `DHE` (to be compliant to NIST SP 800-56B) for key transport. If your server is configured to support ciphers known as static key ciphers, you should know that hese ciphers don't support "Forward Secrecy". In the new specification for HTTP/2, these ciphers have been blacklisted. Not all servers that support `RSA` key exchange are vulnerable, but it is recommended to disable `RSA` key exchange ciphers as it does not support forward secrecy. On the other hand, `TLS_ECDHE_RSA` ciphers may be OK, because `RSA` is not doing the key transport in this case. TLS 1.3 doesn’t use `RSA` key exchanges because they’re not forward secret.
 
@@ -4251,7 +4255,7 @@ add_header Allow "GET, HEAD, POST" always;
 
 if ($request_method !~ ^(GET|HEAD|POST)$) {
 
-  # You can also use 'add_header' inside 'if' context instead of outside 'if':
+  # You can also use 'add_header' inside 'if' context:
   # add_header Allow "GET, HEAD, POST" always;
   return 405;
 
@@ -4777,7 +4781,12 @@ location / {
 
   > The use of custom headers with `X-` prefix is not forbidden but discouraged. In other words, you can keep using `X-` prefixed headers, but it's not recommended and you may not document them as if they are public standard.
 
-  > Internet Engineering Task Force released in [RFC 6648](https://tools.ietf.org/html/rfc6648) <sup>[IETF]</sup> recommended deprecation of `X-` prefix.
+  > The [IETF draft](https://tools.ietf.org/html/draft-saintandre-xdash-00) was posted to deprecate the recommendation of using the `X-` prefix for non-standard headers. The reason is that when non-standard headers prefixed with `X-` become standard, removing the `X-` prefix breaks backwards compatibility, forcing application protocols to support both names (E.g, `x-gzip` and `gzip` are now equivalent). So, the official recommendation is to just name them sensibly without the `X-` prefix.
+
+  > Internet Engineering Task Force released in [RFC 6648](https://tools.ietf.org/html/rfc6648) <sup>[IETF]</sup> recommended official deprecation of `X-` prefix:
+
+  > - _3. Recommendations for Creators of New Parameters [...] SHOULD NOT prefix their parameter names with "X-" or similar constructs._
+  > - _4. Recommendations for Protocol Designers [...] SHOULD NOT prohibit parameters with an "X-" prefix or similar constructs from being registered. [...] MUST NOT stipulate that a parameter with an "X-" prefix or similar constructs needs to be understood as unstandardized. [...] MUST NOT stipulate that a parameter without an "X-" prefix or similar constructs needs to be understood as standardized._
 
   > The `X-` in front of a header name customarily has denoted it as experimental/non-standard/vendor-specific. Once it's a standard part of HTTP, it'll lose the prefix.
 
@@ -4800,6 +4809,7 @@ add_header Backend-Server $hostname;
 ###### External resources
 
 - [Use of the "X-" Prefix in Application Protocols](https://tools.ietf.org/html/draft-saintandre-xdash-00) <sup>[IETF]</sup>
+- [Why we need to deprecate x prefix for HTTP headers?](https://tonyxu.io/posts/2018/http-deprecate-x-prefix/)
 - [Custom HTTP headers : naming conventions](https://stackoverflow.com/questions/3561381/custom-http-headers-naming-conventions/3561399#3561399)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
