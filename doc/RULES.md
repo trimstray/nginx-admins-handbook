@@ -2969,9 +2969,9 @@ certbot certonly -d example.com -d www.example.com
 
   > It is recommended to enable TLS 1.2/1.3 and fully disable SSLv2, SSLv3, TLS 1.0 and TLS 1.1 that have protocol weaknesses and uses older cipher suites (do not provide any modern ciper modes) which we really shouldn’t be using anymore. TLS 1.2 is currently the most used version of TLS and has made several improvements in security compared to TLS 1.1. The vast majority of sites do support TLSv1.2 but there are still some out there that don't (what's more, it is still not all clients are compatible with every version of TLS). The TLS 1.3 protocol is the latest and more robust TLS protocol version and should be used where possible (and where don't need backward compatibility). The biggest benefit to dropping TLS 1.0 and 1.1 is that modern AEAD ciphers are only supported by TLS 1.2 and above.
 
-  > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. [NIST Special Publication (SP) 800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST, pdf]</sup>) and industry consortia such as the Payment Card Industry Association (PCI) [PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf) <sup>[pdf]</sup>. For example, in March of 2020, [Firefox will disable support for TLS 1.0 and TLS 1.1](https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls/).
+  > TLS 1.0 and TLS 1.1 should not be used (see [Deprecating TLSv1.0 and TLSv1.1](https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html) <sup>[IETF]</sup>) and were superseded by TLS 1.2, which has now itself been superseded by TLS 1.3 (must be included by January 1, 2024). They are also actively being deprecated in accordance with guidance from government agencies (e.g. [NIST Special Publication (SP) 800-52 Revision 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf) <sup>[NIST, pdf]</sup>) and industry consortia such as the Payment Card Industry Association ([PCI-TLS - Migrating from SSL and Early TLS (Information Suplement)](https://www.pcisecuritystandards.org/documents/Migrating-from-SSL-Early-TLS-Info-Supp-v1_1.pdf) <sup>[pdf]</sup>). For example, in March of 2020, [Firefox will disable support for TLS 1.0 and TLS 1.1](https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls/).
 
-  > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be POODLEd, BEASTed and otherwise padding-Oracled as well. Lots of other CVE weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients). There are many other security risks caused by sticking to TLS 1.0 or 1.1, so I strongly recommend everyone updates their clients, services and devices to support min. TLS 1.2.
+  > Sticking with TLS 1.0 is a very bad idea and pretty unsafe. Can be [POODLEd](https://en.wikipedia.org/wiki/POODLE), [BEASTed](https://en.wikipedia.org/wiki/Transport_Layer_Security#BEAST_attack) and otherwise [padding-Oracled](https://en.wikipedia.org/wiki/Padding_oracle_attack) as well. Lots of other CVE (see [TLS Security 6: Examples of TLS Vulnerabilities and Attacks](https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/)) weaknesses still apply which cannot be fixed unless by switching TLS 1.0 off. Sticking with TLS 1.1 is only a bad compromise though it is halfway free from TLS 1.0 problems. On the other hand, sometimes their use is still required in practice (to support older clients). There are many other security risks caused by sticking to TLS 1.0 or 1.1, so I strongly recommend everyone updates their clients, services and devices to support min. TLS 1.2.
 
   > Removing backward SSL/TLS version is often the only way to prevent downgrade attacks. Google has proposed an extension to SSL/TLS named `TLS_FALLBACK_SCSV` (it should be supported by your OpenSSL library) that seeks to prevent forced SSL/TLS downgrades (the extension was adopted as [RFC 7507](https://tools.ietf.org/html/rfc7507) in April 2015). Upgrading alone is not sufficient. You must disable SSLv2 and SSLv3 - so if your server does not allow SSLv3 (or v2) connections it is not needed (as those downgraded connections would not work). Technically `TLS_FALLBACK_SCSV` is still useful with SSL disabled, because it helps avoid the connection being downgraded to TLS<1.2. To test this extension, read [this](https://dwradcliffe.com/2014/10/16/testing-tls-fallback.html) great tutorial.
 
@@ -3064,8 +3064,11 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 - [What level of SSL or TLS is required for HIPAA compliance?](https://luxsci.com/blog/level-ssl-tls-required-hipaa.html)
 - [AEAD Ciphers - shadowsocks](https://shadowsocks.org/en/spec/AEAD-Ciphers.html)
+- [Building a faster and more secure web with TCP Fast Open, TLS False Start, and TLS 1.3](https://blogs.windows.com/msedgedev/2016/06/15/building-a-faster-and-more-secure-web-with-tcp-fast-open-tls-false-start-and-tls-1-3/)
 - [SSL Labs Grade Change for TLS 1.0 and TLS 1.1 Protocols](https://blog.qualys.com/ssllabs/2018/11/19/grade-change-for-tls-1-0-and-tls-1-1-protocols)
 - [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
+- [TLS versions (from this handbook)](#tls-versions)
+- [Defend against the BEAST attack - Hardening - P1 (from this handbook)](#beginner-defend-against-the-beast-attack)
 
 #### :beginner: Use only strong ciphers
 
@@ -3599,6 +3602,7 @@ OpenSSL 1.1.0k  R Server sent fatal alert: protocol_version
 - [Zombie POODLE and GOLDENDOODLE Vulnerabilities](https://blog.qualys.com/technology/2019/04/22/zombie-poodle-and-goldendoodle-vulnerabilities)
 - [SSL Labs Grading Update: Forward Secrecy, Authenticated Encryption and ROBOT](https://blog.qualys.com/ssllabs/2018/02/02/forward-secrecy-authenticated-encryption-and-robot-grading-update)
 - [Logjam: the latest TLS vulnerability explained](https://blog.cloudflare.com/logjam-the-latest-tls-vulnerability-explained/)
+- [The CBC Padding Oracle Problem](https://eklitzke.org/the-cbc-padding-oracle-problem)
 - [Goodbye TLS_RSA](https://lightshipsec.com/goodbye-tls_rsa/)
 - [IETF drops RSA key transport from TLS 1.3](https://www.theinquirer.net/inquirer/news/2343117/ietf-drops-rsa-key-transport-from-ssl)
 - [Why TLS 1.3 is a Huge Improvement](https://securityboulevard.com/2018/12/why-tls-1-3-is-a-huge-improvement/)
@@ -3913,7 +3917,9 @@ ssl_prefer_server_ciphers on;
 
 - [Here Come The ⊕ Ninjas](https://bug665814.bmoattachments.org/attachment.cgi?id=540839) <sup>[pdf]</sup>
 - [An Illustrated Guide to the BEAST Attack](https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art027)
+- [How the BEAST Attack Works](https://www.netsparker.com/blog/web-security/how-the-beast-attack-works/)
 - [Is BEAST still a threat?](https://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html)
+- [SSL/TLS attacks: Part 1 – BEAST Attack](https://niiconsulting.com/checkmate/2013/12/ssltls-attacks-part-1-beast-attack/)
 - [Beat the BEAST with TLS 1.1/1.2 and More](https://blogs.cisco.com/security/beat-the-beast-with-tls) <sup>[not found]</sup>
 - [Duong and Rizzo's paper on the BEAST attack)](https://images.techhive.com/downloads/idge/imported/article/ifw/2011/09/26/beast_duong_rizzo.pdf) <sup>[pdf]</sup>
 - [ImperialViolet - Real World Crypto 2013](https://www.imperialviolet.org/2013/01/13/rwc03.html)
@@ -3963,6 +3969,7 @@ location ^~ /assets/ {
 - [How BREACH works (as I understand it)](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses/172646#172646)
 - [Defending against the BREACH Attack](https://blog.qualys.com/ssllabs/2013/08/07/defending-against-the-breach-attack)
 - [To avoid BREACH, can we use gzip on non-token responses?](https://security.stackexchange.com/questions/172581/to-avoid-breach-can-we-use-gzip-on-non-token-responses)
+- [Brotli compression algorithm and BREACH attack](https://security.stackexchange.com/questions/172188/brotli-compression-algorithm-and-breach-attack/197535#197535)
 - [Don't Worry About BREACH](https://blog.ircmaxell.com/2013/08/dont-worry-about-breach.html)
 - [The current state of the BREACH attack](https://www.sjoerdlangkemper.nl/2016/11/07/current-state-of-breach-attack/)
 - [Module ngx_http_gzip_static_module](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html)

@@ -6765,7 +6765,9 @@ server {
 
 None of the standard answers are safe to use if at any point you had unsecure HTTP set up and expect user content, have forms, host an API, or have configured any website, tool, application, or utility to speak to your site.
 
-The problem occurs when a `POST` request is made to your server. If the server response with a plain 30x redirect the POST content will be lost. To prevent this situation remember about the correct redirect HTTP code for `POST` request ([Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)).
+The problem occurs when a `POST` request is made to your server. If the server response with a plain 30x redirect the `POST` content will be lost. To prevent this situation remember about the correct redirect HTTP code for `POST` request ([Redirect POST request with payload to external endpoint](#redirect-post-request-with-payload-to-external-endpoint)).
+
+It is therefore recommended to use the 301 code only as a response for `GET` or `HEAD` methods and to use the 308 Permanent Redirect for `POST` methods instead, as the method change is explicitly prohibited with this status (see [Mozilla Web Docs - 301 Moved Permanently](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301)).
 
 ```nginx
 server {
