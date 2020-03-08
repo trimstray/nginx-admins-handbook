@@ -3143,12 +3143,6 @@ It is important to pass more than just the URI if you expect the upstream server
 
   > Please read [Managing request headers](https://www.nginx.com/resources/wiki/start/topics/examples/headers_management/) from the official wiki.
 
-The following figure describes the modules and directives responsible for manipulating HTTP request and response headers:
-
-<p align="center">
-  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/reverse-proxy/nginx_headers_manipulation.png" alt="nginx_headers_manipulation">
-</p>
-
 In NGINX does support arbitrary request header field. Last part of a variable name is the field name converted to lower case with dashes replaced by underscores:
 
 ```
@@ -3412,7 +3406,7 @@ We also have the ability to manipulate request and response headers using the [h
 - `more_set_input_headers` - very much like `more_set_headers` except that it operates on input headers (or request headers)
 - `more_clear_input_headers` - very much like `more_clear_headers` except that it operates on input headers (or request headers)
 
-See also the following diagram:
+The following figure describes the modules and directives responsible for manipulating HTTP request and response headers:
 
 <p align="center">
   <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/reverse-proxy/headers_processing.png" alt="headers_processing">

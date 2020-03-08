@@ -4977,6 +4977,10 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
 
   > Example of incomplete chain: [incomplete-chain.badssl.com](https://incomplete-chain.badssl.com/).
 
+  From the "SSL Labs: SSL and TLS Deployment Best Practices - 2.1 Use Complete Certificate Chains":
+
+  > _An invalid certificate chain effectively renders the server certificate invalid and results in browser warnings. In practice, this problem is sometimes difficult to diagnose because some browsers can reconstruct incomplete chains and some can’t. All browsers tend to cache and reuse intermediate certificates._
+
 ###### Example
 
 On the OpenSSL side:
