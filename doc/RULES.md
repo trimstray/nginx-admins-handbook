@@ -3728,6 +3728,8 @@ ssl_ecdh_curve X25519:secp521r1:secp384r1:prime256v1;
 
   > The `2048 bit` is generally expected to be safe and is already very far into the "cannot break it zone". However, years ago people expected 1024 bit to be safe so if you are after long term resistance you would go up to `4096 bit` (for both RSA keys and DH parameters). It's also important if you want to get 100% on Key Exchange of the SSL Labs test.
 
+  > TLS clients should also reject static Diffie-Hellman - it's describe in [this](https://tools.ietf.org/id/draft-dkg-tls-reject-static-dh-00.html) draft.
+
   > You should remember that the `4096 bit` modulus will make DH computations slower and won’t actually improve security.
 
   There is [good explanation](https://security.stackexchange.com/questions/47204/dh-parameters-recommended-size/47207#47207) about DH parameters recommended size:
