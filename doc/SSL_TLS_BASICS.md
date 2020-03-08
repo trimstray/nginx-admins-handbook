@@ -277,8 +277,8 @@ But the following AEAD cipher suites are recommended:
 | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
 | `AEAD_CHACHA20_POLY1305` | `chacha20-ietf-poly1305` | 32 | 32 | 12 | 16 |
 | `AEAD_AES_256_GCM` | `aes-256-gcm` | 32 | 32 | 12 | 16 |
-| `AEAD_AES_192_GCM` | `aes-192-gcm 24` | 24 | 12 | 16 |
-| `AEAD_AES_128_GCM` | `aes-128-gcm 16` | 16 | 12 | 16 |
+| `AEAD_AES_192_GCM` | `aes-192-gcm` | 24 | 24 | 12 | 16 |
+| `AEAD_AES_128_GCM` | `aes-128-gcm` | 16 | 16 | 12 | 16 |
 
 These are the current AEAD ciphers which don't trigger the [ROBOT](https://robotattack.org/) warning.
 
