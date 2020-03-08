@@ -274,7 +274,7 @@ TLS_DHE_RSA_WITH_ARIA_256_GCM_SHA384
 But the following AEAD cipher suites are recommended:
 
 | <b>NAME</b> | <b>ALIAS</b> | <b>KEY SIZE</b> | <b>SALT SIZE</b> | <b>NONCE SIZE</b> | <b>TAG SIZE</b> |
-| :---:        | :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
+| :---:        | :---:        | :---:        | :---:        | :---:        | :---:        |
 | `AEAD_CHACHA20_POLY1305` | `chacha20-ietf-poly1305` | 32 | 32 | 12 | 16 |
 | `AEAD_AES_256_GCM` | `aes-256-gcm` | 32 | 32 | 12 | 16 |
 | `AEAD_AES_192_GCM` | `aes-192-gcm 24` | 24 | 12 | 16 |
