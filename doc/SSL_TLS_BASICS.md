@@ -54,6 +54,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 - [TLS Security 1: What Is SSL/TLS (set of articles by Acunetix)](https://www.acunetix.com/blog/articles/tls-security-what-is-tls-ssl-part-1/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
+- [Cryptographic Right Answers](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html)
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
 - [SSL Testing Methods](https://securityboulevard.com/2020/02/ssl-testing-methods/)
 - [SSL/TLS Threat Model](https://blog.ivanristic.com/SSL_Threat_Model.png)
@@ -225,7 +226,7 @@ I recommend to read [Cipher Suites: Ciphers, Algorithms and Negotiating Security
 
 ##### Authenticated encryption (AEAD) cipher suites
 
-AEAD algorithms generally come with a security proof. They provides specialized block cipher modes of operation called Authenticated Encryption (AE) modes, or sometimes Authenticated Encryption with Associated Data (AEAD). These modes handle both the encryption and the authentication in one go, usually with a single key.
+AEAD algorithms generally come with a security proof. They provides specialized block cipher modes of operation called Authenticated Encryption (AE) modes, or sometimes Authenticated Encryption with Associated Data (AEAD). These modes handle both the encryption and the authentication in one go, usually with a single key (combine encryption and integrity validation in one algorithm).
 
 These security proofs are of course dependent on the underlying primitives, but it gives more confidence in the full scheme none-the-less. The AEAD ciphers - regardless of the internal structure - should be immune to the problems caused by authenticate-then-encrypt (see [How to choose an Authenticated Encryption mode](https://blog.cryptographyengineering.com/2012/05/19/how-to-choose-authenticated-encryption/) as a great explanation).
 
