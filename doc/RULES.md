@@ -3100,7 +3100,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 
   > In my opinion `128-bit` symmetric encryption doesn’t less secure. Moreover, there are about 30% faster and still secure. For example TLS 1.3 use `TLS_AES_128_GCM_SHA256 (0x1301)` (for TLS-compliant applications).
 
-  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and NIST (Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me (getting rid of `CHACHA20_POLY1305`) and I have not found a rational explanation for why we should do it. `ChaCha20` is simpler than `AES` and currently be quite a lot faster encryption algorithm if no `AES` hardware acceleration is available (in practice `AES` is often implemented in hardware which gives it an advantage). What's more, speed and security is probably the reason for Google to already support `ChaCha20 + Poly1305/AES` in Chrome.
+  > You should disable `CHACHA20_POLY1305` (e.g. `TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256` and `TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256`) to comply with HIPAA and [NIST SP 800-38D](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf) (Mozilla and Cloudflare uses them, IETF also recommend to use these cipher suites) guidelines and `CBC` ciphersuites to comply with PCI DSS, HIPAA, and NIST guidelines. However, it is strange to me (getting rid of `CHACHA20_POLY1305`) and I have not found a rational explanation for why we should do it. `ChaCha20` is simpler than `AES` and currently be quite a lot faster encryption algorithm if no `AES` hardware acceleration is available (in practice `AES` is often implemented in hardware which gives it an advantage). What's more, speed and security is probably the reason for Google to already support `ChaCha20 + Poly1305/AES` in Chrome.
 
   > Mozilla recommends leaving the default ciphers for TLSv1.3 and not explicitly enabling them in the configuration (TLSv1.3 doesn't require any particular changes). This is one of the changes: we need to know is that the cipher suites are fixed unless an application explicitly defines TLS 1.3 cipher suites. Thus, all of your TLSv1.3 connections will use `AES-256-GCM`, `ChaCha20`, then `AES-128-GCM`, in that order. I also recommend relying on OpenSSL because for TLS 1.3 the cipher suites are fixed so setting them will not affect (you will automatically use those three ciphers).
 
@@ -4659,11 +4659,13 @@ proxy_set_header Host $host;
 
 ###### Rationale
 
-  > In the light of the latest httpoxy vulnerabilities, there is really a need for a full example, how to use `HTTP_X_FORWARDED_FOR` properly. In short, the load balancer sets the 'most recent' part of the header. In my opinion, for security reasons, the proxy servers must be specified by the administrator manually.
-
-  > `X-Forwarded-For` is the custom HTTP header that carries along the original IP address of a client so the app at the other end knows what it is. Otherwise it would only see the proxy IP address, and that makes some apps angry.
+  > `X-Forwarded-For` (XFF) is the custom HTTP header that carries along the original IP address of a client (identifies the client IP address for an original request that was served through a proxy or load balancer) so the app at the other end knows what it is. Otherwise it would only see the proxy IP address, and that makes some apps angry.
 
   > The `X-Forwarded-For` depends on the proxy server, which should actually pass the IP address of the client connecting to it. Where a connection passes through a chain of proxy servers, `X-Forwarded-For` can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user). Because of this, servers behind proxy servers need to know which of them are trustworthy.
+
+  > In the most cases, the most proxies or load balancers automatically include an `X-Forwarded-For` header, for debugging, statistics, and generating location-dependent content, based on the original request.
+
+  > The usefulness of XFF depends on the proxy server truthfully reporting the original host's IP address; for this reason, effective use of XFF requires knowledge of which proxies are trustworthy, for instance by looking them up in a whitelist of servers whose maintainers can be trusted.
 
   > The proxy used can set this header to anything it wants to, and therefore you can't trust its value. Most proxies do set the correct value though. This header is mostly used by caching proxies, and in those cases you're in control of the proxy and can thus verify that is gives you the correct information. In all other cases its value should be considered untrustworthy.
 
@@ -4674,6 +4676,8 @@ proxy_set_header Host $host;
   > A reverse proxy is not source IP address transparent. This is a pain when you need the client source IP address to be correct in the logs of the backend servers. I think the best solution of this problem is configure the load balancer to add/modify an `X-Forwarded-For` header with the source IP of the client and forward it to the backend in the correct form.
 
   > Unfortunately, on the proxy side we are not able to solve this problem (all solutions can be spoofable), it is important that this header is correctly interpreted by application servers. Doing so ensures that the apps or downstream services have accurate information on which to make their decisions, including those regarding access and authorization.
+
+  > In the light of the latest httpoxy vulnerabilities, there is really a need for a full example, how to use `HTTP_X_FORWARDED_FOR` properly. In short, the load balancer sets the 'most recent' part of the header. In my opinion, for security reasons, the proxy servers must be specified by the administrator manually.
 
   There is also an interesing idea what to do in this situation:
 

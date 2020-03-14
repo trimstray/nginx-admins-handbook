@@ -3274,6 +3274,17 @@ I think we should just maybe stop for a second. `X-Forwarded-For` is a one of th
 
 Where a connection passes through a chain of proxy servers, `X-Forwarded-For` can give a comma-separated list of IP addresses with the first being the furthest downstream (that is, the user).
 
+The HTTP `X-Forwarded-For` accepts two directives as mentioned above and described below:
+
+- `<client>` - it is the IP address of the client
+- `<proxy>` - it is the proxies that request has to go through. If there are multiple proxies then the IP addresses of each successive proxy is listed
+
+Syntax:
+
+```
+X-Forwarded-For: <client>, <proxy1>, <proxy2>
+```
+
 `X-Forwarded-For` should not be used for any Access Control List (ACL) checks because it can be spoofed by attackers. Use the real IP address for this type of restrictions. HTTP request headers such as `X-Forwarded-For`, `True-Client-IP`, and `X-Real-IP` are not a robust foundation on which to build any security measures, such as access controls.
 
 [Set properly values of the X-Forwarded-For header (from this handbook)](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header) - see this for more detailed information on how to set properly values of the `X-Forwarded-For` header.
@@ -3282,12 +3293,12 @@ But that's not all. Behind a reverse proxy, the user IP we get is often the reve
 
 I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-ip-header-and-x-forwarded-for-seems-wrong/414166#414166) amazing explanation by [Nick M](https://serverfault.com/users/130923/nick-m).
 
-1) Pass headers from proxy to the backend layer
+1) Pass headers from proxy to the backend layer:
 
     - [Always pass Host, X-Real-IP, and X-Forwarded headers to the backend](RULES.md#beginner-always-pass-host-x-real-ip-and-x-forwarded-headers-to-the-backend)
     - [Set properly values of the X-Forwarded-For header (from this handbook)](RULES.md#beginner-set-properly-values-of-the-x-forwarded-for-header)
 
-2) NGINX - modify the `set_real_ip_from` and `real_ip_header` directives:
+2) NGINX (backend) - modify the `set_real_ip_from` and `real_ip_header` directives:
 
     > For this, the `http_realip_module` must be installed (`--with-http_realip_module`).
 
@@ -3303,7 +3314,7 @@ I recommend to read [this](https://serverfault.com/questions/314574/nginx-real-i
     set_real_ip_from 192.168.40.0/24;
 
     # Defines a request header field used to send the address for a replacement,
-    # in this case We use X-Forwarded-For:
+    # in this case we use X-Forwarded-For:
     real_ip_header X-Forwarded-For;
 
     # The real IP from your client address that matches one of the trusted addresses

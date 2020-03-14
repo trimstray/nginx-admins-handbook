@@ -55,6 +55,7 @@ I will not describe the SSL/TLS protocols meticulously so you have to look at th
 - [TLS Security 1: What Is SSL/TLS (set of articles by Acunetix)](https://www.acunetix.com/blog/articles/tls-security-what-is-tls-ssl-part-1/)
 - [How to deploy modern TLS in 2019?](https://blog.probely.com/how-to-deploy-modern-tls-in-2018-1b9a9cafc454?gi=7e9d841a4d9d)
 - [Cryptographic Right Answers](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html)
+- [The First Few Milliseconds of an HTTPS Connection](http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html)
 - [SSL Labs Grading 2018](https://discussions.qualys.com/docs/DOC-6321-ssl-labs-grading-2018)
 - [SSL Testing Methods](https://securityboulevard.com/2020/02/ssl-testing-methods/)
 - [SSL/TLS Threat Model](https://blog.ivanristic.com/SSL_Threat_Model.png)
