@@ -2759,7 +2759,7 @@ proxy_set_header X-Forwarded-Host $host;
 - [CVE-2018-14773: Remove support for legacy and risky HTTP request headers](https://symfony.com/blog/cve-2018-14773-remove-support-for-legacy-and-risky-http-headers)
 - [Local File Inclusion Vulnerability in Concrete5 version 5.7.3.1](https://hackerone.com/reports/59665)
 - [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning)
-- [Passing headers to the backend (from this handbook)](doc/NGINX_BASICS.md#passing-headers-to-the-backend)
+- [Passing headers to the backend (from this handbook)](NGINX_BASICS.md#passing-headers-to-the-backend)
 - [Set the HTTP headers with add_header and proxy_*_header directives properly - Base Rules - P1 (from this handbook)](#beginner-set-the-http-headers-with-add_header-and-proxy__header-directives-properly)
 
 #### :beginner: Use only the latest supported OpenSSL version

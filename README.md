@@ -112,6 +112,7 @@
   * [Features and architecture](doc/HTTP_BASICS.md#features-and-architecture)
   * [HTTP/2](doc/HTTP_BASICS.md#http2)
     * [How to debug HTTP/2?](doc/HTTP_BASICS.md#how-to-debug-http2)
+  * [HTTP/3](doc/HTTP_BASICS.md#http3)
   * [URI vs URL](doc/HTTP_BASICS.md#uri-vs-url)
   * [Connection vs request](doc/HTTP_BASICS.md#connection-vs-request)
   * [HTTP Headers](doc/HTTP_BASICS.md#http-headers)
@@ -786,6 +787,7 @@ Existing chapters:
   - [x] _Features and architecture_
   - [x] _HTTP/2_
     - [x] _How to debug HTTP/2?_
+  - [x] _HTTP/3_
   - [x] _URI vs URL_
   - [x] _Connection vs request_
   - [x] _HTTP Headers_

@@ -7,6 +7,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
   * [Features and architecture](#features-and-architecture)
   * [HTTP/2](#http2)
     * [How to debug HTTP/2?](#how-to-debug-http2)
+  * [HTTP/3](#http3)
   * [URI vs URL](#uri-vs-url)
   * [Connection vs request](#connection-vs-request)
   * [HTTP Headers](#http-headers)
@@ -136,6 +137,13 @@ See also [NGINX Updates Mitigate the August 2019 HTTP/2 Vulnerabilities](https:/
 ##### How to debug HTTP/2?
 
 There is a great explanation about [Tools for debugging, testing and using HTTP/2](https://blog.cloudflare.com/tools-for-debugging-testing-and-using-http-2/). Look also at [Useful tools for HTTP/2 debugging](https://community.akamai.com/customers/s/article/Useful-tools-for-HTTP-2-debugging?language=en_US).
+
+#### HTTP/3
+
+- [A QUIC look at HTTP/3](https://lwn.net/SubscriberLink/814522/ab3bfaa8f75c60ce/)
+- [HTTP/3 explained](https://daniel.haxx.se/http3-explained/)
+- [HTTP/3: the past, the present, and the future](https://blog.cloudflare.com/http3-the-past-present-and-future/)
+- [What Is HTTP/3 – Lowdown on the Fast New UDP-Based Protocol](https://kinsta.com/blog/http3/)
 
 #### URI vs URL
 
