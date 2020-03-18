@@ -1549,16 +1549,16 @@ NGINX uses the following logic to determining which virtual server (server block
 3. Match the `Host` header field against the `server_name` directive with a
 wildcard at the beginning of the string (the hash table with wildcard names starting with an asterisk)
 
-    > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+  > If one is found, that block will be used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
 
 4. Match the `Host` header field against the `server_name` directive with a
 wildcard at the end of the string (the hash table with wildcard names ending with an asterisk)
 
-    > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
+  > If one is found, that block is used to serve the request. If multiple matches are found, the longest match will be used to serve the request.
 
 5. Match the `Host` header field against the `server_name` directive as a regular expression
 
-    > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
+  > The first `server_name` with a regular expression that matches the `Host` header will be used to serve the request.
 
 6. If all the `Host` headers doesn't match, then direct to the `listen` directive marked as `default_server` (makes the server block answer all the requests that doesn’t match any server block)
 
