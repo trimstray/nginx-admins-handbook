@@ -1650,14 +1650,14 @@ The process of choosing NGINX location block is as follows (a detailed explanati
 
 2. Prefix-based NGINX location matches (no regular expression). Each location will be checked against the request URI. If no exact (meaning no `=` modifier) location block is found, NGINX will continue with non-exact prefixes. It starts with the longest matching prefix location for this URI, with the following approach:
 
-    - In case the longest matching prefix location has the `^~` modifier (e.g. `location ^~ foo { ... }`), NGINX will stop its search right away and choose this location
+  - In case the longest matching prefix location has the `^~` modifier (e.g. `location ^~ foo { ... }`), NGINX will stop its search right away and choose this location
 
-      - the block of the longest (most explicit) of those matches is processed
-      - match-searching stops
+    - the block of the longest (most explicit) of those matches is processed
+    - match-searching stops
 
-    - Assuming the longest matching prefix location doesn’t use the `^~` modifier, the match is temporarily stored and the process continues
+  - Assuming the longest matching prefix location doesn’t use the `^~` modifier, the match is temporarily stored and the process continues
 
-    > I'm not sure about the order. In the official documentation it is not clearly indicated and external guides explain it differently. It seems logical to check the longest matching prefix location first.
+  > I'm not sure about the order. In the official documentation it is not clearly indicated and external guides explain it differently. It seems logical to check the longest matching prefix location first.
 
 3. As soon as the longest matching prefix location is chosen and stored, NGINX continues to evaluate the case-sensitive (e.g. `location ~ foo { ... }`) and insensitive regular expression (e.g. `location ~* foo { ... }`) locations. The first regular expression location that fits the URI is selected right away to process the request
 
