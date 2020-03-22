@@ -8,7 +8,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Debian or Ubuntu](#debian-or-ubuntu)
     * [FreeBSD](#freebsd)
   * [Installing from source](#installing-from-source)
-    * [Automatic installation for RHEL/Debian/BSD](#automatic-installation-for-rheldebianbsd)
+    * [Automatic installation on RHEL/Debian/BSD](#automatic-installation-on-rheldebianbsd)
     * [Nginx package](#nginx-package)
     * [Dependencies](#dependencies)
     * [Patches](#patches)
@@ -311,7 +311,7 @@ Look also on this short note about the system locations. That can be useful too:
   - `/usr/local/lib` - shared libraries
   - `/usr/local/share` - manual pages, data
 
-##### Automatic installation for RHEL/Debian/BSD
+##### Automatic installation on RHEL/Debian/BSD
 
 Installing from source consists of multiple steps. If you don't want to pass through all of them manually, you can run automated script. I created it to facilitate the whole installation process.
 

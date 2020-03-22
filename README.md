@@ -240,7 +240,7 @@
     * [Debian or Ubuntu](doc/HELPERS.md#debian-or-ubuntu)
     * [FreeBSD](doc/HELPERS.md#freebsd)
   * [Installing from source](doc/HELPERS.md#installing-from-source)
-    * [Automatic installation for RHEL/Debian/BSD](doc/HELPERS.md#automatic-installation-for-rheldebianbsd)
+    * [Automatic installation on RHEL/Debian/BSD](doc/HELPERS.md#automatic-installation-on-rheldebianbsd)
     * [Nginx package](doc/HELPERS.md#nginx-package)
     * [Dependencies](doc/HELPERS.md#dependencies)
     * [Patches](doc/HELPERS.md#patches)
@@ -920,7 +920,7 @@ Existing chapters:
 <summary><b>Helpers</b></summary><br>
 
   - _Installing from source_
-    - [x] _Automatic installation for RHEL/Debian/BSD_
+    - [x] _Automatic installation on RHEL/Debian/BSD_
     - [x] _Compiler and linker_
       - [x] _Debugging Symbols_
     - [x] _SystemTap_
@@ -1333,7 +1333,7 @@ I created two versions of printable posters with hardening cheatsheets (High-Res
 
 I created a set of scripts for unattended installation of NGINX from the raw, uncompiled code. It allows you to easily install, create a setup for dependencies (like `zlib` or `openssl`), and customized with installation parameters.
 
-For more information please see [Installing from source - Automatic installation](#automatic-installation) chapter which describes the installation of NGINX on systems/distros such as Ubuntu, Debian, CentOS, and FreeBSD.
+For more information please see [Installing from source - Automatic installation](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib) chapter which describes the installation of NGINX on systems/distros such as Ubuntu, Debian, CentOS, and FreeBSD.
 
 ## Static error pages generator
 
