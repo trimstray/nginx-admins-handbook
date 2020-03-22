@@ -3896,6 +3896,8 @@ server {
 - [Security Review of TLS1.3 0-RTT](https://github.com/tlswg/tls13-spec/issues/1001)
 - [Introducing Zero Round Trip Time Resumption (0-RTT)](https://new.blog.cloudflare.com/introducing-0-rtt/)
 - [What Application Developers Need To Know About TLS Early Data (0RTT)](https://blog.trailofbits.com/2019/03/25/what-application-developers-need-to-know-about-tls-early-data-0rtt/)
+- [Zero round trip time resumption (0-RTT)](https://www.riklewis.com/2019/08/zero-round-trip-time-resumption-0-rtt/)
+- [Session Resumption Protocols and Efficient Forward Security for TLS 1.3 0-RTT](https://eprint.iacr.org/2019/228)
 - [Replay Attacks on Zero Round-Trip Time: The Case of the TLS 1.3 Handshake Candidates](https://eprint.iacr.org/2017/082.pdf) <sup>[pdf]</sup>
 - [0-RTT and Anti-Replay](https://tools.ietf.org/html/rfc8446#section-8) <sup>[IETF]</sup>
 - [Using Early Data in HTTP (2017)](https://tools.ietf.org/id/draft-thomson-http-replay-00.html_) <sup>[IETF]</sup>
