@@ -2365,11 +2365,38 @@ request URI
 
 Both comes from the `ngx_http_access_module` module and allows limiting access to certain client addresses. You can combining `allow/deny` rules.
 
-The easiest path would be to start out by denying all access, then only granting access to those locations you want.
-
   > `deny` will always return 403 error code.
 
+The easiest path would be to start out by denying all access, then only granting access to those locations you want. For example:
+
+```nginx
+location / {
+
+  # without 'satisfy any' both should be passed:
+  satisfy any;
+  allow 192.168.0/0/16;
+  deny all;
+
+  # sh -c "echo -n 'user:' >> /etc/nginx/.secret"
+  # sh -c "openssl passwd -apr1 >> /etc/nginx/.secret"
+  auth_basic "Restricted Area";
+  auth_basic_user_file /etc/nginx/.secret;
+
+  root   /usr/share/nginx/html;
+  index  index.html index.htm;
+
+}
+```
+
 Putting `satisfy any;` in your configuration tells NGINX to accept either http authentication, or IP restriction. By default, when you define both, it will expect both.
+
+See also [this](https://serverfault.com/a/748373) answer:
+
+  > As you've found, it isn't advisable to but the auth settings at the server level because they will apply to all locations. While it is possible to turn basic auth off there doesn't appear to be a way to clear an existing IP whitelist.
+  >
+  > A better solution would be to add the authentication to the / location so that it isn't inherited by /hello.
+  >
+  > The problem comes if you have other locations that require the basic auth and IP whitelisting in which case it might be worth considering moving the auth components to an include file or nesting them under /.
 
 Both directives may work unexpectedly! Look at the following example:
 
