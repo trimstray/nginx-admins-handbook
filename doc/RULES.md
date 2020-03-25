@@ -327,7 +327,7 @@ server {
   > - only one `server_name` (but not required) definition, and...
   > - preventively I add it at the beginning of the configuration (attach it to the file `nginx.conf`)
 
-  > Also good point is `return 444;` (most commonly used to deny malicious or malformed requests) for default server name because this will close the connection (which will kill the connection without sending any headers) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
+  > Also good point is `return 444;` (most commonly used to deny malicious or malformed requests) for default server name because this will close the connection (which will kill the connection without sending any headers so return nothing) and log it internally, for any domain that isn't defined in NGINX. In addition, I would implement rate limiting rule.
 
 ###### Example
 
@@ -342,7 +342,7 @@ server {
   # We catch:
   #   - invalid domain names
   #   - requests without the "Host" header
-  #   - and all others (also due to the above setting)
+  #   - and all others (also due to the above setting; like "--" or "!@#")
   #   - default_server in server_name directive is not required
   #     I add this for a better understanding and I think it's an unwritten standard
   # ...but you should know that it's irrelevant, really, you can put in everything there.
@@ -1840,7 +1840,16 @@ echo | openssl s_client -connect example.com:443 -servername example.com -status
 
   > Exact names, wildcard names starting with an asterisk, and wildcard names ending with an asterisk are stored in three hash tables bound to the listen ports.
 
-  > The exact names hash table is searched first. If a name is not found, the hash table with wildcard names starting with an asterisk is searched. If the name is not found there, the hash table with wildcard names ending with an asterisk is searched. Searching wildcard names hash table is slower than searching exact names hash table because names are searched by domain parts.
+  > The exact names hash table is searched first. So if the most frequently requested names of a server are example.com and www.example.com, it is more efficient to define them explicitly.
+
+  > If the exact name is not found, the hash table with wildcard names starting with an asterisk is searched. If the name is not found there, the hash table with wildcard names ending with an asterisk is searched. Searching wildcard names hash table is slower than searching exact names hash table because names are searched by domain parts.
+
+  >  When searching for a virtual server by name, if name matches more than one of the specified variants, e.g. both wildcard name and regular expression match, the first matching variant will be chosen, in the following order of precedence:
+  >
+  > - exact name
+  > - longest wildcard name starting with an asterisk, e.g. `*.example.org`
+  > - longest wildcard name ending with an asterisk, e.g. `mail.*`
+  > - first matching regular expression (in order of appearance in a configuration file)
 
   > Regular expressions are tested sequentially and therefore are the slowest method and are non-scalable. For these reasons, it is better to use exact names where possible.
 
@@ -1853,6 +1862,9 @@ server {
 
   listen 192.168.252.10:80;
 
+  # From official documentation: "Searching wildcard names hash table is slower than searching exact names hash table
+  # because names are searched by domain parts. Note that the special wildcard form '.example.org' is stored in a
+  # wildcard names hash table and not in an exact names hash table.":
   server_name .example.org;
 
   ...
@@ -1868,6 +1880,7 @@ server {
 
   listen 192.168.252.10:80;
 
+  # .example.org = *.example.org
   server_name example.org www.example.org *.example.org;
 
   ...
@@ -1878,6 +1891,8 @@ server {
 ###### External resources
 
 - [Server names](https://nginx.org/en/docs/http/server_names.html)
+- [Server Naming Conventions and Best Practices](https://blog.serverdensity.com/server-naming-conventions-and-best-practices/)
+- [Server/Device Naming](https://www.vita.virginia.gov/media/vitavirginiagov/it-governance/ea/pdf/Server-Device-Naming-Technical-Brief.pdf) <sup>[pdf]</sup>
 - [Handle incoming connections (from this handbook)](NGINX_BASICS.md#handle-incoming-connections)
 
 #### :beginner: Avoid checks `server_name` with `if` directive
