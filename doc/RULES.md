@@ -1770,17 +1770,17 @@ ssl_buffer_size 1400;
 
   > The use of the OCSP without the implementation of the OCSP Stapling extension is associated with an increased risk of losing user privacy, as well as an increased risk of negative impact on the availability of applications due to the inability to verify the validity of the certificate.
 
-  > OCSP Stapling provides OCSP response in TLS Certificate Status Request ([RFC 6066 - Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
+  > OCSP Stapling defines OCSP response in TLS Certificate Status Request ([RFC 6066 - Certificate Status Request](https://tools.ietf.org/html/rfc6066#section-8)) extension ("stapling"). In this case, server sends the OCSP response as part of TLS extension, hence the client need not have to check it on OCSP URL (saves revocation checking time for client).
 
-  > NGINX generates this list from the file of certificates pointed to by `ssl_trusted_certificate` (the list of these certificates will not be sent to clients). You need to send this list or switch off `ssl_verify_client`. This step is optional when the full certificate chain (only Intermediate certs, without Root CA, and also must not include the site certificate) was already provided with the `ssl_certificate` statement. In case just the certificate is being used (not the parts of your CA), then `ssl_trusted_certificate` is needed.
+  > NGINX provides several options to keep in mind. For example: it generate list from the file of certificates pointed to by `ssl_trusted_certificate` (the list of these certificates will not be sent to clients). You need to send this list or switch off `ssl_verify_client`. This step is optional when the full certificate chain (only Intermediate certs, without Root CA, and also must not include the site certificate) was already provided with the `ssl_certificate` statement. In case just the certificate is being used (not the parts of your CA), then `ssl_trusted_certificate` is needed.
 
   > I found on the web that both type of chains (RootCA + Intermediate certs or only Intermediate certs) will work as the `ssl_trusted_certificate` for the purpose of OCSP verification. The root is not recommended and not needed in `ssl_certificate`. If you use Let’s Encrypt you don't need to add the RootCA (to `ssl_trusted_certificate`) because the OCSP response is signed by the intermediate certificate itself. I think, that the safest way is to include all corresponding Root and Intermediate CA certificates in `ssl_trusted_certificate`.
 
   > I always use the most stable DNS resolver like Google's `8.8.8.8`, Quad9’s `9.9.9.9`, CloudFlare's `1.1.1.1`, or OpenDNS's `208.67.222.222` (of course you can use resolving domains internally and externally with Bind9 or whatever else). If `resolver` line isn't added or your NGINX will not have an external access, the resolver defaults to the server's DNS default.
 
-  > Also bear in mind that NGINX lazy-loads OCSP responses. So, the first request will not have a stapled response, but subsequent requests will. This is, because NGINX will not prefetch OCSP responses at server startup (or after reload).
-
   > You should know, that too short resolver timeout (default of 30 seconds) can be another reason for OCSP Stapling to fail (temporarily). If the NGINX `resolver_timeout` directive is set to very low values (< 5 seconds), log messages like this can appear: `"[...] ssl_stapling" ignored, host not found in OCSP responder [...]`.
+
+  > Also bear in mind that NGINX lazy-loads OCSP responses. So, the first request will not have a stapled response, but subsequent requests will. This is, because NGINX will not prefetch OCSP responses at server startup (or after reload).
 
   Important information from NGINX documentation:
 
