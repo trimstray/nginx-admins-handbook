@@ -1840,7 +1840,7 @@ echo | openssl s_client -connect example.com:443 -servername example.com -status
 
   > Exact names, wildcard names starting with an asterisk, and wildcard names ending with an asterisk are stored in three hash tables bound to the listen ports.
 
-  > The exact names hash table is searched first. So if the most frequently requested names of a server are example.com and www.example.com, it is more efficient to define them explicitly.
+  > The exact names hash table is searched first. So if the most frequently requested names of a server are `example.com` and `www.example.com`, it is more efficient to define them explicitly.
 
   > If the exact name is not found, the hash table with wildcard names starting with an asterisk is searched. If the name is not found there, the hash table with wildcard names ending with an asterisk is searched. Searching wildcard names hash table is slower than searching exact names hash table because names are searched by domain parts.
 
@@ -1862,9 +1862,9 @@ server {
 
   listen 192.168.252.10:80;
 
-  # From official documentation: "Searching wildcard names hash table is slower than searching exact names hash table
-  # because names are searched by domain parts. Note that the special wildcard form '.example.org' is stored in a
-  # wildcard names hash table and not in an exact names hash table.":
+  # From official documentation: "Searching wildcard names hash table is slower than searching exact names
+  # hash table because names are searched by domain parts. Note that the special wildcard form
+  # '.example.org' is stored in a wildcard names hash table and not in an exact names hash table.":
   server_name .example.org;
 
   ...
