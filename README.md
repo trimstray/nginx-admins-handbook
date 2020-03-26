@@ -577,7 +577,7 @@ These are definitely the best assets for us and in the first place you should se
 
 For me, however, there hasn't been a truly in-depth and reasonably simple cheatsheet which describe a variety of configurations and important cross-cutting topics for HTTP servers. Configuration of the NGINX can be tricky sometimes and you really need to get into the syntax and concepts to get an understanding tricks, loopholes, and mechanisms. The documentation isn't as pretty as other projects and should certainly include more robust examples.
 
-  > _This handbook is a set of rules and recommendations for the NGINX Open Source HTTP server. It also contains the best practices, notes, and helpers with countless examples. Many of them refer to external resources._
+  > This handbook is a set of rules and recommendations for the NGINX Open Source HTTP server. It also contains the best practices, notes, and helpers with countless examples. Many of them refer to external resources.
 
 There are a lot of things you can do to improve in your NGINX instance and this guide will attempt to cover as many of them as possible. For the most part, it contains the most important things about NGINX for me. I think the configuration you provided should work without any talisman. That's why I created this repository.
 
