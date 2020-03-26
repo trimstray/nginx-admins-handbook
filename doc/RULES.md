@@ -1853,6 +1853,14 @@ echo | openssl s_client -connect example.com:443 -servername example.com -status
 
   > Regular expressions are tested sequentially and therefore are the slowest method and are non-scalable. For these reasons, it is better to use exact names where possible.
 
+  From official documentation:
+
+  > _A wildcard name may contain an asterisk only on the name’s start or end, and only on a dot border. The names `www.*.example.org` and `w*.example.org` are invalid. [...] A special wildcard name in the form `.example.org` can be used to match both the exact name `example.org` and the wildcard name `*.example.org`._
+
+  > _The name `*.example.org` matches not only `www.example.org` but `www.sub.example.org` as well._
+
+  > _To use a regular expression, the server name must start with the tilde character. [...] otherwise it will be treated as an exact name, or if the expression contains an asterisk, as a wildcard name (and most likely as an invalid one). Do not forget to set `^` and `$` anchors. They are not required syntactically, but logically. Also note that domain name dots should be escaped with a backslash. A regular expression containing the characters `{` and `}` should be quoted._
+
 ###### Example
 
 Not recommended configuration:
