@@ -1551,6 +1551,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/TonyFabeen/nginx-scripting-extending-nginx-functionalities-with-lua"><b>Nginx Scripting - Extending Nginx Functionalities with Lua</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/kazeburo/advanced-nginx-in-mercari-how-to-handle-over-1200000-https-reqsmin"><b>How to handle over 1,200,000 HTTPS Reqs/Min</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.slideshare.net/harukayon/ngx-lua-public"><b>Using ngx_lua / lua-nginx-module in pixiv</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://mdounin.ru/files/mdounin-nginx-whatsnew-nginxconf2018.pdf"><b>Reading nginx CHANGES together</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXewvc6tjIGGFZ6DBKHEld3k"><b>NGINX Conf 2014</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXdED9BR6GQ61A6d3fBzjpbn"><b>NGINX Conf 2015</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.youtube.com/playlist?list=PLGz_X9w9raXcOsB_dT26iu0BvbSxWYG1g"><b>NGINX Conf 2016</b></a><br>
