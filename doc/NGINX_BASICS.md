@@ -1254,7 +1254,7 @@ NGINX employs a solution that uses the `sendfile` system call to perform a zero-
 
 This method is an improved method of data transfer, in which data is copied between file descriptors within the OS kernel space, that is, without transferring data to the application buffers. No additional buffers or data copies are required, and the data never leaves the kernel memory address space.
 
-In my opinion enabling this really won't make any difference unless NGINX is reading from something which can be mapped into the virtual memory space like a file (i.e. the data is in the cache). But please... do not let me influence you - you should in the first place be keeping an eye on this document: [Optimizing TLS for High–Bandwidth Applications in FreeBSD](https://people.freebsd.org/~rrs/asiabsd_2015_tls.pdf).
+In my opinion enabling this really won't make any difference unless NGINX is reading from something which can be mapped into the virtual memory space like a file (i.e. the data is in the cache). But please... do not let me influence you - you should in the first place be keeping an eye on this document: [Optimizing TLS for High–Bandwidth Applications in FreeBSD](https://people.freebsd.org/~rrs/asiabsd_2015_tls.pdf) <sup>[pdf]</sup>.
 
 By default NGINX disable the use of `sendfile`:
 
@@ -1271,7 +1271,7 @@ Look also at `sendfile_max_chunk` directive. NGINX documentation say:
 
   > _When set to a non-zero value, limits the amount of data that can be transferred in a single `sendfile()` call. Without the limit, one fast connection may seize the worker process entirely._
 
-On fast local connection `sendfile()` in Linux may send tens of megabytes per one syscall blocking other connections. `sendfile_max_chunk` allows to limit the maximum size per one `sendfile()` operation. So, with this NGINX  can reduce the maximum time spent in blocking sendfile() calls, since NGINX won’t try to send the whole file at once, but will do it in chunks. For example:
+On fast local connection `sendfile()` in Linux may send tens of megabytes per one syscall blocking other connections. `sendfile_max_chunk` allows to limit the maximum size per one `sendfile()` operation. So, with this NGINX  can reduce the maximum time spent in blocking `sendfile()` calls, since NGINX won’t try to send the whole file at once, but will do it in chunks. For example:
 
 ```nginx
 sendfile on;
@@ -1280,7 +1280,7 @@ sendfile_max_chunk 512k;
 
 ###### `tcp_nodelay`
 
-I recommend to read [The Caveats of TCP_NODELAY](https://eklitzke.org/the-caveats-of-tcp-nodelay) and [Rethinking the TCP Nagle Algorithm](http://ccr.sigcomm.org/archive/2001/jan01/ccr-200101-mogul.pdf). These great papers describes very interesting topics about `TCP_NODELAY` and `TCP_NOPUSH`.
+I recommend to read [The Caveats of TCP_NODELAY](https://eklitzke.org/the-caveats-of-tcp-nodelay) and [Rethinking the TCP Nagle Algorithm](http://ccr.sigcomm.org/archive/2001/jan01/ccr-200101-mogul.pdf) <sup>[pdf]</sup>. These great papers describes very interesting topics about `TCP_NODELAY` and `TCP_NOPUSH`.
 
 `tcp_nodelay` is used to manage Nagle's algorithm which is one mechanism for improving TCP efficiency by reducing the number of small packets sent over the network. If you set `tcp_nodelay on;`, NGINX adds the `TCP_NODELAY` options when opening a new socket.
 
