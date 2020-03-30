@@ -3249,7 +3249,7 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 
 - DH: **2048-bit**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
@@ -3304,7 +3304,7 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 
 - DH: **not used**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
@@ -3357,7 +3357,7 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-A
 
 - DH: **2048-bit**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
@@ -3412,7 +3412,7 @@ ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECD
 
 - DH: **not used**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
@@ -3460,7 +3460,7 @@ ssl_ciphers "EECDH+CHACHA20:EDH+AESGCM:AES256+EECDH:AES256+EDH";
 
 - DH: **2048-bit**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
@@ -3518,7 +3518,7 @@ ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECD
 
 - DH: **2048-bit**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
@@ -3572,7 +3572,7 @@ Safari 8 / OS X 10.10  R  Server sent fatal alert: handshake_failure
 
 - DH: **2048-bit**
 
-- SSLLabs scores:
+- SSL Labs scores:
 
   - Certificate: **100%**
   - Protocol Support: **100%**
