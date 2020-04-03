@@ -143,6 +143,10 @@ See also [What Happens in a TLS Handshake?](https://www.cloudflare.com/learning/
 
 An `RSA` key pair includes a private and a public key. It is a well-established method of public-key cryptography and is based on the use of two large prime numbers. The `RSA` private key is used to generate digital signatures, and the `RSA` public key is used to verify digital signatures. `RSA` requires much bigger key lengths to implement encryption (min. 2048-bit at this moment). This type of encryption is really great when we have two physically or geographically different end-points.
 
+<p align="center">
+  <img src="https://github.com/trimstray/nginx-admins-handbook/blob/master/static/img/tls/rsa_ecc_lengths.png" alt="rsa_ecc_lengths">
+</p>
+
 `ECC` is the latest encryption method. The main selling point of `ECC` is that this security level is achieved using very short system parameters (requires much shorter key lengths compared to `RSA`) and hence speeds. Elliptic curve based algorithms use significantly smaller key sizes than the non-elliptic curve equivalents. An `ECC` key pair also includes a private and public key. The `ECC` private key is used to generate digital signatures, and the `ECC` public key is used to verify digital signatures.
 
 According to most recommendations the key lengths can be taken about twelve times shorter than their counterparts in `RSA` or in classical discrete logarithm based cryptography; concretely `Curve25519` works with keys consisting of about 256 bits, while an equivalent `RSA` instantiation would need key sizes of 3072 bits long.
