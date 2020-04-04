@@ -504,7 +504,7 @@ Another interesting thing is that you can have multiple wildcard names inside th
 | <b>FEATURE</b> | <b>HTTP</b> | <b>HTTPS WITH SELF-SIGNED CERTIFICATE</b> |
 | :---         | :---         | :---         |
 | encryption | no | **yes** |
-| authorization | no | no |
+| authorization | no | no (or **yes** if you trust the issuer of that certificate implicitly) |
 | privacy | no | no (or **yes** if you trust the issuer of that certificate implicitly) |
 | performance | **fast** | **faster than HTTP** (under certain conditions) |
 
