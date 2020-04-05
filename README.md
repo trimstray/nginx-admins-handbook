@@ -595,6 +595,18 @@ This handbook does not get into all aspects of NGINX. What's more, some of the t
 
 I did my best to make this handbook a single and consistent (but now I know that is really hard). It's organized in an order that makes logical sense to me. I think it can also be a good complement to official documentation and other great documents. Many of the topics described here can certainly be done better or different. Of course, I still have a lot [to improve and to do](#contributing--support). I hope you enjoy and have fun with it.
 
+Do not treat this handbook and notes written here as revealed knowledge. You should take a scientific approach when reading this document. If you have any doubts and disagree with me, please point out my mistakes. You should to discover cause and effect relationships by asking questions, carefully gathering and examining the evidence, and seeing if all the available information can be combined in to a logical answer.
+
+I create this handbook for one more reason. Rather than starting from scratch in, I putting together a plan for answering your questions to help you find the best way to do things and ensure that you don't repeat my mistakes from the past.
+
+So, what's most important:
+
+- ask a questions about something that you observe
+- do background research
+- do tests with an experiments
+- analyze and draw conclusions
+- communicate results (for us!)
+
 Finally, you should know I'm not a NGINX expert but I love to know how stuff works and why work the way they do. [I’m not a crypto expert... but I do know the term "elliptic curve"](https://twitter.com/ErikVoorhees/status/1004313761224757248) (I really like this quote!). Don't need to be an expert to figure out the reason just got to have used this and not this or why something works this way and not another. It feels good to understand the recommendations and nuances of a topic you’re passionate about.
 
 ## Before you start
