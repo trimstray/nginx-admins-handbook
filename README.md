@@ -1357,6 +1357,18 @@ For more information please see [HTTP Static Error Pages Generator](https://gith
 
 I added scripts for fast multiple domain searching in the configuration. These tools get specific `server_name` matches and print them on the screen as a `server { ... }` blocks. Both are very helpful if you really have tons of domains or if you want to list specific vhosts from file or the active configuration.
 
+You must follow one important rule to be able to use it. Your server block must have the following structure:
+
+```nginx
+server {
+
+  server_name example.com example.org;
+
+  ... # other directives
+
+}
+```
+
 Example of use:
 
 ```
