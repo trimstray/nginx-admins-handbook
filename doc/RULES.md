@@ -3943,10 +3943,20 @@ server {
 
   > To prevent possible use BEAST attacks you should enable server-side protection, which causes the server ciphers should be preferred over the client ciphers, and completely excluded TLS 1.0 from your protocol stack.
 
+  > When `ssl_prefer_server_ciphers` is set to on, the web server owner can control which ciphers are available.
+
+  > The reason why this control was preferred is old and insecure ciphers that were available in SSL, and TLS v1.0 and TLS v1.1 because when the server supports old TLS versions and `ssl_prefer_server_ciphers` is off, an adversary can interfere with the handshake and force the connection to use weak ciphers, therefore allowing decrypting of the connection.
+
+  > The preferred setting in modern setups is `ssl_prefer_server_ciphers off,` because then the client device can choose his preferred encryption method based on the hardware capabilities of the client device.
+
 ###### Example
 
 ```nginx
+# In TLSv1.0 and TLSv1.1
 ssl_prefer_server_ciphers on;
+
+# In TLSv1.2 and TLSv1.3
+ssl_prefer_server_ciphers off;
 ```
 
 ###### External resources
