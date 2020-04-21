@@ -2774,6 +2774,9 @@ proxy_hide_header X-Runtime;
 # Remove risky request headers (the safest method):
 proxy_set_header X-Original-URL "";
 proxy_set_header X-Rewrite-URL "";
+proxy_set_header X-Forwarded-Server "";
+proxy_set_header X-Forwarded-Host "";
+proxy_set_header X-Host "";
 
 # Or consider setting the vulnerable headers to a known-safe value:
 proxy_set_header X-Original-URL $request_uri;
