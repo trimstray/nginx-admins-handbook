@@ -2762,7 +2762,7 @@ proxy_hide_header X-Runtime;
 
   > The ability to use of the `X-Original-URL` or `X-Rewrite-URL` can have serious consequences. These headers allows a user to access one URL but have your app (e.g. uses PHP/Symfony) return a different one which can bypass restrictions on higher level caches and web servers, for example, also if you set a deny rule (`deny all; return 403;`) on the proxy for location such as `/admin`.
 
-  > If one or more of your backends uses the contents of the `X-Forwarded-Host`, `X-Rewrite-Url` or `X-Original-Url` HTTP request headers to decide which of your users (or which security domain) it sends an HTTP response, you may be impacted by this class of vulnerability. If you passes these headers to your backend an attacker could potentially cause to store a response with arbitrary content inserted to a victim’s cache.
+  > If one or more of your backends uses the contents of the `X-Host`, `X-Forwarded-Host`, `X-Forwarded-Server`, `X-Rewrite-Url` or `X-Original-Url` HTTP request headers to decide which of your users (or which security domain) it sends an HTTP response, you may be impacted by this class of vulnerability. If you passes these headers to your backend an attacker could potentially cause to store a response with arbitrary content inserted to a victim’s cache.
 
   Look at the following explanation taken from [PortSwigger Research - Practical Web Cache Poisoning](https://portswigger.net/research/practical-web-cache-poisoning):
 
