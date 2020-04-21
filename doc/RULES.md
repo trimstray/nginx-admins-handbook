@@ -1168,6 +1168,10 @@ server {
 
   > Be careful with the syntax! You should drop the `=` out of the `error_page` directive because with this, `error_page 404 = /404.html;` return the `404.html` page with a status code of 200 (`=` has relayed that to this page) so you should set `error_page 404 /404.html;` and you'll get the original error code returned.
 
+  > You should also remember about HTTP request smuggling attacks (see [more](https://bertjwregeer.keybase.pub/2019-12-10%20-%20error_page%20request%20smuggling.pdf)):
+  > - `error_page 401 https://example.org/;` - this handler is vulnerable, allowing an attacker to smuggle a request and potentially gain access to resources/information
+  > - `error_page 404 /404.html;` + `error_page 404 @404;` - are not vulnerable
+
   > To generate custom error pages you can use [HTTP Static Error Pages Generator](https://github.com/trimstray/nginx-admins-handbook/tree/master/lib/nginx/snippets/http-error-pages#http-static-error-pages-generator).
 
 ###### Example
