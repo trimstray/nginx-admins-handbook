@@ -635,6 +635,12 @@ Remember about the following most important things:
 + Security is important for ethical reasons. Compliance is important for legal reasons.
 + The key to workplace contentment is understanding they are unrelated to each other.
 + Both are important, but one does not lead to the other (compliance != security).
+author: unknown
+
++ Security is always needed, no matter what type of website it is. It can be static HTML
++ or fully dynamic, an attacker can still inject hostile content into the page in transit
++ to attack the user.
+author: Scott Helme
 ```
 
 I think, in the age of phishing, cyber attacks, ransomware, etc., you should take care of security of your infrastructure as hard as possible but don't ever forget about this one...
