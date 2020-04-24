@@ -2866,6 +2866,18 @@ upstream_response_time 0.003 : 0.001
 upstream_status 401 : 200
 ```
 
+Below is a short description of each of them:
+
+- `$upstream_addr` - keeps the IP address and port, or the path to the UNIX-domain socket of the upstream server. If several servers were contacted during request processing, their addresses are separated by commas, e.g. `192.168.1.1:80, 192.168.1.2:80, unix:/tmp/sock`. If an internal redirect from one server group to another happens, initiated by `X-Accel-Redirect` or `error_page`, then the server addresses from different groups are separated by colons, e.g. `192.168.1.1:80, 192.168.1.2:80, unix:/tmp/sock : 192.168.10.1:80, 192.168.10.2:80`
+- `$upstream_cache_status` - keeps the status of accessing a response cache (0.8.3). The status can be either `MISS`, `BYPASS`, `EXPIRED`, `STALE`, `UPDATING`, `REVALIDATED`, or `HIT`
+- `$upstream_connect_time` - time spent on establishing a connection with an upstream server
+- `$upstream_cookie_` - cookie with the specified name sent by the upstream server in the `Set-Cookie` response header field (1.7.1). Only the cookies from the response of the last server are saved
+- `$upstream_header_time` - time between establishing a connection and receiving the first byte of the response header from the upstream server
+- `$upstream_http_` - keep server response header fields. For example, the `Server` response header field is available through the `$upstream_http_server` variable. The rules of converting header field names to variable names are the same as for the variables that start with the `$http_` prefix. Only the header fields from the response of the last server are saved
+- `$upstream_response_length` - keeps the length of the response obtained from the upstream server (0.7.27); the length is kept in bytes. Lengths of several responses are separated by commas and colons like addresses in the `$upstream_addr` variable
+- `$upstream_response_time` - time between establishing a connection and receiving the last byte of the response body from the upstream server
+- `$upstream_status` - keeps status code of the response obtained from the upstream server. Status codes of several responses are separated by commas and colons like addresses in the `$upstream_addr` variable
+
 Official documentation say:
 
   > _[...] If several servers were contacted during request processing, their addresses are separated by commas. [...] If an internal redirect from one server group to another happens, initiated by “X-Accel-Redirect” or error_page, then the server addresses from different groups are separated by colons_
@@ -3230,7 +3242,7 @@ Ok, so look at the following short explanation about proxy directives (for more 
   proxy_cache_bypass $http_upgrade;
   ```
 
-- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (as opposed to the error page on the backend side). If you want certain error pages still being delivered from the upstream server, then simply don't specify the `error_page code` on the reverse proxy (without this, NGINX will forward the error page coming from the upstream server to the client):
+- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (as opposed to the error page on the backend side). If you want certain error pages still being delivered from the upstream server, then simply don't specify the `error_page <code>` on the reverse proxy (without this, NGINX will forward the error page coming from the upstream server to the client):
 
   ```nginx
   proxy_intercept_errors on;
