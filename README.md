@@ -1560,11 +1560,6 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://enable-cors.org/index.html"><b>Enable cross-origin resource sharing (CORS)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nbs-system/naxsi"><b>NAXSI - WAF for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html"><b>Transport Layer Protection Cheat Sheet by OWASP</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://bettercrypto.org/"><b>Applied Crypto Hardening</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://caniuse.com/#home"><b>Browser support tables for modern web technologies</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://badssl.com/"><b>Memorable site for testing clients against bad SSL configs</b></a><br>
 </p>
 
 ##### Presentations & Videos
@@ -1752,11 +1747,20 @@ _In this ebook you will learn:_
 
 <p>
 &nbsp;&nbsp;:black_small_square: <a href="https://developer.mozilla.org/en-US/docs/Web"><b>Web technology for developers</b></a><br>
-&nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/"><b>OWASP Cheat Sheet Series</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://infosec.mozilla.org/guidelines/web_security.html"><b>Mozilla Web Security</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://appsecwiki.com/#/"><b>Application Security Wiki</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project"><b>OWASP ASVS 3.0.1</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/Santandersecurityresearch/asvs"><b>OWASP ASVS 3.0.1 Web App</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/ASVS/tree/master/4.0"><b>OWASP ASVS 4.0</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/OWASP_Proactive_Controls"><b>OWASP Top 10 Proactive Controls 2018.</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://www.owasp.org/index.php/OWASP_Testing_Project"><b>OWASP Testing Guide v4</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/DevGuide"><b>OWASP Dev Guide</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html"><b>Transport Layer Protection Cheat Sheet by OWASP</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/OWASP/wstg"><b>OWASP WSTG</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://wiki.mozilla.org/Security/Server_Side_TLS"><b>Security/Server Side TLS by Mozilla</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://bettercrypto.org/"><b>Applied Crypto Hardening</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://caniuse.com/#home"><b>Browser support tables for modern web technologies</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://badssl.com/"><b>Memorable site for testing clients against bad SSL configs</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/web-security"><b>The Web Security Academy</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/kb/issues"><b>Burp Scanner - Issue Definitions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://odino.org/wasec-web-application-security-what-to-do-when-dot-dot-dot/"><b>Web application security: what to do when...</b></a><br>
