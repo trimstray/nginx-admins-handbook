@@ -3230,15 +3230,15 @@ Ok, so look at the following short explanation about proxy directives (for more 
   proxy_cache_bypass $http_upgrade;
   ```
 
-- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (as opposed to the error page on the backend side). If you want certain error pages still being delivered from the upstream server, then simply don't specify the error_page <code> on the reverse proxy (without this, NGINX will forward the error page coming from the upstream server to the client):
+- `proxy_intercept_errors` - means that any response with HTTP code 300 or greater is handled by the `error_page` directive and ensures that if the proxied backend returns an error status, NGINX will be the one showing the error page (as opposed to the error page on the backend side). If you want certain error pages still being delivered from the upstream server, then simply don't specify the `error_page code` on the reverse proxy (without this, NGINX will forward the error page coming from the upstream server to the client):
 
   ```nginx
   proxy_intercept_errors on;
   error_page 404 /404.html; # from proxy
 
   # To bypass error intercepting (if you have proxy_intercept_errors on):
-  # 1) don't specify the error_page 404 on the reverse proxy
-  # 2) go to the @debug location
+  # 1 - don't specify the error_page 404 on the reverse proxy
+  # 2 - go to the @debug location
   error_page 500 503 504 @debug;
   location @debug {
     proxy_intercept_errors off;
