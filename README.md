@@ -204,6 +204,7 @@
     * [Error log severity levels](doc/NGINX_BASICS.md#error-log-severity-levels)
     * [How to log the start time of a request?](doc/NGINX_BASICS.md#how-to-log-the-start-time-of-a-request)
     * [How to log the HTTP request body?](doc/NGINX_BASICS.md#how-to-log-the-http-request-body)
+    * [NGINX upstream variables returns 2 values](doc/NGINX_BASICS.md#nginx-upstream-variables-returns-2-values)
   * [Reverse proxy](doc/NGINX_BASICS.md#reverse-proxy)
     * [Passing requests](doc/NGINX_BASICS.md#passing-requests)
     * [Trailing slashes](doc/NGINX_BASICS.md#trailing-slashes)
@@ -897,6 +898,7 @@ Existing chapters:
   - _Log files_
     - [x] _Conditional logging_
     - [x] _Manually log rotation_
+    - [x] _NGINX upstream variables returns 2 values_
   - _Reverse proxy_
     - [x] _Passing requests_
     - [x] _Trailing slashes_

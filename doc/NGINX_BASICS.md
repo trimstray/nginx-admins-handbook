@@ -46,6 +46,7 @@ Go to the **[Table of Contents](https://github.com/trimstray/nginx-admins-handbo
     * [Error log severity levels](#error-log-severity-levels)
     * [How to log the start time of a request?](#how-to-log-the-start-time-of-a-request)
     * [How to log the HTTP request body?](#how-to-log-the-http-request-body)
+    * [NGINX upstream variables returns 2 values](#nginx-upstream-variables-returns-2-values)
   * [Reverse proxy](#reverse-proxy)
     * [Passing requests](#passing-requests)
     * [Trailing slashes](#trailing-slashes)
@@ -2759,7 +2760,7 @@ Default values for the error level:
 - in the HTTP section - `crit`
 - in the server section - `crit`
 
-#### How to log the start time of a request?
+##### How to log the start time of a request?
 
 The most logging information requires the request to complete (status code, bytes sent, durations, etc). If you want to log the start time of a request in NGINX you should apply a [patch](https://gist.github.com/rkbodenner/318681) that exposes request start time as a variable.
 
@@ -2774,7 +2775,7 @@ The `$time_local` variable contains the time when the log entry is written so wh
 
 Since the log phase is the last one, `$time_local` variable is much more close to the end of the request than it's start.
 
-#### How to log the HTTP request body?
+##### How to log the HTTP request body?
 
 Nginx doesn't parse the client request body unless it really needs to, so it usually does not fill the `$request_body` variable.
 
@@ -2850,6 +2851,37 @@ http {
 
 }
 ```
+
+##### NGINX upstream variables returns 2 values
+
+For example:
+
+```
+upstream_addr 192.168.50.201:8080 : 192.168.50.201:8080
+upstream_bytes_received 427 : 341
+upstream_connect_time 0.001 : 0.000
+upstream_header_time 0.003 : 0.001
+upstream_response_length 0 : 0
+upstream_response_time 0.003 : 0.001
+upstream_status 401 : 200
+```
+
+Official documentation say:
+
+  > _[...] If several servers were contacted during request processing, their addresses are separated by commas. [...] If an internal redirect from one server group to another happens, initiated by “X-Accel-Redirect” or error_page, then the server addresses from different groups are separated by colons_
+
+This means that it made multiple requests to a backend, most likely you either have a bare `proxy_pass` host that resolves to different IPs (frequently the case with something like Amazon ELB as an origin), are you have a configured upstream that has multiple servers. Unless disabled, the proxy module will make round robin attempts against all healthy backends. This can be configured from `proxy_next_upstream_*` directives.
+
+For example if this is not the desired behavior, you can just do (specifies in which cases a request should be passed to the next server):
+
+```nginx
+# One should bear in mind that passing a request to the next server is only possible
+# if nothing has been sent to a client yet. That is, if an error or timeout occurs
+# in the middle of the transferring of a response, fixing this is impossible.
+proxy_next_upstream off;
+```
+
+For more information please see [ngx_http_upstream_module](http://nginx.org/en/docs/http/ngx_http_upstream_module.html) and [proxy_next_upstream](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream).
 
 #### Reverse proxy
 
