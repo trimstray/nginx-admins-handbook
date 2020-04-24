@@ -1763,6 +1763,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://bettercrypto.org/"><b>Applied Crypto Hardening</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://caniuse.com/#home"><b>Browser support tables for modern web technologies</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://badssl.com/"><b>Memorable site for testing clients against bad SSL configs</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://https.cio.gov/"><b>The HTTPS-Only Standard</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/web-security"><b>The Web Security Academy</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://portswigger.net/kb/issues"><b>Burp Scanner - Issue Definitions</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://odino.org/wasec-web-application-security-what-to-do-when-dot-dot-dot/"><b>Web application security: what to do when...</b></a><br>
