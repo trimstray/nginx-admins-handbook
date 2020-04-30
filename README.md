@@ -642,6 +642,10 @@ author: unknown
 + or fully dynamic, an attacker can still inject hostile content into the page in transit
 + to attack the user.
 author: Scott Helme
+
++ Don’t enable older deprecated protocols just because Karen in Florida is still using
++ a PC that she bought back in 2001.
+author: thisinterestsmeblog
 ```
 
 I think, in the age of phishing, cyber attacks, ransomware, etc., you should take care of security of your infrastructure as hard as possible but don't ever forget about this one...
