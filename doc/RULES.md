@@ -3103,6 +3103,7 @@ ssl_protocols TLSv1.2 TLSv1.1;
 - [Building a faster and more secure web with TCP Fast Open, TLS False Start, and TLS 1.3](https://blogs.windows.com/msedgedev/2016/06/15/building-a-faster-and-more-secure-web-with-tcp-fast-open-tls-false-start-and-tls-1-3/)
 - [SSL Labs Grade Change for TLS 1.0 and TLS 1.1 Protocols](https://blog.qualys.com/ssllabs/2018/11/19/grade-change-for-tls-1-0-and-tls-1-1-protocols)
 - [ImperialViolet - TLS 1.3 and Proxies](https://www.imperialviolet.org/2018/03/10/tls13.html)
+- [How Netflix brings safer and faster streaming experiences to the living room on crowded networks using TLS 1.3](https://netflixtechblog.com/how-netflix-brings-safer-and-faster-streaming-experience-to-the-living-room-on-crowded-networks-78b8de7f758c)
 - [TLS versions (from this handbook)](#tls-versions)
 - [Defend against the BEAST attack - Hardening - P1 (from this handbook)](#beginner-defend-against-the-beast-attack)
 
