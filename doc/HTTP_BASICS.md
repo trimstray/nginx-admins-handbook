@@ -223,6 +223,7 @@ See these articles about HTTP headers:
 - [The HTTP Response Headers List](https://flaviocopes.com/http-response-headers/)
 - [Exotic HTTP Headers](https://peteris.rocks/blog/exotic-http-headers/)
 - [Secure your web application with these HTTP headers](https://odino.org/secure-your-web-application-with-these-http-headers/)
+- [OWASP Secure Headers Project](https://owasp.org/www-project-secure-headers/)
 
 HTTP headers allow the client and server to pass additional information with the request or the response. An HTTP header consists of its case-insensitive name followed by a colon `:`, then by its value (without line breaks).
 
