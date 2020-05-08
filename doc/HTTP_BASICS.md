@@ -482,12 +482,12 @@ After receiving and interpreting a request message, a server responds with an HT
 ```
                      FIELDS OF HTTP RESPONSE       PART OF RFC 2616
 ---------------------------------------------------------------------
-  Request       = (1) : Status-line                  Section 6.1
+  Response      = (1) : Status-line                  Section 6.1
                   (2) : *(( general-header           Section 4.5
                           | response-header          Section 6.2
                           | entity-header ) CRLF)    Section 7.1
                   (3) : CRLF
-                  (4) : [ message-body ]             Section 4.3
+                  (4) : [ message-body ]             Section 7.2
 ```
 
 Example of form an HTTP response for a request to fetch the `/alerts/status` page from the web server running on `localhost:8000`:
@@ -515,6 +515,12 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
   > When an HTTP/1.1 message is sent to an HTTP/1.0 recipient or a recipient whose version is unknown, the HTTP/1.1 message is constructed such that it can be interpreted as a valid HTTP/1.0 message if all of the newer features are ignored.
 
 ###### Status codes and reason phrase
+
+- `1xx: Informational` - Request received, continuing process
+- `2xx: Success` - The action was successfully received, understood, and accepted
+- `3xx: Redirection` - Further action must be taken in order to complete the request
+- `4xx: Client Error` - The request contains bad syntax or cannot be fulfilled
+- `5xx: Server Error` - The server failed to fulfill an apparently valid request
 
 For more information please see:
 
