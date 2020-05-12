@@ -3273,6 +3273,21 @@ OPTIONS_FILE_SET+=TLS1_2
 make config-recursive
 make install
 
+# If you want to remove parameters from the options file:
+make rmconfig
+
+# If you want to recompile NGINX from ports:
+# - edit options file manually
+make clean
+make reinstall # make deinstall install
+# - remove options file (see above command)
+make config
+make clean
+make reinstall # make deinstall install
+
+# To disable vulnerabilities (not recommend!)
+make DISABLE_VULNERABILITIES=yes reinstall
+
 # To use/link openssl* port from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
 
