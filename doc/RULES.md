@@ -1742,7 +1742,7 @@ server {
 
   > _1400 bytes (actually, it should probably be even a bit lower) is the recommended setting for interactive traffic where you want to avoid any unnecessary delays due to packet loss/jitter of fragments of the TLS record. However, packing each TLS record into dedicated packet does add some framing overhead and you probably want larger record sizes if you're streaming larger (and less latency sensitive) data. 4K is an in between value that's "reasonable" but not great for either case. For smaller records, we should also reserve space for various TCP options (timestamps, SACKs. up to 40 bytes), and account for TLS record overhead (another 20-60 bytes on average, depending on the negotiated ciphersuite). All in all: 1500 - 40 (IP) - 20 (TCP) - 40 (TCP options) - TLS overhead (60-100) ~= 1300 bytes. If you inspect records emitted by Google servers, you'll see that they carry ~1300 bytes of application data due to the math above._
 
-  The recommendation from Leif Hedstrom, Thomas Jackson, Brian Geffon etc is to use the below values:
+  The other recommendation (it seems to me that the authors are Leif Hedstrom, Thomas Jackson, Brian Geffon) is to use the below values:
 
   > - smaller TLS record size: MTU/MSS (1500) minus the TCP (20 bytes) and IP (40 bytes) overheads: 1500 - 40 - 20 = 1440 bytes<br>
   > - larger TLS record size: maximum TLS record size which is 16383 (2^14 - 1)
