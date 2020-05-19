@@ -53,6 +53,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Testing SSL connection with specific cipher](#testing-ssl-connection-with-specific-cipher)
     * [Testing OCSP Stapling](#testing-ocsp-stapling)
     * [Verify 0-RTT](#verify-0-rtt)
+    * [Testing SCSV](#testing-scsv)
     * [Load testing with ApacheBench (ab)](#load-testing-with-apachebench-ab)
       * [Standard test](#standard-test)
       * [Test with Keep-Alive header](#test-with-keep-alive-header)
@@ -3933,6 +3934,14 @@ __EOF__
 
 openssl s_client -connect ${_host}:443 -tls1_3 -sess_out session.pem -ign_eof < req.in
 openssl s_client -connect ${_host}:443 -tls1_3 -sess_in session.pem -early_data req.in
+```
+
+###### Testing SCSV
+
+```bash
+_host="example.com"
+
+openssl s_client -connect ${_host}:443 -tlsextdebug -status -fallback_scsv -no_tls1_3
 ```
 
 ##### Load testing with ApacheBench (ab)

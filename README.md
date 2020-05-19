@@ -286,6 +286,7 @@
     * [Testing SSL connection with specific cipher](doc/HELPERS.md#testing-ssl-connection-with-specific-cipher)
     * [Testing OCSP Stapling](doc/HELPERS.md#testing-ocsp-stapling)
     * [Verify 0-RTT](doc/HELPERS.md#verify-0-rtt)
+    * [Testing SCSV](doc/HELPERS.md#testing-scsv)
     * [Load testing with ApacheBench (ab)](doc/HELPERS.md#load-testing-with-apachebench-ab)
       * [Standard test](doc/HELPERS.md#standard-test)
       * [Test with Keep-Alive header](doc/HELPERS.md#test-with-keep-alive-header)
@@ -971,6 +972,7 @@ Existing chapters:
     - [x] _Testing SSL connection with specific SSL version_
     - [x] _Testing SSL connection with specific cipher_
     - [x] _Verify 0-RTT_
+    - [x] _Testing SCSV_
     - _Load testing with ApacheBench (ab)_
       - [x] _Standard test_
       - [x] _Test with Keep-Alive header_
