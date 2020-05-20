@@ -147,11 +147,14 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Generate password file with htpasswd command](#generate-password-file-with-htpasswd-command)
     * [Generate private key without passphrase](#generate-private-key-without-passphrase)
-    * [Remove passphrase from key](#remove-passphrase-from-key)
+    * [Generate private key with passphrase](#generate-private-key-with-passphrase)
+    * [Remove passphrase from private key](#remove-passphrase-from-private-key)
+    * [Encrypt existing private key with a passphrase](#encrypt-existing-private-key-with-a-passphrase)
     * [Generate CSR](#generate-csr)
     * [Generate CSR (metadata from existing certificate)](#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](#generate-csr-with--config-param)
     * [Generate private key and CSR](#generate-private-key-and-csr)
+    * [List available EC curves](#list-available-ec-curves)
     * [Generate ECDSA private key](#generate-ecdsa-private-key)
     * [Generate private key and CSR (ECC)](#generate-private-key-with-csr-ecc)
     * [Generate self-signed certificate](#generate-self-signed-certificate)
@@ -165,7 +168,9 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Convert DER to PEM](#convert-der-to-pem)
     * [Convert PEM to DER](#convert-pem-to-der)
     * [Verification of the certificate's supported purposes](#verification-of-the-certificates-supported-purposes)
+    * [Check private key](#check-private-key)
     * [Verification of the private key](#verification-of-the-private-key)
+    * [Get public key from private key](#get-public-key-from-private-key)
     * [Verification of the public key](#verification-of-the-public-key)
     * [Verification of the certificate](#verification-of-the-certificate)
     * [Verification of the CSR](#verification-of-the-csr)
@@ -7408,11 +7413,28 @@ htpasswd -c htpasswd_example.com.conf <username>
 openssl genrsa -out ${_fd} ${_len} )
 ```
 
-###### Remove passphrase from key
+###### Generate private key with passphrase
 
 ```bash
-( _fd_pass="private_pass.key" ; _fd="private.key" ; \
-openssl rsa -in ${_fd_pass} -out ${_fd}  )
+# _ciph: des3, aes128, aes256
+# _len: 2048, 4096
+( _ciph="aes128" ; _fd="private.key" ; _len="4096" ; \
+openssl genrsa -${_ciph} -out ${_fd} ${_len} )
+```
+
+###### Remove passphrase from private key
+
+```bash
+( _fd="private.key" ; _fd_unp="private_unp.key" ; \
+openssl rsa -in ${_fd} -out ${_fd_unp} )
+```
+
+###### Encrypt existing private key with a passphrase
+
+```bash
+# _ciph: des3, aes128, aes256
+( _ciph="aes128" ; _fd="private.key" ; _fd_pass="private_pass.key" ; \
+openssl rsa -${_ciph} -in ${_fd} -out ${_fd_pass}
 ```
 
 ###### Generate CSR
@@ -7504,6 +7526,12 @@ For more information please look at these great explanations:
 ```bash
 ( _fd="private.key" ; _fd_csr="request.csr" ; _len="4096" ; \
 openssl req -out ${_fd_csr} -new -newkey rsa:${_len} -nodes -keyout ${_fd} )
+```
+
+###### List available EC curves
+
+```bash
+openssl ecparam -list_curves
 ```
 
 ###### Generate ECDSA private key
@@ -7620,11 +7648,25 @@ openssl x509 -in ${_fd_pem} -outform der -out ${_fd_der} )
 openssl x509 -purpose -noout -in ${_fd_pem} )
 ```
 
+###### Check private key
+
+```bash
+( _fd="private.key" ; \
+openssl rsa -check -in ${_fd} )
+```
+
 ###### Verification of the private key
 
 ```bash
 ( _fd="private.key" ; \
 openssl rsa -noout -text -in ${_fd} )
+```
+
+###### Get public key from private key
+
+```bash
+( _fd="private.key" ; _fd_pub="public.key" ; \
+openssl rsa -pubout -in ${_fd} -out ${_fd_pub} )
 ```
 
 ###### Verification of the public key

@@ -380,11 +380,14 @@
     * [Create a temporary static backend with SSL support](doc/HELPERS.md#create-a-temporary-static-backend-with-ssl-support)
     * [Generate password file with htpasswd command](doc/HELPERS.md#generate-password-file-with-htpasswd-command)
     * [Generate private key without passphrase](doc/HELPERS.md#generate-private-key-without-passphrase)
-    * [Remove passphrase from key](doc/HELPERS.md#remove-passphrase-from-key)
+    * [Generate private key with passphrase](doc/HELPERS.md#generate-private-key-with-passphrase)
+    * [Remove passphrase from private key](doc/HELPERS.md#remove-passphrase-from-private-key)
+    * [Encrypt existing private key with a passphrase](doc/HELPERS.md#encrypt-existing-private-key-with-a-passphrase)
     * [Generate CSR](doc/HELPERS.md#generate-csr)
     * [Generate CSR (metadata from existing certificate)](doc/HELPERS.md#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](doc/HELPERS.md#generate-csr-with--config-param)
     * [Generate private key and CSR](doc/HELPERS.md#generate-private-key-and-csr)
+    * [List available EC curves](#list-available-ec-curves)
     * [Generate ECDSA private key](doc/HELPERS.md#generate-ecdsa-private-key)
     * [Generate private key and CSR (ECC)](doc/HELPERS.md#generate-private-key-and-csr-ecc)
     * [Generate self-signed certificate](doc/HELPERS.md#generate-self-signed-certificate)
@@ -398,7 +401,9 @@
     * [Convert DER to PEM](doc/HELPERS.md#convert-der-to-pem)
     * [Convert PEM to DER](doc/HELPERS.md#convert-pem-to-der)
     * [Verification of the certificate's supported purposes](doc/HELPERS.md#verification-of-the-certificates-supported-purposes)
+    * [Check private key](#check-private-key)
     * [Verification of the private key](doc/HELPERS.md#verification-of-the-private-key)
+    * [Get public key from private key](#get-public-key-from-private-key)
     * [Verification of the public key](doc/HELPERS.md#verification-of-the-public-key)
     * [Verification of the certificate](doc/HELPERS.md#verification-of-the-certificate)
     * [Verification of the CSR](doc/HELPERS.md#verification-of-the-csr)
@@ -1062,11 +1067,14 @@ Existing chapters:
     - [x] _Create a temporary static backend with SSL support_
     - [x] _Generate password file with htpasswd command_
     - [x] _Generate private key without passphrase_
-    - [x] _Remove passphrase from key_
+    - [x] _Generate private key with passphrase_
+    - [x] _Remove passphrase from private key_
+    - [x] _Encrypt existing private key with a passphrase_
     - [x] _Generate CSR_
     - [x] _Generate CSR (metadata from existing certificate)_
     - [x] _Generate CSR with -config param_
     - [x] _Generate private key and CSR_
+    - [x] _List available EC curves_
     - [x] _Generate ECDSA private key_
     - [x] _Generate private key and CSR (ECC)_
     - [x] _Generate self-signed certificate_
@@ -1081,6 +1089,8 @@ Existing chapters:
     - [x] _Convert PEM to DER_
     - [x] _Verification of the certificate's supported purposes_
     - [x] _Verification of the private key_
+    - [x] _Check private key_
+    - [x] _Get public key from private key_
     - [x] _Verification of the public key_
     - [x] _Verification of the certificate_
     - [x] _Verification of the CSR_
