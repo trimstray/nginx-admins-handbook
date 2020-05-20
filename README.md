@@ -380,6 +380,7 @@
     * [Create a temporary static backend with SSL support](doc/HELPERS.md#create-a-temporary-static-backend-with-ssl-support)
     * [Generate password file with htpasswd command](doc/HELPERS.md#generate-password-file-with-htpasswd-command)
     * [Generate private key without passphrase](doc/HELPERS.md#generate-private-key-without-passphrase)
+    * [Remove passphrase from key](doc/HELPERS.md#remove-passphrase-from-key)
     * [Generate CSR](doc/HELPERS.md#generate-csr)
     * [Generate CSR (metadata from existing certificate)](doc/HELPERS.md#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](doc/HELPERS.md#generate-csr-with--config-param)
@@ -1061,6 +1062,7 @@ Existing chapters:
     - [x] _Create a temporary static backend with SSL support_
     - [x] _Generate password file with htpasswd command_
     - [x] _Generate private key without passphrase_
+    - [x] _Remove passphrase from key_
     - [x] _Generate CSR_
     - [x] _Generate CSR (metadata from existing certificate)_
     - [x] _Generate CSR with -config param_

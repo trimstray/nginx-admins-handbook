@@ -147,6 +147,7 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Create a temporary static backend with SSL support](#create-a-temporary-static-backend-with-ssl-support)
     * [Generate password file with htpasswd command](#generate-password-file-with-htpasswd-command)
     * [Generate private key without passphrase](#generate-private-key-without-passphrase)
+    * [Remove passphrase from key](#remove-passphrase-from-key)
     * [Generate CSR](#generate-csr)
     * [Generate CSR (metadata from existing certificate)](#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](#generate-csr-with--config-param)
@@ -7405,6 +7406,13 @@ htpasswd -c htpasswd_example.com.conf <username>
 # _len: 2048, 4096
 ( _fd="private.key" ; _len="4096" ; \
 openssl genrsa -out ${_fd} ${_len} )
+```
+
+###### Remove passphrase from key
+
+```bash
+( _fd_pass="private_pass.key" ; _fd="private.key" ; \
+openssl rsa -in ${_fd_pass} -out ${_fd}  )
 ```
 
 ###### Generate CSR
