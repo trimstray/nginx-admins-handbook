@@ -398,6 +398,9 @@
     * [Generate certificate with 4096 bit private key](doc/HELPERS.md#generate-certificate-with-4096-bit-private-key)
     * [Generate DH public parameters](doc/HELPERS.md#generate-dh-public-parameters)
     * [Display DH public parameters](doc/HELPERS.md#display-dh-public-parameters)
+    * [Extract private key from pfx](doc/HELPERS.md#extract-private-key-from-pfx)
+    * [Extract private key and certs from pfx](doc/HELPERS.md#extract-private-key-and-certs-from-pfx)
+    * [Extract certs from p7b](doc/HELPERS.md#extract-certs-from-p7b)
     * [Convert DER to PEM](doc/HELPERS.md#convert-der-to-pem)
     * [Convert PEM to DER](doc/HELPERS.md#convert-pem-to-der)
     * [Verification of the certificate's supported purposes](doc/HELPERS.md#verification-of-the-certificates-supported-purposes)
@@ -1085,6 +1088,7 @@ Existing chapters:
     - [x] _Generate certificate with 4096 bit private key_
     - [x] _Generate DH public parameters_
     - [x] _Display DH public parameters_
+    - [x] _Extract certs from p7b_
     - [x] _Convert DER to PEM_
     - [x] _Convert PEM to DER_
     - [x] _Verification of the certificate's supported purposes_

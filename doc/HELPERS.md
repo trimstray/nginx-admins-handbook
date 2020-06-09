@@ -165,6 +165,9 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Generate certificate with 4096 bit private key](#generate-certificate-with-4096-bit-private-key)
     * [Generate DH public parameters](#generate-dh-public-parameters)
     * [Display DH public parameters](#display-dh-public-parameters)
+    * [Extract private key from pfx](#extract-private-key-from-pfx)
+    * [Extract private key and certs from pfx](#extract-private-key-and-certs-from-pfx)
+    * [Extract certs from p7b](#extract-certs-from-p7b)
     * [Convert DER to PEM](#convert-der-to-pem)
     * [Convert PEM to DER](#convert-pem-to-der)
     * [Verification of the certificate's supported purposes](#verification-of-the-certificates-supported-purposes)
@@ -7625,6 +7628,16 @@ openssl pkcs12 -in ${_fd_pfx} -nocerts -nodes -out ${_fd_key} )
 ```bash
 ( _fd_pfx="cert.pfx" ; _fd_pem="key_certs.pem" ; \
 openssl pkcs12 -in ${_fd_pfx} -nodes -out ${_fd_pem} )
+```
+
+###### Extract certs from p7b
+
+```bash
+# PKCS#7 file doesn't include private keys.
+( _fd_p7b="cert.p7b" ; _fd_pem="cert.pem" ; \
+openssl pkcs7 -inform DER -outform PEM -in ${_fd_p7b} -print_certs > ${_fd_pem})
+# or:
+openssl pkcs7 -print_certs -in -in ${_fd_p7b} -out ${_fd_pem})
 ```
 
 ###### Convert DER to PEM
