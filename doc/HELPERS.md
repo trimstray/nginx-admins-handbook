@@ -6144,7 +6144,7 @@ For support GeoIP2 we have [ngx_http_geoip2_module](https://github.com/leev/ngx_
 
 Example 1:
 
-1. Create error page template in `/var/www/error_pages/error.html`:
+1. Create error page template in `/var/www/error_pages/errors.html`:
 
 ```html
 <!-- Based on: https://blog.adriaan.io/one-nginx-error-page-to-rule-them-all.html -->
@@ -6165,6 +6165,19 @@ Example 1:
   <!--# else -->
     <h1><!--# echo var="status" default="" --> <!--# echo var="status_text" default="Something goes wrong..." --></h1>
   <!--# endif -->
+</body>
+</html>
+```
+
+or
+
+```html
+<html>
+<head>
+<title><!--# echo var="status" default="" --> <!--# echo var="status_text" default="Something goes wrong..." --></title>
+</head>
+<body>
+<center><h1><!--# echo var="status" default="" --> <!--# echo var="status_text" default="Something goes wrong..." --></h1></center>
 </body>
 </html>
 ```
@@ -6226,9 +6239,9 @@ server {
 
   ...
 
-  error_page 400 401 403 404 405 500 501 502 503 /error.html;
+  error_page 400 401 403 404 405 500 501 502 503 /errors.html;
 
-  location = /error.html {
+  location = /errors.html {
 
     ssi on;
     internal;
