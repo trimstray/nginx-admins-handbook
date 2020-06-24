@@ -3286,6 +3286,9 @@ make install
 # If you want to remove parameters from the options file:
 make rmconfig
 
+# Before these tasks create backup of your current NGINX config:
+#   - tar czvfp /usr/backup/nginx.tgz /usr/local/etc/nginx
+
 # If you want to recompile NGINX from ports:
 # - edit options file manually
 make clean
