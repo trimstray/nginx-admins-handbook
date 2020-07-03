@@ -31,7 +31,7 @@ alias git.reset 'git add . && git reset --hard HEAD'
 
 ### VARNISH
 alias vs.test 'varnishd -C -f /etc/varnish/default.vcl'
-alias vs.gen '_xr=$(cat /dev/urandom | tr -dc '0-9' | fold -w 256 | head -n 1 | head --bytes 8) ; varnishadm vcl.load vcl_${_xr} /etc/varnish/default.vcl'
+alias vs.gen '_xr=$(export LC_CTYPE=C ; cat /dev/urandom | tr -dc '0-9' | fold -w 256 | head -n 1 | head --bytes 8) ; varnishadm vcl.load vcl_${_xr} /etc/varnish/default.vcl'
 alias vs.list 'varnishadm vcl.list'
 alias vs.use 'varnishadm vcl.use'
 
