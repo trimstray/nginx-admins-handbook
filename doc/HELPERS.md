@@ -6538,7 +6538,13 @@ Example 1:
 map $http_user_agent $invalid_ua {
 
   default           0;
-  "python-requests" 1;
+  ~*scrapyproject   1;
+  ~*netcrawler      1;
+  ~*nmap            1;
+  ~*sqlmap          1;
+  ~*slowhttptest    1;
+  ~*nikto           1;
+  ~*python-requests 1;
 
 }
 
@@ -6562,7 +6568,13 @@ Example 1:
 map $http_user_agent $limit_ip_key_by_ua {
 
   default           "";
-  "python-requests" $binary_remote_addr;
+  ~*scrapyproject   binary_remote_addr;
+  ~*netcrawler      binary_remote_addr;
+  ~*nmap            binary_remote_addr;
+  ~*sqlmap          binary_remote_addr;
+  ~*slowhttptest    binary_remote_addr;
+  ~*nikto           binary_remote_addr;
+  ~*python-requests binary_remote_addr;
 
 }
 
