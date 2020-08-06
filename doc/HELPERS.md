@@ -126,6 +126,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Blocking/allowing IP addresses](#blockingallowing-ip-addresses)
     * [Blocking referrer spam](#blocking-referrer-spam)
     * [Limiting referrer spam](#limiting-referrer-spam)
+    * [Blocking User-Agent](#blocking-user-agent)
+    * [Limiting User-Agent](#limiting-user-agent)
     * [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the rate of requests per IP with geo and map](#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
@@ -6525,6 +6527,56 @@ HTTP/1.1 200     1.00 secs:    3174 bytes ==> GET  /storage/img/header.jpg
 HTTP/1.1 200     1.04 secs:    3174 bytes ==> GET  /storage/img/header.jpg
 
 ...
+```
+
+##### Blocking User-Agent
+
+Example 1:
+
+```nginx
+# 1) File: /etc/nginx/limits.conf
+map $http_user_agent $invalid_ua {
+
+  default           0;
+  "python-requests" 1;
+
+}
+
+# 2) Include this file in http context:
+include /etc/nginx/limits.conf;
+
+# 3) Turn on in a specific context (e.g. server):
+server_name example.com;
+
+  if ($invalid_ua) { return 444; }
+
+  ...
+```
+
+##### Limiting User-Agent
+
+Example 1:
+
+```nginx
+# 1) File: /etc/nginx/limits.conf
+map $http_user_agent $limit_ip_key_by_ua {
+
+  default           "";
+  "python-requests" $binary_remote_addr;
+
+}
+
+limit_req_zone $limit_ip_key_by_ua zone=req_for_remote_addr_by_ua:32k rate=10r/m;
+
+# 2) Include this file in http context:
+include /etc/nginx/limits.conf;
+
+# 3) Turn on in a specific context (e.g. server):
+server_name example.com;
+
+  limit_req zone=req_for_remote_addr_by_ua burst=2;
+
+  ...
 ```
 
 ##### Limiting the rate of requests with burst mode

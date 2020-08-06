@@ -359,6 +359,8 @@
     * [Blocking/allowing IP addresses](doc/HELPERS.md#blockingallowing-ip-addresses)
     * [Blocking referrer spam](doc/HELPERS.md#blocking-referrer-spam)
     * [Limiting referrer spam](doc/HELPERS.md#limiting-referrer-spam)
+    * [Blocking User-Agent](doc/HELPERS.md#blocking-user-agent)
+    * [Limiting User-Agent](doc/HELPERS.md#limiting-user-agent)
     * [Limiting the rate of requests with burst mode](doc/HELPERS.md#limiting-the-rate-of-requests-with-burst-mode)
     * [Limiting the rate of requests with burst mode and nodelay](doc/HELPERS.md#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
     * [Limiting the rate of requests per IP with geo and map](doc/HELPERS.md#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
