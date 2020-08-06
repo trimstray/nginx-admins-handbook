@@ -3858,10 +3858,10 @@ Remember also about [this](https://stackoverflow.com/questions/37438949/antiddos
 
 See also examples (all comes from this handbook):
 
-- [Limiting the rate of requests with burst mode](#limiting-the-rate-of-requests-with-burst-mode)
-- [Limiting the rate of requests with burst mode and nodelay](#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
-- [Limiting the rate of requests per IP with geo and map](#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
-- [Limiting the number of connections](#limiting-the-number-of-connections)
+- [Limiting the rate of requests with burst mode](HELPERS.md#limiting-the-rate-of-requests-with-burst-mode)
+- [Limiting the rate of requests with burst mode and nodelay](HELPERS.md#limiting-the-rate-of-requests-with-burst-mode-and-nodelay)
+- [Limiting the rate of requests per IP with geo and map](HELPERS.md#limiting-the-rate-of-requests-per-ip-with-geo-and-map)
+- [Limiting the number of connections](HELPERS.md#limiting-the-number-of-connections)
 
 ##### Burst and nodelay parameters
 
