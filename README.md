@@ -556,6 +556,7 @@ These essential documents should be the main source of knowledge for you:
 - **[Getting Started](https://www.nginx.com/resources/wiki/start/)**
 - **[NGINX Documentation](https://nginx.org/en/docs/)**
 - **[Development guide](http://nginx.org/en/docs/dev/development_guide.html)**
+- **[Security Controls](https://docs.nginx.com/nginx/admin-guide/security-controls/)**
 
 In addition, I would like to recommend three great docs focuses on the concept of the HTTP protocol:
 
@@ -1530,6 +1531,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="http://nginx.org/en/docs/dev/development_guide.html"><b>Development Guide</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://forum.nginx.org/"><b>Nginx Forum</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="http://nginx.org/en/security_advisories.html"><b>Nginx Security Advisories</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://docs.nginx.com/nginx/admin-guide/security-controls/"><b>Nginx Security Controls</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://mailman.nginx.org/mailman/listinfo/nginx"><b>Nginx Mailing List</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginx/nginx"><b>Nginx Read-only Mirror</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nginxinc/NGINX-Demos"><b>NGINX-Demos
