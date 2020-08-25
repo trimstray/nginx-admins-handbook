@@ -300,7 +300,7 @@
       * [Debug mode (with Lua)](doc/HELPERS.md#debug-mode-with-lua)
       * [Analyse data pass to and from the threads](doc/HELPERS.md#analyse-data-pass-to-and-from-the-threads)
       * [Parsing wrk result and generate report](doc/HELPERS.md#parsing-wrk-result-and-generate-report)
-    * [Load testing with locust](#load-testing-with-locust)
+    * [Load testing with locust](doc/HELPERS.md#load-testing-with-locust)
       * [Multiple paths](doc/HELPERS.md#multiple-paths)
       * [Multiple paths with different user sessions](doc/HELPERS.md#multiple-paths-with-different-user-sessions)
     * [TCP SYN flood Denial of Service attack](doc/HELPERS.md#tcp-syn-flood-denial-of-service-attack)
@@ -389,15 +389,16 @@
     * [Generate CSR (metadata from existing certificate)](doc/HELPERS.md#generate-csr-metadata-from-existing-certificate)
     * [Generate CSR with -config param](doc/HELPERS.md#generate-csr-with--config-param)
     * [Generate private key and CSR](doc/HELPERS.md#generate-private-key-and-csr)
-    * [List available EC curves](#list-available-ec-curves)
+    * [List available EC curves](doc/HELPERS.md#list-available-ec-curves)
+    * [Print ECDSA private and public keys](doc/HELPERS.md#print-ecdsa-private-and-public-keys)
     * [Generate ECDSA private key](doc/HELPERS.md#generate-ecdsa-private-key)
     * [Generate private key and CSR (ECC)](doc/HELPERS.md#generate-private-key-and-csr-ecc)
     * [Generate self-signed certificate](doc/HELPERS.md#generate-self-signed-certificate)
     * [Generate self-signed certificate from existing private key](doc/HELPERS.md#generate-self-signed-certificate-from-existing-private-key)
     * [Generate self-signed certificate from existing private key and csr](doc/HELPERS.md#generate-self-signed-certificate-from-existing-private-key-and-csr)
-    * [Generate multidomain certificate](doc/HELPERS.md#generate-multidomain-certificate)
-    * [Generate wildcard certificate](doc/HELPERS.md#generate-wildcard-certificate)
-    * [Generate certificate with 4096 bit private key](doc/HELPERS.md#generate-certificate-with-4096-bit-private-key)
+    * [Generate multidomain certificate (Certbot)](doc/HELPERS.md#generate-multidomain-certificate-certbot)
+    * [Generate wildcard certificate (Certbot)](doc/HELPERS.md#generate-wildcard-certificate-certbot)
+    * [Generate certificate with 4096 bit private key (Certbot)](doc/HELPERS.md#generate-certificate-with-4096-bit-private-key-certbot)
     * [Generate DH public parameters](doc/HELPERS.md#generate-dh-public-parameters)
     * [Display DH public parameters](doc/HELPERS.md#display-dh-public-parameters)
     * [Extract private key from pfx](doc/HELPERS.md#extract-private-key-from-pfx)
@@ -406,14 +407,14 @@
     * [Convert DER to PEM](doc/HELPERS.md#convert-der-to-pem)
     * [Convert PEM to DER](doc/HELPERS.md#convert-pem-to-der)
     * [Verification of the certificate's supported purposes](doc/HELPERS.md#verification-of-the-certificates-supported-purposes)
-    * [Check private key](#check-private-key)
+    * [Check private key](doc/HELPERS.md#check-private-key)
     * [Verification of the private key](doc/HELPERS.md#verification-of-the-private-key)
-    * [Get public key from private key](#get-public-key-from-private-key)
+    * [Get public key from private key](doc/HELPERS.md#get-public-key-from-private-key)
     * [Verification of the public key](doc/HELPERS.md#verification-of-the-public-key)
     * [Verification of the certificate](doc/HELPERS.md#verification-of-the-certificate)
     * [Verification of the CSR](doc/HELPERS.md#verification-of-the-csr)
-    * [Check whether the private key and the certificate match](doc/HELPERS.md#check-whether-the-private-key-and-the-certificate-match)
-    * [Check whether the private key and the CSR match](doc/HELPERS.md#check-whether-the-private-key-and-the-csr-match)
+    * [Check the private key and the certificate are match](doc/HELPERS.md#check-the-private-key-and-the-certificate-are-match)
+    * [Check the private key and the CSR are match](doc/HELPERS.md#check-the-private-key-and-the-csr-are-match)
     [TLSv1.3 and CCM ciphers](doc/HELPERS.md#tlsv13-and-ccm-ciphers)
 - **[Base Rules (16)](doc/RULES.md#base-rules)**<a id="toc-base-rules"></a>
   * [Organising Nginx configuration](doc/RULES.md#beginner-organising-nginx-configuration)
@@ -1086,9 +1087,9 @@ Existing chapters:
     - [x] _Generate self-signed certificate_
     - [x] _Generate self-signed certificate from existing private key_
     - [x] _Generate self-signed certificate from existing private key and csr_
-    - [x] _Generate multidomain certificate_
-    - [x] _Generate wildcard certificate_
-    - [x] _Generate certificate with 4096 bit private key_
+    - [x] _Generate multidomain certificate (Certbot)_
+    - [x] _Generate wildcard certificate (Certbot)_
+    - [x] _Generate certificate with 4096 bit private key (Certbot)_
     - [x] _Generate DH public parameters_
     - [x] _Display DH public parameters_
     - [x] _Extract certs from p7b_
@@ -1101,7 +1102,7 @@ Existing chapters:
     - [x] _Verification of the public key_
     - [x] _Verification of the certificate_
     - [x] _Verification of the CSR_
-    - [x] _Check whether the private key and the certificate match_
+    - [x] _Check the private key and the certificate are match_
     - [x] _TLSv1.3 and CCM ciphers_
 
 </details>

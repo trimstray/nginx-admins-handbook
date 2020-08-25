@@ -157,14 +157,15 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Generate CSR with -config param](#generate-csr-with--config-param)
     * [Generate private key and CSR](#generate-private-key-and-csr)
     * [List available EC curves](#list-available-ec-curves)
+    * [Print ECDSA private and public keys](#print-ecdsa-private-and-public-keys)
     * [Generate ECDSA private key](#generate-ecdsa-private-key)
     * [Generate private key and CSR (ECC)](#generate-private-key-with-csr-ecc)
     * [Generate self-signed certificate](#generate-self-signed-certificate)
     * [Generate self-signed certificate from existing private key](#generate-self-signed-certificate-from-existing-private-key)
     * [Generate self-signed certificate from existing private key and csr](#generate-self-signed-certificate-from-existing-private-key-and-csr)
-    * [Generate multidomain certificate](#generate-multidomain-certificate)
-    * [Generate wildcard certificate](#generate-wildcard-certificate)
-    * [Generate certificate with 4096 bit private key](#generate-certificate-with-4096-bit-private-key)
+    * [Generate multidomain certificate (Certbot)](#generate-multidomain-certificate-certbot)
+    * [Generate wildcard certificate (Certbot)](#generate-wildcard-certificate-certbot)
+    * [Generate certificate with 4096 bit private key (Certbot)](#generate-certificate-with-4096-bit-private-key-certbot)
     * [Generate DH public parameters](#generate-dh-public-parameters)
     * [Display DH public parameters](#display-dh-public-parameters)
     * [Extract private key from pfx](#extract-private-key-from-pfx)
@@ -179,8 +180,8 @@ Go back to the **[Table of Contents](https://github.com/trimstray/nginx-admins-h
     * [Verification of the public key](#verification-of-the-public-key)
     * [Verification of the certificate](#verification-of-the-certificate)
     * [Verification of the CSR](#verification-of-the-csr)
-    * [Check whether the private key and the certificate match](#check-whether-the-private-key-and-the-certificate-match)
-    * [Check whether the private key and the CSR match](#check-whether-the-private-key-and-the-csr-match)
+    * [Check the private key and the certificate are match](#check-the-private-key-and-the-certificate-are-match)
+    * [Check the private key and the CSR are match](#check-the-private-key-and-the-csr-are-match)
     * [TLSv1.3 and CCM ciphers](#tlsv13-and-ccm-ciphers)
 
 #### Installing from prebuilt packages
@@ -7492,7 +7493,7 @@ htpasswd -c htpasswd_example.com.conf <username>
 
 ```bash
 # _len: 2048, 4096
-( _fd="private.key" ; _len="4096" ; \
+( _fd="private.key" ; _len="2048" ; \
 openssl genrsa -out ${_fd} ${_len} )
 ```
 
@@ -7501,7 +7502,7 @@ openssl genrsa -out ${_fd} ${_len} )
 ```bash
 # _ciph: des3, aes128, aes256
 # _len: 2048, 4096
-( _ciph="aes128" ; _fd="private.key" ; _len="4096" ; \
+( _ciph="aes128" ; _fd="private.key" ; _len="2048" ; \
 openssl genrsa -${_ciph} -out ${_fd} ${_len} )
 ```
 
@@ -7518,6 +7519,13 @@ openssl rsa -in ${_fd} -out ${_fd_unp} )
 # _ciph: des3, aes128, aes256
 ( _ciph="aes128" ; _fd="private.key" ; _fd_pass="private_pass.key" ; \
 openssl rsa -${_ciph} -in ${_fd} -out ${_fd_pass}
+```
+
+###### Generate private key and CSR
+
+```bash
+( _fd="private.key" ; _fd_csr="request.csr" ; _len="2048" ; \
+openssl req -out ${_fd_csr} -new -newkey rsa:${_len} -nodes -keyout ${_fd} )
 ```
 
 ###### Generate CSR
@@ -7604,17 +7612,21 @@ For more information please look at these great explanations:
 - [Your OpenSSL CSR command is out of date](https://expeditedsecurity.com/blog/openssl-csr-command/)
 - [OpenSSL example configuration file](https://www.tbs-certificats.com/openssl-dem-server-cert.cnf)
 
-###### Generate private key and CSR
-
-```bash
-( _fd="private.key" ; _fd_csr="request.csr" ; _len="4096" ; \
-openssl req -out ${_fd_csr} -new -newkey rsa:${_len} -nodes -keyout ${_fd} )
-```
-
 ###### List available EC curves
 
 ```bash
 openssl ecparam -list_curves
+```
+
+###### Print ECDSA private and public keys
+
+```bash
+( _fd="private.key" ; \
+openssl ec -in ${_fd} -noout -text )
+
+# For x25519 only extracting public key
+( _fd="private.key" ; _fd_pub="public.key" ; \
+openssl pkey -in ${_fd} -pubout -out ${_fd_pub} )
 ```
 
 ###### Generate ECDSA private key
@@ -7642,7 +7654,7 @@ openssl req -new -key ${_fd} -out ${_fd_csr} -sha256 )
 
 ```bash
 # _len: 2048, 4096
-( _fd="domain.key" ; _fd_out="domain.crt" ; _len="4096" ; _days="365" ; \
+( _fd="domain.key" ; _fd_out="domain.crt" ; _len="2048" ; _days="365" ; \
 openssl req -newkey rsa:${_len} -nodes \
 -keyout ${_fd} -x509 -days ${_days} -out ${_fd_out} )
 ```
@@ -7665,19 +7677,19 @@ openssl x509 -signkey ${_fd} -nodes \
 -in ${_fd_csr} -req -days ${_days} -out ${_fd_out} )
 ```
 
-###### Generate multidomain certificate
+###### Generate multidomain certificate (Certbot)
 
 ```bash
 certbot certonly -d example.com -d www.example.com
 ```
 
-###### Generate wildcard certificate
+###### Generate wildcard certificate (Certbot)
 
 ```bash
 certbot certonly --manual --preferred-challenges=dns -d example.com -d *.example.com
 ```
 
-###### Generate certificate with 4096 bit private key
+###### Generate certificate with 4096 bit private key (Certbot)
 
 ```bash
 certbot certonly -d example.com -d www.example.com --rsa-key-size 4096
@@ -7789,14 +7801,14 @@ openssl x509 -noout -text -in ${_fd} )
 openssl req -text -noout -in ${_fd_csr} )
 ```
 
-###### Check whether the private key and the certificate match
+###### Check the private key and the certificate are match
 
 ```bash
 (openssl rsa -noout -modulus -in private.key | openssl md5 ; \
 openssl x509 -noout -modulus -in certificate.crt | openssl md5) | uniq
 ```
 
-###### Check whether the private key and the CSR match
+###### Check the private key and the CSR are match
 
 ```bash
 (openssl rsa -noout -modulus -in private.key | openssl md5 ; \
