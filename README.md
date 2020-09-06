@@ -314,7 +314,8 @@
     * [Get the list of configure arguments](doc/HELPERS.md#get-the-list-of-configure-arguments)
     * [Check if the module has been compiled](doc/HELPERS.md#check-if-the-module-has-been-compiled)
     * [Show the most accessed IP addresses](doc/HELPERS.md#show-the-most-accessed-ip-addresses)
-    * [Show the most accessed IP addresses (method, code, ip, and domain)](doc/HELPERS.md#show-the-most-accessed-ip-addresses-method-code-ip-and-domain)
+    * [Show the most accessed IP addresses (ip and url)](doc/HELPERS.md#show-the-most-accessed-ip-addresses-ip-and-url)
+    * [Show the most accessed IP addresses (method, code, ip, and url)](doc/HELPERS.md#show-the-most-accessed-ip-addresses-method-code-ip-and-url)
     * [Show the top 5 visitors (IP addresses)](doc/HELPERS.md#show-the-top-5-visitors-ip-addresses)
     * [Show the most requested urls](doc/HELPERS.md#show-the-most-requested-urls)
     * [Show the most requested urls containing 'string'](doc/HELPERS.md#show-the-most-requested-urls-containing-string)
@@ -1012,6 +1013,7 @@ Existing chapters:
     - [x] _Dump configuration_
     - [x] _Get the list of configure arguments_
     - [x] _Check if the module has been compiled_
+    - [x] _Show the most accessed IP addresses (ip and url)_
     - [x] _Show the most requested urls with http methods_
     - [x] _Show the most accessed response codes_
     - [x] _Calculating requests per second with IP addresses and urls_
