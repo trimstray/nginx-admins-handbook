@@ -808,6 +808,8 @@ Existing chapters:
     - [x] _Arjun_
     - [x] _Corsy_
     - [x] _XSStrike_
+  - _Online & Web tools_
+    - [x] _ssltools_
   - _Other stuff_
     - [x] _OWASP Cheat Sheet Series_
     - [x] _Mozilla Web Security_
@@ -1754,6 +1756,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://decoder.link"><b>Tools for testing SSL configuration</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://tls.imirhil.fr/"><b>Test your TLS server configuration (e.g. ciphers)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.jitbit.com/sslcheck/"><b>Scan your website for non-secure content</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="http://www.ssltools.com"><b>Analyze website security</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://ciphersuite.info/"><b>TLS Cipher Suite Search</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.ssllabs.com/ssltest/viewMyClient.html"><b>SSL/TLS Capabilities of Your Browser</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suche.org/sslClientInfo"><b>SSL-Client Info's</b></a><br>
