@@ -2103,6 +2103,10 @@ The `ngx_http_rewrite_module` also provides additional directives:
 
   > _That’s actually not true and shows you don’t understand the problem with it. When the `if` statement ends with `return` directive, there is no problem and it’s safe to use._
 
+  On the other hand, official documentation say:
+
+  > _Directive if has problems when used in location context, in some cases it doesn’t do what you expect but something completely different instead. In some cases it even segfaults. It’s generally a good idea to avoid it if possible._
+
 - `set` - sets a value for the specified variable. The value can contain text, variables, and their combination
 
 Example of usage `if` and `set` directives:

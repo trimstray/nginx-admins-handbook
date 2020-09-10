@@ -1911,11 +1911,15 @@ server {
 
 ###### Rationale
 
-  > When NGINX receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this `if` directive is always evaluated. Since you’re requesting NGINX to check for the `Host` header for every request. It’s extremely inefficient.
+  > When NGINX receives a request no matter what is the subdomain being requested, be it `www.example.com` or just the plain `example.com` this `if` directive is always evaluated. Since you’re requesting NGINX to check for the `Host` header for every request. It might be extremely inefficient.
 
   > Instead use two server directives like the example below. This approach decreases NGINX processing requirements.
 
   > The problem is not just the `$server_name` directive. Keep in mind also other variables, e.g. `$scheme`. In some cases (but not always), it is better to add an additional block directive than to use the `if`.
+
+  On the other hand, official documentation say:
+
+  > _Directive if has problems when used in location context, in some cases it doesn’t do what you expect but something completely different instead. In some cases it even segfaults. It’s generally a good idea to avoid it if possible._
 
 ###### Example
 
