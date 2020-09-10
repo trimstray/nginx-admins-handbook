@@ -3290,10 +3290,7 @@ make install
 # If you want to remove parameters from the options file:
 make rmconfig
 
-# Before these tasks create backup of your current NGINX config:
-#   - tar czvfp /usr/backup/nginx.tgz /usr/local/etc/nginx
-
-# If you want to recompile NGINX from ports:
+# If you want to recompile OpenSSL from ports:
 # - edit options file manually
 make clean
 make reinstall # make deinstall install
@@ -3301,9 +3298,6 @@ make reinstall # make deinstall install
 make config
 make clean
 make reinstall # make deinstall install
-
-# To disable vulnerabilities (not recommend!)
-make DISABLE_VULNERABILITIES=yes reinstall
 
 # To use/link openssl* port from your system (world):
 if [[ ! $(grep -q "DEFAULT_VERSIONS+=ssl=openssl111" /etc/make.conf) ]] ; then
@@ -3444,6 +3438,12 @@ Go to the main NGINX port directory:
 cd /usr/ports/www/nginx
 ```
 
+Before these tasks create backup of your current NGINX config:
+
+```bash
+tar czvfp /usr/backup/nginx.tgz /usr/local/etc/nginx
+```
+
 Parameters:
 
 ```bash
@@ -3573,6 +3573,30 @@ or with pre-install configuration:
 make config-recursive
 make install
 make clean
+```
+
+If you want to remove parameters from the options file:
+
+```bash
+make rmconfig
+```
+
+If you want to recompile NGINX from ports:
+
+```bash
+# - edit options file manually
+make clean
+make reinstall # make deinstall install
+# - remove options file (see above command)
+make config
+make clean
+make reinstall # make deinstall install
+```
+
+To disable vulnerabilities (not recommend!):
+
+```bash
+make DISABLE_VULNERABILITIES=yes reinstall
 ```
 
 ###### Post installation tasks
