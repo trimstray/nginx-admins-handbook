@@ -3560,7 +3560,7 @@ OPTIONS_FILE_UNSET+=XSS
 OPTIONS_FILE_UNSET+=WEBSOCKIFY
 ```
 
-The simplest way:
+The simplest way to install:
 
 ```bash
 make install
@@ -3575,29 +3575,35 @@ make install
 make clean
 ```
 
-If you want to remove parameters from the options file:
+But if you want to run other tasks:
 
-```bash
-make rmconfig
-```
+- remove parameters from the options file:
 
-If you want to recompile NGINX from ports:
+  ```bash
+  make rmconfig
+  ```
 
-```bash
-# - edit options file manually
-make clean
-make reinstall # make deinstall install
-# - remove options file (see above command)
-make config
-make clean
-make reinstall # make deinstall install
-```
+- recompile NGINX from ports:
 
-To disable vulnerabilities (not recommend!):
+  ```bash
+  # The following task are not necessery:
+  # - edit options file manually
+  # - regenerate options file with wizard:
+  make config
+  # - remove options file:
+  make rmconfig
+  # after this you might to run pre-install configuration:
+  make config-recursive
 
-```bash
-make DISABLE_VULNERABILITIES=yes reinstall
-```
+  make clean
+  make reinstall # make deinstall install
+  ```
+
+- to disable vulnerabilities (not recommend!):
+
+  ```bash
+  make DISABLE_VULNERABILITIES=yes reinstall
+  ```
 
 ###### Post installation tasks
 
