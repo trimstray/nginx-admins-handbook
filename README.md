@@ -1820,6 +1820,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://engineering.videoblocks.com/web-architecture-101-a3224e126947"><b>Web Architecture 101</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/leandromoreira/linux-network-performance-parameters"><b>Learn where some of the network sysctl variables fit into the Linux/Kernel network flow</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://suniphrase.wordpress.com/2015/10/27/jemalloc-vs-tcmalloc-vs-dlmalloc/"><b>jemalloc vs tcmalloc vs dlmalloc</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://arxiv.org/pdf/1905.01135.pdf"><b>On the Impact of Memory Allocation on High-Performance Query Processing</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.blog/2018-08-08-glb-director-open-source-load-balancer/"><b>GLB: GitHub’s open source load balancer</b></a><br>
 </p>
 
