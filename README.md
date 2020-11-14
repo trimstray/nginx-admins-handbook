@@ -685,8 +685,6 @@ If you find something which doesn't make sense, or something doesn't seem right,
 
 Before adding a pull request, please see the **[contributing guidelines](.github/CONTRIBUTING.md)**.
 
-If this project is useful and important for you, you can bring **positive energy** by giving some **good words** or **supporting this project**. Thank you!
-
 ## Code Contributors
 
 This project exists thanks to all the people who contribute.
