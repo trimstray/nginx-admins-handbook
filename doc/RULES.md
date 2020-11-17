@@ -2397,7 +2397,7 @@ pkg -f install <pkgname>
 
   > NGINX meets these requirements and it is the default behaviour, but remember to check it.
 
-  From [Secure-Programs-HOWTO: Minimize Privileges](ftp://ftp.wayne.edu/ldp/en/Secure-Programs-HOWTO/minimize-privileges.html) article:
+  From [Secure Programming HOWTO - 7.4. Minimize Privileges](https://dwheeler.com/secure-programs/3.71/Secure-Programs-HOWTO/minimize-privileges.html) article:
 
   > _The most extreme example is to simply not write a secure program at all - if this can be done, it usually should be. For example, don't make your program `setuid` or `setgid` if you can; just make it an ordinary program, and require the administrator to log in as such before running it._
 
