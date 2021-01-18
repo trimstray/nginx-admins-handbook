@@ -745,7 +745,7 @@ http {
 ssl_protocols TLSv1.2;
 ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305";
 
-ssl_prefer_server_ciphers on;
+ssl_prefer_server_ciphers off;
 
 ssl_ecdh_curve secp521r1:secp384r1;
 
@@ -3959,7 +3959,7 @@ server {
 
   > The reason why this control was preferred is old and insecure ciphers that were available in SSL, and TLS v1.0 and TLS v1.1 because when the server supports old TLS versions and `ssl_prefer_server_ciphers` is off, an adversary can interfere with the handshake and force the connection to use weak ciphers, therefore allowing decrypting of the connection.
 
-  > The preferred setting in modern setups is `ssl_prefer_server_ciphers off,` because then the client device can choose his preferred encryption method based on the hardware capabilities of the client device.
+  > The preferred setting in modern setups is `ssl_prefer_server_ciphers off,` because then the client device can choose his preferred encryption method based on the hardware capabilities of the client device. As such, we let the client choose the most performant cipher suite for their hardware configuration.
 
 ###### Example
 
