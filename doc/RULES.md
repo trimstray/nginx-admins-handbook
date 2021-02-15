@@ -2984,6 +2984,7 @@ certbot certonly -d example.com -d www.example.com
 - [Key Lengths - Contribution to The Handbook of Information Security](https://infoscience.epfl.ch/record/164539/files/NPDF-32.pdf) <sup>[pdf]</sup>
 - [NIST - Key Management](https://csrc.nist.gov/Projects/Key-Management/publications) <sup>[NIST]</sup>
 - [CA/Browser Forum Baseline Requirements](https://cabforum.org/baseline-requirements-documents/)
+- [Mozilla Guidelines - Key Management](https://infosec.mozilla.org/guidelines/key_management.html)
 - [So you're making an RSA key for an HTTPS certificate. What key size do you use?](https://certsimple.com/blog/measuring-ssl-rsa-keys)
 - [RSA Key Sizes: 2048 or 4096 bits?](https://danielpocock.com/rsa-key-sizes-2048-or-4096-bits/)
 - [Create a self-signed ECC certificate](https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/)

@@ -1801,6 +1801,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/TLS-Redirection#technical-details"><b>TLS Redirection (and Virtual Host Confusion)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.acunetix.com/blog/articles/tls-vulnerabilities-attacks-final-part/"><b>TLS Security 6: Examples of TLS Vulnerabilities and Attacks</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers"><b>Guidelines for Setting Security Headers</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://infosec.mozilla.org/guidelines/web_security.html"><b>Mozilla Guidelines - Web Security</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://medium.freecodecamp.org/secure-your-web-application-with-these-http-headers-fd66e0367628"><b>Secure your web application with these HTTP headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://zinoui.com/blog/security-http-headers"><b>Security HTTP Headers</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/GrrrDog/weird_proxies/wiki"><b>Analysis of various reverse proxies, cache proxies, load balancers, etc.</b></a><br>
