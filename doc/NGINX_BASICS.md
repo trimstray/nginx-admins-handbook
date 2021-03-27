@@ -2749,7 +2749,7 @@ The following is a list of all severity levels:
 | `info` | informational messages that aren’t necessary to read but may be good to know |
 | `notice` | something normal happened that is worth noting |
 | `warn` | something unexpected happened, however is not a cause for concern |
-| `error` | something was unsuccessful, contains the action of limiting rules |
+| `error` | something was unsuccessful, contains the action of limiting rules (default) |
 | `crit` | important problems that need to be addressed |
 | `alert` | severe situation where action is needed promptly |
 | `emerg` | the system is in an unusable state and requires immediate attention |
