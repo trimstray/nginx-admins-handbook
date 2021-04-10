@@ -4521,7 +4521,7 @@ large_client_header_buffers 2 1k; # default: 4 8k
 client_body_timeout 10s;    # default: 60s
 client_header_timeout 10s;  # default: 60s
 keepalive_timeout 5s 5s;    # default: 75s
-send_timeout 10s;           # 6default: 0s
+send_timeout 10s;           # default: 60s
 ```
 
 ###### External resources
