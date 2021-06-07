@@ -1591,6 +1591,7 @@ _In this ebook you will learn:_
 &nbsp;&nbsp;:black_small_square: <a href="https://enable-cors.org/index.html"><b>Enable cross-origin resource sharing (CORS)</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://github.com/nbs-system/naxsi"><b>NAXSI - WAF for Nginx</b></a><br>
 &nbsp;&nbsp;:black_small_square: <a href="https://geekflare.com/install-modsecurity-on-nginx/"><b>ModSecurity for Nginx</b></a><br>
+&nbsp;&nbsp;:black_small_square: <a href="https://github.com/bunkerity/bunkerized-nginx"><b>bunkerized-nginx : make your web services "secure by default"</b></a><br>
 </p>
 
 ##### Presentations & Videos
