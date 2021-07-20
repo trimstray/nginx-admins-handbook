@@ -5383,6 +5383,9 @@ tail -2000 "$_fd" | cut -d '"' -f3 | cut -d ' ' -f2 | sort | uniq -c | sort -nr
 _fd="access.log"
 tail -F "$_fd" | pv -lr >/dev/null
 
+# https://serverfault.com/a/641552
+tail -F "$_fd" | pv --line-mode --rate --timer --average-rate -b > /dev/null
+
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
 #   ... | xargs printf '%10s%24s%18s\n%10s%24s%18s\n' "AMOUNT" "DATE" "IP_ADDRESS"
