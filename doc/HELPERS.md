@@ -5384,7 +5384,7 @@ _fd="access.log"
 tail -F "$_fd" | pv -lr >/dev/null
 
 # https://serverfault.com/a/641552
-tail -F "$_fd" | pv --line-mode --rate --timer --average-rate -b > /dev/null
+tail -F "$_fd" | pv --line-mode --rate --timer --average-rate -b >/dev/null
 
 # - add `head -n X` to the end to limit the result
 # - add this to the end for print header:
