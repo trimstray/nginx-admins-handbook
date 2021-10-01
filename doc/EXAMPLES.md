@@ -172,7 +172,7 @@ include /etc/nginx/master/_server/domain.com/backends.conf;
 ###### Init domain directory
 
 ```bash
-cd /etc/nginx/cd master/_server
+cd /etc/nginx/master/_server
 cp -R example.com domain.com
 
 cd domain.com
